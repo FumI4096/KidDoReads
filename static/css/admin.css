@@ -1,0 +1,146 @@
+:root{
+    --primary-color: #ffee00;
+    --secondary-color: #f5e8da;
+    --tertiary-color: #a46b28;
+    --orange-300: #fa9939;
+    --orange-400: #e87a00;
+    --orange-500: #d76d00;
+    --gray-100: #dbdbdb;
+    --gray-200: #c9c9c9;
+    --secondary-color-two: #e4d7ca;
+    --layout-padding: 0.7rem 5rem;
+}
+
+@font-face {
+    font-family: 'Regular-Poppins';
+    src: url('../fonts/Poppins-Regular.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Light-Poppins';
+    src: url('../fonts/Poppins-Light.ttf') format('truetype');
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+}
+
+body{
+    display: flex;
+    height: 911px;
+    
+}
+
+aside{
+    background-color: var(--tertiary-color);
+    padding: 0.7rem 0.6rem;
+    height: 100%;
+    width: 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+}
+
+aside > ion-icon{
+    color: white;
+    font-size: 2.4rem;
+
+}
+
+#closeProfileButton {
+    display: none;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+    padding: var(--layout-padding);
+    height: 100%;
+    background-color: var(--secondary-color);
+    flex-basis: 100%;
+    overflow-y: auto;
+}
+
+#formActionButtons{
+    display: flex;
+    gap: 1rem;
+}
+
+table{
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+thead > tr{
+    height: 6rem;
+    background-color: white;
+    color: black;
+    font-family: 'Regular-Poppins';
+}
+
+thead > tr > th{
+    border: 1px solid white;
+}
+
+tbody > tr, tbody > tr > td > input{
+    font-family: 'Light-Poppins';
+}
+
+tbody > tr:nth-child(odd){
+    background-color: var(--gray-100);
+}
+
+tbody > tr:nth-child(even){
+    background-color: var(--gray-200);
+}
+
+td{
+    height: 7rem;
+}
+
+td > input{
+    text-align: center;
+    outline: none;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+}
+
+td > input::placeholder{
+    color: rgb(41, 41, 41);
+}
+
+td > *{
+    width: 100%;
+}
+
+.uploadImageData{
+    padding: 0.3rem;
+}
+
+.uploadImageData > label{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 4px dashed;
+    height: 100%;
+    cursor: pointer;
+}
+
+.actionButtons > div{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+

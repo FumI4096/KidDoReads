@@ -1,0 +1,227 @@
+:root{
+    --primary-color: #ffee00;
+    --secondary-color: #f5e8da;
+    --tertiary-color: #a46b28;
+    --orange-300: #fa9939;
+    --orange-400: #e87a00;
+    --orange-500: #d76d00;
+    --secondary-color-two: #e4d7ca;
+    --layout-padding: 0.7rem 5rem;
+}
+
+@font-face {
+    font-family: 'Regular-Poppins';
+    src: url('../fonts/Poppins-Regular.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Light-Poppins';
+    src: url('../fonts/Poppins-Light.ttf') format('truetype');
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+}
+
+body{
+    display: flex;
+    height: 911px;
+    
+}
+
+aside{
+    background-color: var(--tertiary-color);
+    padding: 0.7rem 0.6rem;
+    height: 100%;
+    width: 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+}
+
+aside > ion-icon{
+    color: white;
+    font-size: 2.4rem;
+
+}
+
+#closeProfileButton {
+    display: none;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+    padding: var(--layout-padding);
+    height: 100%;
+    background-color: var(--secondary-color);
+    flex-basis: 100%;
+    overflow-y: auto;
+}
+
+main > header{
+    padding: 2rem 5rem;
+    background-color: var(--tertiary-color);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+}
+
+main > header > img{
+    height: 5rem;
+}
+
+main > header > nav {
+    width: auto;
+}
+
+main > header > nav > ul {
+    list-style: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+main > header > nav > ul > li {
+    font-family: 'Regular-Poppins';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    border-radius: 100px;
+    width: 100%;
+    background-color: var(--secondary-color);
+    cursor: pointer;
+}
+
+main > header > nav > ul > li:hover {
+    background-color: var(--secondary-color-two);
+}
+
+#contents{
+    gap: 1rem;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+
+#contents > * {
+    border-radius: 20px;
+    height: 300px;
+}
+
+.content {
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#addContentButton {
+    background-color: var(--orange-400);
+    font-size: 1.5rem;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#addContentButton:active {
+    background-color: var(--orange-500);
+}
+
+.contentBackground{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.createContent {
+    width: 500px;
+    height: auto;
+    padding: 3rem;
+    border-radius: 20px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    font-family: 'Regular-Poppins';
+
+}
+
+.submitContent {
+    background-color: var(--orange-300);
+    width: 100%;
+    border: none;
+    border-radius: 100px;
+    height: 3rem;
+    font-family: 'Regular-Poppins';
+    font-size: 1rem;
+
+}
+
+/* Hide default radio */
+.contentTypeContainer > label > input[type="radio"] {
+    display: none;
+}
+
+/* Custom radio style */
+.contentTypeContainer > label > input[type="radio"] + span {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--tertiary-color);
+    border-radius: 50%;
+    position: relative;
+    background: #fff;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+/* Checked state */
+.contentTypeContainer > label > input[type="radio"]:checked + span::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: var(--tertiary-color);
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+.contentTitle{
+    border: none;
+    background-color: transparent;
+    border-bottom: 2px solid black;
+    outline: none;
+    font-family: 'Regular-Poppins';
+    font-size: 2rem;
+}
+
+.closeContentButton{
+    align-self: flex-end;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+
+

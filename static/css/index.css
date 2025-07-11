@@ -1,0 +1,93 @@
+:root{
+    --primary-color: #ffee00;
+    --secondary-color: #f5e8da;
+    --tertiary-color: #a46b28;
+    --orange-300: #fa9939;
+    --orange-400: #e87a00;
+    --orange-500: #d76d00;
+    --layout-padding: 0.7rem 5rem;
+}
+
+@font-face {
+    font-family: 'Regular-Poppins';
+    src: url('../fonts/Poppins-Regular.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Light-Poppins';
+    src: url('../fonts/Poppins-Light.ttf') format('truetype');
+}
+
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+main{
+    background-color: var(--tertiary-color);
+    height: 911px;
+    display: grid;
+    place-content: center;
+}
+
+form {
+    width: auto;
+    height: auto;
+    background-color: var(--orange-300);
+    padding: 5rem 3rem;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+form > div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    background-color: white;
+    width: 20rem;
+    border: none;
+    border-radius: 100px;
+    padding: 0 1.2rem;
+    outline: none;
+    height: 3rem;
+    gap: 1rem;
+}
+
+form > div > input{
+    height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: 'Regular-Poppins';
+    font-size: 1rem;
+}
+
+form > div > ion-icon{
+    font-size: 1.2rem;
+}
+
+.displayPassword{
+    display: block;
+}
+
+#unshowPasswordButton{
+    display: none;
+
+}
+
+#loginButton{
+    background-color: var(--primary-color);
+    width: 20rem;
+    border: none;
+    border-radius: 100px;
+    padding: 0 1.2rem;
+    outline: none;
+    height: 3rem;
+    font-family: 'Regular-Poppins';
+    font-size: 1rem;
+}
+

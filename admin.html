@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for character set and responsive viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiddoReads</title>
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="./static/css/admin.css">
+</head>
+<body>
+    <!-- Ionicons script tags for module and nomodule support -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- Sidebar section -->
+    <aside id="sideBar">
+        <!-- Ionicons icons for profile, close profile, and log out buttons -->
+        <ion-icon name="person-circle-outline" id="profileButton"></ion-icon>
+        <ion-icon name="close-circle-outline" id="closeProfileButton"></ion-icon>
+        <ion-icon name="log-out-outline" id="logOutButton"></ion-icon>
+    </aside>
+
+    <!-- Main content section -->
+    <main id="mainHome">
+        <!-- Header section -->
+        <header>
+
+        </header>
+
+        <div id="formActionButtons">
+            <button id="addRowButton">
+                add
+            </button>
+            <button>
+                filter
+            </button>
+        </div>
+        <section >
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="uploadImageData">
+                            <label for="picUpload">
+                                Your Image File
+                                <input type="file" id="picUpload" name="myImage" accept="image/png, image/jpeg" hidden/>
+                            </label>
+                        </td>
+                        <td>
+                            <input type="text" placeholder="Enter ID">
+                        </td>
+                        <td>
+                            <input type="text" placeholder="Enter Name">
+                        </td>
+                        <td>
+                            <input type="text" placeholder="Enter Email">
+                        </td>
+                        <td class="actionButtons">
+                            <div>
+                                <button>
+                                    <ion-icon name="save-outline"></ion-icon>
+                                </button>
+                                <button>
+                                    <ion-icon name="close-outline"></ion-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- JavaScript file for dynamic behavior -->
+    <script src="./static/js/admin.js"></script>
+</body>
+</html>
