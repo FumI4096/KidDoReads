@@ -52,7 +52,6 @@ function checkInputState() {
     const getQuestion = document.querySelector(".question").value.trim();
     const getAnswer = document.querySelector(".answer").value.trim();
     const getChoices = Array.from(choicesContainer.querySelectorAll(".choice-box .choice"));
-
     const hasEmptyChoice = getChoices.some(choice => choice.value.trim() === "");
 
     if (getQuestion && getAnswer && !hasEmptyChoice) {
@@ -87,7 +86,6 @@ function setFormToViewMode() {
     else{
         previousButton.disabled = false;
     } 
-
 }
 
 function setFormToEditMode() {
@@ -235,7 +233,16 @@ function saveCurrentQuestion(){
 function clearForm(){
     document.querySelector(".question").value = ""
     document.querySelector(".answer").value = ""
-    choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {choice.value = ""})
+    const choices = choicesContainer.querySelectorAll(".choice-box .choice");
+    if (choices.length > 2) {
+        for (let i = 2; i < choices.length; i++) {
+            choices[i].parentElement.remove();
+        }
+    }
+
+    // Clear the values of the first two choices
+    const updatedChoices = choicesContainer.querySelectorAll(".choice-box .choice");
+    updatedChoices.forEach(choice => choice.value = "");
 }
 
 function nextForm(){
@@ -312,6 +319,5 @@ function firstQuestionExist(length){
         return false
     }
 }
-
 
 
