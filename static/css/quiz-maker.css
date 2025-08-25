@@ -1,0 +1,20 @@
+.choices-container{
+    display: flex; 
+    flex-direction: column;
+}
+
+.choice-box{
+    display: flex;
+    position: relative
+}
+
+
+.choice-box-hover:hover::after{
+    content: 'Remove';
+    color: white;
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
