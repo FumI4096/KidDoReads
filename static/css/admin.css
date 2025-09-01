@@ -90,7 +90,7 @@ thead > tr > th{
     border: 1px solid white;
 }
 
-tbody > tr, tbody > tr > td > input{
+tbody > tr, tbody > tr > td > p{
     font-family: 'Light-Poppins';
 }
 
@@ -103,44 +103,127 @@ tbody > tr:nth-child(even){
 }
 
 td{
-    height: 7rem;
+    height: 9rem;
 }
 
-td > input{
+td > p{
     text-align: center;
     outline: none;
     background: none;
     border: none;
-    font-size: 0.95rem;
-}
-
-td > input::placeholder{
-    color: rgb(41, 41, 41);
+    font-size: 0.87rem;
 }
 
 td > *{
     width: 100%;
 }
 
-.uploadImageData{
+.user-image-cell{
+    display: grid;
+    place-content: center;
+}
+
+.upload-image-box{
     padding: 0.3rem;
 }
 
-.uploadImageData > label{
+.upload-image-box > label{
     display: flex;
     justify-content: center;
     align-items: center;
     border: 4px dashed;
     height: 100%;
     cursor: pointer;
+    font-size: 0.87rem;
 }
 
-.actionButtons > div{
+.action-buttons > div{
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 2rem;
 }
+/* 
+.save-button{
+    display: none;
+} */
 
+.edit-button{
+    display: none;
+}
+
+.toggle-password{
+    display: block;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#user-form{
+    display: flex;
+    gap: 0.7rem;
+}
+
+#image-box{
+    border: 4px dashed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0 5rem 0 5rem;
+}
+
+#image-box > label{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#image-box > label > input {
+    visibility: none;
+}
+
+#image-display{
+    aspect-ratio: 1/1;
+    width: 120px;
+    height: 120px;
+    position: relative;
+}
+
+#image-display:hover{
+    opacity: 0.85;
+}
+
+
+#image-input{
+    visibility: hidden;
+    position: absolute;
+    bottom: 0;
+
+}
+
+#input-box{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+}
+
+#submit-actions{
+    display: flex;
+    justify-content: end;
+}
+
+.user-image-display{
+    aspect-ratio: 1/1;
+    width: 100px;
+    height: 100px;
+}
 
