@@ -145,7 +145,7 @@ function addChoice(){
         choicesContainer.appendChild(choiceDiv)
     }
     checkInputState()
-    
+
 }
 
 function removeChoice() {

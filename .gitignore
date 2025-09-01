@@ -1,5 +1,7 @@
 __pycache__/
 venv/
 database/
-db.py
-config.py
+config/
+static/uploads
+
+.env
