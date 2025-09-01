@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for character set and responsive viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiddoReads</title>
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- Sidebar section -->
+    <aside id="sideBar">
+        <!-- Ionicons icons for profile, close profile, and log out buttons -->
+        <ion-icon name="person-circle-outline" id="profileButton"></ion-icon>
+        <ion-icon name="close-circle-outline" id="closeProfileButton"></ion-icon>
+        <ion-icon name="log-out-outline" id="logOutButton"></ion-icon>
+    </aside>
+
+    <!-- Main content section -->
+    <main id="mainHome">
+        <form action="{{ url_for('register') }}" method="POST" enctype="multipart/form-data">
+            <section id="user-form">
+                <div id="image-box">
+                    <label for="image-input">
+                        <img id="image-display" src={{url_for('static', filename="images/default_profile_picture.png")}}
+                        />
+                    </label>
+                    <p>Enter Image</p>
+                    <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
+                </div>
+                <div id="input-box">
+                    <div>
+                        <label for="id">User ID</label>
+                        <input type="text" id="id" name="id" placeholder="Enter User ID">
+                    </div>
+        
+                    <div>
+                        <label for="fname">First Name</label>
+                        <input type="text" id="fname" name="fname" placeholder="Enter First Name">
+                    </div>
+        
+                    <div>
+                        <label for="lname">Last Name</label>
+                        <input type="text" id="lname" name="lname" placeholder="Enter Last Name">
+                    </div>
+        
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email" placeholder="Enter Email">
+                    </div>
+
+                    <div>
+                        <label for="password">Password</label>
+                        <input type="text" id="password" name="password" placeholder="Enter Password">
+                    </div>
+        
+                    <div>
+                        <label for="role">Role</label>
+                        <select id="role" name="role">
+                            <option value="">Select Role</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+            <div id="submit-actions">
+                <input type="submit" id="submit-user-button" value="Submit"/>
+            </div>
+        </form>
+        <section>
+            <button id="student-record-button">Student Record</button>
+            <button id="teacher-record-button">Teacher Record</button>
+        </section>
+        <div id="formActionButtons">
+            <button>
+                filter
+            </button>
+        </div>
+        <section>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email/Password</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        
+                        
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- JavaScript file for dynamic behavior -->
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
