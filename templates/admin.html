@@ -22,7 +22,7 @@
 
     <!-- Main content section -->
     <main id="mainHome">
-        <form action="{{ url_for('register') }}" method="POST" enctype="multipart/form-data">
+        <form id="main-form" action="{{ url_for('register') }}" method="POST" enctype="multipart/form-data">
             <section id="user-form">
                 <div id="image-box">
                     <label for="image-input">
@@ -70,17 +70,20 @@
             </section>
             <div id="submit-actions">
                 <input type="submit" id="submit-user-button" value="Submit"/>
+                <input type="button" id="cancel-user-button" value="Cancel" hidden/>
             </div>
         </form>
         <section>
             <button id="student-record-button">Student Record</button>
             <button id="teacher-record-button">Teacher Record</button>
         </section>
-        <div id="formActionButtons">
-            <button>
-                filter
-            </button>
-        </div>
+        <form id="filter-form">
+            <label for="filter">Filter</label>
+            <select id="filter" name="fiter">
+                <option value="default">Default</option>
+                <option value="id">By ID</option>
+            </select>
+        </form>
         <section>
             <table>
                 <thead>
