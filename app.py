@@ -49,12 +49,10 @@ def register():
         if role == "student":
             db.insert_student(int(id), fname, lname, email, password, filename)
             
-            db.close()
             return jsonify({"status": True, "message": "Student Inserted Successfully"})
         elif role == "teacher":
             db.insert_teacher(int(id), fname, lname, email, password, filename)
             
-            db.close()
             return jsonify({"status": True, "message": "Teacher Inserted Successfully"})
             
     except Exception as e:
@@ -63,15 +61,14 @@ def register():
 @app.route('/students', methods=['GET'])
 def get_student_record():
     try:
-        results = db.get_student_records()
+        status, results = db.get_student_records()
         rows = results
         students = []
+
         for row in rows:
-            print(row[4])
             if row[4] is not None:
                 filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
                 image_url = url_for('static', filename=f'uploads/{filename}')
-                print(image_url)
             else:
                 image_url = None
             students.append({
@@ -82,23 +79,28 @@ def get_student_record():
                 "image": image_url,
                 "role": row[5]
             })
+        
+        if status:
+            return jsonify({"status": True, "data": students})
+        else:
+            return jsonify({"status": False, "message": results})
             
-        return jsonify({"status": True, "data": students})
+            
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
 
 @app.route('/teachers', methods=['GET'])
 def get_teacher_record():
     try:
-        results = db.get_teacher_records()
+        status, results = db.get_teacher_records()
         rows = results
+        
+        print(status)
         teachers = []
         for row in rows:
-            print(row[4])
             if row[4] is not None:
                 filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
                 image_url = url_for('static', filename=f'uploads/{filename}')
-                print(image_url)
             else:
                 image_url = None
             teachers.append({
@@ -109,7 +111,11 @@ def get_teacher_record():
                 "image": image_url,
                 "role": row[5]
             })
-        return jsonify({"status": True, "data": teachers})
+            
+        if status:
+            return jsonify({"status": True, "data": teachers})
+        else:
+            return jsonify({"status": False, "message": results})
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
 
@@ -140,13 +146,72 @@ def modify_user():
         if errors:
             return jsonify({"status": False, "errors": errors})
             
-        db.modify_user_record(original_id, id, fname, lname, email, password, image, role)
+        status, message = db.modify_user_record(original_id, id, fname, lname, email, password, filename, role)
         
-    
-        return jsonify({"status": True, "message": "Modifed Successfully"})
+        if status:
+            return jsonify({"status": True, "message": message})
+        else:
+            return jsonify({"status": False, "message": message})
+            
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
-
+    
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    try:
+        id = request.form.get('id')
+        role = request.form.get('role')
+        
+        status, message = db.delete_user_record(id, role)
+        
+        if status:
+            return jsonify({"status": True, "message": message})
+        else:
+            return jsonify({"status": False, "message": message})            
+            
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+    
+@app.route('/filter_record/<string:role>/<string:filter>', methods=['GET'])
+def filter_record(role, filter):
+    try:
+        result = []
+        if role == "student":
+            status, result = db.get_student_records(filter)
+        elif role == "teacher":
+            status, result = db.get_teacher_records(filter)
+        else:
+            return jsonify({"status": False, "message": "Records are only students and teachers"})
+        
+        rows = result
+        data = []
+        
+        for row in rows:
+            if row[4] is not None:
+                filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
+                image_url = url_for('static', filename=f'uploads/{filename}')
+            else:
+                image_url = None
+            data.append({
+                "id": row[0],
+                "fname": row[1],
+                "lname": row[2],
+                "email": row[3],
+                "image": image_url,
+                "role": row[5]
+            })
+        
+        if status:
+            return jsonify({"status": True, "data": data})
+        else:
+            return jsonify({"status": False, "message": result})
+            
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+        
+    
+    
+        
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -154,8 +219,8 @@ def regValidation(id, fname, lname, email, password, role) -> list:
     errors = []
     
     namePattern = r'^[A-Za-z\s\-]+$'
-    emailPattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-    passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$'
+    emailPattern = r'^[\w\.-]+@[\w\.-]+\.edu.ph$'
+    passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)\S{8,}$'
     
     if not id or not fname or not lname or not email or not password or not role:
         errors.append("Please complete the valid requirements.")
@@ -180,8 +245,8 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
     errors = []
     
     namePattern = r'^[A-Za-z\s\-]+$'
-    emailPattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-    passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$'
+    emailPattern = r'^[\w\.-]+@[\w\.-]+\.edu.ph$'
+    passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)\S{8,}$'
     
     if not id or not fname or not lname or not email or not role:
         errors.append("Please complete the valid requirements.")
