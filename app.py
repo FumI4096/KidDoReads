@@ -1,5 +1,6 @@
 from flask import Flask, flash, render_template, request, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash
 from database.db import Database
 from dotenv import load_dotenv
 import os
@@ -17,7 +18,40 @@ db = Database()
 
 @app.route('/')
 def home():
+    return render_template('index.html')
+
+@app.route('/admin')
+def admin():
     return render_template('admin.html')
+
+@app.route('/teacher_dashboard')
+def teacher_dashboard():
+    return render_template('teacher-dashboard.html')
+
+@app.route('/student_dashboard')
+def student_dashboard():
+    return render_template('student-dashboard.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    id = request.form.get('id')
+    password = request.form.get('password')
+    
+    errors = loginValidation(id, password)
+    
+    if errors:
+        return jsonify({"status": False, "errors": errors})
+    else:
+        role = db.get_role_by_id(id)
+        
+        if role[0].lower() == "student":
+            return jsonify({'status': True, 'redirectUrl': 'student_dashboard'})
+        elif role[0].lower() == "teacher":
+            return jsonify({'status': True, 'redirectUrl': 'teacher_dashboard'})
+        elif role[0].lower() == "admin":
+            return jsonify({'status': True, 'redirectUrl': 'admin'})
+        else:
+            return jsonify({"status": False, "message": "Invalid role."})        
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -209,11 +243,29 @@ def filter_record(role, filter):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
         
-    
-    
-        
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def loginValidation(id, password) -> list:
+    errors = []
+    
+    if not id or not password:
+        errors.append("Please complete the valid requirements.")
+    if not id.isdigit():
+        errors.append("School ID must be a number")
+        
+    data = db.get_password_by_id(id)
+    
+    if not data:
+        errors.append("Invalid ID. Please try again")
+        
+    hashed_password = data[0]
+    
+    if not check_password_hash(hashed_password, password):
+        errors.append("Invalid password. Please try again")
+    
+    return errors
+    
 
 def regValidation(id, fname, lname, email, password, role) -> list:
     errors = []

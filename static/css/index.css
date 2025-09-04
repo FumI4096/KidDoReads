@@ -79,7 +79,7 @@ form > div > ion-icon{
 
 }
 
-#loginButton{
+#login-button{
     background-color: var(--primary-color);
     width: 20rem;
     border: none;

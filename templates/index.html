@@ -7,7 +7,7 @@
     <title>Login</title>
     
     <!-- Link to external CSS file for styling the login page -->
-    <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
 
@@ -15,33 +15,27 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-    <!-- Main content of the login page -->
     <main>
-        <!-- Login form (note: `action=""` means it currently does nothing when submitted) -->
-        <form action="">
+        <form id="login-form" action="{{ url_for('login') }}" method="POST">
             <!-- Placeholder for logo -->
             <img src="" alt="logo">
 
-            <!-- Input for user ID -->
             <div>
-                <input type="text" placeholder="Enter your ID">
+                <input type="text" id="id" name="id" placeholder="Enter your ID">
             </div>
 
             <!-- Input for password and toggle icons -->
             <div>
-                <input type="password" placeholder="Enter your password">
+                <input type="password" id="password" name="password" placeholder="Enter your password">
                 
-                <!-- Show/hide password icons (functionality handled in JS) -->
                 <ion-icon name="eye-outline" id="showPasswordButton"></ion-icon>
                 <ion-icon name="eye-off-outline" id="unshowPasswordButton"></ion-icon>
             </div>
 
-            <!-- Login button (currently a button input, not a form submit) -->
-            <input type="button" value="Login" id="loginButton">
+            <input type="submit" value="Login" id="login-button">
         </form>
     </main>
 
-    <!-- Link to external JavaScript for form functionality (e.g., login handling, password toggle) -->
-    <script src="./static/js/index.js"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>
