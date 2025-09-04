@@ -2,6 +2,7 @@
 const showPasswordButton = document.getElementById('showPasswordButton');
 const unshowPasswordButton = document.getElementById('unshowPasswordButton');
 const passwordInput = document.querySelector('input[type="password"]');
+const loginForm = document.getElementById('login-form')
 
 // Event listener to show password (eye icon clicked)
 showPasswordButton.addEventListener('click', () => 
@@ -21,3 +22,32 @@ function displayEyePassword(element1, element2, showPassword){
     passwordInput.type = showPassword ? "text" : "password";
 
 }
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.target)
+
+    const response = await fetch('/login', {
+        method: "POST",
+        body: formData
+    })
+
+    const result = await response.json()
+
+    if (result.status){
+        window.location.href = result.redirectUrl
+    }
+    else{
+        if (result.errors){
+            result.errors.forEach(error => {
+                alert("Error: " + error)
+            })
+            return
+        }
+        alert("Error: " + result.message)
+    }
+    
+
+})
+
