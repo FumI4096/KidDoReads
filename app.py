@@ -9,7 +9,7 @@ import re
 
 load_dotenv()
 
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'static/images/uploads'
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -31,6 +31,10 @@ def teacher_dashboard():
 @app.route('/student_dashboard')
 def student_dashboard():
     return render_template('student-dashboard.html')
+
+@app.route('/content_making')
+def content_making():
+    return render_template('quiz-making.html')
 
 @app.route('/login', methods=['POST'])
 def login():
