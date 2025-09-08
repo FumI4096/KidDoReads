@@ -246,6 +246,18 @@ def filter_record(role, filter):
             
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
+    
+@app.route('/update_content', methods=['POST'])
+def update_content():
+    content = request.form.get('content')
+    teacherId = request.form.get('id')
+    
+    result = db.update_content(teacherId, content)
+    
+    if result is True:
+        return jsonify({"status": True, "message": "Content Updated Successfully"})
+    else:
+        return jsonify({"status": False, "message": result})
         
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
