@@ -197,7 +197,9 @@ function relabelChoices() {
     });
 }
 
-function saveCurrentQuestion(){
+async function saveCurrentQuestion(e){
+    e.preventDefault()
+
     const getQuestion = document.querySelector(".question").value
     const getChoices = choicesContainer.querySelectorAll(".choice-box .choice")
     const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
@@ -250,7 +252,28 @@ function saveCurrentQuestion(){
         currentQuestion = questionObject.length - 1;
 
     }
+
     sessionStorage.setItem("questions", JSON.stringify(questionObject))
+
+    const formData = new FormData()
+    formData.append('content', JSON.stringify(sessionStorage.getItem("questions")))
+    formData.append('id', 123)
+
+    const response = await fetch('/update_content', {
+        method: 'POST',
+        body: formData,
+    });
+
+    const result = await response.json()        
+    if (result.status) {
+        console.log(result.message);
+    } 
+    else {
+        console.error("Error saving content:", result.message);
+    }
+    
+
+
     setFormToViewMode()
 
     console.log("Currently on Question:", currentQuestion + 1);
@@ -263,7 +286,6 @@ function clearForm(){
     const answers = answerContainer.querySelectorAll('input, label');
 
     const checkedAnswer = document.querySelector('input[name="answer"]:checked');
-
 
     choices.forEach(choice => choice.value = "");
     if (choices.length > 2) {
@@ -383,7 +405,4 @@ function firstQuestionExist(length){
         return false
     }
 }
-
-sessionStorage.clear()
-
 
