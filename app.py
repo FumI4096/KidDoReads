@@ -264,7 +264,7 @@ def allowed_file(filename):
 
 def loginValidation(id, password) -> list:
     errors = []
-    
+    hashed_password = ""
     if not id or not password:
         errors.append("Please complete the valid requirements.")
     if not id.isdigit():
@@ -272,10 +272,10 @@ def loginValidation(id, password) -> list:
         
     data = db.get_password_by_id(id)
     
-    if not data:
+    if data == None:
         errors.append("Invalid ID. Please try again")
-        
-    hashed_password = data[0]
+    else:
+        hashed_password = data[0]
     
     if not check_password_hash(hashed_password, password):
         errors.append("Invalid password. Please try again")
