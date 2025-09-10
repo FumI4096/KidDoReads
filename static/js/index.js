@@ -1,20 +1,20 @@
-// Get references to the show/hide password icons and the password input field
+import Notification from './modules/Notification.js'
+
 const showPasswordButton = document.getElementById('showPasswordButton');
 const unshowPasswordButton = document.getElementById('unshowPasswordButton');
 const passwordInput = document.querySelector('input[type="password"]');
 const loginForm = document.getElementById('login-form')
 
-// Event listener to show password (eye icon clicked)
+const notifyObj = new Notification()
+
 showPasswordButton.addEventListener('click', () => 
     displayEyePassword(showPasswordButton, unshowPasswordButton, true)
 );
 
-// Event listener to hide password (eye-off icon clicked)
 unshowPasswordButton.addEventListener('click', () => 
     displayEyePassword(unshowPasswordButton, showPasswordButton, false)
 );
 
-// Toggle the visibility of the password input field
 function displayEyePassword(element1, element2, showPassword){
     element1.style.display = "none";
     element2.style.display = "block";
@@ -35,17 +35,23 @@ loginForm.addEventListener('submit', async (e) => {
 
     const result = await response.json()
 
-    if (result.status){
-        window.location.href = result.redirectUrl
-    }
-    else{
-        if (result.errors){
-            result.errors.forEach(error => {
-                alert("Error: " + error)
-            })
-            return
+    try{
+
+        if (response.ok && result.status){
+            window.location.href = result.redirectUrl
         }
-        alert("Error: " + result.message)
+        else{
+            if (result.errors){
+                result.errors.forEach(error => {
+                    notifyObj.notify(error, "error")
+                })
+                return
+            }
+            notifyObj.notify(result.message, "error")
+        }
+    }
+    catch (error){
+        console.log(error.message)
     }
     
 
