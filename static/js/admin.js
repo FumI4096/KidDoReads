@@ -1,4 +1,3 @@
-// Get references to sidebar buttons and container
 const profileButton = document.getElementById("profileButton");
 const sideBar = document.getElementById("sideBar");
 const closeProfileButton = document.getElementById("closeProfileButton");
@@ -11,7 +10,6 @@ const studentDisplayButton = document.getElementById('student-record-button')
 const teacherDisplayButton = document.getElementById('teacher-record-button')
 const filterOptions = document.getElementById('filter')
 let currentTab = "student"
-
 const defaultProfilePicture = "../static/images/default_profile_picture.png"
 
 studentDisplayButton.disabled = true;
@@ -211,7 +209,6 @@ function addRow(user_id, user_fname, user_lname, user_email, user_image, role){
         deleteUser(user_id, role.toLowerCase())
     })
 
-
     // Append all cells to the row
     newRow.appendChild(imgTd);
     newRow.appendChild(idTd);
@@ -234,8 +231,8 @@ function populateForm(image, id, fname, lname, email, role){
 
     const submitButton = document.getElementById('submit-user-button')
     const cancelButton = document.getElementById('cancel-user-button')
-    cancelButton.hidden = false
 
+    cancelButton.hidden = false
     submitButton.disabled = true;
 
     const originalId = document.createElement("input");
@@ -245,7 +242,6 @@ function populateForm(image, id, fname, lname, email, role){
     originalId.name = "original_id"
 
     mainForm.appendChild(originalId)
-
     mainForm.action = "modify_user";
 
     if (image){
@@ -276,7 +272,6 @@ function populateForm(image, id, fname, lname, email, role){
     emailInput.addEventListener('input', updateSubmitButtonState);
 
     submitButton.value = "Save";
-
     submitActionContainer.appendChild(cancelButton)
 
     cancelButton.addEventListener('click', () => {
@@ -296,19 +291,15 @@ function populateForm(image, id, fname, lname, email, role){
 function cancelModify(){
     const cancelButton = document.getElementById("cancel-user-button");
     const submitButton = document.getElementById("submit-user-button");
-
     submitButton.value = "Submit";
     submitButton.disabled = false;
     cancelButton.hidden = true;
     document.querySelector("form").reset();
-
     document.querySelectorAll(".edit-buttons, .delete-buttons").forEach(element => {
         element.disabled = false;
     })
-
     imageDisplay.src = defaultProfilePicture; 
     submitButton.textContent = "Submit";
-
 }
 
 function deleteUser(id, role){
@@ -371,14 +362,12 @@ function deleteUser(id, role){
         if (result.status){
             formBody.remove();
             alert(result.message)
-
             if (currentTab == "student"){
                 showRecords('/students')
             }
             else if (currentTab == "teacher"){
                 showRecords('/teachers')
             }
-
         }
         else{
             alert("Error: " + result.message)
