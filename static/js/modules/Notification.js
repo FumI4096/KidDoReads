@@ -12,6 +12,12 @@ class Notification{
 
     notify(statement, type, image = ""){
         if (typeof(statement) == "string"){
+            const existingNotifications = this.#container ? this.#container.querySelectorAll(".notification-box") : [];
+            for (const notification of existingNotifications) {
+                if (notification.textContent.includes(statement)) {
+                    return;
+                }
+            }
             if (!this.#container) {
                 this.#container = this.notificationContainerStructure();
                 document.body.appendChild(this.#container);
@@ -27,9 +33,9 @@ class Notification{
 
             this.#container.append(notificationBox);
 
-            const existingNotifications = this.#container.querySelectorAll(".notification-box")
+            const allNotifications  = this.#container.querySelectorAll(".notification-box")
 
-            const delay = existingNotifications.length * this.#displayTime
+            const delay = allNotifications.length * this.#displayTime
 
             const timeoutId = setTimeout(() => {
                 notificationBox.remove();
