@@ -133,7 +133,6 @@ def get_teacher_record():
         status, results = db.get_teacher_records()
         rows = results
         
-        print(status)
         teachers = []
         for row in rows:
             if row[4] is not None:
