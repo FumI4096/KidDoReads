@@ -267,18 +267,20 @@ def loginValidation(id, password) -> list:
     hashed_password = ""
     if not id or not password:
         errors.append("Please complete the valid requirements.")
+        
+        return errors
     if not id.isdigit():
-        errors.append("School ID must be a number")
+        errors.append("School ID must be a number.")
         
     data = db.get_password_by_id(id)
     
-    if data == None:
-        errors.append("Invalid ID. Please try again")
+    if data is None:
+        errors.append("Invalid School ID. Please try again.")
     else:
         hashed_password = data[0]
     
     if not check_password_hash(hashed_password, password):
-        errors.append("Invalid password. Please try again")
+        errors.append("Invalid password. Please try again.")
     
     return errors
     
