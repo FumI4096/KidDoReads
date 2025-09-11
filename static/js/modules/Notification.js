@@ -2,7 +2,7 @@ class Notification{
     #container = document.getElementById('notification-container')
     #notificationColor = 'rgb(255, 255, 255)'
     #successfulBorder = 'solid 10px rgb(77, 233, 86)'
-    #errorBorder = 'solid 3px rgb(207, 0, 44)'
+    #errorBorder = 'solid 2px rgb(207, 0, 44)'
     #borderRadius = '12px'
     #width = '350px'
     #height = '80px'
@@ -10,7 +10,7 @@ class Notification{
     #displayTime = 2000;
     #notificationTimeouts = new WeakMap();
 
-    notify(statement, type, image = ""){
+    notify(statement, type){
         if (typeof(statement) == "string"){
             const existingNotifications = this.#container ? this.#container.querySelectorAll(".notification-box") : [];
             for (const notification of existingNotifications) {
@@ -25,10 +25,10 @@ class Notification{
 
             let notificationBox;
             if (type === "error"){
-                notificationBox = this.error(statement, image)
+                notificationBox = this.error(statement)
             }
             else if (type === "success"){
-                notificationBox = this.success(statement, image)
+                notificationBox = this.success(statement)
             }
 
             this.#container.append(notificationBox);
@@ -68,7 +68,6 @@ class Notification{
         notificationBox.style.borderRadius = this.#borderRadius;
         notificationBox.style.backgroundColor = this.#notificationColor;
         notificationBox.style.display = "flex";
-        notificationBox.style.justifyContent = "center";
         notificationBox.style.alignItems = "center";
         notificationBox.style.gap = "1rem";
         notificationBox.style.fontFamily = 'Light-Poppins'
@@ -78,20 +77,22 @@ class Notification{
         return notificationBox;
     } 
 
-    error(statement, image){
+    error(statement){
         const errorBox = this.notificationStructure()
         errorBox.style.border = this.#errorBorder
+        const errorImageElement = document.createElement('img')
+        const errorImage = "static/images/cross.png"
 
-        if (this.imageExist(image)){
-            errorBox.append(image)
-        }
+        errorImageElement.alt = "Error Image";
+        errorImageElement.src = errorImage;
+        errorImageElement.style.height = "90%";
 
-        errorBox.append(statement)
+        errorBox.append(errorImageElement, statement)
         return errorBox
         
     }
 
-    success(statement, image){
+    success(statement){
         const successBox = this.notificationStructure()
         successBox.style.border = this.#successfulBorder
 
@@ -102,16 +103,6 @@ class Notification{
         successBox.append(statement)
 
         return successBox
-
-    }
-
-    imageExist(image){
-        if (image != ""){
-            return true
-        }
-        else{
-            return false
-        }
 
     }
 }
