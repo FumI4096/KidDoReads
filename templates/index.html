@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png')  }}">
     
     <!-- Link to external CSS file for styling the login page -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
@@ -16,9 +17,11 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     <main>
+        <aside>
+            <span>Big Adventures Start with Small Stories</span>
+            <span>Kid-Do-Reads</span>
+        </aside>
         <form id="login-form" action="{{ url_for('login') }}" method="POST">
-            <!-- Placeholder for logo -->
-            <img src="" alt="logo">
 
             <div>
                 <input type="text" id="id" name="id" placeholder="Enter your ID">

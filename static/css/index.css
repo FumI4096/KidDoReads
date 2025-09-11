@@ -1,5 +1,10 @@
 :root{
-    --primary-color: #ffee00;
+    --background: #f0efeb;
+    --black-text: #474434;
+    --primary-color: #fbc363;
+    --accent-color: #fc664f;
+    --primary-accent-color: linear-gradient(var(--primary-color), var(--accent-color));
+    --linear-text-color: linear-gradient(to right, #ed9f10, var(--accent-color));
     --secondary-color: #f5e8da;
     --tertiary-color: #a46b28;
     --orange-300: #fa9939;
@@ -18,28 +23,67 @@
     src: url('../fonts/Poppins-Light.ttf') format('truetype');
 }
 
+@font-face{
+    font-family: 'Bold-Poppins';
+    src: url('../fonts/Poppins-Bold.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Medium-Poppins';
+    src: url('../fonts/Poppins-Medium.ttf') format('truetype');
+}
+
 *{
     box-sizing: border-box;
     padding: 0;
     margin: 0;
 }
 
+html, body{
+    height: 100%;
+}
+
 main{
-    background-color: var(--tertiary-color);
-    height: 911px;
+    background: var(--background) url('../images/kdr-logo.png') no-repeat;
+    background-size: 700px;
+    background-position-y: 106%;
+    background-position-x: -1%;
+    height: 100%;
     display: grid;
     place-content: center;
+}
+
+aside{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    & > span:nth-child(1){
+        font-family: 'Light-Poppins';
+    }
+
+    & > span:nth-child(2){
+        font-family: 'Medium-Poppins';
+        font-weight: bold;
+        font-size: 3rem;
+        background-image: var(--linear-text-color);
+        color: transparent;
+        background-clip: text;
+
+    }
 }
 
 form {
     width: auto;
     height: auto;
-    background-color: var(--orange-300);
-    padding: 5rem 3rem;
-    border-radius: 20px;
+    background-image: var(--primary-accent-color);
+    padding: 3rem 4rem;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     gap: 0.9rem;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 }
 
 form > div{
@@ -55,6 +99,7 @@ form > div{
     outline: none;
     height: 3rem;
     gap: 1rem;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 }
 
 form > div > input{
@@ -89,5 +134,15 @@ form > div > ion-icon{
     height: 3rem;
     font-family: 'Regular-Poppins';
     font-size: 1rem;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+
+    &:hover{
+        background-color: #f7bf5f;
+    }
+
+    &:active{
+        background-color: #f1ba59;
+    }
 }
 
