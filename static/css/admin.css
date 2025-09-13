@@ -1,13 +1,20 @@
 :root{
-    --primary-color: #ffee00;
-    --secondary-color: #f5e8da;
-    --tertiary-color: #a46b28;
-    --orange-300: #fa9939;
-    --orange-400: #e87a00;
-    --orange-500: #d76d00;
-    --gray-100: #dbdbdb;
-    --gray-200: #c9c9c9;
-    --secondary-color-two: #e4d7ca;
+    --background-1: #f0efeb;
+    --background-2: #ebe5d9;
+    --black-text: #474434;
+    --primary-color: #fbc363;
+    --primary-color-200: #f7bf5f;
+    --primary-color-300: #f1ba59;
+    --primary-color-700: #ed9f10;
+    --accent-color: #fc664f;
+    --accent-color-200: #f6553e;
+    --accent-color-300: #f2523b;
+    --secondary-color: #5C609D;
+    --tertiary-color: #F79B8A;
+    --primary-accent-color-1: linear-gradient(var(--primary-color), var(--accent-color));
+    --primary-accent-color-2: linear-gradient(var(--primary-color) 20%, var(--accent-color));
+    --secondary-tertiary-color-1: linear-gradient(to right, var(--secondary-color) 70%, var(--tertiary-color));
+    --box-shadow-1: 0 3px 5px rgba(0, 0, 0, 0.3); 
     --layout-padding: 0.7rem 5rem;
 }
 
@@ -21,6 +28,22 @@
     src: url('../fonts/Poppins-Light.ttf') format('truetype');
 }
 
+@font-face{
+    font-family: 'Bold-Poppins';
+    src: url('../fonts/Poppins-Bold.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Medium-Poppins';
+    src: url('../fonts/Poppins-Medium.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Extra-Light-Poppins';
+    src: url('../fonts/Poppins-ExtraLight.ttf') format('truetype');
+}
+
+
 *{
     padding: 0;
     margin: 0;
@@ -28,44 +51,325 @@
     list-style: none;
 }
 
-body{
-    display: flex;
-    height: 911px;
-    
+html, body{
+    height: 100%;
 }
 
-aside{
-    background-color: var(--tertiary-color);
-    padding: 0.7rem 0.6rem;
+body{
+    padding: 2.4rem;
+    background-image: url('../images/red-circle.svg');
+    background-position: -3% 100%;
+    background-repeat: no-repeat, no-repeat;
+    background-color: var(--background-1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+header{
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    & span{
+        font-family: 'Medium-Poppins';
+        font-weight: bold;
+        font-size: 1.5rem;
+        background-image: linear-gradient(to right, var(--primary-color-700), var(--accent-color));
+        color: transparent;
+        background-clip: text;
+    }
+}
+
+header > img{
     height: 100%;
-    width: 3%;
+}
+
+main{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    gap: 2rem;
+
+}
+
+main > aside{
+    background-image: var(--primary-accent-color-2);
+    height: 100%;
+    width: 350px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
+    border-radius: 12px;
+    padding: 3rem 1rem;
+    gap: 2rem;
+
+    & > section{
+        display: flex;
+        gap: 1.2rem;
+    }
+
+    & > ul{
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: 0.6rem;
+        width: 100%;
+    }
+
+    & > ul > li {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: auto;
+        padding: 0.6rem 1rem;
+        gap: 2rem;
+        font-family: 'Light-Poppins';
+        color: black;
+        cursor: pointer;
+    }
+
+    & > ul > li:hover {
+        background-color: rgba(255, 255, 255, 0.4);
+        border-radius: 100px;
+    }
+
+    & > p {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: auto;
+        padding: 0.6rem 1rem;
+        gap: 2rem;
+        font-family: 'Light-Poppins';
+        color: black;
+        cursor: pointer; 
+        position: relative; 
+    }
+    
+    & > p:hover::before{
+        content: "";
+        width: 100%;
+        background-color: white;
+        height: 2px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+
+    & > p > ion-icon{
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    & > p > span{
+        color: white;
+
+    }
 }
 
-aside > ion-icon{
+.toggle-user{
+    background-color: var(--background-1);
+    border-radius: 100px;
+    box-shadow: var(--box-shadow-1);
+}
+
+main > aside > img{
     color: white;
     font-size: 2.4rem;
 
 }
 
-#closeProfileButton {
-    display: none;
-}
-
-main{
+main > section{
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 5rem;
-    padding: var(--layout-padding);
+    gap: 0.7rem;
+
+    & > p{
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+    & > p > span{
+        font-family: 'Regular-Poppins';
+    }
+}
+
+#user-form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
-    background-color: var(--secondary-color);
-    flex-basis: 100%;
-    overflow-y: auto;
+    gap: 1.5rem;
+    padding: 3.2rem 0;
+    background-color: var(--background-2);
+    box-shadow: var(--box-shadow-1);
+    position: relative;
+
+    & > p{
+        position: absolute;
+        top: 0;
+    }
+}
+
+#image-box{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    & > input {
+        visibility: hidden;
+        position: absolute;
+        bottom: 0;
+    }
+
+    & > label{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    & > p{
+        font-size: 0.77rem;
+        font-family: 'Regular-Poppins';
+    }
+}
+
+#image-display{
+    border: 2px solid var(--black-text);
+    aspect-ratio: 1/1;
+    width: 120px;
+    height: 120px;
+    border-radius: 100%;
+}
+
+#image-display:hover{
+    opacity: 0.85;
+}
+
+#input-box{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 0.7rem;
+
+    & > :not(#submit-actions){
+        flex: 1;
+    }
+
+    & > :not(#submit-actions) > input{
+        height: 100%;
+        width: 250px;
+        outline: none;
+        border-radius: 2px;
+        padding: 0 0.7rem;
+        box-shadow: var(--box-shadow-1);
+        font-family: 'Regular-Poppins';
+        border: none;
+    }
+
+    & > :not(#submit-actions) > select{
+        -webkit-appearance: none;
+        -moz-appearance: none; 
+        appearance: none; 
+        background-color: var(--accent-color);
+        background-image: url('../images/cusztomize-dropdown-select-1.svg');
+        background-repeat: no-repeat;
+        background-size: 20px;
+        background-position: right 10px center;
+        height: 100%;
+        outline: none;
+        width: 170px;
+        color: white;
+        border-radius: 2px;
+        padding: 0 0.7rem;
+        box-shadow: var(--box-shadow-1);
+        font-family: 'Regular-Poppins';
+        border: none;
+
+        & > option{
+            background-color: white;
+            color: var(--black-text);
+            outline: none;
+            cursor: pointer;
+            border-collapse: collapse;
+
+        }
+
+    }
+}
+
+
+#submit-actions{
+    align-self:flex-end;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    flex-basis: 90px;
+    gap: 1rem;
+}
+
+#submit-user-button{
+    background-color: var(--primary-color);
+    padding: 0.5rem 0;
+    font-size: 0.80rem;
+    border: none;
+    border-radius: 3px;
+    box-shadow: var(--box-shadow-1);
+    font-family: 'Regular-Poppins';
+    cursor: pointer;
+}
+
+#cancel-user-button{
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.5rem 0;
+    font-size: 0.80rem;
+    border: none;
+    border-radius: 3px;
+    box-shadow: var(--box-shadow-1);
+    font-family: 'Regular-Poppins';
+    cursor: pointer;
+}
+
+#filter{
+    -webkit-appearance: none;
+    -moz-appearance: none; 
+    appearance: none; 
+    background-color: white;
+    background-image: url('../images/cusztomize-dropdown-select-2.svg');
+    background-size: 24px;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    height: 100%;
+    outline: none;
+    width: 170px;
+    padding: 0.7rem 0.7rem;
+    color: black;
+    box-shadow: var(--box-shadow-1);
+    font-family: 'Regular-Poppins';
+    border: none;
+
+    & > option{
+        background-color: white;
+        color: var(--black-text);
+        outline: none;
+        cursor: pointer;
+
+    }
+    
+
+}
+
+#table-container{
+    height: 100%;
+    flex-grow: 1;
 }
 
 table{
@@ -75,14 +379,16 @@ table{
 }
 
 thead > tr{
-    height: 6rem;
-    background-color: white;
+    height: 4.0rem;
     color: black;
-    font-family: 'Regular-Poppins';
-}
+    background-image: var(--secondary-tertiary-color-1);
 
-thead > tr > th{
-    border: 1px solid white;
+    & > th{
+        color: white;
+        font-family: 'Light-Poppins';
+        font-weight: normal;
+
+    }
 }
 
 tbody > tr, tbody > tr > td > p{
@@ -90,15 +396,15 @@ tbody > tr, tbody > tr > td > p{
 }
 
 tbody > tr:nth-child(odd){
-    background-color: var(--gray-100);
+    background-color: var(--background-1);
 }
 
 tbody > tr:nth-child(even){
-    background-color: var(--gray-200);
+    background-color: var(--background-2);
 }
 
 td{
-    height: 9rem;
+    height: 4rem;
 }
 
 td > p{
@@ -137,89 +443,61 @@ td > *{
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
 }
-/* 
-.save-button{
-    display: none;
-} */
 
-.edit-button{
-    display: none;
+.edit-buttons{
+    background-color: var(--primary-color);
+    width: 40%;
+    padding: 0.7rem 0;
+    font-size: 0.83rem;
+    border: none;
+    border-radius: 3px;
+    box-shadow: var(--box-shadow-1);
+    font-family: 'Regular-Poppins';
+    cursor: pointer;
+
+}
+
+#submit-user-button:hover, .edit-buttons:hover{
+    background-color: var(--primary-color-200);
+}
+
+#submit-user-button:hover, .edit-buttons:active{
+    background-color: var(--primary-color-300);
+}
+
+.delete-buttons{
+    background-color: var(--accent-color);
+    color: white;
+    width: 40%;
+    padding: 0.7rem 0;
+    font-size: 0.83rem;
+    border: none;
+    border-radius: 3px;   
+    box-shadow: var(--box-shadow-1);
+    font-family: 'Regular-Poppins';
+    cursor: pointer;
+}
+
+
+#cancel-user-button:hover, .delete-buttons:hover{
+    background-color: var(--accent-color-200);
+}
+
+#cancel-user-button:hover, .delete-buttons:active{
+    background-color: var(--accent-color-300);
 }
 
 .toggle-password{
     display: block;
 }
 
-main-form{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-#user-form{
-    display: flex;
-    gap: 0.7rem;
-}
-
-#image-box{
-    border: 4px dashed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding: 0 5rem 0 5rem;
-}
-
-#image-box > label{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
-#image-box > label > input {
-    visibility: none;
-}
-
-#image-display{
-    aspect-ratio: 1/1;
-    width: 120px;
-    height: 120px;
-    position: relative;
-}
-
-#image-display:hover{
-    opacity: 0.85;
-}
-
-
-#image-input{
-    visibility: hidden;
-    position: absolute;
-    bottom: 0;
-
-}
-
-#input-box{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    position: relative;
-}
-
-#submit-actions{
-    display: flex;
-    justify-content: end;
-}
-
 .user-image-display{
+    border-radius: 100%;
     aspect-ratio: 1/1;
-    width: 100px;
-    height: 100px;
+    width: 40px;
+    height: 40px;
 }
 
 #delete-form{

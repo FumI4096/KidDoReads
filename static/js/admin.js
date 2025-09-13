@@ -1,9 +1,7 @@
-const profileButton = document.getElementById("profileButton");
-const sideBar = document.getElementById("sideBar");
-const closeProfileButton = document.getElementById("closeProfileButton");
-const logOutButton = document.getElementById("logOutButton");
+import Notification from './modules/Notification.js'
+
+const mainForm = document.getElementById('main-form')
 const tableBody = document.querySelector("tbody");
-const formBody = document.querySelector("form")
 const imageInput = document.getElementById('image-input')
 const imageDisplay = document.getElementById('image-display')
 const studentDisplayButton = document.getElementById('student-record-button')
@@ -13,21 +11,30 @@ let currentTab = "student"
 const defaultProfilePicture = "../static/images/default_profile_picture.png"
 
 studentDisplayButton.disabled = true;
+studentDisplayButton.style.pointerEvents = 'none'
 
-studentDisplayButton.addEventListener('click', () => {
+const notifyObj = new Notification()
+
+studentDisplayButton.addEventListener('click', (e) => {
     currentTab = "student"
     showRecords('/students')
     filterOptions.value = "default"
-    studentDisplayButton.disabled = true
-    teacherDisplayButton.disabled = false
+    e.target.disabled = true
+    e.target.style.pointerEvents = 'none'
+    e.target.classList.add('toggle-user')
+    teacherDisplayButton.style.pointerEvents = 'auto'
+    teacherDisplayButton.classList.remove('toggle-user')
 })
 
-teacherDisplayButton.addEventListener('click', () => {
+teacherDisplayButton.addEventListener('click', (e) => {
     currentTab = "teacher"
     showRecords('/teachers')
     filterOptions.value = "default"
-    studentDisplayButton.disabled = false
-    teacherDisplayButton.disabled = true
+    e.target.disabled = true
+    e.target.style.pointerEvents = 'none'
+    e.target.classList.add('toggle-user')
+    studentDisplayButton.style.pointerEvents = 'auto'
+    studentDisplayButton.classList.remove('toggle-user')
 })
 
 imageInput.addEventListener('change', defaultImageChanger);
@@ -37,11 +44,11 @@ function defaultImageChanger(event){
     if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            imageDisplay.src = e.target.result;
+            imageDisplay.src = e.target.result; 
         };
         reader.readAsDataURL(file);
     }
-    }
+}
 
 document.getElementById("main-form").addEventListener("submit", async (e) => {
     e.preventDefault()
@@ -59,9 +66,11 @@ document.getElementById("main-form").addEventListener("submit", async (e) => {
 
     if (result.status){
         //notification here
-        alert(result.message)
+        notifyObj.notify(result.message, "success")
         formBody.reset()
         formBody.action = '/register'
+        const passwordInput = document.getElementById('password')
+        passwordInput.setAttribute('placeholder', "Enter Password")
 
         const submitButton = document.getElementById('submit-user-button');
         const cancelButton = document.getElementById('cancel-user-button');
@@ -80,11 +89,11 @@ document.getElementById("main-form").addEventListener("submit", async (e) => {
     else{
         if (result.errors){
             result.errors.forEach(error => {
-                alert("Error: " + error)
+                notifyObj.notify(error, "error")
             })
             return
         }
-        alert("Error: " + result.message)
+        notifyObj.notify(result.message, "error")
     }
 })
 
@@ -102,7 +111,7 @@ document.getElementById("filter").addEventListener("change", async (e) => {
         })
     }
     else{
-        alert("Error: " + result.message)
+        notifyObj.notify(result.message, "error")
     }
 })
 
@@ -207,6 +216,9 @@ function populateForm(image, id, fname, lname, email, role){
     const lnameInput = document.getElementById('lname');
     const emailInput = document.getElementById('email');
     const roleInput = document.getElementById('role');
+    
+    const passwordInput = document.getElementById('password')
+    passwordInput.setAttribute('placeholder', "Enter Password (Optional)")
 
     const submitButton = document.getElementById('submit-user-button')
     const cancelButton = document.getElementById('cancel-user-button')
@@ -246,7 +258,7 @@ function populateForm(image, id, fname, lname, email, role){
         
         submitButton.disabled = allFieldsAreTheSame;
     }
-
+    
     imageInput.addEventListener('change', updateSubmitButtonState)
     idInput.addEventListener('input', updateSubmitButtonState);
     fnameInput.addEventListener('input', updateSubmitButtonState);
@@ -258,6 +270,7 @@ function populateForm(image, id, fname, lname, email, role){
 
     cancelButton.addEventListener('click', () => {
         mainForm.removeChild(originalId)
+        passwordInput.setAttribute('placeholder', "Enter Password")
         document.querySelectorAll(".edit-buttons").forEach(element => {
             element.removeEventListener('click', populateForm)
         })
@@ -282,6 +295,7 @@ function cancelModify(){
     })
     imageDisplay.src = defaultProfilePicture; 
     submitButton.textContent = "Submit";
+    mainForm.action = '/register'
 }
 
 function deleteUser(id, role){
@@ -314,7 +328,6 @@ function deleteUser(id, role){
     cancelButton.type = 'button';
     cancelButton.value = "No";
     statement.textContent = `Are you sure you want to delete user ${id}`;
-
 
     cancelButton.addEventListener('click', () => {
         if (formContainer.parentNode) {

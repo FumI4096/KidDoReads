@@ -12,99 +12,105 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-    <!-- Sidebar section -->
-    <aside id="sideBar">
-        <!-- Ionicons icons for profile, close profile, and log out buttons -->
-        <ion-icon name="person-circle-outline" id="profileButton"></ion-icon>
-        <ion-icon name="close-circle-outline" id="closeProfileButton"></ion-icon>
-        <ion-icon name="log-out-outline" id="logOutButton"></ion-icon>
-    </aside>
+    <header>
+        <img src="{{url_for('static', filename='images/kdr-logo.png')}}" />
+        <span>Kid-Do-Reads</span>
+    </header>
 
-    <!-- Main content section -->
-    <main id="mainHome">
-        <form id="main-form" action="{{ url_for('register') }}" method="POST" enctype="multipart/form-data">
-            <section id="user-form">
-                <div id="image-box">
-                    <label for="image-input">
-                        <img id="image-display" src={{url_for('static', filename="images/default_profile_picture.png")}}
-                        />
-                    </label>
-                    <p>Enter Image</p>
-                    <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
-                </div>
-                <div id="input-box">
-                    <div>
-                        <label for="id">User ID</label>
-                        <input type="text" id="id" name="id" placeholder="Enter User ID">
-                    </div>
-        
-                    <div>
-                        <label for="fname">First Name</label>
-                        <input type="text" id="fname" name="fname" placeholder="Enter First Name">
-                    </div>
-        
-                    <div>
-                        <label for="lname">Last Name</label>
-                        <input type="text" id="lname" name="lname" placeholder="Enter Last Name">
-                    </div>
-        
-                    <div>
-                        <label for="email">Email</label>
-                        <input type="text" id="email" name="email" placeholder="Enter Email">
-                    </div>
-
-                    <div>
-                        <label for="password">Password</label>
-                        <input type="text" id="password" name="password" placeholder="Enter Password">
-                    </div>
-        
-                    <div>
-                        <label for="role">Role</label>
-                        <select id="role" name="role">
-                            <option value="">Select Role</option>
-                            <option value="student">Student</option>
-                            <option value="teacher">Teacher</option>
-                        </select>
-                    </div>
-                </div>
+    <main>
+        <aside>
+            <section>
+                <img src="" alt="image">
+                <span>Administrator</span>
             </section>
-            <div id="submit-actions">
-                <input type="submit" id="submit-user-button" value="Submit"/>
-                <input type="button" id="cancel-user-button" value="Cancel" hidden/>
-            </div>
-        </form>
+            <ul>
+                <li class="toggle-user" id="student-record-button">
+                    <img src="{{url_for('static', filename='images/person.png') }}"
+                    <span>Student</span>
+                </li>
+                <li id="teacher-record-button">
+                    <img src="{{url_for('static', filename='images/person.png') }}"
+                    <span>Teachers</span>
+                </li>
+            </ul>
+            
+            <p id="log-out-button">
+                <ion-icon name="log-out"></ion-icon>
+                <span>Log Out</span>
+            </p>
+        </aside>
+    
         <section>
-            <button id="student-record-button">Student Record</button>
-            <button id="teacher-record-button">Teacher Record</button>
-        </section>
-        <form id="filter-form">
-            <label for="filter">Filter</label>
-            <select id="filter" name="fiter">
-                <option value="default">Default</option>
-                <option value="id">By ID</option>
-            </select>
-        </form>
-        <section>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>ID</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email/Password</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                        
-                        
-                </tbody>
-            </table>
+            <p> 
+                <img src="{{url_for('static', filename='images/add.svg')}}"/>
+                <span>Add User Record</span>
+            </p>
+            <form id="main-form" action="{{ url_for('register') }}" method="POST" enctype="multipart/form-data">
+                <section id="user-form">
+                    <div id="image-box">
+                        <label for="image-input">
+                            <img id="image-display" src={{url_for('static', filename="images/default_profile_picture.png")}}
+                            />
+                        </label>
+                        <p>Enter Image</p>
+                        <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
+                    </div>
+                    <div id="input-box">
+                        <div>
+                            <input type="text" id="id" name="id" placeholder="Enter User ID">
+
+                            <select id="role" name="role">
+                                <option value="">Role</option>
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                            </select>
+                        </div>
+            
+                        <div>
+                            <input type="text" id="fname" name="fname" placeholder="Enter First Name">
+                            <input type="text" id="lname" name="lname" placeholder="Enter Last Name">
+                        </div>
+            
+                        <div>
+                            <input type="text" id="email" name="email" placeholder="Enter Email">
+                            <input type="text" id="password" name="password" placeholder="Enter Password">
+                        </div>
+                    </div>
+                    <div id="submit-actions">
+                        <input type="submit" id="submit-user-button" value="Submit"/>
+                        <input type="button" id="cancel-user-button" value="Cancel" hidden/>
+                    </div>
+                </section>
+            </form>
+
+            <form id="filter-form">
+                <select id="filter" name="fiter">
+                    <option value="default">Descending</option>
+                    <option value="id">Ascending</option>
+                </select>
+            </form>
+            <section id="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email/Password</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            
+                            
+                    </tbody>
+                </table>
+            </section>
         </section>
     </main>
 
     <!-- JavaScript file for dynamic behavior -->
-    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}" type=module></script>
 </body>
 </html>
