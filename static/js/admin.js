@@ -200,7 +200,8 @@ function addRow(user_id, user_fname, user_lname, user_email, user_image, role){
 function populateForm(image, id, fname, lname, email, role){
     const mainForm = document.getElementById('main-form')
     const submitActionContainer = document.getElementById('submit-actions')
-    const imageInput = document.getElementById('image-display');
+    const imageInput = document.getElementById('image-input');
+    const imageDisplay = document.getElementById('image-display');
     const idInput = document.getElementById('id');
     const fnameInput = document.getElementById('fname');
     const lnameInput = document.getElementById('lname');
@@ -223,10 +224,10 @@ function populateForm(image, id, fname, lname, email, role){
     mainForm.action = "modify_user";
 
     if (image){
-        imageInput.src = image;
+        imageDisplay.src = image;
     }
     else{
-        imageInput.src = defaultProfilePicture;
+        imageDisplay.src = defaultProfilePicture;
     }
     idInput.value = id;
     fnameInput.value = fname;
