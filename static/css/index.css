@@ -6,7 +6,8 @@
     --primary-color-300: #f1ba59;
     --primary-color-700: #ed9f10;
     --accent-color: #fc664f;
-    --primary-accent-color: linear-gradient(var(--primary-color), var(--accent-color));
+    --primary-accent-color-1: linear-gradient(var(--primary-color), var(--accent-color));
+    --primary-accent-color-2: linear-gradient(var(--primary-color) 90%, var(--accent-color));
     --box-shadow-1: 0 3px 5px rgba(0, 0, 0, 0.3); 
     --layout-padding: 0.7rem 5rem;
 }
@@ -29,6 +30,11 @@
 @font-face{
     font-family: 'Medium-Poppins';
     src: url('../fonts/Poppins-Medium.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Extra-Light-Poppins';
+    src: url('../fonts/Poppins-ExtraLight.ttf') format('truetype');
 }
 
 *{
@@ -76,7 +82,7 @@ aside{
 form {
     width: auto;
     height: auto;
-    background-image: var(--primary-accent-color);
+    background-image: var(--primary-accent-color-1);
     padding: 3rem 4rem;
     border-radius: 12px;
     display: flex;
