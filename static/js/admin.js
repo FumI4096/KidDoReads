@@ -67,6 +67,7 @@ document.getElementById("main-form").addEventListener("submit", async (e) => {
         const cancelButton = document.getElementById('cancel-user-button');
         cancelButton.hidden = true;
         submitButton.value = "Submit"
+        imageDisplay.src = "static/images/default_profile_picture.png"
         
         if (currentTab == "student"){
             showRecords('/students')
@@ -90,7 +91,6 @@ document.getElementById("main-form").addEventListener("submit", async (e) => {
 document.getElementById("filter").addEventListener("change", async (e) => {
     const filterValue = e.target.value;
     const role = currentTab
-
     const url = `/filter_record/${role}/${filterValue}`
 
     const response = await fetch(url)
