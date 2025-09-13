@@ -293,20 +293,34 @@ def regValidation(id, fname, lname, email, password, role) -> list:
     
     if not id or not fname or not lname or not email or not password or not role:
         errors.append("Please complete the valid requirements.")
+        
+        return errors
+        
+    isIdExist = db.id_exist(id, role)
+    isEmailExist = db.email_exist(id, email, role)
+        
     if not id.isdigit():
         errors.append("School ID should be a number")
+    elif isIdExist:
+        errors.append("School ID already exist.")
+    elif isinstance(isIdExist, str):
+        errors.append(isIdExist)
     if not re.match(namePattern, fname):
         errors.append("First name should only contain letters, spaces, or hyphens.")
     if not re.match(namePattern, lname):
         errors.append("Last name should only contain letters, spaces, or hyphens.")
     if not re.match(emailPattern, email):
-        errors.append("Please enter a valid email address.")
+        errors.append("Please enter a valid letran email address.")
+    elif isEmailExist:
+        errors.append("Email already exist.")
+    elif isinstance(isEmailExist, str):
+        errors.append(isEmailExist)        
     if not re.match(passwordPattern, password):
         errors.append(
-            "Password must be at least 8 characters long, include uppercase, lowercase, a number, and at least 1 special character."
-        )    
+            "Password must be at least 8 characters long, an uppercase, lowercase, a number."
+        )  
     if role not in ['student', 'teacher']:
-        errors.append("Role must be student or teacher")
+        errors.append("Role must be student or teacher.")
         
     return errors 
 
@@ -319,20 +333,33 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
     
     if not id or not fname or not lname or not email or not role:
         errors.append("Please complete the valid requirements.")
+        return errors
+        
+    isIdExist = db.id_exist(id, role)
+    isEmailExist = db.email_exist(id, email, role)
+    
     if not id.isdigit():
         errors.append("School ID should be a number")
+    elif isIdExist:
+        errors.append("School ID already exist.")
+    elif isinstance(isIdExist, str):
+        errors.append(isIdExist)        
     if not re.match(namePattern, fname):
         errors.append("First name should only contain letters, spaces, or hyphens.")
     if not re.match(namePattern, lname):
         errors.append("Last name should only contain letters, spaces, or hyphens.")
     if not re.match(emailPattern, email):
-        errors.append("Please enter a valid email address.")
+        errors.append("Please enter a valid letran email address.")
+    elif isEmailExist:
+        errors.append("Email already exist.")
+    elif isinstance(isEmailExist, str):
+        errors.append(isEmailExist)   
     if not re.match(passwordPattern, password) and len(password) > 0:
         errors.append(
-            "Password must be at least 8 characters long, include uppercase, lowercase, a number, and at least 1 special character."
+            "Password must be at least 8 characters long, an uppercase, lowercase, a number."
         )    
     if role not in ['student', 'teacher']:
-        errors.append("Role must be student or teacher")
+        errors.append("Role must be student or teacher.")
         
     return errors   
     
