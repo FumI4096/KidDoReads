@@ -9,7 +9,7 @@ import re
 
 load_dotenv()
 
-UPLOAD_FOLDER = 'static/images/uploads'
+UPLOAD_FOLDER = 'static/uploads'
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -79,6 +79,7 @@ def register():
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             
+            print(image)
         errors = regValidation(id, fname, lname, email, password, role)
         
         if errors:
