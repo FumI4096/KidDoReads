@@ -92,9 +92,7 @@ document.getElementById("filter").addEventListener("change", async (e) => {
     const filterValue = e.target.value;
     const role = currentTab
     const url = `/filter_record/${role}/${filterValue}`
-
     const response = await fetch(url)
-
     const result = await response.json()
 
     if (result.status){
