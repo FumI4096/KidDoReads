@@ -79,7 +79,6 @@ def register():
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             
-            print(image)
         errors = regValidation(id, fname, lname, email, password, role)
         
         if errors:
