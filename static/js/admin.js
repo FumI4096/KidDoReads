@@ -30,7 +30,9 @@ teacherDisplayButton.addEventListener('click', () => {
     teacherDisplayButton.disabled = true
 })
 
-imageInput.addEventListener('change', (event) => {
+imageInput.addEventListener('change', defaultImageChanger);
+
+function defaultImageChanger(event){
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
@@ -39,11 +41,7 @@ imageInput.addEventListener('change', (event) => {
         };
         reader.readAsDataURL(file);
     }
-    else{
-        imageDisplay.src = defaultProfilePicture;
     }
-    
-});
 
 document.getElementById("main-form").addEventListener("submit", async (e) => {
     e.preventDefault()
@@ -63,7 +61,6 @@ document.getElementById("main-form").addEventListener("submit", async (e) => {
         //notification here
         alert(result.message)
         formBody.reset()
-
         formBody.action = '/register'
 
         const submitButton = document.getElementById('submit-user-button');
@@ -257,15 +254,18 @@ function populateForm(image, id, fname, lname, email, role){
     roleInput.value = role;
 
     function updateSubmitButtonState() {
+        const isImageSame = checkImageSame(imageInput.value, image)
+
         const isIdSame = idInput.value == id;
         const isFnameSame = fnameInput.value == fname;
         const isLnameSame = lnameInput.value == lname;
         const isEmailSame = emailInput.value == email;
-        const allFieldsAreTheSame = isIdSame && isFnameSame && isLnameSame && isEmailSame;
+        const allFieldsAreTheSame = isImageSame && isIdSame && isFnameSame && isLnameSame && isEmailSame;
         
         submitButton.disabled = allFieldsAreTheSame;
     }
 
+    imageInput.addEventListener('change', updateSubmitButtonState)
     idInput.addEventListener('input', updateSubmitButtonState);
     fnameInput.addEventListener('input', updateSubmitButtonState);
     lnameInput.addEventListener('input', updateSubmitButtonState);
@@ -375,5 +375,11 @@ function deleteUser(id, role){
     })
 }
 
+function checkImageSame(inputtedImage, originalImage){
+    const cleanInputtedImage = inputtedImage.split("\\").pop();
+    const cleanOriginalImage = originalImage.split("/").pop();
+
+    return cleanInputtedImage == cleanOriginalImage
+}
 
 showRecords('/students')
