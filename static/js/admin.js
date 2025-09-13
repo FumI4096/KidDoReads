@@ -108,23 +108,6 @@ document.getElementById("filter").addEventListener("change", async (e) => {
     }
 })
 
-// Handle sidebar open action
-profileButton.addEventListener("click", () => {
-    sideBar.style.width = "400px";                      
-    profileButton.style.display = "none";               
-    closeProfileButton.style.display = "block";         
-    closeProfileButton.style.alignSelf = "end";         
-    logOutButton.style.alignSelf = "start";             
-});
-
-// Handle sidebar close action
-closeProfileButton.addEventListener("click", () => {
-    sideBar.style.width = "3%";                         
-    profileButton.style.display = "block";              
-    closeProfileButton.style.display = "none";          
-    logOutButton.style.alignSelf = "center";            
-});
-
 async function showRecords(apiRoute){
     const response = await fetch(apiRoute)
     const result = await response.json()
