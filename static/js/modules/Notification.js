@@ -1,7 +1,7 @@
 class Notification{
     #container = document.getElementById('notification-container')
     #notificationColor = 'rgb(255, 255, 255)'
-    #successfulBorder = 'solid 10px rgb(77, 233, 86)'
+    #successfulBorder = 'solid 2px rgba(59, 197, 66, 1)'
     #errorBorder = 'solid 2px rgb(207, 0, 44)'
     #borderRadius = '12px'
     #width = '350px'
@@ -95,12 +95,14 @@ class Notification{
     success(statement){
         const successBox = this.notificationStructure()
         successBox.style.border = this.#successfulBorder
+        const successImageElement = document.createElement('img')
+        const successImage = "static/images/check.png"
 
-        if (this.imageExist(image)){
-            successBox.append(image)
-        }
+        successImageElement.alt = "Error Image";
+        successImageElement.src = successImage;
+        successImageElement.style.height = "90%";
 
-        successBox.append(statement)
+        successBox.append(successImageElement, statement)
 
         return successBox
 
