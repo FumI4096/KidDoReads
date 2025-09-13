@@ -1,41 +1,4 @@
-:root{
-    --background: #f0efeb;
-    --black-text: #474434;
-    --primary-color: #fbc363;
-    --primary-color-200: #f7bf5f;
-    --primary-color-300: #f1ba59;
-    --primary-color-700: #ed9f10;
-    --accent-color: #fc664f;
-    --primary-accent-color-1: linear-gradient(var(--primary-color), var(--accent-color));
-    --primary-accent-color-2: linear-gradient(var(--primary-color) 90%, var(--accent-color));
-    --box-shadow-1: 0 3px 5px rgba(0, 0, 0, 0.3); 
-    --layout-padding: 0.7rem 5rem;
-}
-
-@font-face {
-    font-family: 'Regular-Poppins';
-    src: url('../fonts/Poppins-Regular.ttf') format('truetype');
-}
-
-@font-face{
-    font-family: 'Light-Poppins';
-    src: url('../fonts/Poppins-Light.ttf') format('truetype');
-}
-
-@font-face{
-    font-family: 'Bold-Poppins';
-    src: url('../fonts/Poppins-Bold.ttf') format('truetype');
-}
-
-@font-face{
-    font-family: 'Medium-Poppins';
-    src: url('../fonts/Poppins-Medium.ttf') format('truetype');
-}
-
-@font-face{
-    font-family: 'Extra-Light-Poppins';
-    src: url('../fonts/Poppins-ExtraLight.ttf') format('truetype');
-}
+@import "variables.css";
 
 *{
     box-sizing: border-box;
@@ -48,7 +11,7 @@ html, body{
 }
 
 main{
-    background: var(--background) url('../images/kdr-logo.png') no-repeat;
+    background: var(--background-1) url('../images/kdr-logo.png') no-repeat;
     background-size: 700px;
     background-position-y: 106%;
     background-position-x: -1%;
