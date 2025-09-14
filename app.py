@@ -329,8 +329,8 @@ def regValidation(id, fname, lname, email, password, role) -> list:
         
         return errors
         
-    isIdExist = db.id_exist(id, role)
-    isEmailExist = db.email_exist(id, email, role)
+    isIdExist = db.id_exist(id)
+    isEmailExist = db.email_exist(email)
         
     if not id.isdigit():
         errors.append("School ID should be a number")
@@ -352,8 +352,8 @@ def regValidation(id, fname, lname, email, password, role) -> list:
         errors.append(
             "Password must be at least 8 characters long, an uppercase, lowercase, a number."
         )  
-    if role not in ['student', 'teacher']:
-        errors.append("Role must be student or teacher.")
+    if role not in ['student', 'teacher', 'admin']:
+        errors.append("Role must be student, teacher or admin.")
         
     return errors 
 
@@ -368,8 +368,8 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
         errors.append("Please complete the valid requirements.")
         return errors
         
-    isIdExist = db.id_exist(id, role)
-    isEmailExist = db.email_exist(id, email, role)
+    isIdExist = db.id_exist(id)
+    isEmailExist = db.email_exist(email)
     
     if not id.isdigit():
         errors.append("School ID should be a number")
@@ -391,8 +391,8 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
         errors.append(
             "Password must be at least 8 characters long, an uppercase, lowercase, a number."
         )    
-    if role not in ['student', 'teacher']:
-        errors.append("Role must be student or teacher.")
+    if role not in ['student', 'teacher', 'admin']:
+        errors.append("Role must be student, teacher or admin.")
         
     return errors   
     
