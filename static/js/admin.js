@@ -85,6 +85,9 @@ function defaultImageChanger(event){
         };
         reader.readAsDataURL(file);
     }
+    else{
+        imageDisplay.src = defaultProfilePicture
+    }
 }
 
 mainForm.addEventListener("submit", async (e) => {
@@ -256,6 +259,7 @@ function populateForm(image, id, fname, lname, email, role){
     const lnameInput = document.getElementById('lname');
     const emailInput = document.getElementById('email');
     const roleInput = document.getElementById('role');
+    let originalImage = ""
     
     const passwordInput = document.getElementById('password')
     passwordInput.setAttribute('placeholder', "Enter Password (Optional)")
@@ -265,6 +269,8 @@ function populateForm(image, id, fname, lname, email, role){
 
     cancelButton.hidden = false
     submitButton.disabled = true;
+
+    imageInput.accept = 'image/png, image/jpeg';
 
     const originalId = document.createElement("input");
     originalId.type = "text"
@@ -277,9 +283,12 @@ function populateForm(image, id, fname, lname, email, role){
 
     if (image){
         imageDisplay.src = image;
+        originalImage = image;
+
     }
     else{
         imageDisplay.src = defaultProfilePicture;
+        originalImage = defaultProfilePicture;
     }
     idInput.value = id;
     fnameInput.value = fname;
@@ -288,18 +297,20 @@ function populateForm(image, id, fname, lname, email, role){
     roleInput.value = role;
 
     function updateSubmitButtonState() {
-        const isImageSame = checkImageSame(imageInput.value, image)
+        const isImageSame = checkImageSame(imageInput.value, originalImage);
 
         const isIdSame = idInput.value == id;
         const isFnameSame = fnameInput.value == fname;
         const isLnameSame = lnameInput.value == lname;
         const isEmailSame = emailInput.value == email;
-        const allFieldsAreTheSame = isImageSame && isIdSame && isFnameSame && isLnameSame && isEmailSame;
+        const isRoleSame = roleInput.value == role;
+        const allFieldsAreTheSame = isImageSame && isIdSame && isFnameSame && isLnameSame && isEmailSame && isRoleSame;
         
         submitButton.disabled = allFieldsAreTheSame;
     }
     
-    imageInput.addEventListener('change', updateSubmitButtonState)
+    imageInput.addEventListener('change', updateSubmitButtonState);
+    roleInput.addEventListener('change', updateSubmitButtonState);
     idInput.addEventListener('input', updateSubmitButtonState);
     fnameInput.addEventListener('input', updateSubmitButtonState);
     lnameInput.addEventListener('input', updateSubmitButtonState);
@@ -414,10 +425,15 @@ function deleteUser(id, role){
 }
 
 function checkImageSame(inputtedImage, originalImage){
+    if (inputtedImage.trim().length === 0 || originalImage == null){
+        return true
+    }
+    else{
     const cleanInputtedImage = inputtedImage.split("\\").pop();
     const cleanOriginalImage = originalImage.split("/").pop();
 
     return cleanInputtedImage == cleanOriginalImage
+}
 }
 
 showRecords('/students')
