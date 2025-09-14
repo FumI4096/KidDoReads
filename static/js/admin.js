@@ -87,7 +87,7 @@ function defaultImageChanger(event){
     }
 }
 
-document.getElementById("main-form").addEventListener("submit", async (e) => {
+mainForm.addEventListener("submit", async (e) => {
     e.preventDefault()
 
     const formBody = e.target;
