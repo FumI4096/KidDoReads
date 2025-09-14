@@ -24,13 +24,17 @@
                 <span>Administrator</span>
             </section>
             <ul>
-                <li class="toggle-user" id="student-record-button">
+                <li id="admin-record-button">
                     <img src="{{url_for('static', filename='images/person.png') }}"
-                    <span>Student</span>
-                </li>
+                    <span>Admin</span>
+                </li>                
                 <li id="teacher-record-button">
                     <img src="{{url_for('static', filename='images/person.png') }}"
                     <span>Teachers</span>
+                </li>
+                <li class="toggle-user" id="student-record-button">
+                    <img src="{{url_for('static', filename='images/person.png') }}"
+                    <span>Student</span>
                 </li>
             </ul>
             
@@ -63,6 +67,7 @@
                                 <option value="">Role</option>
                                 <option value="student">Student</option>
                                 <option value="teacher">Teacher</option>
+                                <option value="admin">Admin</option>
                             </select>
                         </div>
             
@@ -71,9 +76,11 @@
                             <input type="text" id="lname" name="lname" placeholder="Enter Last Name">
                         </div>
             
-                        <div>
+                        <div id="email-password-container">
                             <input type="text" id="email" name="email" placeholder="Enter Email">
-                            <input type="text" id="password" name="password" placeholder="Enter Password">
+                            <input type="password" id="password" name="password" placeholder="Enter Password">
+                            <ion-icon name="eye-outline" id="showPasswordButton"></ion-icon>
+                            <ion-icon name="eye-off-outline" id="unshowPasswordButton"></ion-icon>
                         </div>
                     </div>
                     <div id="submit-actions">

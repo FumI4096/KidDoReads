@@ -6,6 +6,10 @@ const imageInput = document.getElementById('image-input')
 const imageDisplay = document.getElementById('image-display')
 const studentDisplayButton = document.getElementById('student-record-button')
 const teacherDisplayButton = document.getElementById('teacher-record-button')
+const adminDisplayButton = document.getElementById('admin-record-button')
+const showPasswordButton = document.getElementById('showPasswordButton');
+const unshowPasswordButton = document.getElementById('unshowPasswordButton');
+const inputPassword = document.getElementById('password')
 const filterOptions = document.getElementById('filter')
 let currentTab = "student"
 const defaultProfilePicture = "../static/images/default_profile_picture.png"
@@ -14,6 +18,22 @@ studentDisplayButton.disabled = true;
 studentDisplayButton.style.pointerEvents = 'none'
 
 const notifyObj = new Notification()
+
+showPasswordButton.addEventListener('click', () => 
+    displayEyePassword(showPasswordButton, unshowPasswordButton, true)
+);
+
+unshowPasswordButton.addEventListener('click', () => 
+    displayEyePassword(unshowPasswordButton, showPasswordButton, false)
+);
+
+function displayEyePassword(element1, element2, showPassword){
+    element1.style.display = "none";
+    element2.style.display = "block";
+
+    inputPassword.type = showPassword ? "text" : "password";
+
+}
 
 studentDisplayButton.addEventListener('click', (e) => {
     currentTab = "student"
@@ -24,6 +44,8 @@ studentDisplayButton.addEventListener('click', (e) => {
     e.target.classList.add('toggle-user')
     teacherDisplayButton.style.pointerEvents = 'auto'
     teacherDisplayButton.classList.remove('toggle-user')
+    adminDisplayButton.style.pointerEvents = 'auto'
+    adminDisplayButton.classList.remove('toggle-user')
 })
 
 teacherDisplayButton.addEventListener('click', (e) => {
@@ -35,6 +57,21 @@ teacherDisplayButton.addEventListener('click', (e) => {
     e.target.classList.add('toggle-user')
     studentDisplayButton.style.pointerEvents = 'auto'
     studentDisplayButton.classList.remove('toggle-user')
+    adminDisplayButton.style.pointerEvents = 'auto'
+    adminDisplayButton.classList.remove('toggle-user')
+})
+
+adminDisplayButton.addEventListener('click', (e) => {
+    currentTab = "admin"
+    showRecords('/admins')
+    filterOptions.value = "default"
+    e.target.disabled = true
+    e.target.style.pointerEvents = 'none'
+    e.target.classList.add('toggle-user')
+    studentDisplayButton.style.pointerEvents = 'auto'
+    studentDisplayButton.classList.remove('toggle-user')
+    teacherDisplayButton.style.pointerEvents = 'auto'
+    teacherDisplayButton.classList.remove('toggle-user')
 })
 
 imageInput.addEventListener('change', defaultImageChanger);
@@ -83,6 +120,9 @@ document.getElementById("main-form").addEventListener("submit", async (e) => {
         }
         else if (currentTab == "teacher"){
             showRecords('/teachers')
+        }
+else if (currentTab == "admin"){
+            showRecords('/admins')
         }
 
     }
@@ -362,6 +402,9 @@ function deleteUser(id, role){
             }
             else if (currentTab == "teacher"){
                 showRecords('/teachers')
+            }
+            else if (currentTab == "admin"){
+                showRecords('/admin')
             }
         }
         else{

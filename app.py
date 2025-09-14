@@ -92,6 +92,10 @@ def register():
             db.insert_teacher(int(id), fname, lname, email, password, filename)
             
             return jsonify({"status": True, "message": "Teacher Inserted Successfully"})
+        elif role == "admin":
+            db.insert_admin(int(id), fname, lname, email, password, filename)
+            
+            return jsonify({"status": True, "message": "Admin Inserted Successfully"})
             
     except Exception as e:
         return jsonify({"message": str(e)})
@@ -131,6 +135,35 @@ def get_student_record():
 def get_teacher_record():
     try:
         status, results = db.get_teacher_records()
+        rows = results
+        
+        teachers = []
+        for row in rows:
+            if row[4] is not None:
+                filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
+                image_url = url_for('static', filename=f'uploads/{filename}')
+            else:
+                image_url = None
+            teachers.append({
+                "id": row[0],
+                "fname": row[1],
+                "lname": row[2],
+                "email": row[3],
+                "image": image_url,
+                "role": row[5]
+            })
+            
+        if status:
+            return jsonify({"status": True, "data": teachers})
+        else:
+            return jsonify({"status": False, "message": results})
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+    
+@app.route('/admins', methods=['GET'])
+def get_admin_record():
+    try:
+        status, results = db.get_admin_records()
         rows = results
         
         teachers = []
