@@ -168,7 +168,7 @@ async function showRecords(apiRoute){
 
     }
     else{
-        alert("Error: " + result.message)
+        notifyObj.notify(result.message, "error")
     }
 
 }
@@ -396,7 +396,7 @@ function deleteUser(id, role){
 
         if (result.status){
             formBody.remove();
-            alert(result.message)
+            notifyObj.notify(result.message, "success")
             if (currentTab == "student"){
                 showRecords('/students')
             }
@@ -408,7 +408,7 @@ function deleteUser(id, role){
             }
         }
         else{
-            alert("Error: " + result.message)
+            notifyObj.notify(result.message, "error")
         }
     })
 }
