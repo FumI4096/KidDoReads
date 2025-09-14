@@ -105,7 +105,6 @@ mainForm.addEventListener("submit", async (e) => {
     const result = await response.json()
 
     if (result.status){
-        //notification here
         notifyObj.notify(result.message, "success")
         formBody.reset()
         formBody.action = '/register'
@@ -124,7 +123,7 @@ mainForm.addEventListener("submit", async (e) => {
         else if (currentTab == "teacher"){
             showRecords('/teachers')
         }
-else if (currentTab == "admin"){
+        else if (currentTab == "admin"){
             showRecords('/admins')
         }
 
@@ -429,11 +428,11 @@ function checkImageSame(inputtedImage, originalImage){
         return true
     }
     else{
-    const cleanInputtedImage = inputtedImage.split("\\").pop();
-    const cleanOriginalImage = originalImage.split("/").pop();
-
-    return cleanInputtedImage == cleanOriginalImage
-}
+        const cleanInputtedImage = inputtedImage.split("\\").pop();
+        const cleanOriginalImage = originalImage.split("/").pop();
+    
+        return cleanInputtedImage == cleanOriginalImage
+    }
 }
 
 showRecords('/students')
