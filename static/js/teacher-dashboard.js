@@ -1,140 +1,118 @@
-// Set the default current tab to Grade 2
-let currentTab = 2;
-
-// Get references to grade navigation elements
-const twoNav = document.getElementById("twoNav");
-const threeNav = document.getElementById("threeNav");
-const fourNav = document.getElementById("fourNav");
-
-// Get references to sidebar buttons and container
-const profileButton = document.getElementById("profileButton");
-const sideBar = document.getElementById("sideBar");
-const closeProfileButton = document.getElementById("closeProfileButton");
+const activityNavButton = document.getElementById("activities-record-button");
+const assessmentNavButton = document.getElementById("assessments-record-button");
+const progressNavButton = document.getElementById("progress-record-button");
 const logOutButton = document.getElementById("logOutButton");
 
-// Get references to main content area and add content button
-const mainHome = document.getElementById("mainHome");
-const contents = document.getElementById("contents");
-const addContentButton = document.getElementById("addContentButton");
+const contents = document.getElementById("content-container");
+const addContentButton = document.getElementById("add-content-button");
 
-// Set up tab switching event listeners
-twoNav.addEventListener("click", () => changeTab(2));
-threeNav.addEventListener("click", () => changeTab(3));
-fourNav.addEventListener("click", () => changeTab(4));
+activityNavButton.addEventListener('click', (e) => {
+    // showRecords('/students')
+    e.target.disabled = true
+    e.target.style.pointerEvents = 'none'
+    e.target.classList.add('toggle-user')
+    assessmentNavButton.style.pointerEvents = 'auto'
+    assessmentNavButton.classList.remove('toggle-user')
+    progressNavButton.style.pointerEvents = 'auto'
+    progressNavButton.classList.remove('toggle-user')
+})
 
-// Handle click to add content
-addContentButton.addEventListener("click", () => testContent());
+assessmentNavButton.addEventListener('click', (e) => {
+    // showRecords('/teachers')
+    e.target.disabled = true
+    e.target.style.pointerEvents = 'none'
+    e.target.classList.add('toggle-user')
+    activityNavButton.style.pointerEvents = 'auto'
+    activityNavButton.classList.remove('toggle-user')
+    progressNavButton.style.pointerEvents = 'auto'
+    progressNavButton.classList.remove('toggle-user')
+})
 
-// Handle sidebar open action
-profileButton.addEventListener("click", () => {
-    sideBar.style.width = "400px";                      // Expand sidebar
-    profileButton.style.display = "none";               // Hide profile button
-    closeProfileButton.style.display = "block";         // Show close button
-    closeProfileButton.style.alignSelf = "end";         // Align close button to end
-    logOutButton.style.alignSelf = "start";             // Align logout button to start
-});
+progressNavButton.addEventListener('click', (e) => {
+    // showRecords('/admins')
+    e.target.disabled = true
+    e.target.style.pointerEvents = 'none'
+    e.target.classList.add('toggle-user')
+    activityNavButton.style.pointerEvents = 'auto'
+    activityNavButton.classList.remove('toggle-user')
+    assessmentNavButton.style.pointerEvents = 'auto'
+    assessmentNavButton.classList.remove('toggle-user')
+})
 
-// Handle sidebar close action
-closeProfileButton.addEventListener("click", () => {
-    sideBar.style.width = "3%";                         // Collapse sidebar
-    profileButton.style.display = "block";              // Show profile button
-    closeProfileButton.style.display = "none";          // Hide close button
-    logOutButton.style.alignSelf = "center";            // Center logout button
-});
+addContentButton.addEventListener("click", testContent);
 
-// Function to change the current tab
-function changeTab(tab){
-    // Future logic for displaying different sections can be added here
-    switch(tab){
-        case 2:
-        case 3:
-        case 4:
-            currentTab = tab;
-            console.log(currentTab); // Debug: Log current tab
-            break;
-    }
-}
-
-// Function to dynamically create a content creation form
 function testContent(){
-    // Create background overlay
-    const contentBackground = document.createElement("div");
-    contentBackground.classList.add("contentBackground");
+    const contentContainer = document.createElement("div");
+    contentContainer.setAttribute('id', "content-input-container");
 
-    // Create close button for content form
     const closeContentButton = document.createElement("ion-icon");
     closeContentButton.name = "close-outline";
-    closeContentButton.classList.add("closeContentButton");
+    closeContentButton.setAttribute('id', "close-content-button");
+    closeContentButton.style.color = 'white';
 
-    // Create content form container
+    const contentHeaderStatement = document.createElement("p");
+    contentHeaderStatement.setAttribute('id', 'content-header-statement')
+    contentHeaderStatement.textContent = "Create an Activity";
+
     const createContent = document.createElement("div");
-    createContent.classList.add("createContent");
+    createContent.setAttribute('id', "create-content");
 
-    // Create input for content title
     const contentTitle = document.createElement("input");
-    contentTitle.classList.add("contentTitle");
+    contentTitle.setAttribute('id',"content-title");
     contentTitle.type = "text";
     contentTitle.placeholder = "Enter Content Title";
 
-    // Create submit button
-    const submitContent = document.createElement("button");
-    submitContent.innerHTML = "Create Content";
-    submitContent.classList.add("submitContent");
+    const submitContentButton = document.createElement("button");
+    submitContentButton.innerHTML = "Confirm";
+    submitContentButton.setAttribute('id',"submit-content");
 
-    // Add close button and title input to content form
     createContent.appendChild(closeContentButton);
+    createContent.appendChild(contentHeaderStatement)
     createContent.appendChild(contentTitle);
-    contentBackground.appendChild(createContent);
-
-    // Add radio button selection for content types
-    const contentStatement = document.createElement("p");
-    contentStatement.innerHTML = "Select the type of content you want to create:";
+    contentContainer.appendChild(createContent);
 
     const contentTypeContainer = document.createElement("div");
-    contentTypeContainer.classList.add("contentTypeContainer");
-    contentTypeContainer.appendChild(contentStatement);
+    contentTypeContainer.setAttribute('id',"content-type-container");
 
-    // List of content types
-    const contentTypes = ["Quiz", "Spelling Game", "Storytelling"];
+    const selectContent = document.createElement("select");
+    selectContent.setAttribute('id', "content-type");
+    selectContent.id = "content-type";
+    selectContent.name = "content-type";
+
+    const contentTypes = [
+        {value: '', text: 'Activity Type'},
+        {value: 'activity1', text: 'Activity 1'}, 
+        {value: 'activity2', text: 'Activity 2'}, 
+        {value: 'activity3', text: 'Activity 3'}
+    ];
     contentTypes.forEach(type => {
-        const labelRadio = document.createElement("label");
-        labelRadio.style.display = "flex";
-        labelRadio.style.alignItems = "center";
-        labelRadio.style.gap = "0.5rem";
+        const optionElement = document.createElement('option');
+        optionElement.value = type.value;
+        optionElement.textContent = type.text;
 
-        const radio = document.createElement("input");
-        radio.type = "radio";
-        radio.name = "contentType";
-        radio.value = type.toLowerCase();
-
-        const customSpan = document.createElement("span");
-
-        // Append radio button and label
-        labelRadio.appendChild(radio);
-        labelRadio.appendChild(customSpan);
-        labelRadio.appendChild(document.createTextNode(type));
-        contentTypeContainer.appendChild(labelRadio);
+        selectContent.appendChild(optionElement)
     });
-
-    // Finalize form structure
+    
+    contentTypeContainer.appendChild(selectContent);
     createContent.appendChild(contentTypeContainer);
-    createContent.appendChild(submitContent);
-    document.body.appendChild(contentBackground);
+    createContent.appendChild(submitContentButton);
+    document.body.appendChild(contentContainer);
 
-    // Close content form when close icon is clicked
+    submitContentButton.addEventListener('click', addContent)
+
     closeContentButton.addEventListener("click", () => {
-        contentBackground.style.display = "none";
+        document.body.removeChild(contentContainer);
     });
+
+    function addContent(){
+        const newContent = document.createElement("div");
+        const testElement = document.createElement("p");
+        testElement.innerHTML = "test";
+        newContent.classList.add("content");
+        newContent.appendChild(testElement);
+        contents.appendChild(newContent);
+        contents.appendChild(addContentButton); // Re-add button
+        document.body.removeChild(contentContainer);
+    }
 }
 
-// Optional function for adding simple "test" content to the page
-function addContent(){
-    contents.removeChild(addContentButton); // Temporarily remove button to insert new content
-    const newContent = document.createElement("div");
-    const testElement = document.createElement("p");
-    testElement.innerHTML = "test";
-    newContent.classList.add("content");
-    newContent.appendChild(testElement);
-    contents.appendChild(newContent);
-    contents.appendChild(addContentButton); // Re-add button
-}

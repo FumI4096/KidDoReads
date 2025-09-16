@@ -13,36 +13,49 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-    <!-- Sidebar section -->
-    <aside id="sideBar">
-        <!-- Ionicons icons for profile, close profile, and log out buttons -->
-        <ion-icon name="person-circle-outline" id="profileButton"></ion-icon>
-        <ion-icon name="close-circle-outline" id="closeProfileButton"></ion-icon>
-        <ion-icon name="log-out-outline" id="logOutButton"></ion-icon>
-    </aside>
+    <header>
+        <img src="{{url_for('static', filename='images/kdr-logo.png')}}" />
+        <span>Kid-Do-Reads</span>
+    </header>
 
-    <!-- Main content section -->
-    <main id="mainHome">
-        <!-- Header section -->
-        <header>
-            <!-- Placeholder for logo (image source to be added) -->
-            <img src="" alt="logo">
-            <!-- Navigation menu -->
-            <nav>
-                <ul>
-                    <!-- Grade navigation links -->
-                    <li id="twoNav">Grade 2</li>
-                    <li id="threeNav">Grade 3</li>
-                    <li id="fourNav">Grade 4</li>
-                </ul>
-            </nav>
-        </header>
+    <main>
+        <aside>
+            <section>
+                <img src="" alt="image">
+                <span>Teacher Name</span>
+            </section>
+            <ul>
+                <li class="toggle-user" id="activities-record-button">
+                    <img src="{{url_for('static', filename='images/person.png') }}"
+                    <span>Activities</span>
+                </li>
+                <li id="assessments-record-button">
+                    <img src="{{url_for('static', filename='images/person.png') }}"
+                    <span>Assessments</span>
+                </li>                
+                <li id="progress-record-button">
+                    <img src="{{url_for('static', filename='images/circle-progress-indicator.png') }}"
+                    <span>Student Progress</span>
+                </li>
+            </ul>
+            
+            <p id="log-out-button">
+                <ion-icon name="log-out"></ion-icon>
+                <span>Log Out</span>
+            </p>
+        </aside>
+    
+        <section>
+            <p>Activities</p>
+            <div id="content-container">
 
-        <!-- Content area -->
-        <div id="contents">
-            <!-- Button to add content (functionality to be added) -->
-            <button id="addContentButton">Add Content</button>
-        </div>
+                <button id="add-content-button">
+                    <span>Add New Activity</span>
+                    <img src="{{url_for('static', filename='images/white-add-button.svg')}}" alt="add-button"/>
+                </button>
+            </div>
+
+        </section>
     </main>
 
     <!-- JavaScript file for dynamic behavior -->
