@@ -10,6 +10,7 @@
     --accent-color-200: #f6553e;
     --accent-color-300: #f2523b;
     --secondary-color: #5C609D;
+    --secondary-color-200: #4f538a;
     --tertiary-color: #F79B8A;
     --primary-accent-color-1: linear-gradient(var(--primary-color), var(--accent-color));
     --primary-accent-color-2: linear-gradient(var(--primary-color) 20%, var(--accent-color));
