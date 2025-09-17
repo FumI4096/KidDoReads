@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, session, request, redirect, url_for, jsonify, abort
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from database.db import Database
@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 import base64
 import re
+from functools import wraps
 
 load_dotenv()
 
@@ -13,28 +14,51 @@ UPLOAD_FOLDER = 'static/uploads'
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config["PROPAGATE_EXCEPTIONS"] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = Database()
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            abort(401)
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
 @app.route('/admin')
+@login_required
 def admin():
     return render_template('admin.html')
 
+@app.errorhandler(401)
+def unauthorized(e):
+    return render_template('error.html', type="401", error="Unauthorized Access"), 401
+
 @app.route('/teacher_dashboard')
+@login_required
 def teacher_dashboard():
     return render_template('teacher-dashboard.html')
 
 @app.route('/student_dashboard')
+@login_required
 def student_dashboard():
     return render_template('student-dashboard.html')
 
 @app.route('/content_making')
+@login_required
 def content_making():
     return render_template('quiz-making.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -47,6 +71,9 @@ def login():
         return jsonify({"status": False, "errors": errors})
     else:
         role = db.get_role_by_id(id)
+        
+        session["user_id"] = id
+        session["role"] = role[0].lower()        
         
         if role[0].lower() == "student":
             return jsonify({'status': True, 'redirectUrl': 'student_dashboard'})
@@ -166,14 +193,14 @@ def get_admin_record():
         status, results = db.get_admin_records()
         rows = results
         
-        teachers = []
+        admins = []
         for row in rows:
             if row[4] is not None:
                 filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
                 image_url = url_for('static', filename=f'uploads/{filename}')
             else:
                 image_url = None
-            teachers.append({
+            admins.append({
                 "id": row[0],
                 "fname": row[1],
                 "lname": row[2],
@@ -183,7 +210,7 @@ def get_admin_record():
             })
             
         if status:
-            return jsonify({"status": True, "data": teachers})
+            return jsonify({"status": True, "data": admins})
         else:
             return jsonify({"status": False, "message": results})
     except Exception as e:
@@ -243,6 +270,7 @@ def delete_user():
         return jsonify({"status": False, "message": str(e)})
     
 @app.route('/filter_record/<string:role>/<string:filter>', methods=['GET'])
+@login_required
 def filter_record(role, filter):
     try:
         result = []
@@ -280,6 +308,7 @@ def filter_record(role, filter):
         return jsonify({"status": False, "message": str(e)})
     
 @app.route('/update_content', methods=['POST'])
+@login_required
 def update_content():
     content = request.form.get('content')
     teacherId = request.form.get('id')

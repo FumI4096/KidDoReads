@@ -1,0 +1,38 @@
+@import 'variables.css';
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html, body{
+    height: 100%;
+    width: 100%;
+}
+
+body{
+    background-color: var(--background-1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+img{
+    inline-size: 50px;
+}
+
+h2{
+    color: var(--black-text);
+    font-family: 'Medium-Poppins';
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+p{
+    color: var(--black-text);
+    font-family: 'Light-Poppins';
+    font-size: 1.5rem;
+        opacity: 0.5;
+}
