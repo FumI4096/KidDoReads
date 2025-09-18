@@ -2,22 +2,22 @@ import Notification from './modules/Notification.js'
 
 const mainForm = document.getElementById('main-form')
 const tableBody = document.querySelector("tbody");
-const imageInput = document.getElementById('image-input')
-const imageDisplay = document.getElementById('image-display')
-const studentDisplayButton = document.getElementById('student-record-button')
-const teacherDisplayButton = document.getElementById('teacher-record-button')
-const adminDisplayButton = document.getElementById('admin-record-button')
+const imageInput = document.getElementById('image-input');
+const imageDisplay = document.getElementById('image-display');
+const studentDisplayButton = document.getElementById('student-record-button');
+const teacherDisplayButton = document.getElementById('teacher-record-button');
+const adminDisplayButton = document.getElementById('admin-record-button');
 const showPasswordButton = document.getElementById('showPasswordButton');
 const unshowPasswordButton = document.getElementById('unshowPasswordButton');
-const inputPassword = document.getElementById('password')
-const filterOptions = document.getElementById('filter')
-let currentTab = "student"
-const defaultProfilePicture = "../static/images/default_profile_picture.png"
+const inputPassword = document.getElementById('password');
+const filterOptions = document.getElementById('filter');
+let currentTab = "student";
+const defaultProfilePicture = "../static/images/default_profile_picture.png";
 
 studentDisplayButton.disabled = true;
-studentDisplayButton.style.pointerEvents = 'none'
+studentDisplayButton.style.pointerEvents = 'none';
 
-const notifyObj = new Notification()
+const notifyObj = new Notification();
 
 showPasswordButton.addEventListener('click', () => 
     displayEyePassword(showPasswordButton, unshowPasswordButton, true)
@@ -36,42 +36,42 @@ function displayEyePassword(element1, element2, showPassword){
 }
 
 studentDisplayButton.addEventListener('click', (e) => {
-    currentTab = "student"
-    showRecords('/students')
-    filterOptions.value = "default"
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
-    teacherDisplayButton.style.pointerEvents = 'auto'
-    teacherDisplayButton.classList.remove('toggle-user')
-    adminDisplayButton.style.pointerEvents = 'auto'
-    adminDisplayButton.classList.remove('toggle-user')
+    currentTab = "student";
+    showRecords('/students');
+    filterOptions.value = "default";
+    e.target.disabled = true;
+    e.target.style.pointerEvents = 'none';
+    e.target.classList.add('toggle-user');
+    teacherDisplayButton.style.pointerEvents = 'auto';
+    teacherDisplayButton.classList.remove('toggle-user');
+    adminDisplayButton.style.pointerEvents = 'auto';
+    adminDisplayButton.classList.remove('toggle-user');
 })
 
 teacherDisplayButton.addEventListener('click', (e) => {
-    currentTab = "teacher"
-    showRecords('/teachers')
-    filterOptions.value = "default"
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
-    studentDisplayButton.style.pointerEvents = 'auto'
-    studentDisplayButton.classList.remove('toggle-user')
-    adminDisplayButton.style.pointerEvents = 'auto'
-    adminDisplayButton.classList.remove('toggle-user')
+    currentTab = "teacher";
+    showRecords('/teachers');
+    filterOptions.value = "default";
+    e.target.disabled = true;
+    e.target.style.pointerEvents = 'none';
+    e.target.classList.add('toggle-user');
+    studentDisplayButton.style.pointerEvents = 'auto';
+    studentDisplayButton.classList.remove('toggle-user');
+    adminDisplayButton.style.pointerEvents = 'auto';
+    adminDisplayButton.classList.remove('toggle-user');
 })
 
 adminDisplayButton.addEventListener('click', (e) => {
-    currentTab = "admin"
-    showRecords('/admins')
-    filterOptions.value = "default"
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
-    studentDisplayButton.style.pointerEvents = 'auto'
-    studentDisplayButton.classList.remove('toggle-user')
-    teacherDisplayButton.style.pointerEvents = 'auto'
-    teacherDisplayButton.classList.remove('toggle-user')
+    currentTab = "admin";
+    showRecords('/admins');
+    filterOptions.value = "default";
+    e.target.disabled = true;
+    e.target.style.pointerEvents = 'none';
+    e.target.classList.add('toggle-user');
+    studentDisplayButton.style.pointerEvents = 'auto';
+    studentDisplayButton.classList.remove('toggle-user');
+    teacherDisplayButton.style.pointerEvents = 'auto';
+    teacherDisplayButton.classList.remove('toggle-user');
 })
 
 imageInput.addEventListener('change', defaultImageChanger);
@@ -105,72 +105,77 @@ mainForm.addEventListener("submit", async (e) => {
     const result = await response.json()
 
     if (result.status){
-        notifyObj.notify(result.message, "success")
-        formBody.reset()
-        formBody.action = '/register'
-        const passwordInput = document.getElementById('password')
-        passwordInput.setAttribute('placeholder', "Enter Password")
+        notifyObj.notify(result.message, "success");
+        formBody.reset();
+        formBody.action = '/register';
+        const passwordInput = document.getElementById('password');
+        passwordInput.setAttribute('placeholder', "Enter Password");
 
         const submitButton = document.getElementById('submit-user-button');
         const cancelButton = document.getElementById('cancel-user-button');
         cancelButton.hidden = true;
-        submitButton.value = "Submit"
-        imageDisplay.src = "static/images/default_profile_picture.png"
+        submitButton.value = "Submit";
+        imageDisplay.src = "static/images/default_profile_picture.png";
         
         if (currentTab == "student"){
-            showRecords('/students')
+            showRecords('/students');
         }
         else if (currentTab == "teacher"){
-            showRecords('/teachers')
+            showRecords('/teachers');
         }
         else if (currentTab == "admin"){
-            showRecords('/admins')
+            showRecords('/admins');
         }
 
     }
     else{
         if (result.errors){
             result.errors.forEach(error => {
-                notifyObj.notify(error, "error")
+                notifyObj.notify(error, "error");
             })
             return
         }
-        notifyObj.notify(result.message, "error")
+        notifyObj.notify(result.message, "error");
     }
 })
 
 document.getElementById("filter").addEventListener("change", async (e) => {
     const filterValue = e.target.value;
-    const role = currentTab
-    const url = `/filter_record/${role}/${filterValue}`
-    const response = await fetch(url)
-    const result = await response.json()
+    const role = currentTab;
+    const url = `/filter_record/${role}/${filterValue}`;
+    const response = await fetch(url);
+    const result = await response.json();
 
     if (result.status){
-        tableBody.innerHTML = ""
+        tableBody.innerHTML = "";
         result.data.forEach(data => {
-            addRow(data.id, data.fname, data.lname, data.email, data.image, data.role)
+            addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
         })
     }
     else{
-        notifyObj.notify(result.message, "error")
+        notifyObj.notify(result.message, "error");
     }
 })
 
 async function showRecords(apiRoute){
-    const response = await fetch(apiRoute)
-    const result = await response.json()
+    const response = await fetch(apiRoute, {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    const result = await response.json();
 
     tableBody.innerHTML = ""
 
     if (result.status){
         result.data.forEach(data => {
-            addRow(data.id, data.fname, data.lname, data.email, data.image, data.role)
+            addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
         })
 
     }
     else{
-        notifyObj.notify(result.message, "error")
+        notifyObj.notify(result.message, "error");
     }
 
 }
@@ -231,11 +236,11 @@ function addRow(user_id, user_fname, user_lname, user_email, user_image, role){
     actionTd.appendChild(actionDiv);
 
     editBtn.addEventListener('click', () => {
-        populateForm(user_image, user_id, user_fname, user_lname, user_email, role.toLowerCase())
+        populateForm(user_image, user_id, user_fname, user_lname, user_email, role.toLowerCase());
     })
 
     deleteBtn.addEventListener('click', () => {
-        deleteUser(user_id, role.toLowerCase())
+        deleteUser(user_id, role.toLowerCase());
     })
 
     // Append all cells to the row
@@ -258,26 +263,26 @@ function populateForm(image, id, fname, lname, email, role){
     const lnameInput = document.getElementById('lname');
     const emailInput = document.getElementById('email');
     const roleInput = document.getElementById('role');
-    let originalImage = ""
+    let originalImage = "";
     
-    const passwordInput = document.getElementById('password')
-    passwordInput.setAttribute('placeholder', "Enter Password (Optional)")
+    const passwordInput = document.getElementById('password');
+    passwordInput.setAttribute('placeholder', "Enter Password (Optional)");
 
-    const submitButton = document.getElementById('submit-user-button')
-    const cancelButton = document.getElementById('cancel-user-button')
+    const submitButton = document.getElementById('submit-user-button');
+    const cancelButton = document.getElementById('cancel-user-button');
 
-    cancelButton.hidden = false
+    cancelButton.hidden = false;
     submitButton.disabled = true;
 
     imageInput.accept = 'image/png, image/jpeg';
 
     const originalId = document.createElement("input");
-    originalId.type = "text"
+    originalId.type = "text";
     originalId.value = id;
     originalId.hidden = true;
-    originalId.name = "original_id"
+    originalId.name = "original_id";
 
-    mainForm.appendChild(originalId)
+    mainForm.appendChild(originalId);
     mainForm.action = "modify_user";
 
     if (image){
@@ -316,15 +321,15 @@ function populateForm(image, id, fname, lname, email, role){
     emailInput.addEventListener('input', updateSubmitButtonState);
 
     submitButton.value = "Save";
-    submitActionContainer.appendChild(cancelButton)
+    submitActionContainer.appendChild(cancelButton);
 
     cancelButton.addEventListener('click', () => {
-        mainForm.removeChild(originalId)
-        passwordInput.setAttribute('placeholder', "Enter Password")
+        mainForm.removeChild(originalId);
+        passwordInput.setAttribute('placeholder', "Enter Password");
         document.querySelectorAll(".edit-buttons").forEach(element => {
-            element.removeEventListener('click', populateForm)
+            element.removeEventListener('click', populateForm);
         })
-        cancelModify()
+        cancelModify();
     })   
 
     document.querySelectorAll(".edit-buttons, .delete-buttons").forEach(element => {
@@ -402,23 +407,23 @@ function deleteUser(id, role){
             body: formData
         });
 
-        const result = await response.json()
+        const result = await response.json();
 
         if (result.status){
             formBody.remove();
-            notifyObj.notify(result.message, "success")
+            notifyObj.notify(result.message, "success");
             if (currentTab == "student"){
-                showRecords('/students')
+                showRecords('/students');
             }
             else if (currentTab == "teacher"){
-                showRecords('/teachers')
+                showRecords('/teachers');
             }
             else if (currentTab == "admin"){
-                showRecords('/admin')
+                showRecords('/admin');
             }
         }
         else{
-            notifyObj.notify(result.message, "error")
+            notifyObj.notify(result.message, "error");
         }
     })
 }
@@ -431,7 +436,7 @@ function checkImageSame(inputtedImage, originalImage){
         const cleanInputtedImage = inputtedImage.split("\\").pop();
         const cleanOriginalImage = originalImage.split("/").pop();
     
-        return cleanInputtedImage == cleanOriginalImage
+        return cleanInputtedImage == cleanOriginalImage;
     }
 }
 
