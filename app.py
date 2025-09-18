@@ -26,25 +26,55 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def role_required(role):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if "role" not in session or session["role"] != role:
+                abort(403)
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/admin')
-@login_required
-def admin():
-    return render_template('admin.html')
+@app.errorhandler(400)
+def unauthorized(e):
+    return render_template('error.html', type="400", error="Bad Request"), 400
 
 @app.errorhandler(401)
 def unauthorized(e):
     return render_template('error.html', type="401", error="Unauthorized Access"), 401
 
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template('error.html', type="403", error="Inaccessible to Enter this Page"), 403
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('error.html', type="404", error="Page not Found"), 404
+
+@app.errorhandler(405)
+def not_found(e):
+    return render_template('error.html', type="405", error="Page not Available"), 405
+
+@app.route('/admin')
+@login_required
+@role_required('admin')
+def admin():
+    return render_template('admin.html')
+
 @app.route('/teacher_dashboard')
+@role_required('teacher')
 @login_required
 def teacher_dashboard():
     return render_template('teacher-dashboard.html')
 
 @app.route('/student_dashboard')
+@role_required('student')
 @login_required
 def student_dashboard():
     return render_template('student-dashboard.html')
@@ -82,7 +112,7 @@ def login():
         elif role[0].lower() == "admin":
             return jsonify({'status': True, 'redirectUrl': 'admin'})
         else:
-            return jsonify({"status": False, "message": "Invalid role."})        
+            return jsonify({"status": False, "message": "Invalid role."}), 400        
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -128,7 +158,11 @@ def register():
         return jsonify({"message": str(e)})
     
 @app.route('/students', methods=['GET'])
+@login_required
 def get_student_record():
+    if "text/html" in request.headers.get("Accept", ""):
+        abort(403) 
+    
     try:
         status, results = db.get_student_records()
         rows = results
@@ -148,6 +182,8 @@ def get_student_record():
                 "image": image_url,
                 "role": row[5]
             })
+            
+
         
         if status:
             return jsonify({"status": True, "data": students})
@@ -160,6 +196,8 @@ def get_student_record():
 
 @app.route('/teachers', methods=['GET'])
 def get_teacher_record():
+    if "text/html" in request.headers.get("Accept", ""):
+        abort(403)     
     try:
         status, results = db.get_teacher_records()
         rows = results
@@ -189,6 +227,9 @@ def get_teacher_record():
     
 @app.route('/admins', methods=['GET'])
 def get_admin_record():
+    if "text/html" in request.headers.get("Accept", ""):
+        abort(403) 
+        
     try:
         status, results = db.get_admin_records()
         rows = results
