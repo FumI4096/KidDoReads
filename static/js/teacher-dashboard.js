@@ -116,3 +116,29 @@ function testContent(){
     }
 }
 
+document.addEventListener("DOMContentLoaded", async function() {
+    const id = localStorage.getItem("id")
+
+    const url = `/user/${id}`;
+    const getInfo = await fetch(url);
+
+    const user = await getInfo.json();
+
+    if (user.status){
+        localStorage.setItem("fullName", user.data[0].fullName);
+
+        const teacherName = document.getElementById('teacher_name')
+        const teacherPicture = document.getElementById('teacher_picture')
+
+        teacherName.textContent = localStorage.getItem("fullName")
+        if (user.data[0].image){
+            localStorage.setItem("image", user.data[0].image)
+            teacherPicture.src = localStorage.getItem("image")
+        }
+        else{
+            localStorage.setItem("image", defaultProfilePicture)
+            teacherPicture.src = localStorage.getItem("image")
+        }
+
+    }
+});

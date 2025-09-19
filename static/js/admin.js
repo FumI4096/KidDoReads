@@ -440,4 +440,31 @@ function checkImageSame(inputtedImage, originalImage){
     }
 }
 
+document.addEventListener("DOMContentLoaded", async function() {
+    const id = localStorage.getItem("id")
+
+    const url = `/user/${id}`;
+    const getInfo = await fetch(url);
+
+    const user = await getInfo.json();
+
+    if (user.status){
+        localStorage.setItem("fullName", user.data[0].fullName);
+
+        const adminName = document.getElementById('admin_name')
+        const adminPicture = document.getElementById('admin_picture')
+
+        adminName.textContent = localStorage.getItem("fullName")
+        if (user.data[0].image){
+            localStorage.setItem("image", user.data[0].image)
+            adminPicture.src = localStorage.getItem("image")
+        }
+        else{
+            localStorage.setItem("image", defaultProfilePicture)
+            adminPicture.src = localStorage.getItem("image")
+        }
+
+    }
+});
+
 showRecords('/students')

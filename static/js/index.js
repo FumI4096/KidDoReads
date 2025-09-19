@@ -38,6 +38,7 @@ loginForm.addEventListener('submit', async (e) => {
     try{
 
         if (response.ok && result.status){
+            localStorage.setItem("id", result.id);
             window.location.href = result.redirectUrl
         }
         else{

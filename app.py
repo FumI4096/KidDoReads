@@ -106,11 +106,11 @@ def login():
         session["role"] = role[0].lower()        
         
         if role[0].lower() == "student":
-            return jsonify({'status': True, 'redirectUrl': 'student_dashboard'})
+            return jsonify({'status': True, 'redirectUrl': 'student_dashboard', "id": id})
         elif role[0].lower() == "teacher":
-            return jsonify({'status': True, 'redirectUrl': 'teacher_dashboard'})
+            return jsonify({'status': True, 'redirectUrl': 'teacher_dashboard', "id": id})
         elif role[0].lower() == "admin":
-            return jsonify({'status': True, 'redirectUrl': 'admin'})
+            return jsonify({'status': True, 'redirectUrl': 'admin', "id": id})
         else:
             return jsonify({"status": False, "message": "Invalid role."}), 400        
 
@@ -339,6 +339,33 @@ def filter_record(role, filter):
                 "image": image_url,
                 "role": row[5]
             })
+        
+        if status:
+            return jsonify({"status": True, "data": data})
+        else:
+            return jsonify({"status": False, "message": result})
+            
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+    
+@app.route('/user/<string:id>', methods=['GET'])
+@login_required
+def get_user(id):
+    try:
+        status, result = db.get_user_info_by_id(id)
+
+        data = []
+        
+        if result[2] is not None:
+            filename = result[2].decode('utf-8') if isinstance(result[2], bytes) else result[2]
+            image_url = url_for('static', filename=f'uploads/{filename}')
+        else:
+            image_url = None
+        data.append({
+            "fullName": result[0],
+            "email": result[1],
+            "image": image_url,
+        })
         
         if status:
             return jsonify({"status": True, "data": data})
