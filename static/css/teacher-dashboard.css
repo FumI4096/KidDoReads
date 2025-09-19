@@ -61,8 +61,21 @@ main > aside{
     gap: 2rem;
 
     & > section{
+        padding: 0 1rem;
+        width: 100%;
         display: flex;
         gap: 1.2rem;
+
+        & > img{
+            inline-size: 50px;
+            border-radius: 100%;
+        }
+
+        & > span{
+            font-family: 'Light-Poppins';
+            color: black;
+            font-size: 1rem;
+        }
     }
 
     & > ul{
