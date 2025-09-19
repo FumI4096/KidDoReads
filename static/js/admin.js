@@ -9,6 +9,7 @@ const teacherDisplayButton = document.getElementById('teacher-record-button');
 const adminDisplayButton = document.getElementById('admin-record-button');
 const showPasswordButton = document.getElementById('showPasswordButton');
 const unshowPasswordButton = document.getElementById('unshowPasswordButton');
+const logOutButton = document.getElementById('log-out-button');
 const inputPassword = document.getElementById('password');
 const filterOptions = document.getElementById('filter');
 let currentTab = "student";
@@ -34,6 +35,11 @@ function displayEyePassword(element1, element2, showPassword){
     inputPassword.type = showPassword ? "text" : "password";
 
 }
+
+logOutButton.addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = '/logout'
+})
 
 studentDisplayButton.addEventListener('click', (e) => {
     currentTab = "student";

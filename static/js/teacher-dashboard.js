@@ -1,10 +1,16 @@
 const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
 const progressNavButton = document.getElementById("progress-record-button");
-const logOutButton = document.getElementById("logOutButton");
+const logOutButton = document.getElementById('log-out-button');
 
 const contents = document.getElementById("content-container");
 const addContentButton = document.getElementById("add-content-button");
+
+logOutButton.addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = '/logout'
+})
+
 
 activityNavButton.addEventListener('click', (e) => {
     // showRecords('/students')
