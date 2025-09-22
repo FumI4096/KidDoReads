@@ -389,7 +389,7 @@ def regValidation(id, fname, lname, email, password, role) -> list:
     errors = []
     
     namePattern = r'^[A-Za-z\s\-]+$'
-    emailPattern = r'^[\w\.-]+@[\w\.-]+\.edu.ph$'
+    emailPattern = r'^[\w\.-]+@[\w\.-]+@letran-calamba\.edu\.ph$'
     passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)\S{8,}$'
     
     if not id or not fname or not lname or not email or not password or not role:
@@ -429,7 +429,7 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
     errors = []
     
     namePattern = r'^[A-Za-z\s\-]+$'
-    emailPattern = r'^[\w\.-]+@[\w\.-]+\.edu.ph$'
+    emailPattern = r'^[\w\.-]+@[\w\.-]+@letran-calamba\.edu\.ph$'
     passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)\S{8,}$'
     
     if not id or not fname or not lname or not email or not role:
@@ -444,7 +444,7 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
     elif isIdExist:
         errors.append("School ID already exist.")
     elif isinstance(isIdExist, str):
-        errors.append(isIdExist)        
+        errors.append(isIdExist)
     if not re.match(namePattern, fname):
         errors.append("First name should only contain letters, spaces, or hyphens.")
     if not re.match(namePattern, lname):
@@ -454,7 +454,7 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
     elif isEmailExist:
         errors.append("Email already exist.")
     elif isinstance(isEmailExist, str):
-        errors.append(isEmailExist)   
+        errors.append(isEmailExist)     
     if not re.match(passwordPattern, password) and len(password) > 0:
         errors.append(
             "Password must be at least 8 characters long, an uppercase, lowercase, a number."
