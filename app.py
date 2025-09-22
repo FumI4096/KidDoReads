@@ -28,7 +28,7 @@ def role_required(role):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if "role" not in session or session["role"] != role:
+            if not current_user.is_authenticated or current_user.role != role:
                 abort(403)
             return f(*args, **kwargs)
         return decorated_function
