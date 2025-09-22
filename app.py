@@ -5,7 +5,6 @@ from werkzeug.security import check_password_hash
 from database.db import Database
 from dotenv import load_dotenv
 import os
-import base64
 import re
 from functools import wraps
 from blueprints.ErrorHandler import errors
@@ -167,7 +166,6 @@ def get_student_record():
             return jsonify({"status": True, "data": students})
         else:
             return jsonify({"status": False, "message": results})
-            
             
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
