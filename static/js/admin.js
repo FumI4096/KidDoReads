@@ -263,10 +263,10 @@ function populateForm(image, id, fname, lname, email, role){
     const fnameInput = document.getElementById('fname');
     const lnameInput = document.getElementById('lname');
     const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
     const roleInput = document.getElementById('role');
     let originalImage = "";
     
-    const passwordInput = document.getElementById('password');
     passwordInput.setAttribute('placeholder', "Enter Password (Optional)");
 
     const submitButton = document.getElementById('submit-user-button');
@@ -283,7 +283,14 @@ function populateForm(image, id, fname, lname, email, role){
     originalId.hidden = true;
     originalId.name = "original_id";
 
+    const originalEmail = document.createElement("input");
+    originalEmail.type = "text";
+    originalEmail.value = email;
+    originalEmail.hidden = true;
+    originalEmail.name = "original_email";
+
     mainForm.appendChild(originalId);
+    mainForm.appendChild(originalEmail)
     mainForm.action = "modify_user";
 
     if (image){
@@ -309,7 +316,8 @@ function populateForm(image, id, fname, lname, email, role){
         const isLnameSame = lnameInput.value == lname;
         const isEmailSame = emailInput.value == email;
         const isRoleSame = roleInput.value == role;
-        const allFieldsAreTheSame = isImageSame && isIdSame && isFnameSame && isLnameSame && isEmailSame && isRoleSame;
+        const isPasswordEmpty = passwordInput.value.length == 0;
+        const allFieldsAreTheSame = isImageSame && isIdSame && isFnameSame && isLnameSame && isEmailSame &&isPasswordEmpty && isRoleSame;
         
         submitButton.disabled = allFieldsAreTheSame;
     }
@@ -320,12 +328,14 @@ function populateForm(image, id, fname, lname, email, role){
     fnameInput.addEventListener('input', updateSubmitButtonState);
     lnameInput.addEventListener('input', updateSubmitButtonState);
     emailInput.addEventListener('input', updateSubmitButtonState);
+    passwordInput.addEventListener('input', updateSubmitButtonState)
 
     submitButton.value = "Save";
     submitActionContainer.appendChild(cancelButton);
 
     cancelButton.addEventListener('click', () => {
         mainForm.removeChild(originalId);
+        mainForm.removeChild(originalEmail)
         passwordInput.setAttribute('placeholder', "Enter Password");
         document.querySelectorAll(".edit-buttons").forEach(element => {
             element.removeEventListener('click', populateForm);

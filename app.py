@@ -20,7 +20,7 @@ app.config["PROPAGATE_EXCEPTIONS"] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = Database()
 
-login_manager.login_view = 'login'
+login_manager.login_view = 'home'
 login_manager.init_app(app)
 app.register_blueprint(errors)
 
@@ -232,6 +232,7 @@ def get_admin_record():
 def modify_user():
     try:
         original_id = request.form.get("original_id")
+        original_email = request.form.get("original_email")
         id = request.form.get("id")
         fname = request.form.get("fname")
         lname = request.form.get("lname")
@@ -251,7 +252,7 @@ def modify_user():
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             
-        errors = modifyValidation(id, fname, lname, email, password, role)
+        errors = modifyValidation(id, original_id, fname, lname, email, original_email, password, role)
         if errors:
             return jsonify({"status": False, "errors": errors})
             
@@ -425,7 +426,7 @@ def regValidation(id, fname, lname, email, password, role) -> list:
         
     return errors 
 
-def modifyValidation(id, fname, lname, email, password, role) -> list:
+def modifyValidation(id, original_id, fname, lname, email, original_email, password, role) -> list:
     errors = []
     
     namePattern = r'^[A-Za-z\s\-]+$'
@@ -441,7 +442,7 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
     
     if not id.isdigit():
         errors.append("School ID should be a number")
-    elif isIdExist:
+    elif isIdExist and id != original_id:
         errors.append("School ID already exist.")
     elif isinstance(isIdExist, str):
         errors.append(isIdExist)
@@ -451,7 +452,7 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
         errors.append("Last name should only contain letters, spaces, or hyphens.")
     if not re.match(emailPattern, email):
         errors.append("Please enter a valid letran email address.")
-    elif isEmailExist:
+    elif isEmailExist and email != original_email:
         errors.append("Email already exist.")
     elif isinstance(isEmailExist, str):
         errors.append(isEmailExist)     
