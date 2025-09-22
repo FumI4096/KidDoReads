@@ -420,7 +420,7 @@ function deleteUser(id, role){
                 showRecords('/teachers');
             }
             else if (currentTab == "admin"){
-                showRecords('/admin');
+                showRecords('/admins');
             }
         }
         else{
