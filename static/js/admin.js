@@ -164,12 +164,7 @@ document.getElementById("filter").addEventListener("change", async (e) => {
 })
 
 async function showRecords(apiRoute){
-    const response = await fetch(apiRoute, {
-        method: "GET",
-        headers: {
-            "X-Requested-With": "XMLHttpRequest"
-        }
-    })
+    const response = await fetch(apiRoute)
     const result = await response.json();
 
     tableBody.innerHTML = ""
