@@ -389,7 +389,7 @@ def regValidation(id, fname, lname, email, password, role) -> list:
     errors = []
     
     namePattern = r'^[A-Za-z\s\-]+$'
-    emailPattern = r'^[\w\.-]+@[\w\.-]+@letran-calamba\.edu\.ph$'
+    emailPattern = r'^[\w\.-]+@letran-calamba\.edu\.ph$'
     passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)\S{8,}$'
     
     if not id or not fname or not lname or not email or not password or not role:
@@ -429,7 +429,7 @@ def modifyValidation(id, fname, lname, email, password, role) -> list:
     errors = []
     
     namePattern = r'^[A-Za-z\s\-]+$'
-    emailPattern = r'^[\w\.-]+@[\w\.-]+@letran-calamba\.edu\.ph$'
+    emailPattern = r'^[\w\.-]+@letran-calamba\.edu\.ph$'
     passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)\S{8,}$'
     
     if not id or not fname or not lname or not email or not role:
