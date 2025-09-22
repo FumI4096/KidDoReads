@@ -1,4 +1,5 @@
 from flask import Flask, render_template, session, request, redirect, url_for, jsonify, abort
+from flask_login import login_user, current_user, login_required, logout_user
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from database.db import Database
@@ -7,6 +8,8 @@ import os
 import base64
 import re
 from functools import wraps
+from blueprints.ErrorHandler import errors
+from modules.User import login_manager, User
 
 load_dotenv()
 
@@ -40,26 +43,6 @@ def role_required(role):
 @app.route('/')
 def home():
     return render_template('index.html')
-
-@app.errorhandler(400)
-def unauthorized(e):
-    return render_template('error.html', type="400", error="Bad Request"), 400
-
-@app.errorhandler(401)
-def unauthorized(e):
-    return render_template('error.html', type="401", error="Unauthorized Access"), 401
-
-@app.errorhandler(403)
-def forbidden(e):
-    return render_template('error.html', type="403", error="Inaccessible to Enter this Page"), 403
-
-@app.errorhandler(404)
-def not_found(e):
-    return render_template('error.html', type="404", error="Page not Found"), 404
-
-@app.errorhandler(405)
-def not_found(e):
-    return render_template('error.html', type="405", error="Page not Available"), 405
 
 @app.route('/admin')
 @login_required
