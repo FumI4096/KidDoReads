@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, request, redirect, url_for, jsonify, abort
+from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_login import login_user, current_user, login_required, logout_user
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
@@ -21,13 +21,9 @@ app.config["PROPAGATE_EXCEPTIONS"] = False
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 db = Database()
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "user_id" not in session:
-            abort(401)
-        return f(*args, **kwargs)
-    return decorated_function
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+app.register_blueprint(errors)
 
 def role_required(role):
     def decorator(f):
@@ -51,14 +47,14 @@ def admin():
     return render_template('admin.html')
 
 @app.route('/teacher_dashboard')
-@role_required('teacher')
 @login_required
+@role_required('teacher')
 def teacher_dashboard():
     return render_template('teacher-dashboard.html')
 
 @app.route('/student_dashboard')
-@role_required('student')
 @login_required
+@role_required('student')
 def student_dashboard():
     return render_template('student-dashboard.html')
 
@@ -68,16 +64,15 @@ def content_making():
     return render_template('quiz-making.html')
 
 @app.route('/logout')
-@login_required
 def logout():
-    session.clear()
+    logout_user()
     return redirect(url_for('home'))
 
 @app.route('/login', methods=['POST'])
 def login():
     id = request.form.get('id')
     password = request.form.get('password')
-    
+    remember_me = request.form.get('remember_me') == 'on'
     errors = loginValidation(id, password)
     
     if errors:
@@ -85,14 +80,14 @@ def login():
     else:
         role = db.get_role_by_id(id)
         
-        session["user_id"] = id
-        session["role"] = role[0].lower()        
+        user = User(id=id, role=role[0].lower())
+        login_user(user, remember=remember_me)
         
-        if role[0].lower() == "student":
+        if user.role  == "student":
             return jsonify({'status': True, 'redirectUrl': 'student_dashboard', "id": id})
-        elif role[0].lower() == "teacher":
+        elif user.role == "teacher":
             return jsonify({'status': True, 'redirectUrl': 'teacher_dashboard', "id": id})
-        elif role[0].lower() == "admin":
+        elif user.role == "admin":
             return jsonify({'status': True, 'redirectUrl': 'admin', "id": id})
         else:
             return jsonify({"status": False, "message": "Invalid role."}), 400        
@@ -178,9 +173,8 @@ def get_student_record():
         return jsonify({"status": False, "message": str(e)})
 
 @app.route('/teachers', methods=['GET'])
-def get_teacher_record():
-    if "text/html" in request.headers.get("Accept", ""):
-        abort(403)     
+@login_required
+def get_teacher_record():   
     try:
         status, results = db.get_teacher_records()
         rows = results
@@ -209,10 +203,8 @@ def get_teacher_record():
         return jsonify({"status": False, "message": str(e)})
     
 @app.route('/admins', methods=['GET'])
+@login_required
 def get_admin_record():
-    if "text/html" in request.headers.get("Accept", ""):
-        abort(403) 
-        
     try:
         status, results = db.get_admin_records()
         rows = results
@@ -241,6 +233,7 @@ def get_admin_record():
         return jsonify({"status": False, "message": str(e)})
 
 @app.route('/modify_user', methods=['POST'])
+@login_required
 def modify_user():
     try:
         original_id = request.form.get("original_id")
