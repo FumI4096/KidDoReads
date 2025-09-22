@@ -137,9 +137,6 @@ def register():
 @app.route('/students', methods=['GET'])
 @login_required
 def get_student_record():
-    if "text/html" in request.headers.get("Accept", ""):
-        abort(403) 
-    
     try:
         status, results = db.get_student_records()
         rows = results
