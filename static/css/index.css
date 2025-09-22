@@ -14,13 +14,16 @@ main{
     background: var(--background-1) url('../images/kdr-logo.png') no-repeat;
     background-size: 700px;
     background-position-y: 106%;
-    background-position-x: -1%;
+    background-position-x: 0%;
     height: 100%;
-    display: grid;
-    place-content: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
 }
 
-aside{
+#quote-container{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -29,9 +32,11 @@ aside{
     & > span:nth-child(1){
         color: var(--black-text);
         font-family: 'Light-Poppins';
+        text-align: center;
     }
 
     & > span:nth-child(2){
+        text-align: center;
         font-family: 'Medium-Poppins';
         font-weight: bold;
         font-size: 3rem;
@@ -93,6 +98,25 @@ form > div > ion-icon{
 
 }
 
+#check-box-container{
+    color: black;
+    font-family: 'Light-Poppins';
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    & > input{
+        outline: none;
+        cursor: pointer;
+    }
+
+    & > p {
+        flex-grow: 1;
+    }
+
+}
+
 #login-button{
     background-color: var(--primary-color);
     width: 20rem;
@@ -113,6 +137,50 @@ form > div > ion-icon{
 
     &:active{
         background-color: #f1ba59;
+    }
+}
+
+@media screen and (max-width: 1200px){
+    main{
+        background-size: 400px;
+    }
+}
+
+@media screen and (max-width: 500px){
+    main{
+        background-size: 200px;
+        width: 100%;
+        padding: 0 2rem;
+        background-position-y: 100%;
+    }
+    #quote-container{
+
+        & > span:nth-child(1){
+            font-size: 0.9rem;
+        }
+
+        & > span:nth-child(2){
+            font-size: 2rem;
+
+        }
+    }
+    form{
+        width: 100%;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        & > div, #check-box-container, #login-button {
+            width: 100%;
+        }
+    }
+}
+
+@media screen and (max-width: 400px){
+    form{
+        & > div > input,#login-button {
+            font-size: 0.9rem;
+        }
     }
 }
 
