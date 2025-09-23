@@ -46,7 +46,7 @@ main{
     height: 100%;
     width: 100%;
     gap: 2rem;
-
+    min-height: 0;
 }
 
 main > aside{
@@ -299,7 +299,6 @@ main > section{
 
 }
 
-
 #submit-actions{
     align-self:flex-end;
     display: flex;
@@ -362,8 +361,8 @@ main > section{
 }
 
 #table-container{
-    height: 100%;
     flex-grow: 1;
+    overflow: auto;
 }
 
 table{
@@ -376,6 +375,8 @@ thead > tr{
     height: 4.0rem;
     color: black;
     background-image: var(--secondary-tertiary-color-1);
+    position: sticky;
+    top: 0;
 
     & > th{
         color: white;
