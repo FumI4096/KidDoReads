@@ -3,6 +3,7 @@
 const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
 const progressNavButton = document.getElementById("progress-record-button");
+const badgesNavButton = document.getElementById("badges-record-button")
 const logOutButton = document.getElementById('log-out-button');
 const contents = document.getElementById("content-container");
 const addContentButton = document.getElementById("add-content-button");
@@ -13,7 +14,6 @@ logOutButton.addEventListener('click', () => {
     window.location.href = '/logout'
 })
 
-
 activityNavButton.addEventListener('click', (e) => {
     // showRecords('/students')
     e.target.disabled = true
@@ -23,6 +23,8 @@ activityNavButton.addEventListener('click', (e) => {
     assessmentNavButton.classList.remove('toggle-user')
     progressNavButton.style.pointerEvents = 'auto'
     progressNavButton.classList.remove('toggle-user')
+    badgesNavButton.style.pointerEvents = 'auto'
+    badgesNavButton.classList.remove('toggle-user')
 })
 
 assessmentNavButton.addEventListener('click', (e) => {
@@ -34,6 +36,8 @@ assessmentNavButton.addEventListener('click', (e) => {
     activityNavButton.classList.remove('toggle-user')
     progressNavButton.style.pointerEvents = 'auto'
     progressNavButton.classList.remove('toggle-user')
+    badgesNavButton.style.pointerEvents = 'auto'
+    badgesNavButton.classList.remove('toggle-user')
 })
 
 progressNavButton.addEventListener('click', (e) => {
@@ -45,7 +49,11 @@ progressNavButton.addEventListener('click', (e) => {
     activityNavButton.classList.remove('toggle-user')
     assessmentNavButton.style.pointerEvents = 'auto'
     assessmentNavButton.classList.remove('toggle-user')
+    badgesNavButton.style.pointerEvents = 'auto'
+    badgesNavButton.classList.remove('toggle-user')
 })
+
+badgesNavButton.addEventListener('click', studentProfile)
 
 document.addEventListener("DOMContentLoaded", async function() {
     const id = localStorage.getItem("id")
@@ -56,6 +64,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     const user = await getInfo.json();
 
     if (user.status){
+        localStorage.setItem("id", user.data[0].id);
         localStorage.setItem("fullName", user.data[0].fullName);
         
         const studentName = document.getElementById('student_name')
@@ -74,6 +83,49 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     }
 });
+
+function studentProfile(){
+    const profileBackground = document.createElement('div')
+    const profileContainer = document.createElement('div')
+    const profileButtonContainer = document.createElement('nav')
+    const informationContainer = document.createElement('section')
+    const userContainer = document.createElement('article')
+    const badgesContainer = document.createElement('aside')
+
+    profileBackground.setAttribute('id', 'profile-background')
+    profileContainer.setAttribute('id', 'profile-container')
+    profileButtonContainer.setAttribute('id', 'profile-button-container')
+    informationContainer.setAttribute('id', 'information-container')
+    userContainer.setAttribute('id', 'user-container')
+    badgesContainer.setAttribute('id', 'badges-container') // add badges here
+
+    const identificationStatement = document.createElement('p')
+    const closeButton = document.createElement('img')
+    const studentImage = document.createElement('img')
+    const studentName = document.createElement('span')
+    const studentId = document.createElement('span') //extra info (can be removed)
+
+    identificationStatement.textContent = "Student Identification Card"
+    closeButton.src = '../static/images/close-outline.svg'
+    studentImage.src = localStorage.getItem('image')
+    studentName.textContent = localStorage.getItem('fullName')
+    studentId.textContent = localStorage.getItem('id')
+
+    profileButtonContainer.append(identificationStatement, closeButton)
+    userContainer.append(studentImage, studentName)
+
+    informationContainer.append(userContainer, badgesContainer)
+    profileContainer.append(profileButtonContainer, informationContainer)
+    profileBackground.append(profileContainer)
+
+    document.body.appendChild(profileBackground)
+
+
+    closeButton.addEventListener('click', () => {
+        document.body.removeChild(profileBackground)
+    })
+
+}
 
 
 

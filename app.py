@@ -328,14 +328,15 @@ def get_user(id):
 
         data = []
         
-        if result[2] is not None:
-            filename = result[2].decode('utf-8') if isinstance(result[2], bytes) else result[2]
+        if result[3] is not None:
+            filename = result[3].decode('utf-8') if isinstance(result[3], bytes) else result[3]
             image_url = url_for('static', filename=f'uploads/{filename}')
         else:
             image_url = None
         data.append({
-            "fullName": result[0],
-            "email": result[1],
+            "id": result[0],
+            "fullName": result[1],
+            "email": result[2],
             "image": image_url,
         })
         
