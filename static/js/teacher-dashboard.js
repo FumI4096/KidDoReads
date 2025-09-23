@@ -5,6 +5,8 @@ const logOutButton = document.getElementById('log-out-button');
 
 const contents = document.getElementById("content-container");
 const addContentButton = document.getElementById("add-content-button");
+const defaultProfilePicture = "../static/images/default_profile_picture.png";
+
 
 logOutButton.addEventListener('click', () => {
     sessionStorage.clear();
