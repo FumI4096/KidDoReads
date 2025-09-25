@@ -35,10 +35,11 @@ header{
         color: transparent;
         background-clip: text;
     }
-}
 
-header > img{
-    height: 100%;
+    & > img{
+        height: 100%;
+    }
+    
 }
 
 main{
@@ -52,31 +53,13 @@ main{
 main > aside{
     background-image: var(--primary-accent-color-2);
     height: 100%;
-    width: 350px;
+    min-width: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
     border-radius: 12px;
     padding: 3rem 1rem;
     gap: 2rem;
-
-    & > section{
-        padding: 0 1rem;
-        width: 100%;
-        display: flex;
-        gap: 1.2rem;
-
-        & > img{
-            inline-size: 50px;
-            border-radius: 100%;
-        }
-
-        & > span{
-            font-family: 'Light-Poppins';
-            color: black;
-            font-size: 1rem;
-        }
-    }
 
     & > ul{
         display: flex;
@@ -94,29 +77,28 @@ main > aside{
         padding: 0.6rem 1rem;
         gap: 2rem;
         font-family: 'Light-Poppins';
-        color: black;
         cursor: pointer;
     }
 
-    & > ul > li:hover {
+    & > ul > .navigator{
+        color: black;
+    }
+
+    & > ul > .navigator:hover{ 
         background-color: rgba(255, 255, 255, 0.4);
         border-radius: 100px;
     }
 
-    & > p {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: auto;
-        padding: 0.6rem 1rem;
-        gap: 2rem;
-        font-family: 'Light-Poppins';
-        color: black;
-        cursor: pointer; 
+    & > ul > li:nth-child(3){
+        margin-bottom: auto;
+    }
+
+    & > ul > #log-out-button {
+        color: white;
         position: relative; 
     }
     
-    & > p:hover::before{
+    & > ul > #log-out-button:hover::before{
         content: "";
         width: 100%;
         background-color: white;
@@ -126,14 +108,32 @@ main > aside{
         left: 0;
     }
 
-    & > p > ion-icon{
+    & > ul > #log-out-button > ion-icon{
         font-size: 1.5rem;
         color: white;
     }
 
-    & > p > span{
+    & > ul > #log-out-button > span{
         color: white;
 
+    }
+}
+
+#admin-info{
+    padding: 0 1rem;
+    width: 100%;
+    display: flex;
+    gap: 1.2rem;
+
+    & > img{
+        inline-size: 50px;
+        border-radius: 100%;
+    }
+
+    & > span{
+        font-family: 'Light-Poppins';
+        color: black;
+        font-size: 1rem;
     }
 }
 
@@ -150,20 +150,27 @@ main > aside > img{
 }
 
 main > section{
-    width: 100%;
+    flex-basis: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
-
-    & > p{
+    flex-grow: 1;
+    & > div {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        width: 100%;
+    }
+    & > div > p{
+        width: 100%;
         display: flex;
         gap: 0.8rem;
         align-items: center;
     }
-    & > p > img{
+    & > div > p > img{
         height: 75%;
     }
-    & > p > span{
+    & > div > p > span{
         font-family: 'Regular-Poppins';
     }
 }
@@ -172,9 +179,9 @@ main > section{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    height: auto;
     gap: 1.5rem;
-    padding: 3.2rem 0;
+    padding: 2.7rem 1.5rem;
     background-color: var(--background-2);
     box-shadow: var(--box-shadow-1);
     position: relative;
@@ -231,12 +238,8 @@ main > section{
     height: 100%;
     gap: 0.7rem;
 
-    & > :not(#submit-actions){
-        flex: 1;
-    }
-
-    & > :not(#submit-actions) > input{
-        height: 100%;
+    & > div > input{
+        height: 40px;
         width: 250px;
         outline: none;
         border-radius: 2px;
@@ -251,7 +254,7 @@ main > section{
     }
 
 
-    & > :not(#submit-actions) > select{
+    & > div > select{
         -webkit-appearance: none;
         -moz-appearance: none; 
         appearance: none; 
@@ -262,6 +265,7 @@ main > section{
         background-position: right 10px center;
         height: 100%;
         outline: none;
+        height: 40px;
         width: 170px;
         color: white;
         border-radius: 2px;
@@ -300,17 +304,18 @@ main > section{
 }
 
 #submit-actions{
-    align-self:flex-end;
+    align-self: flex-end;
     display: flex;
     flex-direction: column;
-    justify-content: end;
-    flex-basis: 90px;
+    justify-self: flex-start;
     gap: 1rem;
+    height: 100%;
 }
 
 #submit-user-button{
     background-color: var(--primary-color);
     padding: 0.5rem 0;
+    width: 80px;
     font-size: 0.80rem;
     border: none;
     border-radius: 3px;
@@ -323,6 +328,7 @@ main > section{
     background-color: var(--accent-color);
     color: white;
     padding: 0.5rem 0;
+    width: 80px;
     font-size: 0.80rem;
     border: none;
     border-radius: 3px;
@@ -399,7 +405,14 @@ tbody > tr:nth-child(even){
 }
 
 td{
-    height: 4rem;
+    padding: 1rem 0;
+    
+}
+
+.user-image-cell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 td > p{
@@ -408,15 +421,8 @@ td > p{
     background: none;
     border: none;
     font-size: 0.87rem;
-}
-
-td > *{
-    width: 100%;
-}
-
-.user-image-cell{
-    display: grid;
-    place-content: center;
+    overflow-wrap: break-word;
+    
 }
 
 .upload-image-box{
@@ -491,8 +497,8 @@ td > *{
 .user-image-display{
     border-radius: 100%;
     aspect-ratio: 1/1;
-    width: 40px;
-    height: 40px;
+    inline-size: 40px;
+    object-fit: cover;
 }
 
 #delete-form{
@@ -558,5 +564,204 @@ td > *{
         
     }
 
+}
+
+@media screen and (max-width: 1580px){
+
+    .action-buttons > div{
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+
+        & > * {
+            width: 60%;
+        }
+    }
+
+}
+
+@media screen and (max-width: 1455px){
+    td > p{
+        font-size: 0.75rem;
+    }
+
+}
+
+@media screen and (max-width: 1209px){
+    #input-box{
+        width: 100%;
+        height: auto;
+
+        & > div{
+            display: flex;
+            width: 100%;
+            gap: 0.8rem;
+
+            & > input, & > select{
+                width: 100%;
+            }
+        }
+
+        & > div > #password{
+            width: calc(100% - 1.6rem);
+        }
+
+    }
+
+}
+
+@media screen and (max-width: 1105px){
+    body{
+        padding: 1.5rem;
+    }
+    main{
+        gap: 1.5rem;
+    }
+    main > aside {
+        min-width: 260px;
+    }
+    #user-form{
+        gap: 0.8rem;
+        padding: 1.5rem;
+    }
+
+    thead > tr > th{
+        font-size: 0.85rem;
+    }
+
+
+}
+
+@media screen and (max-width: 936px){
+    html, body{
+        height: auto;
+    }
+    main{
+        overflow: visible;
+        flex-direction: column-reverse;
+    }
+    main > aside{
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        flex-direction: row;
+        height: 78px;
+        border-top-left-radius: 35px;
+        border-top-right-radius: 20px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        background-image: none;
+        background-color: white;
+        padding: 0;
+
+        & > ul{
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+
+            & > li{
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                gap: 0.3rem;
+                font-size: 0.8rem;
+            }
+
+            & > .navigator:hover{
+                background-color: transparent !important;
+                border: none !important;
+                border-radius: 0 !important;
+                color: inherit !important;
+                box-shadow: none !important;
+            }
+
+            & > #log-out-button{
+                & > ion-icon{
+                    color: var(--accent-color)
+                }
+                & > span{
+                    color: black
+                }
+            }
+        }
+    }
+
+    main > section{
+        flex-basis: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        flex-grow: 1;
+        & > div {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row-reverse;
+            width: 100%;
+        }
+        & > div > p{
+            width: 100%;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+    }
+
+    #admin-info{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: row-reverse;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        padding: 0;
+
+        & > img{
+            inline-size: 30px;
+            border-radius: 100%;
+        }
+
+        & > span{
+            font-family: 'Regular-Poppins';
+            color: black;
+            font-size: 0.9rem;
+        }
+    }
+
+    .toggle-user{
+        background-color: transparent !important;
+        box-shadow: none !important;
+        border-bottom: solid 3px var(--secondary-color);
+        border-radius: 0 !important;
+    }
+    #table-container{
+        height: 700px;
+    }
+
+}
+@media screen and (max-width: 772px) {
+    #table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+    #table-container table {
+        min-width: 650px; 
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px){
+    body{
+        padding: 1rem;
+    }
+    #user-form{
+        flex-direction: column;
+    }
+    #submit-actions{
+        width: 100%;
+    }
 }
 
