@@ -319,7 +319,7 @@ function populateForm(image, id, fname, lname, email, role){
         const isEmailSame = emailInput.value == email;
         const isRoleSame = roleInput.value == role;
         const isPasswordEmpty = passwordInput.value.length == 0;
-        const allFieldsAreTheSame = isImageSame && isIdSame && isFnameSame && isLnameSame && isEmailSame &&isPasswordEmpty && isRoleSame;
+        const allFieldsAreTheSame = isImageSame && isIdSame && isFnameSame && isLnameSame && isEmailSame && isPasswordEmpty && isRoleSame;
         
         submitButton.disabled = allFieldsAreTheSame;
     }
