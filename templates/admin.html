@@ -21,10 +21,10 @@
 
     <main>
         <aside>
-            <section>
-                <img alt="image" id="admin_picture">
+            <section id="admin-info">
+                <img alt="image" id="admin_picture"/>
                 <span id="admin_name">Administrator</span>
-            </section>
+            </section> 
             <ul>
                 <li class="navigator" id="admin-record-button">
                     <img src="{{url_for('static', filename='images/person.png') }}" />
@@ -46,11 +46,12 @@
         </aside>
     
         <section>
-            <p> 
-                <img src="{{url_for('static', filename='images/orange-add-button.svg')}}"/>
-
-                <span>Add User Record</span>
-            </p>
+            <div>
+                <p> 
+                    <img src="{{url_for('static', filename='images/orange-add-button.svg')}}"/>
+                    <span>Add User Record</span>
+                </p>
+            </div>
             <form id="main-form" action="{{ url_for('register') }}" method="POST" enctype="multipart/form-data">
                 <section id="user-form">
                     <div id="image-box">
