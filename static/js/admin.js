@@ -12,8 +12,12 @@ const unshowPasswordButton = document.getElementById('unshowPasswordButton');
 const logOutButton = document.getElementById('log-out-button');
 const inputPassword = document.getElementById('password');
 const filterOptions = document.getElementById('filter');
-let currentTab = "student";
+const mainAside = document.querySelector('main > aside');
+const mainSection = document.querySelector('main > section > div');
+const adminInfo = document.getElementById('admin-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
+let currentTab = "student";
+let isInMainSection = false;
 
 studentDisplayButton.disabled = true;
 studentDisplayButton.style.pointerEvents = 'none';
@@ -81,6 +85,7 @@ adminDisplayButton.addEventListener('click', () => {
 })
 
 imageInput.addEventListener('change', defaultImageChanger);
+window.addEventListener('resize', moveAdminInfo);
 
 function defaultImageChanger(event){
     const file = event.target.files[0];
@@ -453,6 +458,17 @@ function checkImageSame(inputtedImage, originalImage){
     }
 }
 
+function moveAdminInfo(){
+    if (window.innerWidth <= 936 && !isInMainSection) {
+        mainSection.insertBefore(adminInfo, mainSection.firstChild);
+        isInMainSection = true;
+    } else if (window.innerWidth > 936 && isInMainSection) {
+        mainAside.insertBefore(adminInfo, mainAside.firstChild);
+        isInMainSection = false;
+    }
+    
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
     const id = localStorage.getItem("id")
 
@@ -480,4 +496,5 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 });
 
+moveAdminInfo();
 showRecords('/students')
