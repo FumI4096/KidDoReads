@@ -186,8 +186,9 @@ function addRow(user_id, user_fname, user_lname, user_email, user_image, role){
 
     // Image cell
     const imgTd = document.createElement("td");
+    const imageContainer = document.createElement("div");
+    imageContainer.classList.add("user-image-cell");
     const image = document.createElement("img");
-    imgTd.classList.add("user-image-cell");
     image.classList.add("user-image-display");
     if (user_image){
         image.src = user_image;
@@ -195,8 +196,9 @@ function addRow(user_id, user_fname, user_lname, user_email, user_image, role){
     else{
         image.src = defaultProfilePicture;
     }
-
-    imgTd.appendChild(image);
+    
+    imageContainer.appendChild(image);
+    imgTd.appendChild(imageContainer);
 
     // ID cell
     const idTd = document.createElement("td");
