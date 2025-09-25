@@ -41,39 +41,39 @@ logOutButton.addEventListener('click', () => {
     window.location.href = '/logout'
 })
 
-studentDisplayButton.addEventListener('click', (e) => {
+studentDisplayButton.addEventListener('click', () => {
     currentTab = "student";
     showRecords('/students');
     filterOptions.value = "default";
-    e.target.disabled = true;
-    e.target.style.pointerEvents = 'none';
-    e.target.classList.add('toggle-user');
+    studentDisplayButton.disabled = true;
+    studentDisplayButton.style.pointerEvents = 'none';
+    studentDisplayButton.classList.add('toggle-user');
     teacherDisplayButton.style.pointerEvents = 'auto';
     teacherDisplayButton.classList.remove('toggle-user');
     adminDisplayButton.style.pointerEvents = 'auto';
     adminDisplayButton.classList.remove('toggle-user');
 })
 
-teacherDisplayButton.addEventListener('click', (e) => {
+teacherDisplayButton.addEventListener('click', () => {
     currentTab = "teacher";
     showRecords('/teachers');
     filterOptions.value = "default";
-    e.target.disabled = true;
-    e.target.style.pointerEvents = 'none';
-    e.target.classList.add('toggle-user');
+    teacherDisplayButton.disabled = true;
+    teacherDisplayButton.style.pointerEvents = 'none';
+    teacherDisplayButton.classList.add('toggle-user');
     studentDisplayButton.style.pointerEvents = 'auto';
     studentDisplayButton.classList.remove('toggle-user');
     adminDisplayButton.style.pointerEvents = 'auto';
     adminDisplayButton.classList.remove('toggle-user');
 })
 
-adminDisplayButton.addEventListener('click', (e) => {
+adminDisplayButton.addEventListener('click', () => {
     currentTab = "admin";
     showRecords('/admins');
     filterOptions.value = "default";
-    e.target.disabled = true;
-    e.target.style.pointerEvents = 'none';
-    e.target.classList.add('toggle-user');
+    adminDisplayButton.disabled = true;
+    adminDisplayButton.style.pointerEvents = 'none';
+    adminDisplayButton.classList.add('toggle-user');
     studentDisplayButton.style.pointerEvents = 'auto';
     studentDisplayButton.classList.remove('toggle-user');
     teacherDisplayButton.style.pointerEvents = 'auto';
