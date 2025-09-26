@@ -39,23 +39,23 @@ def role_required(role):
 def home():
     return render_template('index.html')
 
-@app.route('/admin')
+@app.route('/admin')    
 @login_required
 @role_required('admin')
 def admin():
-    return render_template('admin.html')
+    return render_template('admin/admin-dashboard.html')
 
 @app.route('/teacher_dashboard')
 @login_required
 @role_required('teacher')
 def teacher_dashboard():
-    return render_template('teacher-dashboard.html')
+    return render_template('teacher/teacher-dashboard.html')
 
 @app.route('/student_dashboard')
 @login_required
 @role_required('student')
 def student_dashboard():
-    return render_template('student-dashboard.html')
+    return render_template('student/student-dashboard.html')
 
 @app.route('/content_making')
 @login_required
@@ -413,14 +413,14 @@ def regValidation(id, fname, lname, email, password, role) -> list:
     if not re.match(namePattern, lname):
         errors.append("Last name should only contain letters, spaces, or hyphens.")
     if not re.match(emailPattern, email):
-        errors.append("Please enter a valid letran email address.")
+        errors.append("Please enter a valid Letran email address.")
     elif isEmailExist:
         errors.append("Email already exist.")
     elif isinstance(isEmailExist, str):
         errors.append(isEmailExist)        
     if not re.match(passwordPattern, password):
         errors.append(
-            "Password must be at least 8 characters long, an uppercase, lowercase, a number."
+            "Password must be at least 8 characters long, an uppercase, lowercase, and a number."
         )  
     if role not in ['student', 'teacher', 'admin']:
         errors.append("Role must be student, teacher or admin.")
