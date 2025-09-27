@@ -65,7 +65,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     const user = await getInfo.json();
 
     if (user.status){
-        localStorage.setItem("id", user.data[0].id);
         localStorage.setItem("fullName", user.data[0].fullName);
         
         const studentName = document.getElementById('student_name')
