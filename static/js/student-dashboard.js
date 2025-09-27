@@ -1,9 +1,8 @@
 //Change variable names 
 
+const profileButton = document.getElementById("profile-button")
 const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
-const progressNavButton = document.getElementById("progress-record-button");
-const badgesNavButton = document.getElementById("badges-record-button")
 const logOutButton = document.getElementById('log-out-button');
 const contents = document.getElementById("content-container");
 const addContentButton = document.getElementById("add-content-button");
@@ -42,18 +41,7 @@ assessmentNavButton.addEventListener('click', () => {
     progressNavButton.classList.remove('toggle-user')
 })
 
-progressNavButton.addEventListener('click', () => {
-    // showRecords('/admins')
-    progressNavButton.disabled = true
-    progressNavButton.style.pointerEvents = 'none'
-    progressNavButton.classList.add('toggle-user')
-    activityNavButton.style.pointerEvents = 'auto'
-    activityNavButton.classList.remove('toggle-user')
-    assessmentNavButton.style.pointerEvents = 'auto'
-    assessmentNavButton.classList.remove('toggle-user')
-})
-
-// badgesNavButton.addEventListener('click', studentProfile)
+profileButton.addEventListener('click', studentProfile)
 window.addEventListener('resize', moveStudentInfo);
 
 document.addEventListener("DOMContentLoaded", async function() {
