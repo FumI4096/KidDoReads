@@ -163,7 +163,7 @@ main > aside > img{
 
 @media screen and (max-width: 1105px){
     body{
-        padding: 1.5rem;
+        padding: 1.7rem;
     }
     main{
         gap: 1.5rem;
@@ -189,6 +189,12 @@ main > aside > img{
 @media screen and (max-width: 936px){
     html, body{
         height: auto;
+    }
+    body{
+        background-image: url('../../images/red-circle.svg');
+        background-position: -3% 100%;
+        background-repeat: no-repeat;
+        background-color: var(--background-1);
     }
     main{
         overflow: visible;
@@ -292,7 +298,7 @@ main > aside > img{
 
 @media screen and (max-width: 768px){
     body{
-        padding: 0.5rem;
+        padding: 1rem;
     }
 
     main > aside > ul{
