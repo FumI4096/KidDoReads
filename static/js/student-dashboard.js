@@ -7,53 +7,54 @@ const badgesNavButton = document.getElementById("badges-record-button")
 const logOutButton = document.getElementById('log-out-button');
 const contents = document.getElementById("content-container");
 const addContentButton = document.getElementById("add-content-button");
+const mainAside = document.querySelector('main > aside');
+const mainSection = document.querySelector('main > section');
+const studentInfo = document.getElementById('student-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
+// let currentTab = "student";
+let isInMainSection = false;
+
 
 logOutButton.addEventListener('click', () => {
     sessionStorage.clear();
     window.location.href = '/logout'
 })
 
-activityNavButton.addEventListener('click', (e) => {
+activityNavButton.addEventListener('click', () => {
     // showRecords('/students')
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
+    activityNavButton.disabled = true
+    activityNavButton.style.pointerEvents = 'none'
+    activityNavButton.classList.add('toggle-user')
     assessmentNavButton.style.pointerEvents = 'auto'
     assessmentNavButton.classList.remove('toggle-user')
     progressNavButton.style.pointerEvents = 'auto'
     progressNavButton.classList.remove('toggle-user')
-    badgesNavButton.style.pointerEvents = 'auto'
-    badgesNavButton.classList.remove('toggle-user')
 })
 
-assessmentNavButton.addEventListener('click', (e) => {
+assessmentNavButton.addEventListener('click', () => {
     // showRecords('/teachers')
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
+    assessmentNavButton.disabled = true
+    assessmentNavButton.style.pointerEvents = 'none'
+    assessmentNavButton.classList.add('toggle-user')
     activityNavButton.style.pointerEvents = 'auto'
     activityNavButton.classList.remove('toggle-user')
     progressNavButton.style.pointerEvents = 'auto'
     progressNavButton.classList.remove('toggle-user')
-    badgesNavButton.style.pointerEvents = 'auto'
-    badgesNavButton.classList.remove('toggle-user')
 })
 
-progressNavButton.addEventListener('click', (e) => {
+progressNavButton.addEventListener('click', () => {
     // showRecords('/admins')
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
+    progressNavButton.disabled = true
+    progressNavButton.style.pointerEvents = 'none'
+    progressNavButton.classList.add('toggle-user')
     activityNavButton.style.pointerEvents = 'auto'
     activityNavButton.classList.remove('toggle-user')
     assessmentNavButton.style.pointerEvents = 'auto'
     assessmentNavButton.classList.remove('toggle-user')
-    badgesNavButton.style.pointerEvents = 'auto'
-    badgesNavButton.classList.remove('toggle-user')
 })
 
-badgesNavButton.addEventListener('click', studentProfile)
+// badgesNavButton.addEventListener('click', studentProfile)
+window.addEventListener('resize', moveStudentInfo);
 
 document.addEventListener("DOMContentLoaded", async function() {
     const id = localStorage.getItem("id")
