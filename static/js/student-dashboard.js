@@ -128,5 +128,17 @@ function studentProfile(){
 
 }
 
+function moveStudentInfo(){
+    if (window.innerWidth <= 936 && !isInMainSection) {
+        mainSection.insertBefore(studentInfo, mainSection.firstChild);
+        isInMainSection = true;
+    } else if (window.innerWidth > 936 && isInMainSection) {
+        mainAside.insertBefore(studentInfo, mainAside.firstChild);
+        isInMainSection = false;
+    }
+    
+}
+
+moveStudentInfo();
 
 
