@@ -14,33 +14,33 @@ logOutButton.addEventListener('click', () => {
 })
 
 
-activityNavButton.addEventListener('click', (e) => {
+activityNavButton.addEventListener('click', () => {
     // showRecords('/students')
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
+    activityNavButton.disabled = true
+    activityNavButton.style.pointerEvents = 'none'
+    activityNavButton.classList.add('toggle-user')
     assessmentNavButton.style.pointerEvents = 'auto'
     assessmentNavButton.classList.remove('toggle-user')
     progressNavButton.style.pointerEvents = 'auto'
     progressNavButton.classList.remove('toggle-user')
 })
 
-assessmentNavButton.addEventListener('click', (e) => {
+assessmentNavButton.addEventListener('click', () => {
     // showRecords('/teachers')
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
+    assessmentNavButton.disabled = true
+    assessmentNavButton.style.pointerEvents = 'none'
+    assessmentNavButton.classList.add('toggle-user')
     activityNavButton.style.pointerEvents = 'auto'
     activityNavButton.classList.remove('toggle-user')
     progressNavButton.style.pointerEvents = 'auto'
     progressNavButton.classList.remove('toggle-user')
 })
 
-progressNavButton.addEventListener('click', (e) => {
+progressNavButton.addEventListener('click', () => {
     // showRecords('/admins')
-    e.target.disabled = true
-    e.target.style.pointerEvents = 'none'
-    e.target.classList.add('toggle-user')
+    progressNavButton.disabled = true
+    progressNavButton.style.pointerEvents = 'none'
+    progressNavButton.classList.add('toggle-user')
     activityNavButton.style.pointerEvents = 'auto'
     activityNavButton.classList.remove('toggle-user')
     assessmentNavButton.style.pointerEvents = 'auto'
