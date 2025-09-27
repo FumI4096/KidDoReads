@@ -1,154 +1,5 @@
 @import "variables.css";
 
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    list-style: none;
-}
-
-html, body{
-    height: 100%;
-}
-
-body{
-    padding: 2.4rem;
-    background-image: url('../images/red-circle.svg'), url('../images/violet-circle.svg');
-    background-position: -3% 100%, 100% 0%;
-    background-repeat: no-repeat, no-repeat;
-    background-color: var(--background-1);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-header{
-    height: 40px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    & span{
-        font-family: 'Medium-Poppins';
-        font-weight: bold;
-        font-size: 1.5rem;
-        background-image: linear-gradient(to right, var(--primary-color-700), var(--accent-color));
-        color: transparent;
-        background-clip: text;
-    }
-
-    & > img{
-        height: 100%;
-    }
-    
-}
-
-main{
-    display: flex;
-    height: 100%;
-    width: 100%;
-    gap: 2rem;
-    min-height: 0;
-}
-
-main > aside{
-    background-image: var(--primary-accent-color-2);
-    height: 100%;
-    min-width: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 12px;
-    padding: 3rem 1rem;
-    gap: 2rem;
-
-    & > ul{
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        gap: 0.6rem;
-        width: 100%;
-    }
-
-    & > ul > li {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: auto;
-        padding: 0.6rem 1rem;
-        gap: 2rem;
-        font-family: 'Light-Poppins';
-        cursor: pointer;
-    }
-
-    & > ul > .navigator{
-        color: black;
-    }
-
-    & > ul > .navigator:hover{ 
-        background-color: rgba(255, 255, 255, 0.4);
-        border-radius: 100px;
-    }
-
-    & > ul > li:nth-child(3){
-        margin-bottom: auto;
-    }
-
-    & > ul > #log-out-button {
-        color: white;
-        position: relative; 
-    }
-    
-    & > ul > #log-out-button:hover::before{
-        content: "";
-        width: 100%;
-        background-color: white;
-        height: 2px;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-    }
-
-    & > ul > #log-out-button > ion-icon{
-        font-size: 1.5rem;
-        color: white;
-    }
-
-    & > ul > #log-out-button > span{
-        color: white;
-
-    }
-}
-
-#admin-info{
-    padding: 0 1rem;
-    width: 100%;
-    display: flex;
-    gap: 1.2rem;
-
-    & > img{
-        inline-size: 50px;
-        border-radius: 100%;
-    }
-
-    & > span{
-        font-family: 'Light-Poppins';
-        color: black;
-        font-size: 1rem;
-    }
-}
-
-.toggle-user{
-    background-color: var(--background-1);
-    border-radius: 100px;
-    box-shadow: var(--box-shadow-1);
-}
-
-main > aside > img{
-    color: white;
-    font-size: 2.4rem;
-
-}
-
 main > section{
     flex-basis: 100%;
     display: flex;
@@ -611,15 +462,6 @@ td > p{
 }
 
 @media screen and (max-width: 1105px){
-    body{
-        padding: 1.5rem;
-    }
-    main{
-        gap: 1.5rem;
-    }
-    main > aside {
-        min-width: 260px;
-    }
     #user-form{
         gap: 0.8rem;
         padding: 1.5rem;
@@ -633,62 +475,6 @@ td > p{
 }
 
 @media screen and (max-width: 936px){
-    html, body{
-        height: auto;
-    }
-    main{
-        overflow: visible;
-        flex-direction: column-reverse;
-    }
-    main > aside{
-        position: sticky;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        flex-direction: row;
-        height: 78px;
-        border-top-left-radius: 35px;
-        border-top-right-radius: 20px;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        background-image: none;
-        background-color: white;
-        padding: 0;
-
-        & > ul{
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: center;
-            height: 100%;
-
-            & > li{
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-                gap: 0.3rem;
-                font-size: 0.8rem;
-            }
-
-            & > .navigator:hover{
-                background-color: transparent !important;
-                border: none !important;
-                border-radius: 0 !important;
-                color: inherit !important;
-                box-shadow: none !important;
-            }
-
-            & > #log-out-button{
-                & > ion-icon{
-                    color: var(--accent-color)
-                }
-                & > span{
-                    color: black
-                }
-            }
-        }
-    }
-
     main > section{
         flex-basis: 100%;
         display: flex;
@@ -754,14 +540,35 @@ td > p{
 }
 
 @media screen and (max-width: 768px){
-    body{
-        padding: 1rem;
-    }
     #user-form{
         flex-direction: column;
     }
     #submit-actions{
         width: 100%;
+    }
+
+    #input-box > div > input, #input-box > div > select{
+        font-size: 0.8rem;
+    } 
+
+}
+
+@media screen and (max-width: 500px){
+
+    #input-box > div{
+        flex-direction: column;
+    }
+
+    #input-box > div:nth-child(1){
+        flex-direction: row;
+    }
+
+    #input-box > div:nth-child(3) > #password{
+        width: 100%;
+    }
+
+    #email-password-container > ion-icon{
+        transform: translateY(119%);
     }
 }
 
