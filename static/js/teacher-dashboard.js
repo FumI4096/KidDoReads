@@ -2,16 +2,20 @@ const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
 const progressNavButton = document.getElementById("progress-record-button");
 const logOutButton = document.getElementById('log-out-button');
-
 const contents = document.getElementById("content-container");
 const addContentButton = document.getElementById("add-content-button");
+const mainAside = document.querySelector('main > aside');
+const mainSection = document.querySelector('main > section');
+const teacherInfo = document.getElementById('teacher-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
-
+let isInMainSection = false;
 
 logOutButton.addEventListener('click', () => {
     sessionStorage.clear();
     window.location.href = '/logout'
 })
+
+window.addEventListener('resize', moveStudentInfo);
 
 
 activityNavButton.addEventListener('click', () => {
@@ -150,3 +154,16 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     }
 });
+
+function moveStudentInfo(){
+    if (window.innerWidth <= 936 && !isInMainSection) {
+        mainSection.insertBefore(teacherInfo, mainSection.firstChild);
+        isInMainSection = true;
+    } else if (window.innerWidth > 936 && isInMainSection) {
+        mainAside.insertBefore(teacherInfo, mainAside.firstChild);
+        isInMainSection = false;
+    }
+    
+}
+
+moveStudentInfo();
