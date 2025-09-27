@@ -216,7 +216,7 @@ main > aside > img{
         height: auto;
 
         & > ul{
-            height: 50px;
+            height: 80px;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
@@ -302,15 +302,10 @@ main > aside > img{
     }
 
     main > aside > ul{
-        justify-content: center;
 
         & > li{
             & > span{
                 font-size: 11px;
-            }
-
-            & > img{
-                inline-size: 20px;
             }
         }
 
