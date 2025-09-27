@@ -248,7 +248,7 @@ function addRow(user_id, user_fname, user_lname, user_email, user_image, role){
     })
 
     deleteBtn.addEventListener('click', () => {
-        deleteUser(user_id, role.toLowerCase());
+        deleteUser(user_id, user_fname, user_lname, role.toLowerCase());
     })
 
     // Append all cells to the row
@@ -371,7 +371,7 @@ function cancelModify(){
     mainForm.action = '/register'
 }
 
-function deleteUser(id, role){
+function deleteUser(id, firstName, lastName, role){
     const formContainer = document.createElement('form');
     const inputContainer = document.createElement('div');
     const submitButton = document.createElement('input');
@@ -400,7 +400,7 @@ function deleteUser(id, role){
     submitButton.value = 'Yes';
     cancelButton.type = 'button';
     cancelButton.value = "No";
-    statement.textContent = `Are you sure you want to delete user ${id}`;
+    statement.textContent = `Are you sure you want to permanently remove user "${firstName} ${lastName}"?`;
 
     cancelButton.addEventListener('click', () => {
         if (formContainer.parentNode) {
