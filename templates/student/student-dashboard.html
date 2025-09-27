@@ -29,6 +29,10 @@
                 <span id="student_name">Student</span>
             </section>
             <ul>
+                <li id="profile-button">
+                    <img src="{{url_for('static', filename='images/person.png') }}"/>
+                    <span>Profile</span>
+                </li>
                 <li class="toggle-user" id="activities-record-button">
                     <img src="{{url_for('static', filename='images/person.png') }}" />
                     <span>Activities</span>
@@ -37,10 +41,6 @@
                     <img src="{{url_for('static', filename='images/person.png') }}"/>
                     <span>Assessments</span>
                 </li>                
-                <li id="progress-record-button">
-                    <img src="{{url_for('static', filename='images/circle-progress-indicator.png') }}"/>
-                    <span>Student Progress</span>
-                </li>
                 <li id="log-out-button">
                     <ion-icon name="log-out"></ion-icon>
                     <span>Log Out</span>
