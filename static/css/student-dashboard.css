@@ -8,13 +8,6 @@ main > section{
 
 }
 
-#student-info:hover{
-    cursor: pointer;
-    & > span{
-        text-decoration: underline;
-    }
-}
-
 /* START OF FEATURES (the bottom designs) */
 
 #profile-background{
