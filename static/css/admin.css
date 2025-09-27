@@ -537,6 +537,26 @@ td > p{
         min-width: 650px; 
         width: 100%;
     }
+
+    #delete-form{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 2rem;
+    }
+
+    #delete-input-container{
+        width: 400px;
+        gap: 1rem;
+
+        & > p {
+            font-size: 1.1rem;
+        }
+
+        & > aside > *{
+            width: 50%;
+        }
+    }
 }
 
 @media screen and (max-width: 768px){
@@ -550,6 +570,16 @@ td > p{
     #input-box > div > input, #input-box > div > select{
         font-size: 0.8rem;
     } 
+
+    #delete-input-container{
+        & > aside{
+            gap: 1rem;
+        }
+
+        & > aside > input:nth-child(1), & > aside > input:nth-child(2){
+            width: 100%;
+        }
+    }
 
 }
 
@@ -569,6 +599,15 @@ td > p{
 
     #email-password-container > ion-icon{
         transform: translateY(119%);
+    }
+
+    #delete-form{
+        padding: 0 1rem;
+    }
+
+    #delete-input-container{
+        width: 100%;
+        padding: 1.8buiybyubirem;
     }
 }
 
