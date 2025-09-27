@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KidDoReads</title>
     <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png')  }}">
@@ -36,7 +37,7 @@
                 </li>
                 <li class="toggle-user navigator" id="student-record-button">
                     <img src="{{url_for('static', filename='images/person.png') }}" />
-                    <span>Student</span>
+                    <span>Students</span>
                 </li>
                 <li id="log-out-button">
                     <ion-icon name="log-out"></ion-icon>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KidDoReads</title>
     <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/student-dashboard.css') }}">
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png')  }}">
@@ -23,33 +24,29 @@
 
     <main>
         <aside>
-            <section>
+            <section id="student-info">
                 <img alt="image" id="student_picture">
                 <span id="student_name">Student</span>
             </section>
             <ul>
                 <li class="toggle-user" id="activities-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}"
+                    <img src="{{url_for('static', filename='images/person.png') }}" />
                     <span>Activities</span>
                 </li>
                 <li id="assessments-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}"
+                    <img src="{{url_for('static', filename='images/person.png') }}"/>
                     <span>Assessments</span>
                 </li>                
                 <li id="progress-record-button">
-                    <img src="{{url_for('static', filename='images/circle-progress-indicator.png') }}"
+                    <img src="{{url_for('static', filename='images/circle-progress-indicator.png') }}"/>
                     <span>Student Progress</span>
                 </li>
-                <li id="badges-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}"
-                    <span>Badges</span>
+                <li id="log-out-button">
+                    <ion-icon name="log-out"></ion-icon>
+                    <span>Log Out</span>
                 </li>
             </ul>
             
-            <p id="log-out-button">
-                <ion-icon name="log-out"></ion-icon>
-                <span>Log Out</span>
-            </p>
         </aside>
     
         <section>
