@@ -10,6 +10,8 @@ let removeMode = false
 let disableSaveButton = false
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 let currentQuestion = 0
+let originalChoiceElements = []
+let originalAnswerElements = []
 
 addChoiceButton.addEventListener("click", addChoice)
 removeChoiceButton.addEventListener("click", removeChoice)
@@ -96,6 +98,11 @@ function setFormToViewMode() {
     else{
         previousButton.disabled = false;
     } 
+
+    if(removeMode){
+        removeChoiceButton.textContent = "Remove Choice"
+        removeMode = false
+    }
 }
 
 function setFormToEditMode() {
@@ -183,12 +190,18 @@ function removeChoice() {
             element.classList.add("choice-toggle-hover")
         }
         else{
-            element.classList.remove("choice-box-hover");
+            element.classList.remove("choice-toggle-hover");
         }
     });
 
+    if (removeMode){
+        saveButton.disabled = true
+    }
+    else{
+        checkInputState()
+    }
+
     addChoiceButton.disabled = removeMode
-    checkInputState()
 }
 
 function relabelChoices() {
