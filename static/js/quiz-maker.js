@@ -59,6 +59,8 @@ if (firstQuestionExist(questionObject.length)) {
     saveButton.disabled = true
 }
 
+
+//check if some inputs are filled or missing
 function checkInputState() {
     const getQuestion = document.querySelector(".question").value.trim();
     const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
@@ -79,8 +81,8 @@ function setFormToViewMode() {
     nextButton.disabled = false; 
     addChoiceButton.disabled = true;
     removeChoiceButton.disabled = true;
-    document.querySelector(".question").readOnly = true;
     answerRadioButtonsDisable(true)
+    document.querySelector(".question").readOnly = true;
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
     });
@@ -274,20 +276,18 @@ async function saveCurrentQuestion(e){
     formData.append('content', JSON.stringify(sessionStorage.getItem("questions")))
     formData.append('id', 123)
 
-    const response = await fetch('/update_content', {
-        method: 'POST',
-        body: formData,
-    });
+    // const response = await fetch('/update_content', {
+    //     method: 'POST',
+    //     body: formData,
+    // });
 
-    const result = await response.json()        
-    if (result.status) {
-        console.log(result.message);
-    } 
-    else {
-        console.error("Error saving content:", result.message);
-    }
-    
-
+    // const result = await response.json()        
+    // if (result.status) {
+    //     console.log(result.message);
+    // } 
+    // else {
+    //     console.error("Error saving content:", result.message);
+    // }
 
     setFormToViewMode()
 
@@ -414,7 +414,6 @@ function loadQuestion(index) {
 
 function answerRadioButtonsDisable(state){
     const radioButtons = answerContainer.querySelectorAll('input')
-
     radioButtons.forEach(element => {
         element.disabled = state
     })
