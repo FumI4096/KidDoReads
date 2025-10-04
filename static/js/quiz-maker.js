@@ -120,6 +120,7 @@ function setFormToEditMode() {
 function addChoice(){
     choiceCount = choicesContainer.querySelectorAll(".choice-box").length
     choiceCharacter = ""
+    const answerOptions = document.querySelector(".answer-options")
 
     switch (choiceCount + 1){
         case 1:
@@ -142,7 +143,7 @@ function addChoice(){
         const choiceLetter = document.createElement("p")
         
         choiceLetter.classList.add("choice-letter")
-        choiceLetter.textContent = choiceCharacter
+        choiceLetter.textContent = choiceCharacter + "."
         
         choiceInput.type = "text"
         choiceInput.name = choiceCharacter
@@ -165,9 +166,10 @@ function addChoice(){
         answerLabel.textContent = choiceCharacter
         answerLabel.setAttribute('for', choiceCharacter.toLowerCase())
 
-        answerContainer.append(answerRadioButton, answerLabel)
+        answerOptions.append(answerRadioButton, answerLabel)
         
     }
+
     checkInputState()
 
 }
@@ -178,7 +180,7 @@ function removeChoice() {
     const choicesElements = choicesContainer.querySelectorAll(".choice-box")
     choicesElements.forEach(element => {
         if (removeMode){
-            element.classList.add("choice-box-hover")
+            element.classList.add("choice-toggle-hover")
         }
         else{
             element.classList.remove("choice-box-hover");
@@ -193,7 +195,7 @@ function relabelChoices() {
     const choiceElements = choicesContainer.querySelectorAll(".choice-box");
     choiceElements.forEach((element, index) => {
         const letter = String.fromCharCode(65 + index);
-        element.querySelector(".choice-letter").textContent = letter;
+        element.querySelector(".choice-letter").textContent = letter + ".";
     });
 }
 
@@ -343,12 +345,18 @@ function loadQuestion(index) {
         return;
     }
 
+    const answerHeader = document.createElement("h3")
+    answerHeader.textContent = "Choose an Answer:"
+    const answerOptions = document.createElement("div")
+    answerOptions.className = "answer-options"
+    
     const questionData = questionObject[index];
     document.querySelector(".question").value = questionData.question;
 
     const choicesContainer = document.querySelector(".choices-container");
     choicesContainer.innerHTML = '';
     answerContainer.innerHTML = '';
+    answerContainer.appendChild(answerHeader)
 
     const choiceLetters = ['A', 'B', 'C', 'D'];
     questionData.choices.forEach((choiceText, i) => {
@@ -357,7 +365,7 @@ function loadQuestion(index) {
 
         const choiceLetter = document.createElement('p');
         choiceLetter.className = 'choice-letter';
-        choiceLetter.textContent = choiceLetters[i];
+        choiceLetter.textContent = choiceLetters[i] + ".";
 
         const choiceInput = document.createElement('input');
         choiceInput.className = 'choice';
@@ -383,8 +391,10 @@ function loadQuestion(index) {
             answerRadioButton.checked = true;
         } 
 
-        answerContainer.append(answerRadioButton, answerLabel)
+        answerOptions.append(answerRadioButton, answerLabel)
     });
+
+    answerContainer.appendChild(answerOptions)
 
     currentQuestion = index; 
 }
