@@ -86,9 +86,12 @@ function testContent(){
 
     const contentTypes = [
         {value: '', text: 'Activity Type'},
-        {value: 'activity1', text: 'Activity 1'}, 
-        {value: 'activity2', text: 'Activity 2'}, 
-        {value: 'activity3', text: 'Activity 3'}
+        {value: '1', text: 'Pronunciation: Word Audio Match'}, 
+        {value: '2', text: 'Phonemic Awareness: Listen & Choose'}, 
+        {value: '3', text: 'Word Recognition: Sound-Alike Match'},
+        {value: '4', text: 'Word Recognition: Meaning Maker'},
+        {value: '5', text: 'Reading Comprehension: What Happens Next?'},
+        {value: '6', text: 'Reading Comprehension: Picture + Clues'}
     ];
     contentTypes.forEach(type => {
         const optionElement = document.createElement('option');
