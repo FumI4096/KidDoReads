@@ -103,7 +103,7 @@ main > section{
     font-size: 1.2rem;
 }
 
-#content-type {
+#content_type {
     background-image: url('../images/cusztomize-dropdown-select-1.svg');
     background-repeat: no-repeat;
     background-size: 20px;
@@ -123,6 +123,7 @@ main > section{
     font-size: 1.1rem;
     box-shadow: var(--box-shadow-1);
     color: white;
+    width: 340px;
 
     & > option{
         background-color: var(--black-text);
