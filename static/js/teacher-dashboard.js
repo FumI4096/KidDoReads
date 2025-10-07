@@ -1,3 +1,5 @@
+import Notification from './modules/Notification.js'
+
 const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
 const progressNavButton = document.getElementById("progress-record-button");
@@ -8,6 +10,7 @@ const mainAside = document.querySelector('main > aside');
 const mainSection = document.querySelector('main > section');
 const teacherInfo = document.getElementById('teacher-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
+const notification = new Notification();
 let isInMainSection = false;
 
 logOutButton.addEventListener('click', () => {
