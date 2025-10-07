@@ -57,10 +57,10 @@ def teacher_dashboard():
 def student_dashboard():
     return render_template('student/student-dashboard.html')
 
-@app.route('/content_making')
+@app.route('/word_audio_match')
 @login_required
-def content_making():
-    return render_template('quiz-making.html')
+def word_audio_match():
+    return render_template('games/word-audio-match.html')
 
 @app.route('/logout')
 def logout():
