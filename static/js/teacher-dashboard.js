@@ -81,8 +81,8 @@ function testContent(){
 
     const selectContent = document.createElement("select");
     selectContent.setAttribute('id', "content-type");
-    selectContent.id = "content-type";
-    selectContent.name = "content-type";
+    selectContent.id = "content_type";
+    selectContent.name = "content_type";
 
     const contentTypes = [
         {value: '', text: 'Activity Type'},
