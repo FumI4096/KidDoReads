@@ -466,6 +466,40 @@ def modifyValidation(id, original_id, fname, lname, email, original_email, passw
         
     return errors   
     
+@app.route('/create_content', methods=['POST'])
+def create_content():
+    try:
+        teacher_id = request.form.get('teacher_id')
+        content_title = request.form.get('content_title')
+        content_type = request.form.get('content_type')
+        
+        
+        db.create_content(int(teacher_id), content_title, content_type)
+        
+        return jsonify({"status": True, "message": "Content Created Successfully"})
+            
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+    
+@app.route('/get_contents/<string:teacher_id>', methods=['GET'])
+def get_contents(teacher_id):
+    try:
+        status, results = db.get_content_records(teacher_id)
+        rows = results
+        
+        contents = []
+        for row in rows:
+            contents.append({
+                "content_title": row[0],
+                "content_type": row[1]
+            })
+            
+        if status:
+            return jsonify({"status": True, "data": contents})
+        else:
+            return jsonify({"status": False, "message": results})
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)
