@@ -128,7 +128,6 @@ main > section{
         background-color: var(--black-text);
         font-family: 'Light-Poppins';
         font-size: 0.8rem;
-        cursor: pointer;
         
     }
 }
