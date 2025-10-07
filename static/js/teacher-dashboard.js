@@ -63,6 +63,7 @@ function testContent(){
 
     const contentTitle = document.createElement("input");
     contentTitle.setAttribute('id',"content-title");
+    contentTitle.name = 'content_title'
     contentTitle.type = "text";
     contentTitle.placeholder = "Enter Content Title";
 
