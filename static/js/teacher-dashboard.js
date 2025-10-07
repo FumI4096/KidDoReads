@@ -43,17 +43,6 @@ assessmentNavButton.addEventListener('click', () => {
     progressNavButton.classList.remove('toggle-user')
 })
 
-progressNavButton.addEventListener('click', () => {
-    // showRecords('/admins')
-    progressNavButton.disabled = true
-    progressNavButton.style.pointerEvents = 'none'
-    progressNavButton.classList.add('toggle-user')
-    activityNavButton.style.pointerEvents = 'auto'
-    activityNavButton.classList.remove('toggle-user')
-    assessmentNavButton.style.pointerEvents = 'auto'
-    assessmentNavButton.classList.remove('toggle-user')
-})
-
 addContentButton.addEventListener("click", testContent);
 
 function testContent(){
