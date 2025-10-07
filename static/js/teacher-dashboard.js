@@ -46,8 +46,11 @@ assessmentNavButton.addEventListener('click', () => {
 addContentButton.addEventListener("click", testContent);
 
 function testContent(){
-    const contentContainer = document.createElement("div");
+    const contentContainer = document.createElement("form");
     contentContainer.setAttribute('id', "content-input-container");
+
+    contentContainer.action = "/create_content"
+    contentContainer.method = "POST"
 
     const closeContentButton = document.createElement("ion-icon");
     closeContentButton.name = "close-outline";
@@ -67,8 +70,9 @@ function testContent(){
     contentTitle.type = "text";
     contentTitle.placeholder = "Enter Content Title";
 
-    const submitContentButton = document.createElement("button");
-    submitContentButton.innerHTML = "Confirm";
+    const submitContentButton = document.createElement("input");
+    submitContentButton.type = "submit";
+    submitContentButton.value = "Confirm";
     submitContentButton.setAttribute('id',"submit-content");
 
     createContent.appendChild(closeContentButton);
@@ -106,22 +110,49 @@ function testContent(){
     createContent.appendChild(submitContentButton);
     document.body.appendChild(contentContainer);
 
-    submitContentButton.addEventListener('click', addContent)
-
     closeContentButton.addEventListener("click", () => {
         document.body.removeChild(contentContainer);
     });
 
-    function addContent(){
-        const newContent = document.createElement("div");
-        const testElement = document.createElement("p");
-        testElement.innerHTML = "test";
-        newContent.classList.add("content");
-        newContent.appendChild(testElement);
-        contents.appendChild(newContent);
-        contents.appendChild(addContentButton); // Re-add button
-        document.body.removeChild(contentContainer);
-    }
+    contentContainer.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const allContentNames = document.querySelectorAll(".activity-name");
+        const activityExists = Array.from(allContentNames).some(
+            (name) => name.innerHTML === contentTitle.value.trim()
+        );
+        if (contentTitle .value === "" || selectContent.value === "") {
+            notification.notify("Please fill out all fields.", "error");
+            return;
+        }
+        
+        if (activityExists) {
+            notification.notify("This activity already exists. Please create a different activity.", "error");
+            return;
+        }
+
+        const formBody = e.target;
+        const actionUrl = formBody.action;
+        const formData = new FormData(formBody);
+
+        formData.append('teacher_id', localStorage.getItem("id"))
+
+        const response = await fetch(actionUrl, {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json()
+
+        if (result.status){
+            formBody.reset()
+            document.body.removeChild(contentContainer)
+            contents.innerHTML = '';
+            showContents()
+        }
+    });
+
+
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -162,4 +193,58 @@ function moveStudentInfo(){
     
 }
 
+async function showContents() {
+    const id = localStorage.getItem("id")
+
+    const url = `/get_contents/${id}`;
+    const response = await fetch(url);
+
+    const result = await response.json();
+
+    if (result.status){
+        result.data.forEach(data => {
+            addContent(data.content_title, data.content_type)
+        })
+    }
+    else{
+        console.log(result.message)
+    }
+}
+
+function addContent(content_title, content_type){
+    const newContent = document.createElement("div");
+    const activityName = document.createElement("p");
+    const activityType = document.createElement("p");
+    newContent.classList.add("content");
+    activityName.classList.add("activity-name");
+    activityType.classList.add("activity-type");
+    activityName.innerHTML = content_title;
+    activityType.innerHTML = content_type;
+    newContent.appendChild(activityName);
+    newContent.appendChild(activityType);
+
+    const editButton = document.createElement("button");
+    const previewButton = document.createElement("button");
+    const hideFromStudentButton = document.createElement("button");
+    
+    editButton.classList.add("edit-button");
+    editButton.innerHTML = "Edit";
+    previewButton.classList.add("preview-button");
+    previewButton.innerHTML = "Preview";
+    hideFromStudentButton.classList.add("hide-from-student-button");
+    hideFromStudentButton.innerHTML = "Hide from Students";
+    
+    const buttonActionContainer = document.createElement("div");
+    buttonActionContainer.classList.add("content-button-action-container");
+    buttonActionContainer.appendChild(editButton);
+    buttonActionContainer.appendChild(previewButton);
+    buttonActionContainer.appendChild(hideFromStudentButton);
+
+    newContent.appendChild(buttonActionContainer);
+
+    contents.appendChild(newContent);
+    contents.appendChild(addContentButton); // Re-add button
+}
+
+showContents()
 moveStudentInfo();
