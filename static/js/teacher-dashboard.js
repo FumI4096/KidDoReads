@@ -239,6 +239,24 @@ function addContent(content_title, content_type){
     buttonActionContainer.appendChild(editButton);
     buttonActionContainer.appendChild(previewButton);
     buttonActionContainer.appendChild(hideFromStudentButton);
+    previewButton.addEventListener('click', async () => {
+        const url = `/contents?teacher_id=${id}&content_name=${content_title}`
+        const getContent = await fetch(url)
+        const result = await getContent.json()
+
+        let gameUrl = previewGamePageTo(content_type)
+
+        if (result.status){
+            console.log("YEY")
+            sessionStorage.setItem("questions", JSON.stringify(result.data))
+
+            gamePageSwitch(gameUrl)
+        }
+        else{
+            sessionStorage.setItem("questions", "[]")
+            gamePageSwitch(gameUrl)
+        }
+    })
 
     newContent.appendChild(buttonActionContainer);
 
@@ -246,5 +264,23 @@ function addContent(content_title, content_type){
     contents.appendChild(addContentButton); // Re-add button
 }
 
-showContents()
+function previewGamePageTo(url){
+    switch(url){
+        case 'Pronunciation: Word Audio Match':
+            return '/word_audio_match_preview';
+            break;
+        case 'Phonemic Awareness: Listen & Choose':
+            // return '/word_audio_match';
+        case 'Word Recognition: Sound-Alike Match' :
+            // return '/word_audio_match';
+        case 'Word Recognition: Meaning Maker':
+            // return '/word_audio_match';
+        case 'Reading Comprehension: What Happens Next?':
+            // return '/word_audio_match';
+        case 'Reading Comprehension: Picture + Clues':
+            // return '/word_audio_match';
+    }
+}
+
+
 moveStudentInfo();
