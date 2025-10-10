@@ -360,8 +360,9 @@ def get_user(id):
 def update_content():
     content = request.form.get('content')
     teacherId = request.form.get('id')
+    content_name = request.form.get('content_name')
     
-    result = db.update_content(teacherId, content)
+    result = db.update_content(teacherId, content_name, content)
     
     if result is True:
         return jsonify({"status": True, "message": "Content Updated Successfully"})

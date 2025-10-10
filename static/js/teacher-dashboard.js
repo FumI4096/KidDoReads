@@ -147,10 +147,16 @@ function testContent(){
         const result = await response.json()
 
         if (result.status){
-            formBody.reset()
-            document.body.removeChild(contentContainer)
             contents.innerHTML = '';
-            showContents()
+            localStorage.setItem("currentActivityTitle", contentTitle.value.trim())
+            localStorage.setItem("originalActivityTitle", contentTitle.value.trim())
+            switch(selectContent.value){
+                case "1":
+                    gamePageSwitch('/word_audio_match_edit')
+                    break
+                default:
+                    console.log("Error")
+            }
         }
     });
 
@@ -243,6 +249,26 @@ function addContent(content_title, content_type){
     buttonActionContainer.appendChild(editButton);
     buttonActionContainer.appendChild(previewButton);
     buttonActionContainer.appendChild(hideFromStudentButton);
+
+    editButton.addEventListener('click', async () => {
+        const url = `/contents?teacher_id=${id}&content_name=${content_title}`
+        const getContent = await fetch(url)
+        const result = await getContent.json()
+
+        let gameUrl = editGamePageTo(content_type)
+
+        if (result.status){
+            console.log("YEY")
+            sessionStorage.setItem("questions", JSON.stringify(result.data))
+
+            gamePageSwitch(gameUrl)
+        }
+        else{
+            sessionStorage.setItem("questions", "[]")
+            gamePageSwitch(gameUrl)
+        }
+    })
+
     previewButton.addEventListener('click', async () => {
         const url = `/contents?teacher_id=${id}&content_name=${content_title}`
         const getContent = await fetch(url)
@@ -263,9 +289,29 @@ function addContent(content_title, content_type){
     })
 
     newContent.appendChild(buttonActionContainer);
-
     contents.appendChild(newContent);
     contents.appendChild(addContentButton); // Re-add button
+}
+
+function gamePageSwitch(pageUrl){
+    window.location.href = pageUrl
+}
+
+function editGamePageTo(url){
+    switch(url){
+        case 'Pronunciation: Word Audio Match':
+            return '/word_audio_match_edit';
+        case 'Phonemic Awareness: Listen & Choose':
+            // return '/word_audio_match';
+        case 'Word Recognition: Sound-Alike Match' :
+            // return '/word_audio_match';
+        case 'Word Recognition: Meaning Maker':
+            // return '/word_audio_match';
+        case 'Reading Comprehension: What Happens Next?':
+            // return '/word_audio_match';
+        case 'Reading Comprehension: Picture + Clues':
+            // return '/word_audio_match';
+    }
 }
 
 function previewGamePageTo(url){
