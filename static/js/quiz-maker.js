@@ -284,21 +284,22 @@ async function saveCurrentQuestion(e){
     sessionStorage.setItem("questions", JSON.stringify(questionObject))
 
     const formData = new FormData()
-    formData.append('content', sessionStorage.getItem("questions")))
-    formData.append('id', 123)
+    formData.append('content', sessionStorage.getItem("questions"))
+    formData.append('id', teacherId)
+    formData.append('content_name', currentTitle)
 
-    // const response = await fetch('/update_content', {
-    //     method: 'POST',
-    //     body: formData,
-    // });
+    const response = await fetch('/update_content', {
+        method: 'POST',
+        body: formData,
+    });
 
-    // const result = await response.json()        
-    // if (result.status) {
-    //     console.log(result.message);
-    // } 
-    // else {
-    //     console.error("Error saving content:", result.message);
-    // }
+    const result = await response.json()        
+    if (result.status) {
+        console.log(result.message);
+    } 
+    else {
+        console.error("Error saving content:", result.message);
+    }
 
     setFormToViewMode()
 
