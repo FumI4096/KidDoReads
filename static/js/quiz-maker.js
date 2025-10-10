@@ -1,3 +1,5 @@
+const displayActivityTitle = document.getElementById('display-activity-title')
+const toTeacherPageButton = document.getElementById('to-teacher-page-button')
 const addChoiceButton = document.getElementById("add-choice-button")
 const removeChoiceButton = document.getElementById("remove-choice-button")
 const choicesContainer = document.querySelector(".choices-container")
@@ -12,6 +14,15 @@ let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 let currentQuestion = 0
 let originalChoiceElements = []
 let originalAnswerElements = []
+
+const teacherId = localStorage.getItem("id")
+const currentTitle = localStorage.getItem("currentActivityTitle")
+
+displayActivityTitle.textContent = `Title: ${currentTitle}`
+toTeacherPageButton.addEventListener('click', () => {
+    sessionStorage.clear()
+    window.location.href = '/teacher_dashboard'
+});
 
 addChoiceButton.addEventListener("click", addChoice)
 removeChoiceButton.addEventListener("click", removeChoice)
@@ -351,8 +362,6 @@ function previousForm() {
 }
 
 function loadQuestion(index) {
-    questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
-
     if (index < 0 || index >= questionObject.length) {
         console.log("Invalid index");
         return;
