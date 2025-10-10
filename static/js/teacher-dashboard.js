@@ -13,6 +13,8 @@ const defaultProfilePicture = "../static/images/default_profile_picture.png";
 const notification = new Notification();
 let isInMainSection = false;
 
+const id = localStorage.getItem("id")
+
 logOutButton.addEventListener('click', () => {
     sessionStorage.clear();
     window.location.href = '/logout'
@@ -49,7 +51,7 @@ function testContent(){
     const contentContainer = document.createElement("form");
     contentContainer.setAttribute('id', "content-input-container");
 
-    contentContainer.action = "/create_content"
+    contentContainer.action = "/contents"
     contentContainer.method = "POST"
 
     const closeContentButton = document.createElement("ion-icon");
@@ -121,7 +123,7 @@ function testContent(){
         const activityExists = Array.from(allContentNames).some(
             (name) => name.innerHTML === contentTitle.value.trim()
         );
-        if (contentTitle .value === "" || selectContent.value === "") {
+        if (contentTitle.value === "" || selectContent.value === "") {
             notification.notify("Please fill out all fields.", "error");
             return;
         }
@@ -156,11 +158,42 @@ function testContent(){
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
+    showUserInfo()
+    showContents()
+});
+
+function moveStudentInfo(){
+    if (window.innerWidth <= 936 && !isInMainSection) {
+        mainSection.insertBefore(teacherInfo, mainSection.firstChild);
+        isInMainSection = true;
+    } else if (window.innerWidth > 936 && isInMainSection) {
+        mainAside.insertBefore(teacherInfo, mainAside.firstChild);
+        isInMainSection = false;
+    }
+    
+}
+
+async function showContents() {
     const id = localStorage.getItem("id")
 
+    const url = `/contents/${id}`;
+    const response = await fetch(url);
+
+    const result = await response.json();
+
+    if (result.status){
+        result.data.forEach(data => {
+            addContent(data.content_title, data.content_type)
+        })
+    }
+    else{
+        console.log(result.message)
+    }
+}
+
+async function showUserInfo(){
     const url = `/user/${id}`;
     const getInfo = await fetch(url);
-
     const user = await getInfo.json();
 
     if (user.status){
@@ -179,35 +212,6 @@ document.addEventListener("DOMContentLoaded", async function() {
             teacherPicture.src = localStorage.getItem("image")
         }
 
-    }
-});
-
-function moveStudentInfo(){
-    if (window.innerWidth <= 936 && !isInMainSection) {
-        mainSection.insertBefore(teacherInfo, mainSection.firstChild);
-        isInMainSection = true;
-    } else if (window.innerWidth > 936 && isInMainSection) {
-        mainAside.insertBefore(teacherInfo, mainAside.firstChild);
-        isInMainSection = false;
-    }
-    
-}
-
-async function showContents() {
-    const id = localStorage.getItem("id")
-
-    const url = `/get_contents/${id}`;
-    const response = await fetch(url);
-
-    const result = await response.json();
-
-    if (result.status){
-        result.data.forEach(data => {
-            addContent(data.content_title, data.content_type)
-        })
-    }
-    else{
-        console.log(result.message)
     }
 }
 
