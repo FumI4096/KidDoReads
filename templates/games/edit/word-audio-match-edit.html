@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Audio Matching</title>
-    <link rel="stylesheet" href=" {{url_for('static', filename='css/word-audio-matching.css')}} ">
+    <link rel="stylesheet" href=" {{url_for('static', filename='css/games/edit/word-audio-matching-edit.css')}} ">
 </head>
 <body>
+    <header>
+        <p id="display-activity-title"></p>
+        <button id="to-teacher-page-button">Save and Exit</button>
+    </header>
     <section class="question-container">
         <input type="text" class="question" name="" placeholder="Input your question here">
     </section>

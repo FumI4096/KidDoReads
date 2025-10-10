@@ -57,10 +57,17 @@ def teacher_dashboard():
 def student_dashboard():
     return render_template('student/student-dashboard.html')
 
-@app.route('/word_audio_match')
+@app.route('/word_audio_match_edit')
 @login_required
+@role_required('teacher')
 def word_audio_match():
-    return render_template('games/word-audio-match.html')
+    return render_template('games/edit/word-audio-match-edit.html')
+
+@app.route('/word_audio_match_preview')
+@login_required
+@role_required('teacher')
+def word_audio_match_preview():
+    return render_template('games/preview/word-audio-matching-preview.html')
 
 @app.route('/logout')
 def logout():

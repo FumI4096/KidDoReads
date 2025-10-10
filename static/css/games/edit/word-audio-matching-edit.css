@@ -1,4 +1,4 @@
-@import "variables.css";
+@import "../../variables.css";
 
 *{
     box-sizing: border-box;
@@ -16,6 +16,11 @@ body{
     display: flex;
     flex-direction: column;
     padding: 3rem 14rem;
+}
+
+header{
+    display: flex;
+    justify-content: space-between;
 }
 
 .question-container{
