@@ -284,7 +284,7 @@ async function saveCurrentQuestion(e){
     sessionStorage.setItem("questions", JSON.stringify(questionObject))
 
     const formData = new FormData()
-    formData.append('content', JSON.stringify(sessionStorage.getItem("questions")))
+    formData.append('content', sessionStorage.getItem("questions")))
     formData.append('id', 123)
 
     // const response = await fetch('/update_content', {
