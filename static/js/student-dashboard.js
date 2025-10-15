@@ -1,4 +1,5 @@
 //Change variable names 
+import Notification from './modules/Notification.js'
 
 const profileButton = document.getElementById("profile-button")
 const activityNavButton = document.getElementById("activities-record-button");
