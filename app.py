@@ -535,7 +535,6 @@ def loginValidation(id, password) -> list:
     
     return errors
     
-
 def regValidation(id, fname, lname, email, password, role) -> list:
     errors = []
     
