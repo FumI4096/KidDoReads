@@ -397,7 +397,8 @@ def get_contents(teacher_id):
         for row in rows:
             contents.append({
                 "content_title": row[0],
-                "content_type": row[1]
+                "content_type": row[1],
+                "isHidden": row[2]
             })
             
         if status:
