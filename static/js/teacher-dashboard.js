@@ -241,14 +241,75 @@ function addContent(content_title, content_type){
     editButton.innerHTML = "Edit";
     previewButton.classList.add("preview-button");
     previewButton.innerHTML = "Preview";
-    hideFromStudentButton.classList.add("hide-from-student-button");
-    hideFromStudentButton.innerHTML = "Hide from Students";
+    deleteButton.classList.add("delete-button");
+    deleteButton.innerHTML = "Delete Activity";
+
+    hideFromStudentContainer.append(hideFromStudentCheckbox, hideFromStudentLabel)
     
     const buttonActionContainer = document.createElement("div");
     buttonActionContainer.classList.add("content-button-action-container");
     buttonActionContainer.appendChild(editButton);
     buttonActionContainer.appendChild(previewButton);
-    buttonActionContainer.appendChild(hideFromStudentButton);
+    buttonActionContainer.appendChild(deleteButton);
+    buttonActionContainer.appendChild(hideFromStudentContainer);
+
+    hideFromStudentCheckbox.addEventListener('change', async () => {
+        const isHidden = hideFromStudentCheckbox.checked ? 1 : 0
+        const url = `content/${id}/${content_title}/${isHidden}`
+
+        try{
+            const response = await fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json' 
+    
+                },
+            });
+    
+            const result = await response.json()
+    
+            if (response.ok && result.status){
+                notification.notify(result.message, "success")
+            }
+            else{
+                notification.notify(result.message, "error")
+            }
+        }
+        catch(error){
+            console.error("Network Error during deletion:", error);
+            notification.notify("Network error. Please check your connection and try again.", "error");
+        }
+    })
+
+    deleteButton.addEventListener('click', async () => {
+        const url = `content/${id}/${content_title}`
+
+        try{
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json' 
+    
+                },
+            });
+    
+            const result = await response.json()
+    
+            if (response.ok && result.status){
+                notification.notify(result.message, "success")
+                newContent.remove();
+            }
+            else{
+                const message = result.message || "Failed to delete content. Please try again.";
+                notification.notify(message, "error");
+                console.error("Server Error:", result);
+            }
+        }
+        catch(error){
+            console.error("Fetch Error:", error);
+            notification.notify("An unexpected error occurred. Please check your connection and try again.", "error");
+        }
+    })
 
     editButton.addEventListener('click', async () => {
         const url = `/contents?teacher_id=${id}&content_name=${content_title}`
