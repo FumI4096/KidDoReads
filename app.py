@@ -371,13 +371,9 @@ def create_content():
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@app.route('/contents', methods=['GET'])
-def get_content():
+@app.route('/contents/<string:teacher_id>/<string:content_name>', methods=['GET'])
+def get_content(teacher_id, content_name):
     try:
-        
-        teacher_id = request.args.get('teacher_id')
-        content_name = request.args.get('content_name')
-        
         status, results = db.get_content(teacher_id, content_name)
             
         if status and results:
