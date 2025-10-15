@@ -108,45 +108,51 @@ mainForm.addEventListener("submit", async (e) => {
     const actionUrl = formBody.action;
     const formData = new FormData(formBody);
 
-    const response = await fetch(actionUrl, {
-        method: "POST",
-        body: formData
-    });
-
-    const result = await response.json()
-
-    if (result.status){
-        notifyObj.notify(result.message, "success");
-        formBody.reset();
-        formBody.action = '/register';
-        const passwordInput = document.getElementById('password');
-        passwordInput.setAttribute('placeholder', "Enter Password");
-
-        const submitButton = document.getElementById('submit-user-button');
-        const cancelButton = document.getElementById('cancel-user-button');
-        cancelButton.hidden = true;
-        submitButton.value = "Submit";
-        imageDisplay.src = "static/images/default_profile_picture.png";
-        
-        if (currentTab == "student"){
-            showRecords('/students');
+    try{
+        const response = await fetch(actionUrl, {
+            method: "POST",
+            body: formData
+        });
+    
+        const result = await response.json()
+    
+        if (response.ok && result.status){
+            notifyObj.notify(result.message, "success");
+            formBody.reset();
+            formBody.action = '/register';
+            const passwordInput = document.getElementById('password');
+            passwordInput.setAttribute('placeholder', "Enter Password");
+    
+            const submitButton = document.getElementById('submit-user-button');
+            const cancelButton = document.getElementById('cancel-user-button');
+            cancelButton.hidden = true;
+            submitButton.value = "Submit";
+            imageDisplay.src = "static/images/default_profile_picture.png";
+            
+            if (currentTab === "student"){
+                showRecords('/students');
+            }
+            else if (currentTab === "teacher"){
+                showRecords('/teachers');
+            }
+            else if (currentTab === "admin"){
+                showRecords('/admins');
+            }
+    
         }
-        else if (currentTab == "teacher"){
-            showRecords('/teachers');
+        else{
+            if (result.errors){
+                result.errors.forEach(error => {
+                    notifyObj.notify(error, "error");
+                })
+                return
+            }
+            notifyObj.notify(result.message, "error");
         }
-        else if (currentTab == "admin"){
-            showRecords('/admins');
-        }
-
     }
-    else{
-        if (result.errors){
-            result.errors.forEach(error => {
-                notifyObj.notify(error, "error");
-            })
-            return
-        }
-        notifyObj.notify(result.message, "error");
+    catch (error){
+        console.error("Network Error during form submission:", error);
+        notifyObj.notify("Network error. Please check your internet connection.", "error");
     }
 })
 
@@ -154,34 +160,48 @@ document.getElementById("filter").addEventListener("change", async (e) => {
     const filterValue = e.target.value;
     const role = currentTab;
     const url = `/filter_record/${role}/${filterValue}`;
-    const response = await fetch(url);
-    const result = await response.json();
 
-    if (result.status){
-        tableBody.innerHTML = "";
-        result.data.forEach(data => {
-            addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
-        })
+    try{
+        const response = await fetch(url);
+        const result = await response.json();
+    
+        if (result.status){
+            tableBody.innerHTML = "";
+            result.data.forEach(data => {
+                addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
+            })
+        }
+        else{
+            notifyObj.notify(result.message, "error");
+        }
+
     }
-    else{
-        notifyObj.notify(result.message, "error");
+    catch (error){
+        console.error("Network Error while filtering records:", error);
+        notifyObj.notify("Network error. Please try again later.", "error");
     }
 })
 
 async function showRecords(apiRoute){
-    const response = await fetch(apiRoute)
-    const result = await response.json();
-
-    tableBody.innerHTML = ""
-
-    if (result.status){
-        result.data.forEach(data => {
-            addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
-        })
-
+    try{
+        const response = await fetch(apiRoute)
+        const result = await response.json();
+    
+        tableBody.innerHTML = ""
+    
+        if (result.status){
+            result.data.forEach(data => {
+                addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
+            })
+    
+        }
+        else{
+            notifyObj.notify(result.message, "error");
+        }
     }
-    else{
-        notifyObj.notify(result.message, "error");
+    catch (error){
+        console.error("Network Error while loading records:", error);
+        notifyObj.notify("Unable to load data. Please check your network.", "error");
     }
 
 }
@@ -420,28 +440,36 @@ function deleteUser(id, firstName, lastName, role){
         const formBody = e.target;
         const formData = new FormData(formBody);
 
-        const response = await fetch('/delete_user', {
-            method: "POST",
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.status){
-            formBody.remove();
-            notifyObj.notify(result.message, "success");
-            if (currentTab == "student"){
-                showRecords('/students');
+        try{
+            const response = await fetch('/delete_user', {
+                method: "POST",
+                body: formData
+            });
+    
+            const result = await response.json();
+    
+            if (response.ok && result.status){
+                formBody.remove();
+                notifyObj.notify(result.message, "success");
+                if (currentTab === "student"){
+                    showRecords('/students');
+                }
+                else if (currentTab === "teacher"){
+                    showRecords('/teachers');
+                }
+                else if (currentTab === "admin"){
+                    showRecords('/admins');
+                }
             }
-            else if (currentTab == "teacher"){
-                showRecords('/teachers');
-            }
-            else if (currentTab == "admin"){
-                showRecords('/admins');
+            else{
+                const message = result.message || "Failed to delete user. Please try again.";
+                notifyObj.notify(message, "error");
+                console.error("Server Error:", response);
             }
         }
-        else{
-            notifyObj.notify(result.message, "error");
+        catch (error){
+            console.error("Network Error during user deletion:", error);
+            notifyObj.notify("Network error. Please check your connection and try again.", "error");
         }
     })
 }
@@ -473,27 +501,34 @@ document.addEventListener("DOMContentLoaded", async function() {
     const id = localStorage.getItem("id")
 
     const url = `/user/${id}`;
-    const getInfo = await fetch(url);
 
-    const user = await getInfo.json();
-
-    if (user.status){
-        localStorage.setItem("fullName", user.data[0].fullName);
-
-        const adminName = document.getElementById('admin_name')
-        const adminPicture = document.getElementById('admin_picture')
-
-        adminName.textContent = localStorage.getItem("fullName")
-        if (user.data[0].image){
-            localStorage.setItem("image", user.data[0].image)
-            adminPicture.src = localStorage.getItem("image")
-        }
-        else{
-            localStorage.setItem("image", defaultProfilePicture)
-            adminPicture.src = localStorage.getItem("image")
+    try{
+        const response = await fetch(url);
+        const user = await response.json();
+        if (user.status){
+            localStorage.setItem("fullName", user.data[0].fullName);
+    
+            const adminName = document.getElementById('admin_name')
+            const adminPicture = document.getElementById('admin_picture')
+    
+            adminName.textContent = localStorage.getItem("fullName")
+            if (user.data[0].image){
+                localStorage.setItem("image", user.data[0].image)
+                adminPicture.src = localStorage.getItem("image")
+            }
+            else{
+                localStorage.setItem("image", defaultProfilePicture)
+                adminPicture.src = localStorage.getItem("image")
+            }
+    
         }
 
     }
+    catch (error){
+        console.error("Network Error during user deletion:", error);
+        notifyObj.notify("Network error. Please check your connection and try again.", "error");
+    }
+
 });
 
 moveAdminInfo();

@@ -146,17 +146,28 @@ function testContent(){
 
         const result = await response.json()
 
-        if (result.status){
-            contents.innerHTML = '';
-            localStorage.setItem("currentActivityTitle", contentTitle.value.trim())
-            localStorage.setItem("originalActivityTitle", contentTitle.value.trim())
-            switch(selectContent.value){
-                case "1":
-                    gamePageSwitch('/word_audio_match_edit')
-                    break
-                default:
-                    console.log("Error")
+        try{
+            if (response.ok && result.status){
+                contents.innerHTML = '';
+                localStorage.setItem("currentActivityTitle", contentTitle.value.trim())
+                localStorage.setItem("originalActivityTitle", contentTitle.value.trim())
+                switch(selectContent.value){
+                    case "1":
+                        gamePageSwitch('/word_audio_match_edit')
+                        break
+                    default:
+                        console.log("Error")
+                }
             }
+            else{
+                console.log(result.message)
+                notification.notify("Activity can't be created at the moment. Please try again.", "error")
+            }
+
+        }
+        catch (error){
+            console.error("Network Error:", error);
+            notification.notify("Network error. Please check your connection and try again.", "error");
         }
     });
 
@@ -184,40 +195,57 @@ async function showContents() {
 
     const url = `/contents/${id}`;
     const response = await fetch(url);
-
     const result = await response.json();
 
-    if (result.status){
-        result.data.forEach(data => {
-            addContent(data.content_title, data.content_type)
-        })
+    try{
+        if (response.ok && result.status){
+            result.data.forEach(data => {
+                addContent(data.content_title, data.content_type, data.isHidden)
+            })
+        }
+        else{
+            console.log(result.message)
+            notification.notify("Activities can't be retrieved at the moment. Please try again.", "error");
+        }
+
     }
-    else{
-        console.log(result.message)
+    catch(error){
+        console.error("Network Error:", error);
+        notification.notify("Network error. Please check your connection and try again.", "error");
     }
 }
 
 async function showUserInfo(){
     const url = `/user/${id}`;
-    const getInfo = await fetch(url);
-    const user = await getInfo.json();
+    const response = await fetch(url);
+    const result = await response.json();
 
-    if (user.status){
-        localStorage.setItem("fullName", user.data[0].fullName);
+    try{
+        if (response.ok && result.status){
+            localStorage.setItem("fullName", user.data[0].fullName);
 
-        const teacherName = document.getElementById('teacher_name')
-        const teacherPicture = document.getElementById('teacher_picture')
+            const teacherName = document.getElementById('teacher_name')
+            const teacherPicture = document.getElementById('teacher_picture')
 
-        teacherName.textContent = localStorage.getItem("fullName")
-        if (user.data[0].image){
-            localStorage.setItem("image", user.data[0].image)
-            teacherPicture.src = localStorage.getItem("image")
+            teacherName.textContent = localStorage.getItem("fullName")
+            if (user.data[0].image){
+                localStorage.setItem("image", user.data[0].image)
+                teacherPicture.src = localStorage.getItem("image")
+            }
+            else{
+                localStorage.setItem("image", defaultProfilePicture)
+                teacherPicture.src = localStorage.getItem("image")
+            }
+
         }
         else{
-            localStorage.setItem("image", defaultProfilePicture)
-            teacherPicture.src = localStorage.getItem("image")
+            console.log(result.message)
+            notification.notify("User details can't be retrieved at the moment. Please try again.", "error")
         }
-
+    }
+    catch (error){
+        console.error("Network Error:", error);
+        notification.notify("Network error. Please check your connection and try again.", "error");
     }
 }
 
@@ -312,40 +340,61 @@ function addContent(content_title, content_type){
     })
 
     editButton.addEventListener('click', async () => {
-        const url = `/contents?teacher_id=${id}&content_name=${content_title}`
-        const getContent = await fetch(url)
-        const result = await getContent.json()
-
-        let gameUrl = editGamePageTo(content_type)
-
-        if (result.status){
-            console.log("YEY")
-            sessionStorage.setItem("questions", JSON.stringify(result.data))
-
-            gamePageSwitch(gameUrl)
+        const url = `/contents/${id}/${content_title}`
+        
+        try{
+            const response = await fetch(url)
+            const result = await response.json()
+            let gameUrl = editGamePageTo(content_type)
+            
+            if (response.ok && result.status){
+                if (Array.isArray(result.data) && result.data.length > 0) {
+                    sessionStorage.setItem("questions", JSON.stringify(result.data))
+                } 
+                else {
+                    sessionStorage.setItem("questions", "[]")
+                }
+                gamePageSwitch(gameUrl)
+            }
+            else{
+                const message = "Unable to retrieve content. Please try again later." || result.message
+                notification.notify(message, "error");
+                console.error("Server Error:", response);
+            }
         }
-        else{
-            sessionStorage.setItem("questions", "[]")
-            gamePageSwitch(gameUrl)
+        catch (error){
+            console.error("Network Error while fetching content:", error);
+            notification.notify("Network error. Please check your connection and try again.", "error");
         }
     })
 
     previewButton.addEventListener('click', async () => {
-        const url = `/contents?teacher_id=${id}&content_name=${content_title}`
-        const getContent = await fetch(url)
-        const result = await getContent.json()
-
-        let gameUrl = previewGamePageTo(content_type)
-
-        if (result.status){
-            console.log("YEY")
-            sessionStorage.setItem("questions", JSON.stringify(result.data))
-
-            gamePageSwitch(gameUrl)
+        const url = `/contents/${id}/${content_title}`
+    
+        try{
+            const response = await fetch(url)
+            const result = await response.json()
+            let gameUrl = previewGamePageTo(content_type)
+            
+            if (response.ok && result.status){
+                if (Array.isArray(result.data) && result.data.length > 0) {
+                    sessionStorage.setItem("questions", JSON.stringify(result.data))
+                } 
+                else {
+                    sessionStorage.setItem("questions", "[]")
+                }
+                gamePageSwitch(gameUrl)
+            }
+            else{
+                const message = "Unable to retrieve content. Please try again later." || result.message
+                notification.notify(message, "error");
+                console.error("Server Error:", response);
+                return;
+            }
         }
-        else{
-            sessionStorage.setItem("questions", "[]")
-            gamePageSwitch(gameUrl)
+        catch (error){
+            console.error("Network Error while fetching content:", error);
+            notification.notify("Network error. Please check your connection and try again.", "error");
         }
     })
 

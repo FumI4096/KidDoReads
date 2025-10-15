@@ -13,6 +13,8 @@ const defaultProfilePicture = "../static/images/default_profile_picture.png";
 // let currentTab = "student";
 let isInMainSection = false;
 
+const id = localStorage.getItem("id")
+const notification = new Notification();
 
 logOutButton.addEventListener('click', () => {
     sessionStorage.clear();
@@ -45,31 +47,9 @@ profileButton.addEventListener('click', studentProfile)
 window.addEventListener('resize', moveStudentInfo);
 
 document.addEventListener("DOMContentLoaded", async function() {
-    const id = localStorage.getItem("id")
+    showContent(1)
+    showUserInfo()
 
-    const url = `/user/${id}`;
-    const getInfo = await fetch(url);
-
-    const user = await getInfo.json();
-
-    if (user.status){
-        localStorage.setItem("fullName", user.data[0].fullName);
-        
-        const studentName = document.getElementById('student_name')
-        const studentPicture = document.getElementById('student_picture')
-        
-        studentName.textContent = localStorage.getItem("fullName")
-        
-        if (user.data[0].image){
-            localStorage.setItem("image", user.data[0].image)
-            studentPicture.src = localStorage.getItem("image")
-        }
-        else{
-            localStorage.setItem("image", defaultProfilePicture)
-            studentPicture.src = localStorage.getItem("image")
-        }
-
-    }
 });
 
 function studentProfile(){
@@ -147,6 +127,41 @@ async function showContent(contentTypeNum){
     }
     
 }
+
+async function showUserInfo(){
+    const url = `/user/${id}`;
+    const response = await fetch(url);
+    const result = await getInfo.json();
+
+    try{
+        if (response.ok && result.status){
+            localStorage.setItem("fullName", user.data[0].fullName);
+            
+            const studentName = document.getElementById('student_name')
+            const studentPicture = document.getElementById('student_picture')
+            
+            studentName.textContent = localStorage.getItem("fullName")
+            
+            if (user.data[0].image){
+                localStorage.setItem("image", user.data[0].image)
+                studentPicture.src = localStorage.getItem("image")
+            }
+            else{
+                localStorage.setItem("image", defaultProfilePicture)
+                studentPicture.src = localStorage.getItem("image")
+            }
+
+        }
+        else{
+            console.log(result.message)
+            notification.notify("User details can't be retrieved at the moment. Please try again.", "error")
+        }
+    }
+    catch (error){
+        console.error("Network Error:", error);
+        notification.notify("Network error. Please check your connection and try again.", "error");
+    }
+
 }
 
 moveStudentInfo();
