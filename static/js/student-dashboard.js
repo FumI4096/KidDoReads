@@ -123,7 +123,30 @@ function moveStudentInfo(){
         mainAside.insertBefore(studentInfo, mainAside.firstChild);
         isInMainSection = false;
     }
+async function showContent(contentTypeNum){
+    const url = `/students/contents/${contentTypeNum}`
+
+    try{
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (response.ok && result.status){
+            result.data.forEach(element => {
+                console.log(element)
+            });
+        }
+        else{
+            console.log(result.message)
+            notification.notify("Contents can't be retrieved at the moment. Please try again.", "error")
+
+        }
+    }
+    catch (error){
+        console.error("Network Error:", error);
+        notification.notify("Network error. Please check your connection and try again.", "error");
+    }
     
+}
 }
 
 moveStudentInfo();

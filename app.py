@@ -407,19 +407,25 @@ def get_contents(teacher_id):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-def get_all_content_titles(teacher_id):
+@app.route('/students/contents/<string:type>')
+def get_contents_for_students(type):
     try:
-        status, results = db.get_all_content_titles(teacher_id)
+        status, results = db.get_content_by_type(int(type))
         rows = results
         
-        content_title = []
+        contents = []
         for row in rows:
-            content_title.append({
-                "content_title": row[0]
+            quiz_contents_str = row[2]
+            quiz_contents_json = json.loads(quiz_contents_str)
+            contents.append({
+                "content_id": row[0],
+                "teacher_name": row[1],
+                "content_json": quiz_contents_json,
+                "isHidden": row[3]
             })
             
         if status:
-            return jsonify({"status": True, "data": content_title})
+            return jsonify({"status": True, "data": contents})
         else:
             return jsonify({"status": False, "message": results})
     except Exception as e:
