@@ -121,10 +121,11 @@ function testContent(){
         e.preventDefault();
 
         const allContentNames = document.querySelectorAll(".activity-name");
+        const titleInput = contentTitle.value.trim().toLowerCase();
         const activityExists = Array.from(allContentNames).some(
-            (name) => name.innerHTML === contentTitle.value.trim()
+            (name) => name.innerHTML.trim().toLowerCase() === titleInput
         );
-        if (contentTitle.value === "" || selectContent.value === "") {
+        if (titleInput === "" || selectContent.value === "") {
             notification.notify("Please fill out all fields.", "error");
             return;
         }
