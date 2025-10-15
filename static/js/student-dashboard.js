@@ -105,6 +105,9 @@ function moveStudentInfo(){
         mainAside.insertBefore(studentInfo, mainAside.firstChild);
         isInMainSection = false;
     }
+    
+}
+
 async function showContent(contentTypeNum){
     const url = `/students/contents/${contentTypeNum}`
 
