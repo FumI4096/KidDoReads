@@ -432,6 +432,24 @@ def get_contents_for_students(type):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
+# def get_all_content_titles(teacher_id):
+#     try:
+#         status, results = db.get_all_content_titles(teacher_id)
+#         rows = results
+        
+#         content_title = []
+#         for row in rows:
+#             content_title.append({
+#                 "content_title": row[0]
+#             })
+            
+#         if status:
+#             return jsonify({"status": True, "data": content_title})
+#         else:
+#             return jsonify({"status": False, "message": results})
+#     except Exception as e:
+#         return jsonify({"status": False, "message": str(e)})
+    
 @app.route('/contents', methods=['PATCH'])
 def update_content_title():
     try:
