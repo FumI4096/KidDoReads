@@ -251,7 +251,7 @@ async function showUserInfo(){
     }
 }
 
-function addContent(content_title, content_type){
+function addContent(content_title, content_type, content_hidden){
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
@@ -265,12 +265,22 @@ function addContent(content_title, content_type){
 
     const editButton = document.createElement("button");
     const previewButton = document.createElement("button");
-    const hideFromStudentButton = document.createElement("button");
+    const deleteButton = document.createElement("button")
+
+    const hideFromStudentContainer = document.createElement("div")
+    hideFromStudentContainer.classList.add("hide-from-student-container")
+    const hideFromStudentCheckbox = document.createElement("input")
+    hideFromStudentCheckbox.type = "checkbox"
+    hideFromStudentCheckbox.classList.add("hide-from-student-checkbox")  
+    hideFromStudentCheckbox.checked = content_hidden;
+
+    const hideFromStudentLabel = document.createElement("label")
+    hideFromStudentLabel.textContent = "Hidden from Students"
     
     editButton.classList.add("edit-button");
-    editButton.innerHTML = "Edit";
+    editButton.innerHTML = "Edit Activity";
     previewButton.classList.add("preview-button");
-    previewButton.innerHTML = "Preview";
+    previewButton.innerHTML = "Preview Activity";
     deleteButton.classList.add("delete-button");
     deleteButton.innerHTML = "Delete Activity";
 
