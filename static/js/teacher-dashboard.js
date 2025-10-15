@@ -46,9 +46,9 @@ assessmentNavButton.addEventListener('click', () => {
     progressNavButton.classList.remove('toggle-user')
 })
 
-addContentButton.addEventListener("click", testContent);
+addContentButton.addEventListener("click", createContent);
 
-function testContent(){
+function createContent(){
     const contentContainer = document.createElement("form");
     contentContainer.setAttribute('id', "content-input-container");
 
