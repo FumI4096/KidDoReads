@@ -40,7 +40,7 @@ main > section{
     }
     & > .activity-name{
         font-family: 'Bold-Poppins';
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         color: rgb(0, 0, 0);
     }
 
@@ -48,12 +48,12 @@ main > section{
         width: 100%;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        row-gap: 0.5rem;
-        column-gap: 0.5rem;
+        row-gap: 0.3rem;
+        column-gap: 0.3rem;
 
         & > button{
             border: none;
-            height: 37px;
+            height: 30px;
             border-radius: 100px;
             background: white;
             font-family: 'Regular-Poppins';
