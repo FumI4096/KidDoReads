@@ -16,6 +16,7 @@ let isInMainSection = false;
 const id = localStorage.getItem("id")
 
 logOutButton.addEventListener('click', () => {
+    localStorage.clear();
     sessionStorage.clear();
     window.location.href = '/logout'
 })

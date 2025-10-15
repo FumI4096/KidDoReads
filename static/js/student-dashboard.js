@@ -18,6 +18,7 @@ const id = localStorage.getItem("id")
 const notification = new Notification();
 
 logOutButton.addEventListener('click', () => {
+    localStorage.clear();
     sessionStorage.clear();
     window.location.href = '/logout'
 })
