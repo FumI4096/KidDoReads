@@ -13,7 +13,7 @@ const defaultProfilePicture = "../static/images/default_profile_picture.png";
 const notification = new Notification();
 let isInMainSection = false;
 
-const id = localStorage.getItem("id")
+const id = sessionStorage.getItem("id")
 
 logOutButton.addEventListener('click', () => {
     localStorage.clear();
@@ -139,7 +139,7 @@ function createContent(){
         const actionUrl = formBody.action;
         const formData = new FormData(formBody);
 
-        formData.append('teacher_id', localStorage.getItem("id"))
+        formData.append('teacher_id', id)
 
         const response = await fetch(actionUrl, {
             method: "POST",
@@ -193,8 +193,6 @@ function moveStudentInfo(){
 }
 
 async function showContents() {
-    const id = localStorage.getItem("id")
-
     const url = `/contents/${id}`;
     const response = await fetch(url);
     const result = await response.json();
@@ -224,19 +222,19 @@ async function showUserInfo(){
 
     try{
         if (response.ok && result.status){
-            localStorage.setItem("fullName", user.data[0].fullName);
+            sessionStorage.setItem("fullName", result.data[0].fullName);
 
             const teacherName = document.getElementById('teacher_name')
             const teacherPicture = document.getElementById('teacher_picture')
 
-            teacherName.textContent = localStorage.getItem("fullName")
-            if (user.data[0].image){
-                localStorage.setItem("image", user.data[0].image)
-                teacherPicture.src = localStorage.getItem("image")
+            teacherName.textContent = sessionStorage.getItem("fullName")
+            if (result.data[0].image){
+                sessionStorage.setItem("image", result.data[0].image)
+                teacherPicture.src = sessionStorage.getItem("image")
             }
             else{
-                localStorage.setItem("image", defaultProfilePicture)
-                teacherPicture.src = localStorage.getItem("image")
+                sessionStorage.setItem("image", defaultProfilePicture)
+                teacherPicture.src = sessionStorage.getItem("image")
             }
 
         }
@@ -360,7 +358,7 @@ function addContent(content_title, content_type, content_hidden){
             let gameUrl = editGamePageTo(content_type)
             
             if (response.ok && result.status){
-                if (Array.isArray(result.data) && result.data.length > 0) {
+                if (result.data) {
                     sessionStorage.setItem("questions", JSON.stringify(result.data))
                 } 
                 else {
@@ -371,7 +369,7 @@ function addContent(content_title, content_type, content_hidden){
             else{
                 const message = "Unable to retrieve content. Please try again later." || result.message
                 notification.notify(message, "error");
-                console.error("Server Error:", response);
+                console.error("Server Error:", result.message);
             }
         }
         catch (error){

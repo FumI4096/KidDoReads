@@ -498,29 +498,34 @@ function moveAdminInfo(){
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    const id = localStorage.getItem("id")
+    const id = sessionStorage.getItem("id")
 
     const url = `/user/${id}`;
 
     try{
         const response = await fetch(url);
-        const user = await response.json();
-        if (user.status){
-            localStorage.setItem("fullName", user.data[0].fullName);
+        const result = await response.json();
+        if (response.ok && result.status){
+            sessionStorage.setItem("fullName", result.data[0].fullName);
     
             const adminName = document.getElementById('admin_name')
             const adminPicture = document.getElementById('admin_picture')
     
             adminName.textContent = localStorage.getItem("fullName")
-            if (user.data[0].image){
-                localStorage.setItem("image", user.data[0].image)
-                adminPicture.src = localStorage.getItem("image")
+            if (result.data[0].image){
+                sessionStorage.setItem("image", result.data[0].image)
+                adminPicture.src = sessionStorage.getItem("image")
             }
             else{
-                localStorage.setItem("image", defaultProfilePicture)
-                adminPicture.src = localStorage.getItem("image")
+                sessionStorage.setItem("image", defaultProfilePicture)
+                adminPicture.src = sessionStorage.getItem("image")
             }
     
+        }
+        else{
+            console.log(result.message)
+            notification.notify("User details can't be retrieved at the moment. Please try again.", "error")
+        
         }
 
     }

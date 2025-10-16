@@ -12,7 +12,7 @@ const defaultProfilePicture = "../static/images/default_profile_picture.png";
 // let currentTab = "student";
 let isInMainSection = false;
 
-const id = localStorage.getItem("id")
+const id = sessionStorage.getItem("id")
 const notification = new Notification();
 
 logOutButton.addEventListener('click', () => {
@@ -138,20 +138,20 @@ async function showUserInfo(){
 
     try{
         if (response.ok && result.status){
-            localStorage.setItem("fullName", user.data[0].fullName);
+            sessionStorage.setItem("fullName", result.data[0].fullName);
             
             const studentName = document.getElementById('student_name')
             const studentPicture = document.getElementById('student_picture')
             
-            studentName.textContent = localStorage.getItem("fullName")
+            studentName.textContent = sessionStorage.getItem("fullName")
             
-            if (user.data[0].image){
-                localStorage.setItem("image", user.data[0].image)
-                studentPicture.src = localStorage.getItem("image")
+            if (result.data[0].image){
+                sessionStorage.setItem("image", result.data[0].image)
+                studentPicture.src = sessionStorage.getItem("image")
             }
             else{
-                localStorage.setItem("image", defaultProfilePicture)
-                studentPicture.src = localStorage.getItem("image")
+                sessionStorage.setItem("image", defaultProfilePicture)
+                studentPicture.src = sessionStorage.getItem("image")
             }
 
         }
