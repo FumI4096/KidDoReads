@@ -20,7 +20,7 @@ const currentTitle = localStorage.getItem("currentActivityTitle")
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
 toTeacherPageButton.addEventListener('click', () => {
-    sessionStorage.clear()
+    sessionStorage.removeItem('questions')
     window.location.href = '/teacher_dashboard'
 });
 
