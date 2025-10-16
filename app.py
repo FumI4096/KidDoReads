@@ -377,7 +377,7 @@ def get_content(teacher_id, content_name):
         status, results = db.get_content(teacher_id, content_name)
             
         if status and results:
-            quiz_data_str = results[0] 
+            quiz_data_str = results[0] or "{}"
             quiz_data_obj = json.loads(quiz_data_str)
             return jsonify({"status": True, "data": quiz_data_obj})
         elif status: 
