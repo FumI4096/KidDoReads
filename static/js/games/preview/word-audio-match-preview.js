@@ -26,14 +26,6 @@ toTeacherPageButton.addEventListener('click', () => {
 nextButton.addEventListener("click", () => { saveAndNavigate(1); }); 
 previousButton.addEventListener("click", () => { saveAndNavigate(-1); });
 
-
-// Add listener for checking the answer
-const checkAnswerButton = document.createElement('button');
-checkAnswerButton.id = 'check-answer-button';
-checkAnswerButton.textContent = 'Check Answer';
-// Assuming 'button-container' exists in HTML
-document.querySelector(".button-container").insertBefore(checkAnswerButton, nextButton);
-
 loadQuestion(0);
 
 // 3. Core Logic (Simplified for Preview)
@@ -97,7 +89,6 @@ function showFinalScore() {
 
     nextButton.style.display = 'none';
     previousButton.style.display = 'none';
-    checkAnswerButton.style.display = 'none';
 }
 
 function updateNavigationButtons() {
@@ -163,19 +154,10 @@ function loadQuestion(index) {
         choiceBox.appendChild(choiceLabel);
         choicesContainer.appendChild(choiceBox);
     });
-
-    // RENDER ANSWER STATUS (Hidden until Check Answer is clicked)
-    const statusMessage = document.createElement('p');
-    statusMessage.id = 'answer-status';
-    statusMessage.style.fontWeight = 'bold';
-    statusMessage.style.marginTop = '10px';
-    answerContainer.appendChild(statusMessage);
-
+    
     currentQuestion = index;
     previousButton.disabled = (currentQuestion === 0);
     nextButton.disabled = (currentQuestion === questionObject.length - 1);
-    checkAnswerButton.style.display = 'inline';
-    checkAnswerButton.disabled = false;
 
     updateNavigationButtons();
 }
