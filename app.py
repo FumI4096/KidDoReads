@@ -66,7 +66,7 @@ def word_audio_match():
 
 @app.route('/word_audio_match_preview')
 @login_required
-@role_required('teacher')
+@role_required('teacher', 'student')
 def word_audio_match_preview():
     return render_template('games/preview/word-audio-matching-preview.html')
 
