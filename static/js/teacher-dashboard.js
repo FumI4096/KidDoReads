@@ -291,6 +291,13 @@ function addContent(content_title, content_type, content_hidden){
     buttonActionContainer.appendChild(deleteButton);
     buttonActionContainer.appendChild(hideFromStudentContainer);
 
+    hideFromStudentCheckbox.addEventListener('click', (event) => {
+        if (Object.keys(content_details).length <= 3) {
+            event.preventDefault();
+            notification.notify("The activity has less than 3 questions. Please add more.", "error");
+        }
+    });
+
     hideFromStudentCheckbox.addEventListener('change', async () => {
         const isHidden = hideFromStudentCheckbox.checked ? 1 : 0
         const url = `content/${id}/${content_id}/${isHidden}`
