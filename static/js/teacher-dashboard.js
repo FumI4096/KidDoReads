@@ -200,7 +200,9 @@ async function showContents() {
     try{
         if (response.ok && result.status){
             result.data.forEach(data => {
-                addContent(data.content_title, data.content_type, data.isHidden)
+                console.log(data)
+                console.log(Object.keys(data.content_json).length)
+                addContent(data.content_id, data.content_title, data.content_json, data.content_type, data.content_type_name, data.isHidden)
             })
         }
         else{
@@ -249,7 +251,7 @@ async function showUserInfo(){
     }
 }
 
-function addContent(content_title, content_type, content_hidden){
+function addContent(content_id, content_title, content_details, content_type, content_type_name, content_hidden){
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
@@ -257,7 +259,7 @@ function addContent(content_title, content_type, content_hidden){
     activityName.classList.add("activity-name");
     activityType.classList.add("activity-type");
     activityName.innerHTML = content_title;
-    activityType.innerHTML = content_type;
+    activityType.innerHTML = content_type_name;
     newContent.appendChild(activityName);
     newContent.appendChild(activityType);
 
