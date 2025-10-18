@@ -320,7 +320,7 @@ function addContent(content_title, content_type, content_hidden){
     })
 
     deleteButton.addEventListener('click', async () => {
-        const url = `content/${id}/${content_title}`
+        const url = `content/${id}/${content_id}`
 
         try{
             const response = await fetch(url, {
@@ -350,62 +350,31 @@ function addContent(content_title, content_type, content_hidden){
     })
 
     editButton.addEventListener('click', async () => {
-        const url = `/contents/${id}/${content_title}`
-        
-        try{
-            const response = await fetch(url)
-            const result = await response.json()
-            let gameUrl = editGamePageTo(content_type)
-            
-            if (response.ok && result.status){
-                if (result.data) {
-                    sessionStorage.setItem("questions", JSON.stringify(result.data))
-                } 
-                else {
-                    sessionStorage.setItem("questions", "[]")
-                }
-                gamePageSwitch(gameUrl)
-            }
-            else{
-                const message = "Unable to retrieve content. Please try again later." || result.message
-                notification.notify(message, "error");
-                console.error("Server Error:", result.message);
-            }
+        if (Object.keys(content_details).length !== 0){
+            sessionStorage.setItem("questions", JSON.stringify(content_details))
         }
-        catch (error){
-            console.error("Network Error while fetching content:", error);
-            notification.notify("Network error. Please check your connection and try again.", "error");
+        else{
+            sessionStorage.setItem("questions", "[]")
         }
+
+        sessionStorage.setItem("currentActivityTitle", content_title)
+        console.log(Object.keys(content_details).length)
+        console.log(sessionStorage.getItem("questions"))
+        editGamePageTo(content_type)
     })
 
     previewButton.addEventListener('click', async () => {
-        const url = `/contents/${id}/${content_title}`
-    
-        try{
-            const response = await fetch(url)
-            const result = await response.json()
-            let gameUrl = previewGamePageTo(content_type)
-            
-            if (response.ok && result.status){
-                if (Array.isArray(result.data) && result.data.length > 0) {
-                    sessionStorage.setItem("questions", JSON.stringify(result.data))
-                } 
-                else {
-                    sessionStorage.setItem("questions", "[]")
-                }
-                gamePageSwitch(gameUrl)
-            }
-            else{
-                const message = "Unable to retrieve content. Please try again later." || result.message
-                notification.notify(message, "error");
-                console.error("Server Error:", response);
-                return;
-            }
+        if (Object.keys(content_details).length >= 1){
+            sessionStorage.setItem("questions", JSON.stringify(content_details))
+            previewGamePageTo(content_type)
         }
-        catch (error){
-            console.error("Network Error while fetching content:", error);
-            notification.notify("Network error. Please check your connection and try again.", "error");
+        else{
+            notification.notify("No questions in this activity. Please questions and try again", "error")
         }
+
+        sessionStorage.setItem("currentActivityTitle", content_title)
+        console.log(Object.keys(content_details).length)
+        console.log(sessionStorage.getItem("questions"))
     })
 
     newContent.appendChild(buttonActionContainer);
