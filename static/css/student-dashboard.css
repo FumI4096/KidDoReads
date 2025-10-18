@@ -66,6 +66,20 @@ main > section{
     }
 }
 
+#display-contents{
+    /* change to grid later */
+    display: flex;
+    flex-direction: column;
+
+    & > .content{
+        display: flex;
+        & > .teacher-name {
+            margin-right: auto;
+        }
+    }
+
+}
+
 @media screen and (max-width: 936px){
     main > section{
         height: 800px;
