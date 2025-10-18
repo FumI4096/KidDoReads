@@ -150,16 +150,9 @@ function createContent(){
 
         try{
             if (response.ok && result.status){
-                contents.innerHTML = '';
-                localStorage.setItem("currentActivityTitle", contentTitle.value.trim())
-                localStorage.setItem("originalActivityTitle", contentTitle.value.trim())
-                switch(selectContent.value){
-                    case "1":
-                        gamePageSwitch('/word_audio_match_edit')
-                        break
-                    default:
-                        console.log("Error")
-                }
+                sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
+                sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
+                editGamePageTo(parseInt(selectContent.value))
             }
             else{
                 console.log(result.message)
