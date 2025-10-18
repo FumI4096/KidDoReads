@@ -39,6 +39,9 @@ loginForm.addEventListener('submit', async (e) => {
 
         if (response.ok && result.status){
             sessionStorage.setItem("id", result.id);
+            if(result.role === "student" || result.role === "teacher"){
+                sessionStorage.setItem("role", result.role)
+            }
             window.location.href = result.redirectUrl
         }
         else{
