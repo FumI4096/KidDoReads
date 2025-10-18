@@ -91,9 +91,9 @@ def login():
         login_user(user, remember=remember_me)
         
         if user.role  == "student":
-            return jsonify({'status': True, 'redirectUrl': 'student_dashboard', "id": id})
+            return jsonify({'status': True, 'redirectUrl': 'student_dashboard', "id": id, "role": user.role})
         elif user.role == "teacher":
-            return jsonify({'status': True, 'redirectUrl': 'teacher_dashboard', "id": id})
+            return jsonify({'status': True, 'redirectUrl': 'teacher_dashboard', "id": id, "role": user.role})
         elif user.role == "admin":
             return jsonify({'status': True, 'redirectUrl': 'admin', "id": id})
         else:
