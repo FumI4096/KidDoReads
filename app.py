@@ -398,21 +398,23 @@ def get_contents(teacher_id):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@app.route('/students/contents/<string:type>')
+@app.route('/students/contents/<int:type>')
 def get_contents_for_students(type):
     try:
-        status, results = db.get_content_by_type(int(type))
+        status, results = db.get_contents_by_type(type)
         rows = results
         
         contents = []
         for row in rows:
-            quiz_contents_str = row[2]
+            quiz_contents_str = row[3] or "{}"
             quiz_contents_json = json.loads(quiz_contents_str)
             contents.append({
                 "content_id": row[0],
                 "teacher_name": row[1],
+                "content_title": row[2],
                 "content_json": quiz_contents_json,
-                "isHidden": row[3]
+                "content_type": row[4],
+                "isHidden": row[5]
             })
             
         if status:
