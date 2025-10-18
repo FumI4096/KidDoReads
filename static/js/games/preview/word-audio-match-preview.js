@@ -1,5 +1,5 @@
 const displayActivityTitle = document.getElementById('display-activity-title');
-const toTeacherPageButton = document.getElementById('to-teacher-page-button');
+const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
 const choicesContainer = document.querySelector(".choices-container");
 const nextButton = document.getElementById("next-button");
 const previousButton = document.getElementById("previous-button");
@@ -7,21 +7,26 @@ const answerContainer = document.getElementById("answer-container");
 
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 
-console.log(questionObject)
 let currentQuestion = 0;
 let finalScore = 0; 
 
 const storedAnswers = sessionStorage.getItem("userAnswers");
 const userAnswers = storedAnswers ? JSON.parse(storedAnswers) : {};
 
-const currentTitle = localStorage.getItem("currentActivityTitle");
-displayActivityTitle.textContent = `Preview: ${currentTitle}`;
+const currentTitle = sessionStorage.getItem("currentActivityTitle");
 
-toTeacherPageButton.textContent = "Exit Preview"; // Change button text
-toTeacherPageButton.addEventListener('click', () => {
-    // Clear session storage if necessary, or just redirect
-    window.location.href = '/teacher_dashboard';
-});
+if(sessionStorage.getItem("role") === "student"){
+    toDashboardPageButton.style.display = 'none'
+    displayActivityTitle.textContent = `Preview: ${currentTitle}`;
+}
+else if(sessionStorage.getItem("role") === "teacher"){
+    toDashboardPageButton.textContent = "Exit Preview"; 
+    displayActivityTitle.textContent = currentTitle;
+    toDashboardPageButton.addEventListener('click', () => {
+        window.location.href = '/teacher_dashboard';
+    });
+
+}
 
 nextButton.addEventListener("click", () => { saveAndNavigate(1); }); 
 previousButton.addEventListener("click", () => { saveAndNavigate(-1); });
