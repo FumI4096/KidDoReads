@@ -15,8 +15,8 @@ let currentQuestion = 0
 let originalChoiceElements = []
 let originalAnswerElements = []
 
-const teacherId = localStorage.getItem("id")
-const currentTitle = localStorage.getItem("currentActivityTitle")
+const teacherId = sessionStorage.getItem("id")
+const currentTitle = sessionStorage.getItem("currentActivityTitle")
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
 toTeacherPageButton.addEventListener('click', () => {
