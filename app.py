@@ -477,25 +477,22 @@ def update_content():
     else:
         return jsonify({"status": False, "message": result})
     
-@app.route('/content/<string:teacher_id>/<string:content_name>', methods=['DELETE'])
+#switch to id
+@app.route('/content/<string:teacher_id>/<int:content_id>', methods=['DELETE'])
 @login_required
-def delete_content(teacher_id, content_name):
+def delete_content(teacher_id, content_id):
     
-    result, message = db.delete_content(teacher_id, content_name)
+    result, message = db.delete_content(teacher_id, content_id)
     
     if result is True:
         return jsonify({"status": True, "message": message})
     else:
         return jsonify({"status": False, "message": message})
     
-@app.route('/content/<string:teacher_id>/<string:content_name>/<string:hide>', methods=["PATCH"])
+@app.route('/content/<int:teacher_id>/<int:content_id>/<int:hide>', methods=["PATCH"])
 @login_required
-def unhide_content(teacher_id, content_name, hide):
-    isHidden = False
-    if hide == "1":
-        isHidden = True
-        
-    result, message = db.hide_content(teacher_id, content_name, isHidden)
+def unhide_content(teacher_id, content_id, hide):
+    result, message = db.hide_content(teacher_id, content_id, hide)
     
     if result is True:
         return jsonify({"status": True, "message": message})
