@@ -410,44 +410,40 @@ function addContent(content_title, content_type, content_hidden){
 
     newContent.appendChild(buttonActionContainer);
     contents.appendChild(newContent);
-    contents.appendChild(addContentButton); // Re-add button
-}
-
-function gamePageSwitch(pageUrl){
-    window.location.href = pageUrl
+    contents.appendChild(addContentButton);
 }
 
 function editGamePageTo(url){
     switch(url){
-        case 'Pronunciation: Word Audio Match':
-            return '/word_audio_match_edit';
-        case 'Phonemic Awareness: Listen & Choose':
+        case 1: //word audio match
+            window.location.href = '/word_audio_match_edit';
+        case 2: // listen and choose 
             // return '/word_audio_match';
-        case 'Word Recognition: Sound-Alike Match' :
+        case 3: //sound a like match
             // return '/word_audio_match';
-        case 'Word Recognition: Meaning Maker':
+        case 4: //meaning maker
             // return '/word_audio_match';
-        case 'Reading Comprehension: What Happens Next?':
+        case 5: //what happens next
             // return '/word_audio_match';
-        case 'Reading Comprehension: Picture + Clues':
+        case 6: //picture + clues
             // return '/word_audio_match';
     }
 }
 
 function previewGamePageTo(url){
     switch(url){
-        case 'Pronunciation: Word Audio Match':
-            return '/word_audio_match_preview';
+        case 1: // word audio match
+            window.location.href = '/word_audio_match_preview';
             break;
-        case 'Phonemic Awareness: Listen & Choose':
+        case 2: // listen and choose
             // return '/word_audio_match';
-        case 'Word Recognition: Sound-Alike Match' :
+        case 3: //sound alike match
             // return '/word_audio_match';
-        case 'Word Recognition: Meaning Maker':
+        case 4: //meaning maker
             // return '/word_audio_match';
-        case 'Reading Comprehension: What Happens Next?':
+        case 5: //what happens next
             // return '/word_audio_match';
-        case 'Reading Comprehension: Picture + Clues':
+        case 6: //picture + clues
             // return '/word_audio_match';
     }
 }
