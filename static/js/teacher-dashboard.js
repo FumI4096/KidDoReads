@@ -293,7 +293,7 @@ function addContent(content_title, content_type, content_hidden){
 
     hideFromStudentCheckbox.addEventListener('change', async () => {
         const isHidden = hideFromStudentCheckbox.checked ? 1 : 0
-        const url = `content/${id}/${content_title}/${isHidden}`
+        const url = `content/${id}/${content_id}/${isHidden}`
 
         try{
             const response = await fetch(url, {
@@ -303,9 +303,7 @@ function addContent(content_title, content_type, content_hidden){
     
                 },
             });
-    
             const result = await response.json()
-    
             if (response.ok && result.status){
                 notification.notify(result.message, "success")
             }
