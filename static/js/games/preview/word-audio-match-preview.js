@@ -36,7 +36,6 @@ loadQuestion(0);
 // 3. Core Logic (Simplified for Preview)
 
 function saveAndNavigate(direction) {
-    // 1. SAVE: Store the current selection before leaving the question
     const selectedRadio = document.querySelector('input[name="preview_answer"]:checked');
     if (selectedRadio) {
         userAnswers[currentQuestion] = selectedRadio.value;
@@ -51,12 +50,12 @@ function saveAndNavigate(direction) {
         showFinalScore()
     }
 
-    if (direction === 1) { // Moving NEXT or SUBMIT
+    if (direction === 1) { 
         if (currentQuestion < questionObject.length - 1) {
             currentQuestion++;
             loadQuestion(currentQuestion);
         } 
-    } else if (direction === -1) { // Moving PREVIOUS
+    } else if (direction === -1) { 
         if (currentQuestion > 0) {
             currentQuestion--;
             loadQuestion(currentQuestion);
