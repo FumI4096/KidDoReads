@@ -7,7 +7,12 @@
     <link rel="stylesheet" href=" {{url_for('static', filename='css/word-audio-matching')}} ">
 </head>
 <body>
+    <header>
+        <p id="display-activity-title"></p>
+        <button id="to-teacher-page-button">Save and Exit</button>
+    </header>
     <section class="question-container">
+        <!--CHANGES HERE-->
         <input type="text" class="question" name="" placeholder="Input your question here">
     </section>
     <section class="choices-container">
@@ -43,6 +48,6 @@
 
     </div>
     
-    <script src="./static/js/quiz-maker.js"></script>
+    <script src=" {{url_for('static', filename='js/games/edit/listen-and-choose-edit.js')}}"></script>
 </body>
 </html>
