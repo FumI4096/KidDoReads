@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Audio Matching</title>
+    <link rel="stylesheet" href=" {{url_for('static', filename='css/games/preview/word-audio-matching-preview.css')}} ">
+</head>
+<body>
+    <header>
+        <p id="display-activity-title"></p>
+        <h3 id="question-number-display">Question</h3>
+        <button id="to-dashboard-page-button"></button>
+    </header>
+    <section class="question-container">
+        <p class="question" id="question-text"></p>
+    </section>
+    <section class="choices-container">
+        <!--Changes Here-->
+        <div class="choice-box">
+            <label class="choice-label">
+                <input type="radio" name="question_choice" value="a">
+                <p class="choice-letter">A.</p>
+                <span class="choice-text">Choice A Text</span>
+            </label>
+        </div>
+
+        <div class="choice-box">
+            <label class="choice-label">
+                <input type="radio" name="question_choice" value="b">
+                <p class="choice-letter">B.</p>
+                <span class="choice-text">Choice B Text</span>
+            </label>
+        </div>
+
+    </section>
+
+    <div id="answer-container">
+    </div>
+    <div class="button-container">
+        <button id="previous-button">Previous</button>
+        <button id="next-button">Next</button>
+    </div>
+    
+    <script src=" {{url_for('static', filename='js/games/preview/word-audio-match-preview.js')}} "></script>
+</body>
+</html>

@@ -386,34 +386,45 @@ function editGamePageTo(url){
     switch(url){
         case 1: //word audio match
             window.location.href = '/word_audio_match_edit';
-        case 2: // listen and choose 
-            // return '/word_audio_match';
-        case 3: //sound a like match
-            // return '/word_audio_match';
+            break;
+        case 2: // listen and choose
+            window.location.href = '/listen_and_choose_edit';
+            break;
+        case 3: //sound alike match
+            window.location.href = '/sound_alike_match_edit';
+            break;
         case 4: //meaning maker
-            // return '/word_audio_match';
+            window.location.href = '/meaning_maker_edit';
+            break;
         case 5: //what happens next
-            // return '/word_audio_match';
+            window.location.href = '/what_happens_next_edit';
+            break;
         case 6: //picture + clues
-            // return '/word_audio_match';
+            window.location.href = '/picture_clues_edit';
+            break;
     }
 }
 
 function previewGamePageTo(url){
     switch(url){
         case 1: // word audio match
-            window.location.href = '/word_audio_match_preview';
+            window.location.href = '/word_audio_match_answer';
             break;
         case 2: // listen and choose
-            // return '/word_audio_match';
+            window.location.href = '/listen_and_choose_answer';
+            break;
         case 3: //sound alike match
-            // return '/word_audio_match';
+            window.location.href = '/sound_alike_match_answer';
+            break;
         case 4: //meaning maker
-            // return '/word_audio_match';
+            window.location.href = '/meaning_maker_answer';
+            break;
         case 5: //what happens next
-            // return '/word_audio_match';
+            window.location.href = '/what_happens_next_answer';
+            break;
         case 6: //picture + clues
-            // return '/word_audio_match';
+            window.location.href = '/picture_clues_answer';
+            break;
     }
 }
 

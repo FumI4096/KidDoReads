@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Audio Matching</title>
+    <link rel="stylesheet" href=" {{url_for('static', filename='css/word-audio-matching')}} ">
+</head>
+<body>
+    <section class="question-container">
+        <!-- Changes Here -->
+        <input type="text" class="question" name="" placeholder="Input your question here">
+    </section>
+    <section class="choices-container">
+        <div class="choice-box">
+            <p class="choice-letter">A.</p>
+            <input class="choice" type="text" placeholder="Enter a choice">
+        </div>
+        <div class="choice-box">
+            <p class="choice-letter">B.</p>
+            <input class="choice" type="text" placeholder="Enter a choice">
+        </div>
+
+    </section>
+    <aside class="answer-container">
+        <!-- Changes Here -->
+        <h3>Choose an Answer:</h3>
+        <div class="answer-options">
+            <input type="radio" id="a" name="answer" value="a">
+            <label for="a">A</label>
+            <input type="radio" id="b" name="answer" value="b">
+            <label for="b">B</label>
+        </div>
+    </aside>
+    <div class="button-container">
+        <button id="previous-button">Previous</button>
+        <section>
+            <button id="add-choice-button">Add Choice</button>
+            <button id="remove-choice-button">Remove Choice</button>
+            <button id="save-button">Save</button>
+            <button id="edit-button">Edit</button>
+            
+        </section>
+        <button id="next-button">Next</button>
+
+    </div>
+    
+    <script src="./static/js/quiz-maker.js"></script>
+</body>
+</html>

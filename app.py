@@ -35,7 +35,7 @@ def role_required(*roles):
         return decorated_function
     return decorator
 
-
+#MAIN PAGES
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -58,17 +58,86 @@ def teacher_dashboard():
 def student_dashboard():
     return render_template('student/student-dashboard.html')
 
+#PAGES FOR EDITING ACTIVITIES
 @app.route('/word_audio_match_edit')
 @login_required
 @role_required('teacher')
 def word_audio_match():
     return render_template('games/edit/word-audio-match-edit.html')
 
-@app.route('/word_audio_match_preview')
+@app.route('/listen_and_choose_edit')
+@login_required
+@role_required('teacher')
+def word_audio_match():
+    return render_template('games/edit/listen-and-choose-edit.html')
+
+@app.route('/sound_alike_match_edit')
+@login_required
+@role_required('teacher')
+def word_audio_match():
+    return render_template('games/edit/sound-alike-match-edit.html')
+
+@app.route('/meaning_maker_edit')
+@login_required
+@role_required('teacher')
+def word_audio_match():
+    return render_template('games/edit/meaning-maker-edit.html')
+
+@app.route('/what_happens_next_edit')
+@login_required
+@role_required('teacher')
+def word_audio_match():
+    return render_template('games/edit/what-happens-next-edit.html')
+
+@app.route('/picture_clues_edit')
+@login_required
+@role_required('teacher')
+def word_audio_match():
+    return render_template('games/edit/picture-clues-edit.html')
+
+
+#PAGES FOR ANSWERING ACTIVITIES
+@app.route('/word_audio_match_answer')
 @login_required
 @role_required('teacher', 'student')
 def word_audio_match_preview():
-    return render_template('games/preview/word-audio-matching-preview.html')
+    return render_template('games/answer/word-audio-matching-answer.html')
+
+@app.route('/word_audio_match_answer')
+@login_required
+@role_required('teacher', 'student')
+def word_audio_match_preview():
+    return render_template('games/answer/word-audio-matching-answer.html')
+
+@app.route('/listen_and_choose_answer')
+@login_required
+@role_required('teacher', 'student')
+def word_audio_match_preview():
+    return render_template('games/answer/listen-and-choose-answer.html')
+
+@app.route('/sound_alike_match_answer')
+@login_required
+@role_required('teacher', 'student')
+def word_audio_match_preview():
+    return render_template('games/answer/sound-alike-match-answer.html')
+
+@app.route('/meaning_maker_answer')
+@login_required
+@role_required('teacher', 'student')
+def word_audio_match_preview():
+    return render_template('games/answer/meaning-maker-answer.html')
+
+@app.route('/what_happens_next_answer')
+@login_required
+@role_required('teacher', 'student')
+def word_audio_match_preview():
+    return render_template('games/answer/what-happens-next-answer.html')
+
+@app.route('/picture_clues_answer')
+@login_required
+@role_required('teacher', 'student')
+def word_audio_match_preview():
+    return render_template('games/answer/picture-clues-answer.html')
 
 @app.route('/logout')
 def logout():
@@ -463,6 +532,7 @@ def get_contents_for_students(type):
 #         return jsonify({"status": False, "message": str(e)})
     
 
+#change to patch
 @app.route('/update_content', methods=['POST'])
 @login_required
 def update_content():
