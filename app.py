@@ -371,34 +371,24 @@ def create_content():
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@app.route('/contents/<string:teacher_id>/<string:content_name>', methods=['GET'])
-def get_content(teacher_id, content_name):
-    try:
-        status, results = db.get_content(teacher_id, content_name)
-            
-        if status and results:
-            quiz_data_str = results[0] or "{}"
-            quiz_data_obj = json.loads(quiz_data_str)
-            return jsonify({"status": True, "data": quiz_data_obj})
-        elif status: 
-            return jsonify({"status": False, "message": "Content not found"})
-        else:
-            return jsonify({"status": False, "message": results})
-    except Exception as e:
-        return jsonify({"status": False, "message": str(e)})
     
 @app.route('/contents/<string:teacher_id>', methods=['GET'])
 def get_contents(teacher_id):
     try:
-        status, results = db.get_content_records(teacher_id)
+        status, results = db.get_contents_by_teacher(teacher_id)
         rows = results
         
         contents = []
         for row in rows:
+            quiz_contents_str = row[2] or "{}"
+            quiz_contents_json = json.loads(quiz_contents_str)
             contents.append({
-                "content_title": row[0],
-                "content_type": row[1],
-                "isHidden": row[2]
+                "content_id": row[0],
+                "content_title": row[1],
+                "content_json": quiz_contents_json,
+                "content_type": row[3],
+                "content_type_name": row[4],
+                "isHidden": row[5]
             })
             
         if status:
