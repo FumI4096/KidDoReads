@@ -68,31 +68,31 @@ def word_audio_match():
 @app.route('/listen_and_choose_edit')
 @login_required
 @role_required('teacher')
-def word_audio_match():
+def listen_and_choose():
     return render_template('games/edit/listen-and-choose-edit.html')
 
 @app.route('/sound_alike_match_edit')
 @login_required
 @role_required('teacher')
-def word_audio_match():
+def sound_alike_match():
     return render_template('games/edit/sound-alike-match-edit.html')
 
 @app.route('/meaning_maker_edit')
 @login_required
 @role_required('teacher')
-def word_audio_match():
+def meaning_maker():
     return render_template('games/edit/meaning-maker-edit.html')
 
 @app.route('/what_happens_next_edit')
 @login_required
 @role_required('teacher')
-def word_audio_match():
+def what_happens_next():
     return render_template('games/edit/what-happens-next-edit.html')
 
 @app.route('/picture_clues_edit')
 @login_required
 @role_required('teacher')
-def word_audio_match():
+def picture_clues():
     return render_template('games/edit/picture-clues-edit.html')
 
 
@@ -112,31 +112,31 @@ def word_audio_match_preview():
 @app.route('/listen_and_choose_answer')
 @login_required
 @role_required('teacher', 'student')
-def word_audio_match_preview():
+def listen_and_choose_answer():
     return render_template('games/answer/listen-and-choose-answer.html')
 
 @app.route('/sound_alike_match_answer')
 @login_required
 @role_required('teacher', 'student')
-def word_audio_match_preview():
+def sound_alike_match_answer():
     return render_template('games/answer/sound-alike-match-answer.html')
 
 @app.route('/meaning_maker_answer')
 @login_required
 @role_required('teacher', 'student')
-def word_audio_match_preview():
+def meaning_maker_answer():
     return render_template('games/answer/meaning-maker-answer.html')
 
 @app.route('/what_happens_next_answer')
 @login_required
 @role_required('teacher', 'student')
-def word_audio_match_preview():
+def what_happens_next_answer():
     return render_template('games/answer/what-happens-next-answer.html')
 
 @app.route('/picture_clues_answer')
 @login_required
 @role_required('teacher', 'student')
-def word_audio_match_preview():
+def picture_clues_answer():
     return render_template('games/answer/picture-clues-answer.html')
 
 @app.route('/logout')
