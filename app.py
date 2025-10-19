@@ -100,13 +100,7 @@ def picture_clues():
 @app.route('/word_audio_match_answer')
 @login_required
 @role_required('teacher', 'student')
-def word_audio_match_preview():
-    return render_template('games/answer/word-audio-matching-answer.html')
-
-@app.route('/word_audio_match_answer')
-@login_required
-@role_required('teacher', 'student')
-def word_audio_match_preview():
+def word_audio_match_answer():
     return render_template('games/answer/word-audio-matching-answer.html')
 
 @app.route('/listen_and_choose_answer')
