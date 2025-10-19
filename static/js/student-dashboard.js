@@ -7,6 +7,7 @@ const assessmentNavButton = document.getElementById("assessments-record-button")
 const logOutButton = document.getElementById('log-out-button');
 const mainAside = document.querySelector('main > aside');
 const mainSection = document.querySelector('main > section');
+const displayContents = document.getElementById('display-contents');
 const studentInfo = document.getElementById('student-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
 // let currentTab = "student";
@@ -129,6 +130,51 @@ async function showContent(contentTypeNum){
         notification.notify("Network error. Please check your connection and try again.", "error");
     }
     
+}
+
+function addContent(content_id, teacher_name, content_title, content_details, content_type, content_hidden){
+    const newContent = document.createElement("div");
+    const activityName = document.createElement("p");
+    const teacherName = document.createElement("p");
+    newContent.classList.add("content");
+    activityName.classList.add("activity-name");
+    teacherName.classList.add("teacher-name")
+    activityName.innerHTML = content_title;
+    teacherName.innerHTML = teacher_name;
+    newContent.appendChild(activityName);
+    newContent.appendChild(teacherName)
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add("button-container")
+    const playActivityButton = document.createElement('button')
+    const checkProgressButton = document.createElement('button')
+
+    playActivityButton.classList.add('play-activity-button')
+    playActivityButton.innerHTML = "Play Activity"
+    checkProgressButton.classList.add('check-progress-button')
+    checkProgressButton.innerHTML = "Check Progress"
+
+    buttonContainer.append(playActivityButton, checkProgressButton)
+
+    newContent.appendChild(buttonContainer)
+
+    if (content_hidden){
+        newContent.style.display = 'none'
+    }
+    else{
+        newContent.style.display = 'flex'
+    }
+
+    playActivityButton.addEventListener('click', () => {
+        sessionStorage.setItem("currentActivityTitle", content_title)
+        sessionStorage.setItem("currentContentId", content_id)
+        sessionStorage.setItem("questions", JSON.stringify(content_details))
+        console.log(typeof(content_type))
+        answerPageTo(content_type)
+    })
+
+    displayContents.appendChild(newContent)
+
 }
 
 async function showUserInfo(){

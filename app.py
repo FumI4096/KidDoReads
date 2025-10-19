@@ -434,6 +434,24 @@ def create_content():
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
+@app.route('/attempt', methods=['POST'])
+def create_student_attempt():
+    try:
+        content_id = request.form.get('content_id')
+        student_id = request.form.get('student_id')
+        score = request.form.get('score')
+        total_questions = request.form.get('total_questions')
+        
+        status, message = db.create_attempt(content_id, student_id, score, total_questions)
+        
+        if status:
+            return jsonify({"status": status})
+        else:
+            return jsonify({"status": status, "message": message})
+        
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+    
     
 @app.route('/contents/<string:teacher_id>', methods=['GET'])
 def get_contents(teacher_id):
