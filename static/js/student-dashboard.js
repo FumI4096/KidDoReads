@@ -115,8 +115,8 @@ async function showContent(contentTypeNum){
         const result = await response.json();
 
         if (response.ok && result.status){
-            result.data.forEach(element => {
-                console.log(element)
+            result.data.forEach(data => {
+                addContent(data.content_id, data.teacher_name, data.content_title, data.content_json, data.content_type, data.isHidden)
             });
         }
         else{
