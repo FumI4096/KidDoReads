@@ -92,7 +92,7 @@ header{
     }
 }
 
-.answer-container{
+#answer-container{
     margin-bottom: auto;
     display: flex;
     justify-content: space-between;
@@ -111,7 +111,7 @@ header{
     }
 }
 
-.button-container{
+#button-container{
     display: flex;
     justify-content: space-between;
 }
