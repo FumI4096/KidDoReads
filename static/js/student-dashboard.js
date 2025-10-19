@@ -167,6 +167,24 @@ async function showUserInfo(){
 
 }
 
+function answerPageTo(url){
+    switch(url){
+        case 1:
+            window.location.href = '/word_audio_match_answer';
+            break;
+        case 'Phonemic Awareness: Listen & Choose':
+            // return '/word_audio_match';
+        case 'Word Recognition: Sound-Alike Match' :
+            // return '/word_audio_match';
+        case 'Word Recognition: Meaning Maker':
+            // return '/word_audio_match';
+        case 'Reading Comprehension: What Happens Next?':
+            // return '/word_audio_match';
+        case 'Reading Comprehension: Picture + Clues':
+            // return '/word_audio_match';
+    }
+}
+
 moveStudentInfo();
 
 
