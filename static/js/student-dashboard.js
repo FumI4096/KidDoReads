@@ -180,7 +180,7 @@ function addContent(content_id, teacher_name, content_title, content_details, co
 async function showUserInfo(){
     const url = `/user/${id}`;
     const response = await fetch(url);
-    const result = await getInfo.json();
+    const result = await response.json();
 
     try{
         if (response.ok && result.status){
