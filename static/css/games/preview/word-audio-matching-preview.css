@@ -97,6 +97,10 @@ header{
     display: flex;
     justify-content: space-between;
     padding: 0 13rem;
+
+    & > table{
+        width: 100%;
+    }
 }
 
 .answer-options{
