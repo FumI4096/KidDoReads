@@ -227,8 +227,6 @@ def get_student_record():
                 "image": image_url,
                 "role": row[5]
             })
-            
-
         
         if status:
             return jsonify({"status": True, "data": students})
