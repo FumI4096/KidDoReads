@@ -40,14 +40,14 @@ function displayEyePassword(element1, element2, showPassword){
 
 }
 
-logOutButton.addEventListener('click', () => {
+logOutButton.addEventListener('click', async () => {
     sessionStorage.clear();
     window.location.href = '/logout'
 })
 
-studentDisplayButton.addEventListener('click', () => {
+studentDisplayButton.addEventListener('click', async () => {
     currentTab = "student";
-    showRecords('/students');
+    await showRecords('/students');
     filterOptions.value = "default";
     studentDisplayButton.disabled = true;
     studentDisplayButton.style.pointerEvents = 'none';
@@ -58,9 +58,9 @@ studentDisplayButton.addEventListener('click', () => {
     adminDisplayButton.classList.remove('toggle-user');
 })
 
-teacherDisplayButton.addEventListener('click', () => {
+teacherDisplayButton.addEventListener('click', async () => {
     currentTab = "teacher";
-    showRecords('/teachers');
+    await showRecords('/teachers');
     filterOptions.value = "default";
     teacherDisplayButton.disabled = true;
     teacherDisplayButton.style.pointerEvents = 'none';
@@ -71,9 +71,9 @@ teacherDisplayButton.addEventListener('click', () => {
     adminDisplayButton.classList.remove('toggle-user');
 })
 
-adminDisplayButton.addEventListener('click', () => {
+adminDisplayButton.addEventListener('click', async () => {
     currentTab = "admin";
-    showRecords('/admins');
+    await showRecords('/admins');
     filterOptions.value = "default";
     adminDisplayButton.disabled = true;
     adminDisplayButton.style.pointerEvents = 'none';
@@ -509,7 +509,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             const adminName = document.getElementById('admin_name')
             const adminPicture = document.getElementById('admin_picture')
     
-            adminName.textContent = localStorage.getItem("fullName")
+            adminName.textContent = sessionStorage.getItem("fullName")
             if (result.data[0].image){
                 sessionStorage.setItem("image", result.data[0].image)
                 adminPicture.src = sessionStorage.getItem("image")
@@ -535,4 +535,4 @@ document.addEventListener("DOMContentLoaded", async function() {
 });
 
 moveAdminInfo();
-showRecords('/students')
+await showRecords('/students')
