@@ -153,7 +153,7 @@ def login():
         user = User(id=id, role=role[0].lower())
         login_user(user, remember=remember_me)
         
-        if user.role  == "student":
+        if user.role == "student":
             return jsonify({'status': True, 'redirectUrl': 'student_dashboard', "id": id, "role": user.role})
         elif user.role == "teacher":
             return jsonify({'status': True, 'redirectUrl': 'teacher_dashboard', "id": id, "role": user.role})
