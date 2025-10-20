@@ -186,10 +186,8 @@ async function showRecords(apiRoute){
     try{
         const response = await fetch(apiRoute)
         const result = await response.json();
-    
         tableBody.innerHTML = ""
-    
-        if (result.status){
+        if (result.status){  
             result.data.forEach(data => {
                 addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
             })
