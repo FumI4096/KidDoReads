@@ -479,7 +479,7 @@ def get_contents(teacher_id):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@app.route('/students/contents/<int:type>')
+@app.route('/students/contents/<int:type>', methods=["GET"])
 def get_contents_for_students(type):
     try:
         status, results = db.get_contents_by_type(type)
