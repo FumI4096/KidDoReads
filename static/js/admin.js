@@ -524,7 +524,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
         else{
             console.log(result.message)
-            notification.notify("User details can't be retrieved at the moment. Please try again.", "error")
+            notifyObj.notify("User details can't be retrieved at the moment. Please try again.", "error")
         
         }
 
