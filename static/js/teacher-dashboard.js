@@ -170,8 +170,8 @@ function createContent(){
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    showUserInfo()
-    showContents()
+    await showUserInfo()
+    await showContents()
 });
 
 function moveStudentInfo(){

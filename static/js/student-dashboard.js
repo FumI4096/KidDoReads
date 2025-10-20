@@ -48,8 +48,8 @@ profileButton.addEventListener('click', studentProfile)
 window.addEventListener('resize', moveStudentInfo);
 
 document.addEventListener("DOMContentLoaded", async function() {
-    showContent(1)
-    showUserInfo()
+    await showContent(1)
+    await showUserInfo()
 
 });
 
