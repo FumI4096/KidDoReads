@@ -298,13 +298,19 @@ async function saveCurrentQuestion(e){
         body: formData,
     });
 
-    const result = await response.json()        
-    if (result.status) {
-        console.log(result.message);
-    } 
-    else {
-        console.error("Error saving content:", result.message);
+    const result = await response.json()      
+    try{
+        if (response.ok && result.status) {
+            console.log(result.message);
+        } 
+        else {
+            console.log("Error saving content:", result.message);
+        }
+
     }
+    catch (error){
+        console.error(error);
+    } 
 
     setFormToViewMode()
 
