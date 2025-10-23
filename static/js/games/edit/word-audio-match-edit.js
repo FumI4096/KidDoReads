@@ -16,11 +16,15 @@ let originalChoiceElements = []
 let originalAnswerElements = []
 
 const teacherId = sessionStorage.getItem("id")
+const contentId = sessionStorage.getItem("currentActivityId")
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
 toTeacherPageButton.addEventListener('click', () => {
+    sessionStorage.removeItem('originalActivityTitle')
     sessionStorage.removeItem('questions')
+    sessionStorage.removeItem('currentActivityId')
+    sessionStorage.removeItem('currentActivityTitle')
     window.location.href = '/teacher_dashboard'
 });
 
@@ -286,7 +290,8 @@ async function saveCurrentQuestion(e){
     const formData = new FormData()
     formData.append('content', sessionStorage.getItem("questions"))
     formData.append('id', teacherId)
-    formData.append('content_name', currentTitle)
+    formData.append('content_id', contentId)
+    formData.append('total_questions', questionObject.length)
 
     const response = await fetch('/update_content', {
         method: 'POST',

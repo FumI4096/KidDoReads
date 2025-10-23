@@ -152,6 +152,7 @@ function createContent(){
             if (response.ok && result.status){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
+                sessionStorage.setItem("currentActivityId", result.content_id)
                 editGamePageTo(parseInt(selectContent.value))
             }
             else{
@@ -356,7 +357,7 @@ function addContent(content_id, content_title, content_details, content_type, co
         else{
             sessionStorage.setItem("questions", "[]")
         }
-
+        sessionStorage.setItem("currentActivityId", content_id)
         sessionStorage.setItem("currentActivityTitle", content_title)
         console.log(Object.keys(content_details).length)
         console.log(sessionStorage.getItem("questions"))
