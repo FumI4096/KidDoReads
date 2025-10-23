@@ -359,8 +359,7 @@ function addContent(content_id, content_title, content_details, content_type, co
         }
         sessionStorage.setItem("currentActivityId", content_id)
         sessionStorage.setItem("currentActivityTitle", content_title)
-        console.log(Object.keys(content_details).length)
-        console.log(sessionStorage.getItem("questions"))
+        sessionStorage.setItem("originalActivityTitle", content_title)
         editGamePageTo(content_type)
     })
 
