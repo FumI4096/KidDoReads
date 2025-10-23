@@ -14,12 +14,12 @@ from modules.User import login_manager, User
 load_dotenv()
 
 UPLOAD_FOLDER = 'static/uploads'
+db = Database()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config["PROPAGATE_EXCEPTIONS"] = False
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
-db = Database()
+app.config['db'] = db
 
 login_manager.login_view = 'home'
 login_manager.init_app(app)
