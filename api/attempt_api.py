@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-from flask_login import login_required
 from modules.utils import get_db
 
 attempt_bp = Blueprint('attempt_bp', __name__)
