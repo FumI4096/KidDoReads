@@ -127,16 +127,16 @@ mainForm.addEventListener("submit", async (e) => {
             const cancelButton = document.getElementById('cancel-user-button');
             cancelButton.hidden = true;
             submitButton.value = "Submit";
-            imageDisplay.src = "static/images/default_profile_picture.png";
+            imageDisplay.src = "static/images/default_profile_picture.png"; 
             
             if (currentTab === "student"){
-                showRecords('/students');
+                await showRecords('/students');
             }
             else if (currentTab === "teacher"){
-                showRecords('/teachers');
+                await showRecords('/teachers');
             }
             else if (currentTab === "admin"){
-                showRecords('/admins');
+                await showRecords('/admins');
             }
     
         }
@@ -187,7 +187,7 @@ async function showRecords(apiRoute){
         const response = await fetch(apiRoute)
         const result = await response.json();
         tableBody.innerHTML = ""
-        if (result.status){  
+        if (response.ok && result.status){  
             result.data.forEach(data => {
                 addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
             })
@@ -450,13 +450,13 @@ function deleteUser(id, firstName, lastName, role){
                 formBody.remove();
                 notifyObj.notify(result.message, "success");
                 if (currentTab === "student"){
-                    showRecords('/students');
+                    await showRecords('/students');
                 }
                 else if (currentTab === "teacher"){
-                    showRecords('/teachers');
+                    await showRecords('/teachers');
                 }
                 else if (currentTab === "admin"){
-                    showRecords('/admins');
+                    await showRecords('/admins');
                 }
             }
             else{
