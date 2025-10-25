@@ -140,6 +140,7 @@ async function saveCurrentQuestion(e){
 
     if (noQuestion || noChoices || noAnswer){
         console.log("Please put the valid requirements")
+        return;
     }
 
     const newQuestion = {
