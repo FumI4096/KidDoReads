@@ -1,9 +1,8 @@
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
-const addChoiceButton = document.getElementById("add-choice-button")
-const removeChoiceButton = document.getElementById("remove-choice-button")
-const choicesContainer = document.querySelector(".choices-container")
-const answerContainer = document.querySelector(".answer-container")
+const questionInput = document.getElementById("question")
+const choicesContainer = document.getElementById("choices-container")
+const answerContainer = document.getElementById("answer-container")
 const saveButton = document.getElementById("save-button")
 const nextButton = document.getElementById("next-button")
 const previousButton = document.getElementById("previous-button")
@@ -28,23 +27,6 @@ toTeacherPageButton.addEventListener('click', () => {
     window.location.href = '/teacher_dashboard'
 });
 
-addChoiceButton.addEventListener("click", addChoice)
-removeChoiceButton.addEventListener("click", removeChoice)
-choicesContainer.addEventListener("click", (e) => {
-    const choiceElement = e.target.closest(".choice-box");
-
-    if (removeMode && choiceElement && choicesContainer.querySelectorAll(".choice-box").length > 2) {
-        choiceElement.remove();
-        relabelChoices();
-
-        const answerElements = answerContainer.querySelectorAll("input, label")
-
-        answerElements[answerElements.length - 1].remove()
-        answerElements[answerElements.length - 2].remove()
-        
-    }
-    checkInputState()
-});
 saveButton.addEventListener("click", saveCurrentQuestion)
 editButton.addEventListener("click", setFormToEditMode)
 nextButton.addEventListener("click", nextForm)
@@ -60,8 +42,6 @@ if (firstQuestionExist(questionObject.length)) {
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
     });
-    addChoiceButton.disabled = true
-    removeChoiceButton.disabled = true
     editButton.style.display = "inline"
     previousButton.disabled = true
     saveButton.style.display = "none"
@@ -94,19 +74,10 @@ function setFormToViewMode() {
     saveButton.style.display = "none"
     editButton.style.display = "inline"
     nextButton.disabled = false; 
-    addChoiceButton.disabled = true;
-    removeChoiceButton.disabled = true;
     answerRadioButtonsDisable(true)
     document.querySelector(".question").readOnly = true;
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
-    });
-    const choicesElements = choicesContainer.querySelectorAll(".choice-box")
-    choicesElements.forEach(element => {
-        if (removeChoiceButton.disabled == true){
-            element.classList.remove("choice-box-hover")
-            
-        }
     });
 
     if(currentQuestion === 0){
@@ -117,7 +88,6 @@ function setFormToViewMode() {
     } 
 
     if(removeMode){
-        removeChoiceButton.textContent = "Remove Choice"
         removeMode = false
     }
 }
@@ -128,8 +98,6 @@ function setFormToEditMode() {
     checkInputState()
     document.querySelector(".question").readOnly = false;
     answerRadioButtonsDisable(false)
-    addChoiceButton.disabled = false;
-    removeChoiceButton.disabled = false;
     nextButton.disabled = true;
 
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
@@ -139,94 +107,6 @@ function setFormToEditMode() {
     if (editButton.style.display === "none" && currentQuestion === questionObject.length - 1){
         previousButton.disabled = true;
     }
-}
-
-function addChoice(){
-    choiceCount = choicesContainer.querySelectorAll(".choice-box").length
-    choiceCharacter = ""
-    const answerOptions = document.querySelector(".answer-options")
-
-    switch (choiceCount + 1){
-        case 1:
-            choiceCharacter = "A"
-            break
-        case 2:
-            choiceCharacter = "B"
-            break        
-        case 3:
-            choiceCharacter = "C"
-            break
-        case 4:
-            choiceCharacter = "D"
-            break
-    }
-
-    if(choiceCount != 4){
-        const choiceInput = document.createElement("input")
-        const choiceDiv = document.createElement("div")
-        const choiceLetter = document.createElement("p")
-        
-        choiceLetter.classList.add("choice-letter")
-        choiceLetter.textContent = choiceCharacter + "."
-        
-        choiceInput.type = "text"
-        choiceInput.name = choiceCharacter
-        choiceInput.placeholder = "Enter a choice"
-        choiceInput.classList.add("choice")
-        
-        choiceDiv.classList.add("choice-box")
-        choiceDiv.append(choiceLetter)
-        choiceDiv.append(choiceInput)
-        choicesContainer.appendChild(choiceDiv)
-
-        const answerRadioButton = document.createElement("input")
-        const answerLabel = document.createElement("label")
-
-        answerRadioButton.type = "radio"
-        answerRadioButton.setAttribute("id", choiceCharacter.toLowerCase())
-        answerRadioButton.name = "answer"
-        answerRadioButton.value = choiceCharacter.toLowerCase()
-
-        answerLabel.textContent = choiceCharacter
-        answerLabel.setAttribute('for', choiceCharacter.toLowerCase())
-
-        answerOptions.append(answerRadioButton, answerLabel)
-        
-    }
-
-    checkInputState()
-
-}
-
-function removeChoice() {
-    removeMode = !removeMode
-    removeChoiceButton.textContent = removeMode ? "Cancel Choice Removing" : "Remove Choice"
-    const choicesElements = choicesContainer.querySelectorAll(".choice-box")
-    choicesElements.forEach(element => {
-        if (removeMode){
-            element.classList.add("choice-toggle-hover")
-        }
-        else{
-            element.classList.remove("choice-toggle-hover");
-        }
-    });
-
-    if (removeMode){
-        saveButton.disabled = true
-    }
-    else{
-        checkInputState()
-    }
-
-    addChoiceButton.disabled = removeMode
-}
-
-function relabelChoices() {
-    const choiceElements = choicesContainer.querySelectorAll(".choice-box");
-    choiceElements.forEach((element, index) => {
-        const letter = String.fromCharCode(65 + index);
-        element.querySelector(".choice-letter").textContent = letter + ".";
-    });
 }
 
 async function saveCurrentQuestion(e){
@@ -326,17 +206,6 @@ function clearForm(){
     const checkedAnswer = document.querySelector('input[name="answer"]:checked');
 
     choices.forEach(choice => choice.value = "");
-    if (choices.length > 2) {
-        for (let i = 2; i < choices.length; i++) {
-            choices[i].parentElement.remove();
-        }
-    }
-
-    if (answers.length > 4){
-        for(let i = 4; i < answers.length; i++){
-            answers[i].remove()
-        }
-    }
 
     if (checkedAnswer) {
         checkedAnswer.checked = false;
