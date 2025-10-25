@@ -51,8 +51,6 @@ def register():
         password = request.form.get("password")
         role = request.form.get("role")
         
-        print(id, fname, lname, email, password, role)
-        
         if 'image' not in request.files:
             return jsonify({"status": False, "message": "no file uploaded"})
         
