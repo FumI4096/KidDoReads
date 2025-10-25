@@ -37,7 +37,7 @@ document.addEventListener("input", () => {
 
 if (firstQuestionExist(questionObject.length)) {
     loadQuestion(0);
-    document.querySelector(".question").readOnly = true;
+    questionInput.readOnly = true;
     answerRadioButtonsDisable(true)
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
@@ -57,7 +57,7 @@ if (firstQuestionExist(questionObject.length)) {
 
 //check if some inputs are filled or missing
 function checkInputState() {
-    const getQuestion = document.querySelector(".question").value.trim();
+    const getQuestion = questionInput.value.trim();
     const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
     const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
     const getChoices = Array.from(choicesContainer.querySelectorAll(".choice-box .choice"));
@@ -75,7 +75,7 @@ function setFormToViewMode() {
     editButton.style.display = "inline"
     nextButton.disabled = false; 
     answerRadioButtonsDisable(true)
-    document.querySelector(".question").readOnly = true;
+    questionInput.readOnly = true;
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
     });
@@ -96,7 +96,7 @@ function setFormToEditMode() {
     saveButton.style.display = "inline"
     editButton.style.display = "none"
     checkInputState()
-    document.querySelector(".question").readOnly = false;
+    questionInput.readOnly = false;
     answerRadioButtonsDisable(false)
     nextButton.disabled = true;
 
@@ -112,9 +112,9 @@ function setFormToEditMode() {
 async function saveCurrentQuestion(e){
     e.preventDefault()
 
-    const getQuestion = document.querySelector(".question").value
+    const getQuestion = questionInput.value
     const getChoices = choicesContainer.querySelectorAll(".choice-box .choice")
-    const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
+    const checkedRadioButton = answerContainer.querySelector('input[name="answer"]:checked')
     const getAnswer = checkedRadioButton.value ? checkedRadioButton.value : null
     var noQuestion = false
     var noChoices = false
@@ -198,11 +198,8 @@ async function saveCurrentQuestion(e){
 }
 
 function clearForm(){
-    document.querySelector(".question").value = ""
-
+    questionInput.value = ""
     const choices = choicesContainer.querySelectorAll(".choice-box .choice");
-    const answers = answerContainer.querySelectorAll('input, label');
-
     const checkedAnswer = document.querySelector('input[name="answer"]:checked');
 
     choices.forEach(choice => choice.value = "");
@@ -254,7 +251,7 @@ function loadQuestion(index) {
     answerOptions.className = "answer-options"
     
     const questionData = questionObject[index];
-    document.querySelector(".question").value = questionData.question;
+    questionInput.value = questionData.question;
 
     const choicesContainer = document.querySelector(".choices-container");
     choicesContainer.innerHTML = '';
