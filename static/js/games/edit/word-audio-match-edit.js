@@ -253,48 +253,21 @@ function loadQuestion(index) {
     const questionData = questionObject[index];
     questionInput.value = questionData.question;
 
-    const choicesContainer = document.querySelector(".choices-container");
-    choicesContainer.innerHTML = '';
-    answerContainer.innerHTML = '';
-    answerContainer.appendChild(answerHeader)
+    const choiceA = document.getElementById('choice-a')
+    const choiceB = document.getElementById('choice-b')
+    const choiceC = document.getElementById('choice-c')
 
-    const choiceLetters = ['A', 'B', 'C', 'D'];
-    questionData.choices.forEach((choiceText, i) => {
-        const choiceBox = document.createElement('div');
-        choiceBox.className = 'choice-box';
+    choiceA.value = questionData.choices[0] || ""
+    choiceB.value = questionData.choices[1] || ""
+    choiceC.value = questionData.choices[2] || ""
 
-        const choiceLetter = document.createElement('p');
-        choiceLetter.className = 'choice-letter';
-        choiceLetter.textContent = choiceLetters[i] + ".";
+    const radioA = document.getElementById('answer-a');
+    const radioB = document.getElementById('answer-b');
+    const radioC = document.getElementById('answer-c');
 
-        const choiceInput = document.createElement('input');
-        choiceInput.className = 'choice';
-        choiceInput.type = 'text';
-        choiceInput.placeholder = 'Enter a choice';
-        choiceInput.value = choiceText; 
-        choiceBox.appendChild(choiceLetter);
-        choiceBox.appendChild(choiceInput);
-        choicesContainer.appendChild(choiceBox);
-
-        const answerRadioButton = document.createElement("input")
-        const answerLabel = document.createElement("label")
-
-        answerRadioButton.type = "radio"
-        answerRadioButton.setAttribute("id", choiceLetters[i].toLowerCase())
-        answerRadioButton.name = "answer"
-        answerRadioButton.value = choiceLetters[i].toLowerCase()
-
-        answerLabel.textContent = choiceLetters[i]
-        answerLabel.setAttribute('for', choiceLetters[i].toLowerCase())
-
-        if (questionData.answer === choiceLetters[i].toLowerCase()){
-            answerRadioButton.checked = true;
-        } 
-
-        answerOptions.append(answerRadioButton, answerLabel)
-    });
-
-    answerContainer.appendChild(answerOptions)
+    if (radioA) radioA.checked = (questionData.answer === 'a');
+    if (radioB) radioB.checked = (questionData.answer === 'b');
+    if (radioC) radioC.checked = (questionData.answer === 'c');
 
     currentQuestion = index; 
 }
