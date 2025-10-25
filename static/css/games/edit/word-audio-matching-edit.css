@@ -23,7 +23,7 @@ header{
     justify-content: space-between;
 }
 
-.question-container{
+#question-container{
     height: 500px;
     display: flex;
     justify-content: center;
@@ -31,7 +31,7 @@ header{
     background: #616161;
     border-radius: 1rem;
 
-    & > .question{
+    & > #question{
         width: 700px;
         text-align: center;
         outline: none;
@@ -48,7 +48,7 @@ header{
     }
 }
 
-.choices-container{
+#choices-container{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 2rem;
@@ -84,16 +84,7 @@ header{
     }
 }
 
-.choice-toggle-hover:hover{
-    cursor: pointer;
-    background-color: rgb(151, 151, 151);
-
-    & > *:hover{
-        cursor: pointer;
-    }
-}
-
-.answer-container{
+#answer-container{
     margin-bottom: auto;
     display: flex;
     justify-content: space-between;
@@ -112,7 +103,7 @@ header{
     }
 }
 
-.button-container{
+#button-container{
     display: flex;
     justify-content: space-between;
 }
