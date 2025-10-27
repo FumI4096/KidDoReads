@@ -21,8 +21,8 @@ def game_attempt():
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@attempt_bp.route('/attempts/<int:teacher_id>/<int:content_type>', methods=['GET'])
-def student_progress_by_contents(teacher_id, content_type):
+@attempt_bp.route('/attempts/activities/<int:teacher_id>/<int:content_type>', methods=['GET'])
+def student_progress(teacher_id, content_type):
     try:
         db = get_db()
         
@@ -47,8 +47,8 @@ def student_progress_by_contents(teacher_id, content_type):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@attempt_bp.route('/attempts/<int:content_id>', methods=['GET'])
-def student_scores_by_contents(content_id):
+@attempt_bp.route('/attempts/activities/<int:content_id>/filter/<int:filter>', methods=['GET'])
+def attempt_progress(content_id, filter):
     try:
         db = get_db()
         
