@@ -33,6 +33,7 @@ activityNavButton.addEventListener('click', () => {
     progressNavButton.classList.remove('toggle-user')
 })
 
+// to be changed with drop down menus
 assessmentNavButton.addEventListener('click', () => {
     // showRecords('/teachers')
     assessmentNavButton.disabled = true
