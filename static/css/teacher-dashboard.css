@@ -209,6 +209,22 @@ main > section{
     }
 }
 
+#progress-table{
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+
+    & > tbody{
+        & > tr {
+            & > .link:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+
 
 
 
