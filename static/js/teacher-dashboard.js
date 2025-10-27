@@ -4,7 +4,6 @@ const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
 const progressNavButton = document.getElementById("progress-record-button");
 const logOutButton = document.getElementById('log-out-button');
-const contents = document.getElementById("content-container");
 const addContentButton = document.getElementById("add-content-button");
 const mainAside = document.querySelector('main > aside');
 const mainSection = document.querySelector('main > section');
@@ -24,8 +23,8 @@ logOutButton.addEventListener('click', () => {
 window.addEventListener('resize', moveStudentInfo);
 
 
-activityNavButton.addEventListener('click', () => {
-    // showRecords('/students')
+activityNavButton.addEventListener('click', async () => {
+    await showContents()
     activityNavButton.disabled = true
     activityNavButton.style.pointerEvents = 'none'
     activityNavButton.classList.add('toggle-user')
@@ -35,8 +34,8 @@ activityNavButton.addEventListener('click', () => {
     progressNavButton.classList.remove('toggle-user')
 })
 
-assessmentNavButton.addEventListener('click', () => {
-    // showRecords('/teachers')
+assessmentNavButton.addEventListener('click', async () => {
+    await showContents()
     assessmentNavButton.disabled = true
     assessmentNavButton.style.pointerEvents = 'none'
     assessmentNavButton.classList.add('toggle-user')
@@ -44,6 +43,17 @@ assessmentNavButton.addEventListener('click', () => {
     activityNavButton.classList.remove('toggle-user')
     progressNavButton.style.pointerEvents = 'auto'
     progressNavButton.classList.remove('toggle-user')
+})
+
+progressNavButton.addEventListener('click', async () => {
+    await getStudentProgressByContentType(id, 1)
+    progressNavButton.disabled = true
+    progressNavButton.style.pointerEvents = 'none'
+    progressNavButton.classList.add('toggle-user')
+    activityNavButton.style.pointerEvents = 'auto'
+    activityNavButton.classList.remove('toggle-user')
+    assessmentNavButton.style.pointerEvents = 'auto'
+    assessmentNavButton.classList.remove('toggle-user')
 })
 
 addContentButton.addEventListener("click", createContent);
@@ -186,7 +196,10 @@ function moveStudentInfo(){
     
 }
 
+//parameters to be whether if it is an assessment or activities(contents)
 async function showContents() {
+    mainSection.innerHTML = '';
+
     const url = `/contents/${id}`;
     const response = await fetch(url);
     const result = await response.json();
@@ -194,9 +207,7 @@ async function showContents() {
     try{
         if (response.ok && result.status){
             result.data.forEach(data => {
-                console.log(data)
-                console.log(Object.keys(data.content_json).length)
-                addContent(data.content_id, data.content_title, data.content_json, data.content_type, data.content_type_name, data.isHidden)
+                addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.content_type, data.content_type_name, data.isHidden)
             })
         }
         else{
@@ -208,6 +219,19 @@ async function showContents() {
     catch(error){
         console.error("Network Error:", error);
         notification.notify("Network error. Please check your connection and try again.", "error");
+    }
+
+    function contentStructure(){
+        const contentContainer = document.getElementById('content-container')
+
+        if (!(contentContainer)){
+            const div = document.createElement("div");
+            div.setAttribute('id', "content-container");
+            mainSection.appendChild(div);
+            return div
+        }
+
+        return contentContainer
     }
 }
 
@@ -245,7 +269,7 @@ async function showUserInfo(){
     }
 }
 
-function addContent(content_id, content_title, content_details, content_type, content_type_name, content_hidden){
+function addContent(content_container, content_id, content_title, content_details, content_type, content_type_name, content_hidden){
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
@@ -378,8 +402,8 @@ function addContent(content_id, content_title, content_details, content_type, co
     })
 
     newContent.appendChild(buttonActionContainer);
-    contents.appendChild(newContent);
-    contents.appendChild(addContentButton);
+    content_container.appendChild(newContent);
+    content_container.appendChild(addContentButton);
 }
 
 function editGamePageTo(url){
@@ -422,11 +446,388 @@ function previewGamePageTo(url){
         case 5: //what happens next
             window.location.href = '/what_happens_next_answer';
             break;
-        case 6: //picture + clues
+            case 6: //picture + clues
             window.location.href = '/picture_clues_answer';
             break;
     }
 }
 
+function getProgressHeaderRow(){
+    const progressHeaderRow = document.createElement('tr')
+    const contentTitleHeader = document.createElement('th')
+    const completedStudentsHeader = document.createElement('th')
+    const totalStudentsHeader = document.createElement('th')
+    const progressHeader = document.createElement('th')
+    
+    contentTitleHeader.textContent = 'Content Title'
+    completedStudentsHeader.textContent = 'Completed Students'
+    totalStudentsHeader.textContent = 'Total Students'
+    progressHeader.textContent = 'Progress'
+
+    progressHeaderRow.appendChild(contentTitleHeader)
+    progressHeaderRow.appendChild(completedStudentsHeader)
+    progressHeaderRow.appendChild(totalStudentsHeader)
+    progressHeaderRow.appendChild(progressHeader)
+
+    return progressHeaderRow
+}
+
+function getScoreHeaderRow(){
+    const scoreHeaderRow = document.createElement('tr')
+    const studentIdHeader = document.createElement('th')
+    const studentNameHeader = document.createElement('th')
+    const attemptsHeader = document.createElement('th')
+    const highestScoreHeader = document.createElement('th')
+    const lowestScoreHeader = document.createElement('th')
+    const totalQuestionsHeader = document.createElement('th')
+
+    studentIdHeader.textContent = 'Student ID'
+    studentNameHeader.textContent = 'Student Name'
+    attemptsHeader.textContent = 'Attempts'
+    highestScoreHeader.textContent = 'Highest Score'
+    lowestScoreHeader.textContent = 'Lowest Score'
+    totalQuestionsHeader.textContent = 'Total Questions'
+
+    scoreHeaderRow.appendChild(studentIdHeader)
+    scoreHeaderRow.appendChild(studentNameHeader)
+    scoreHeaderRow.appendChild(attemptsHeader)
+    scoreHeaderRow.appendChild(highestScoreHeader)
+    scoreHeaderRow.appendChild(lowestScoreHeader)
+    scoreHeaderRow.appendChild(totalQuestionsHeader)
+
+    return scoreHeaderRow
+}
+
+function getAttemptScoreHeaderRow(){
+    const attemptScoreHeaderRow = document.createElement('tr')
+    const countAttemptHeader = document.createElement('th')
+    const scoreAttemptHeader = document.createElement('th')
+    const dateHeader = document.createElement('th')
+
+    countAttemptHeader.textContent = 'Attempt Count'
+    scoreAttemptHeader.textContent = 'Score'
+    dateHeader.textContent = 'Attempt Submitted Date'
+
+    attemptScoreHeaderRow.appendChild(countAttemptHeader)
+    attemptScoreHeaderRow.appendChild(scoreAttemptHeader)
+    attemptScoreHeaderRow.appendChild(dateHeader)
+
+    return attemptScoreHeaderRow
+
+}
+
+function getProgressEventsHeader(){
+    const headerContainer = document.getElementById('event-details-header')
+    if (!(headerContainer)){
+        const headerContainer = document.createElement('div')
+        headerContainer.setAttribute('id', 'event-details-header')
+        
+        return headerContainer
+    }
+    else{
+        headerContainer.innerHTML = ''
+        return headerContainer
+    }
+    
+}
+
+function studentProgressHeader(headerContainer){
+    const selectCategory = document.createElement('select')
+    const selectContent = document.createElement('select')
+    selectCategory.setAttribute('id', 'select-category')
+    selectCategory.name = 'select-category'
+    selectContent.setAttribute('id', 'select-content')
+    selectContent.name = 'select-content'
+    const categoryOptions = [
+        {value: 0, text: 'Activities'},
+        {value: 1, text: 'Assessments'}
+    ]
+    const contentOptions = [
+        {value: 1, text: 'Pronunciation: Word Audio Match'}, 
+        {value: 2, text: 'Phonemic Awareness: Listen & Choose'},
+        {value: 3, text: 'Word Recognition: Sound-Alike Match'},
+        {value: 4, text: 'Word Recognition: Meaning Maker'},
+        {value: 5, text: 'Reading Comprehension: What Happens Next?'},
+        {value: 6, text: 'Reading Comprehension: Picture + Clues'}
+    ]
+
+    categoryOptions.forEach(option => {
+        const optionElement = document.createElement('option')
+        optionElement.value = option.value
+        optionElement.textContent = option.text
+
+        selectCategory.appendChild(optionElement)
+    })
+
+    contentOptions.forEach(option => {
+        const optionElement = document.createElement('option')
+        optionElement.value = option.value
+        optionElement.textContent = option.text
+
+        selectContent.appendChild(optionElement)
+    })
+
+    headerContainer.appendChild(selectCategory)
+    headerContainer.appendChild(selectContent)
+
+    return headerContainer
+}
+
+function attemptProgressHeader(headerContainer, content_name, content_id, table_header, table_body){
+    const contentName = document.createElement('h3')
+    contentName.textContent = content_name
+    headerContainer.appendChild(contentName)
+
+    const selectAttemptProgressFilter = document.createElement('select')
+    selectAttemptProgressFilter.setAttribute('id', 'select-attempt-progress-filter')
+    selectAttemptProgressFilter.name = 'select-attempt-progress-filter'
+    const filterOptions = [
+        {value: 0, text: 'Student ID DESC'},
+        {value: 1, text: 'Student ID ASC'},
+        {value: 2, text: 'High Score'},
+        {value: 3, text: 'Low Score'},
+        {value: 4, text: 'Most Attempts'},
+        {value: 5, text: 'Least Attempts'}
+    ]
+
+    filterOptions.forEach(option => {
+        const optionElement = document.createElement('option')
+        optionElement.value = option.value
+        optionElement.textContent = option.text
+        selectAttemptProgressFilter.appendChild(optionElement)
+    })
+
+    headerContainer.appendChild(selectAttemptProgressFilter)
+
+    selectAttemptProgressFilter.addEventListener('change', async () => {
+        const url = `/attempts/activities/${content_id}/filter/${selectAttemptProgressFilter.value}`;
+        const response = await fetch(url)
+        const result = await response.json()
+        table_body.innerHTML = ''
+        if (response.ok && result.status){
+            result.scores.forEach(student => {
+                displayStudentAttemptScores(table_header, table_body, content_id, student.student_id, student.student_name, student.student_attempts, student.student_highest_score, student.student_lowest_score, student.total_questions)
+            })
+        }
+        else{
+            console.log(result.message)
+        }
+    })
+
+    return headerContainer
+}
+
+function attemptScoreHeader(headerContainer, student_name, student_id, content_id, table_body){
+    const studentName = document.createElement('h3')
+    studentName.textContent = student_name
+    headerContainer.appendChild(studentName)
+
+    const selectAttemptScoreFilter = document.createElement('select')
+    selectAttemptScoreFilter.setAttribute('id', 'select-attempt-score-category')
+    selectAttemptScoreFilter.name = 'select-attempt-score-category'
+    const filterOptions = [
+        {value: 0, text: 'High Score'},
+        {value: 1, text: 'Low Score'},
+        {value: 2, text: 'Attempt Date DESC'},
+        {value: 3, text: 'Attempt Date ASC'}
+    ]
+
+    filterOptions.forEach(option => {
+        const optionElement = document.createElement('option')
+        optionElement.value = option.value
+        optionElement.textContent = option.text
+
+        selectAttemptScoreFilter.appendChild(optionElement)
+    })
+
+    headerContainer.appendChild(selectAttemptScoreFilter)
+
+    selectAttemptScoreFilter.addEventListener('change', async () => {
+        const url = `/attempts/activities/students/${student_id}/${content_id}/filter/${selectAttemptScoreFilter.value}`;
+        const response = await fetch(url)
+        const result = await response.json()
+        table_body.innerHTML = ''
+        if (response.ok && result.status){
+            result.attemptScores.forEach(student => {
+                displayAttemptScores(table_body, student.attempt_count, student.score, formatDate(student.date))
+            })
+        }
+        else{
+            console.log(result.message)
+        }
+    })
+
+    return headerContainer
+}
+
+async function getStudentProgressByContentType(teacherId, contentType){
+    mainSection.innerHTML = ''
+    const progressTable = document.createElement('table')
+    progressTable.setAttribute('id', 'progress-table')
+
+    const progressTableHeader = document.createElement('thead')
+    const progressTableBody = document.createElement('tbody')
+    
+    progressTableHeader.appendChild(getProgressHeaderRow())
+    progressTable.appendChild(progressTableHeader)
+    progressTable.appendChild(progressTableBody)
+    
+    mainSection.appendChild(progressTable)
+    try{
+        const url = `/attempts/activities/${teacherId}/${contentType}`;
+        const response = await fetch(url)
+        const result = await response.json()
+
+        if (response.ok && result.status){
+            mainSection.insertBefore(studentProgressHeader(getProgressEventsHeader()), mainSection.firstChild)
+
+            result.attempts.forEach(data => {
+                displayAttemptProgress(progressTableHeader, progressTableBody, data.content_id, data.content_title, data.completed_students, data.total_students, data.progress)
+            })
+        }
+        else{
+            console.log(result.message)
+        }
+    }
+    catch(error){
+        console.log(error)
+    }
+    
+    
+}
+
+function displayAttemptProgress(table_header, table_body, content_id, content_title, completed_students, total_students, progress){
+    const dataRow = document.createElement('tr')
+    const contentTitleData = document.createElement('td')
+    const completedStudentsData = document.createElement('td')
+    const totalStudentsData = document.createElement('td')
+    const progressData = document.createElement('td')
+    
+    contentTitleData.textContent = content_title
+    contentTitleData.classList.add('link')
+    completedStudentsData.textContent = completed_students
+    totalStudentsData.textContent = total_students
+    progressData.textContent = progress
+    
+    dataRow.appendChild(contentTitleData)
+    dataRow.appendChild(completedStudentsData)
+    dataRow.appendChild(totalStudentsData)
+    dataRow.appendChild(progressData)
+    
+    table_body.appendChild(dataRow)
+
+    contentTitleData.addEventListener('click', async () => {
+        const url = `/attempts/activities/${content_id}/filter/${0}`;
+        const response = await fetch(url)
+        const result = await response.json()
+        
+        table_header.innerHTML = ''
+        table_body.innerHTML = ''
+        
+        table_header.appendChild(getScoreHeaderRow())
+        
+        mainSection.insertBefore(attemptProgressHeader(getProgressEventsHeader(), content_title, content_id, table_header, table_body), mainSection.firstChild)
+
+        try{
+            if (response.ok && result.status){
+                result.scores.forEach(student => {
+                    displayStudentAttemptScores(table_header, table_body, content_id, student.student_id, student.student_name, student.student_attempts, student.student_highest_score, student.student_lowest_score, student.total_questions)
+                })
+            }
+        }
+        catch(error){
+            console.log(error)
+        }
+    })
+    
+}
+
+function displayStudentAttemptScores(table_header, table_body, content_id, student_id, student_name, student_attempts, student_highest_score, student_lowest_score, total_questions){
+    const scoreDataRow = document.createElement('tr')
+    const studentIdData = document.createElement('td')
+    const studentNameData = document.createElement('td')
+    const attemptsData = document.createElement('td')
+    const highestScoreData = document.createElement('td')
+    const lowestScoreData = document.createElement('td')
+    const totalQuestionsData = document.createElement('td')
+
+    studentIdData.textContent = student_id
+    studentNameData.textContent = student_name
+    attemptsData.textContent = student_attempts || 0
+    attemptsData.classList.add('link')
+    highestScoreData.textContent = student_highest_score || 0
+    lowestScoreData.textContent = student_lowest_score || 0
+    totalQuestionsData.textContent = total_questions
+
+    scoreDataRow.appendChild(studentIdData)
+    scoreDataRow.appendChild(studentNameData)
+    scoreDataRow.appendChild(attemptsData)
+    scoreDataRow.appendChild(highestScoreData)
+    scoreDataRow.appendChild(lowestScoreData)
+    scoreDataRow.appendChild(totalQuestionsData)
+
+    table_body.appendChild(scoreDataRow)
+
+    attemptsData.addEventListener('click', async () => {
+        const url = `/attempts/activities/students/${student_id}/${content_id}/filter/${0}`
+        
+        const response = await fetch(url)
+        const result = await response.json()
+
+        table_header.innerHTML = ''
+        table_body.innerHTML = ''
+        table_header.appendChild(getAttemptScoreHeaderRow())
+
+        mainSection.insertBefore(attemptScoreHeader(getProgressEventsHeader(), student_name, student_id, content_id, table_body), mainSection.firstChild)
+
+        try{
+            if (response.ok && result.status){
+
+                result.attemptScores.forEach(attempt => {
+                    displayAttemptScores(table_body, attempt.attempt_count, attempt.score, formatDate(attempt.date))
+                })
+            }
+        }
+        catch(error){
+            console.log(error)
+        }
+
+    })
+}
+
+function displayAttemptScores(table_body, counted_attempts, score, date){
+    const attemptScoreDataRow = document.createElement('tr')
+    const countAttemptRow = document.createElement('td')
+    const scoreAttemptRow = document.createElement('td')
+    const dateRow = document.createElement('td')
+
+    countAttemptRow.textContent = counted_attempts
+    scoreAttemptRow.textContent = score
+    dateRow.textContent = date
+
+    attemptScoreDataRow.appendChild(countAttemptRow)
+    attemptScoreDataRow.appendChild(scoreAttemptRow)
+    attemptScoreDataRow.appendChild(dateRow)
+
+    table_body.appendChild(attemptScoreDataRow)
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString + '+08:00');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    
+    return `${month} ${day}, ${year} ${hours}:${minutes} ${ampm}`;
+}
 
 moveStudentInfo();
