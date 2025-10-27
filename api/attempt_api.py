@@ -53,7 +53,16 @@ def attempt_progress(content_id, filter):
     try:
         db = get_db()
         
-        status, results = db.get_student_scores_by_content_id(content_id)
+        filters = [
+            'StudentID DESC', 
+            'StudentID ASC', 
+            'highest_score DESC', 
+            'lowest_score ASC', 
+            'total_attempts DESC', 
+            'total_attempts ASC'
+        ]
+        
+        status, results = db.get_student_scores_by_content_id(content_id, filters[filter])
         
         rows = results
         scores = []
