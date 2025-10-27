@@ -26,6 +26,7 @@ def student_progress(teacher_id, content_type):
     try:
         db = get_db()
         
+        # Add condition [0 = activities, 1 = assessments] for category filtering
         status, results = db.get_student_progress_by_contents(teacher_id, content_type)
         
         rows = results
