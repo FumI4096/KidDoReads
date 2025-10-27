@@ -226,7 +226,12 @@ function showFinalScore() {
     
             try{
                 if (response.ok && result.status){
+                    sessionStorage.removeItem('questions')
+                    sessionStorage.removeItem('currentContentId')
+                    sessionStorage.removeItem('currentActivityTitle')
+                    sessionStorage.removeItem("userAnswers")
                     console.log("Success")
+                    window.location.href = '/student_dashboard';
                 }
                 else{
                     console.log(result.message)
@@ -235,11 +240,6 @@ function showFinalScore() {
             catch (error){
                 console.log(error)
             }
-            sessionStorage.removeItem('questions')
-            sessionStorage.removeItem('currentContentId')
-            sessionStorage.removeItem('currentActivityTitle')
-            sessionStorage.removeItem("userAnswers")
-            // window.location.href = '/student_dashboard';
         })
 
 
