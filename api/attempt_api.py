@@ -83,3 +83,33 @@ def attempt_progress(content_id, filter):
         
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
+    
+@attempt_bp.route('/attempts/activities/students/<int:student_id>/<int:content_id>/filter/<int:filter>', methods=['GET'])
+def student_attempt_scores(student_id, content_id, filter):
+    try:
+        db = get_db()
+        
+        filters = [
+            "Score DESC", 
+            "Score ASC", 
+            "attemptAt DESC", 
+            "attemptAt ASC"
+        ]
+        status, results = db.get_student_attempt_scores(student_id, content_id, filters[filter])
+        
+        rows = results
+        attempt_scores = []
+        for row in rows:
+            attempt_scores.append({
+                "attempt_count": row[0],
+                "score": row[1],
+                "date": row[2]
+            })
+        
+        if status:
+            return jsonify({"status": status, "attemptScores": attempt_scores})
+        else:
+            return jsonify({"status": status, "message": "Failed to retrieve attempts"})
+        
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
