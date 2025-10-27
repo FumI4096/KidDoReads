@@ -22,6 +22,7 @@ logOutButton.addEventListener('click', () => {
     window.location.href = '/logout'
 })
 
+// to be changed with drop down menus
 activityNavButton.addEventListener('click', () => {
     // showRecords('/students')
     activityNavButton.disabled = true
