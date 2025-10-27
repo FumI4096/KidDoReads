@@ -215,7 +215,6 @@ function showFinalScore() {
             formData.append("student_id", sessionStorage.getItem("id"))
             formData.append("content_id", sessionStorage.getItem("currentContentId"))
             formData.append("score", finalScore)
-            formData.append("total_questions", totalQuestions)
             
             const response = await fetch('/attempt', {
                 method: "POST",
