@@ -450,6 +450,17 @@ function previewGamePageTo(url){
     }
 }
 
+// 1. Login as a teacher first
+// 2. Make a game first (Word Audio Match would be better if other games aren't yet working)
+// 3. Atleast make 3 or more questions, and save them (The save button is already working)
+// 4. Uncheck the Hidden button, ensuring that the activity is now UNHIDDEN to students
+// 5. Logout, then login as student
+// 6. Answer the created activity and click the Finish Button. (It would be better for you to make more attempts)
+// 7. Logout, then login as teacher again
+// 8. Check the Student Progress Navigation
+
+
+// DESIGN: progress-header-row, progress-header-row > th (Level 1)
 function getProgressHeaderRow(){
     const progressHeaderRow = document.createElement('tr')
     const contentTitleHeader = document.createElement('th')
@@ -470,6 +481,8 @@ function getProgressHeaderRow(){
     return progressHeaderRow
 }
 
+
+//DESIGN: score-header-row, score-header-row > th (Level 2)
 function getScoreHeaderRow(){
     const scoreHeaderRow = document.createElement('tr')
     const studentIdHeader = document.createElement('th')
@@ -496,6 +509,7 @@ function getScoreHeaderRow(){
     return scoreHeaderRow
 }
 
+//DESIGN: attempt-score-header-row, attempt-score-header-row > th (Level 3)
 function getAttemptScoreHeaderRow(){
     const attemptScoreHeaderRow = document.createElement('tr')
     const countAttemptHeader = document.createElement('th')
@@ -514,6 +528,7 @@ function getAttemptScoreHeaderRow(){
 
 }
 
+//NO NEED TO DESIGN
 function getProgressEventsHeader(){
     const headerContainer = document.getElementById('event-details-header')
     if (!(headerContainer)){
@@ -528,6 +543,22 @@ function getProgressEventsHeader(){
     }
     
 }
+
+/**
+ * studentProgressHeader
+ * Creates the main header with category and content filters (Level 1)
+ * 
+ * DESIGN ELEMENTS:
+ * - Two dropdown selects (category and content type)
+ * - Categories: Activities, Assessments
+ * - Content types: Different game types
+ * 
+ * EXISTING IDs:
+ * - #select-category
+ * - #select-content
+ * 
+ * 
+ */
 
 function studentProgressHeader(headerContainer){
     const selectCategory = document.createElement('select')
@@ -570,6 +601,22 @@ function studentProgressHeader(headerContainer){
 
     return headerContainer
 }
+
+/**
+ * attemptProgressHeader
+ * Creates header for student scores view with back button and filters (Level 2)
+ * 
+ * DESIGN ELEMENTS:
+ * - Back button to return to progress list
+ * - Content title (h3)
+ * - Filter dropdown for sorting student scores
+ * 
+ * EXISTING ID: 
+ * #back-to-main-progress-button
+ * #content-name
+ * #select-attempt-progress-filter
+ * 
+ */
 
 function attemptProgressHeader(headerContainer, content_name, content_id, table_header, table_body){
     const contentName = document.createElement('h3')
@@ -615,6 +662,21 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
     return headerContainer
 }
 
+/**
+ * attemptScoreHeader
+ * Creates header for individual student's attempt details (Level 3)
+ * 
+ * DESIGN ELEMENTS:
+ * - Back button to return to student scores
+ * - Student name (h3)
+ * - Filter dropdown for sorting attempts
+ * 
+ * EXISTING ID: 
+ * #back-to-attempt-progress-button
+ * #student-name
+ * #select-attempt-score-filter
+ */
+
 function attemptScoreHeader(headerContainer, student_name, student_id, content_id, table_body){
     const studentName = document.createElement('h3')
     studentName.textContent = student_name
@@ -642,26 +704,31 @@ function attemptScoreHeader(headerContainer, student_name, student_id, content_i
 
     selectAttemptScoreFilter.addEventListener('change', async () => {
         const url = `/attempts/activities/students/${student_id}/${content_id}/filter/${selectAttemptScoreFilter.value}`;
-        const response = await fetch(url)
-        const result = await response.json()
-        table_body.innerHTML = ''
-        if (response.ok && result.status){
-            result.attemptScores.forEach(student => {
-                displayAttemptScores(table_body, student.attempt_count, student.score, formatDate(student.date))
-            })
-        }
-        else{
-            console.log(result.message)
-        }
-    })
+/**
+ * restorePreviousState
+ * Handles back navigation between levels using NavigationManager
+ * 
+ * NAVIGATION FLOW:
+ * - From Level 3 (Attempt Details) → Level 2 (Student Scores)
+ * - From Level 2 (Student Scores) → Level 1 (Progress List)
+ * 
+ * REQUIRED CLASSES NEEDED TO BE DESIGNED (used for element removal):
+ * - .progress-header
+ * - .score-header
+ * - .attempt-header
+ * 
+ */
 
-    return headerContainer
-}
-
-async function getStudentProgressByContentType(teacherId, contentType){
-    mainSection.innerHTML = ''
-    const progressTable = document.createElement('table')
-    progressTable.setAttribute('id', 'progress-table')
+/**
+ * getStudentProgressByContentType
+ * Initializes the main student progress view (Level 1)
+ * Entry point for the student progress tracking system
+ * 
+ * DESIGN ELEMENTS:
+ * - Main table container
+ * 
+ * EXISTING ID: #progress-table
+ */
 
     const progressTableHeader = document.createElement('thead')
     const progressTableBody = document.createElement('tbody')
@@ -686,13 +753,21 @@ async function getStudentProgressByContentType(teacherId, contentType){
         else{
             console.log(result.message)
         }
-    }
-    catch(error){
-        console.log(error)
-    }
-    
-    
-}
+/**
+ * displayAttemptProgress
+ * Displays a row in the progress table (Level 1)
+ * Shows overview of student completion for each activity
+ * 
+ * DESIGN ELEMENTS:
+ * - Table row with clickable content title
+ * 
+ * EXISITINF CLASS ELEMENTS:
+ * .data-row
+ * .link
+ * 
+ * NOTE: The .link class indicates a clickable element that navigates to Level 2
+ * 
+ */
 
 function displayAttemptProgress(table_header, table_body, content_id, content_title, completed_students, total_students, progress){
     const dataRow = document.createElement('tr')
@@ -736,9 +811,23 @@ function displayAttemptProgress(table_header, table_body, content_id, content_ti
         catch(error){
             console.log(error)
         }
-    })
-    
-}
+/**
+ * displayStudentAttemptScores
+ * Displays a row in the student scores table (Level 2)
+ * Shows individual student performance for a specific activity
+ * 
+ * DESIGN ELEMENTS:
+ * - Table row with student information
+ * - Clickable attempts cell that navigates to Level 3
+ * 
+ * EXISTING CLASS ELEMENTS:
+ * .score-data-row
+ * .link
+ * 
+ * NOTE: The .link class on attemptsData indicates it's clickable
+ * 
+ * 
+ */
 
 function displayStudentAttemptScores(table_header, table_body, content_id, student_id, student_name, student_attempts, student_highest_score, student_lowest_score, total_questions){
     const scoreDataRow = document.createElement('tr')
@@ -793,11 +882,18 @@ function displayStudentAttemptScores(table_header, table_body, content_id, stude
     })
 }
 
-function displayAttemptScores(table_body, counted_attempts, score, date){
-    const attemptScoreDataRow = document.createElement('tr')
-    const countAttemptRow = document.createElement('td')
-    const scoreAttemptRow = document.createElement('td')
-    const dateRow = document.createElement('td')
+/**
+ * displayAttemptScores
+ * Displays all scores for each rows by a student (Level 3)
+ * 
+ * 
+ * EXISTING CLASS ELEMENTS:
+ * .attempt-score-data-row
+ * 
+ * NOTE: The .link class on attemptsData indicates it's clickable
+ * 
+ * 
+ */
 
     countAttemptRow.textContent = counted_attempts
     scoreAttemptRow.textContent = score
@@ -810,6 +906,7 @@ function displayAttemptScores(table_body, counted_attempts, score, date){
     table_body.appendChild(attemptScoreDataRow)
 }
 
+// helper/utility function to format date
 function formatDate(dateString) {
     const date = new Date(dateString + '+08:00');
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
