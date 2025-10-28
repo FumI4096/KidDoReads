@@ -397,8 +397,6 @@ function addContent(content_container, content_id, content_title, content_detail
         }
 
         sessionStorage.setItem("currentActivityTitle", content_title)
-        console.log(Object.keys(content_details).length)
-        console.log(sessionStorage.getItem("questions"))
     })
 
     newContent.appendChild(buttonActionContainer);
