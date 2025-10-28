@@ -614,6 +614,7 @@ function studentProgressHeader(headerContainer){
  * EXISTING ID: 
  * #back-to-main-progress-button
  * #content-name
+ * #attempt-progress-detail-container
  * #select-attempt-progress-filter
  * 
  */
@@ -674,6 +675,7 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
  * EXISTING ID: 
  * #back-to-attempt-progress-button
  * #student-name
+ * #attempt-score-detail-container
  * #select-attempt-score-filter
  */
 
@@ -761,7 +763,7 @@ function attemptScoreHeader(headerContainer, student_name, student_id, content_i
  * DESIGN ELEMENTS:
  * - Table row with clickable content title
  * 
- * EXISITINF CLASS ELEMENTS:
+ * EXISTING CLASS ELEMENTS:
  * .data-row
  * .link
  * 
