@@ -37,7 +37,8 @@ def student_progress(teacher_id, content_type):
                 "content_title": row[1],
                 "completed_students": row[2],
                 "total_students": row[3],
-                "progress": row[4]
+                "progress": row[4],
+                'is_hidden_from_students': row[5]
             })
         
         if status:
