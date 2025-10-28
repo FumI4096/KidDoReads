@@ -1,0 +1,7 @@
+const NAVIGATION_LEVELS = {
+    PROGRESS_LIST: 1,
+    STUDENT_SCORES: 2,
+    ATTEMPT_DETAILS: 3
+};
+
+export default NAVIGATION_LEVELS;
