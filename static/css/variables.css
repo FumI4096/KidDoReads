@@ -26,12 +26,12 @@
 
 @font-face{
     font-family: 'Light-Poppins';
-    src: url('../fonts/Poppins/Poppins-Light.ttf') format('truetype');
+    src: url('../fonts/Poppins-Light.ttf') format('truetype');
 }
 
 @font-face{
     font-family: 'Bold-Poppins';
-    src: url('../fonts/Poppins/Poppins-Bold.ttf') format('truetype');
+    src: url('../fonts/Poppins-Bold.ttf') format('truetype');
 }
 
 @font-face{
@@ -48,3 +48,5 @@
     font-family: 'Italic-Poppins';
     src: url('../fonts/Poppins-Italic.ttf') format('truetype');
 }
+
+/*updated font src*/
