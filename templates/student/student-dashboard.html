@@ -1,64 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Meta tags for character set and responsive viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KidDoReads</title>
-    <!-- Link to external CSS file for styling -->
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/student-dashboard.css') }}">
-
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png')  }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png') }}">
 </head>
 <body>
-    <!-- Ionicons script tags for module and nomodule support -->
+    <!-- Ionicons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png')  }}">
     <header>
-        <img src="{{url_for('static', filename='images/kdr-logo.png')}}" />
+        <img src="{{ url_for('static', filename='images/kdr-logo.png') }}" alt="KidDoReads Logo">
         <span>Kid-Do-Reads</span>
     </header>
 
     <main>
         <aside>
             <section id="student-info">
-                <img alt="image" id="student_picture">
+                <img alt="Student Image" id="student_picture">
                 <span id="student_name">Student</span>
             </section>
+
             <ul>
+                <!-- Profile -->
                 <li id="profile-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}"/>
+                    <img src="{{ url_for('static', filename='images/person.png') }}" alt="Profile Icon">
                     <span>Profile</span>
                 </li>
-                <li class="toggle-user" id="activities-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}" />
+
+                <!-- Activities -->
+                <li class="nav-item" id="activities-record-button">
+                    <img src="{{ url_for('static', filename='images/person.png') }}" alt="Activities Icon">
                     <span>Activities</span>
+                    <ion-icon name="chevron-down-outline" class="dropdown-arrow"></ion-icon>
+                    <ul class="dropdown">
+                        <li data-action="audio-word-match">Audio Word Match</li>
+                        <li data-action="listen-choose">Listen & Choose</li>
+                        <li data-action="sound-alike-match">Sound-Alike Match</li>
+                        <li data-action="meaning-maker">Meaning Maker</li>
+                        <li data-action="what-happens-next">What Happens Next?</li>
+                        <li data-action="picture-clues">Picture + Clues</li>
+                    </ul>
                 </li>
-                <li id="assessments-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}"/>
+
+                <!-- Assessments -->
+                <li class="nav-item" id="assessments-record-button">
+                    <img src="{{ url_for('static', filename='images/person.png') }}" alt="Assessments Icon">
                     <span>Assessments</span>
-                </li>                
+                    <ion-icon name="chevron-down-outline" class="dropdown-arrow"></ion-icon>
+                    <ul class="dropdown">
+                        <li data-action="audio-word-match">Audio Word Match</li>
+                        <li data-action="listen-choose">Listen & Choose</li>
+                        <li data-action="sound-alike-match">Sound-Alike Match</li>
+                        <li data-action="meaning-maker">Meaning Maker</li>
+                        <li data-action="what-happens-next">What Happens Next?</li>
+                        <li data-action="picture-clues">Picture + Clues</li>
+                    </ul>
+                </li>
+
+                <!-- Log Out -->
                 <li id="log-out-button">
                     <ion-icon name="log-out"></ion-icon>
                     <span>Log Out</span>
                 </li>
             </ul>
-            
         </aside>
-    
-        <section>
-            <!--Features here-->
-            <div id="display-contents">
-                
-            </div>
 
+        <section>
+            <div id="display-contents"></div>
         </section>
     </main>
 
-    <!-- JavaScript file for dynamic behavior -->
-    <script type=module src="{{ url_for('static', filename='js/student-dashboard.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/student-dashboard.js') }}"></script>
 </body>
 </html>
