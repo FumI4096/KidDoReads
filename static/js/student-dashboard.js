@@ -181,7 +181,8 @@ async function showContent(contentTypeNum) {
                     data.content_title,
                     data.content_json,
                     data.content_type,
-                    data.isHidden
+                    data.isHidden,
+                    "Activity"
                 );
             });
         } else {
@@ -193,16 +194,19 @@ async function showContent(contentTypeNum) {
     }
 }
 
-function addContent(content_id, teacher_name, content_title, content_details, content_type, content_hidden) {
+function addContent(content_id, teacher_name, content_title, content_details, content_type, content_hidden, category_type) {
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const teacherName = document.createElement("p");
+    const categoryType = document.createElement("p")
     newContent.classList.add("content");
     activityName.classList.add("activity-name");
     teacherName.classList.add("teacher-name");
+    categoryType.classList.add("category-type");
     activityName.innerHTML = content_title;
     teacherName.innerHTML = teacher_name;
-    newContent.append(activityName, teacherName);
+    categoryType.innerHTML = category_type;
+    newContent.append(activityName, teacherName, categoryType);
 
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add("button-container");
