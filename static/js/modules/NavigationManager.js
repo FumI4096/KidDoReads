@@ -1,4 +1,4 @@
-export const NavigationManager = {
+const NavigationManager = {
     stack: [],
     
     pushState(state) {
@@ -8,7 +8,6 @@ export const NavigationManager = {
             headerHTML: state.headerHTML,
             tableHeaderHTML: state.tableHeaderHTML,
             tableBodyHTML: state.tableBodyHTML,
-            timestamp: Date.now()
         });
     },
     
