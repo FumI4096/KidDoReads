@@ -2,8 +2,6 @@
 import Notification from './modules/Notification.js';
 
 const profileButton = document.getElementById("profile-button");
-const activityNavButton = document.getElementById("activities-record-button");
-const assessmentNavButton = document.getElementById("assessments-record-button");
 const logOutButton = document.getElementById('log-out-button');
 const mainAside = document.querySelector('main > aside');
 const mainSection = document.querySelector('main > section');
@@ -302,11 +300,14 @@ moveStudentInfo();
     }
 
     // Add click listeners to all dropdown items
-    document.querySelectorAll('.nav-item .dropdown li').forEach(item => {
-        item.addEventListener('click', () => {
+    document.querySelectorAll('#activities-record-button .dropdown li').forEach(item => {
+        item.addEventListener('click', async () => {
             const parentNav = item.closest('.nav-item');
             const navType = parentNav.querySelector('span').textContent.trim(); // e.g. "Activities" or "Assessments"
             const clickedName = item.textContent.trim();
+
+            displayContents.innerHTML = ''
+            showContent(parseInt(item.dataset.action))
 
             // Update the label dynamically
             sectionLabel.textContent = `${navType} – ${clickedName}`;
@@ -314,6 +315,29 @@ moveStudentInfo();
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
             item.classList.add('active');
+
+            
+        });
+    });
+
+    document.querySelectorAll('#assessments-record-button .dropdown li').forEach(item => {
+        item.addEventListener('click', async () => {
+            const parentNav = item.closest('.nav-item');
+            const navType = parentNav.querySelector('span').textContent.trim(); // e.g. "Activities" or "Assessments"
+            const clickedName = item.textContent.trim();
+
+            
+            displayContents.innerHTML = ''
+            //add showAssessments() to be created
+
+            // Update the label dynamically
+            sectionLabel.textContent = `${navType} – ${clickedName}`;
+
+            // Optional: highlight selected item
+            document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
+            item.classList.add('active');
+
+            
         });
     });
 })();
