@@ -1,87 +1,417 @@
 @import "variables.css";
 
-main > section{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-
+/* === GENERAL LAYOUT === */
+main > section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
-/* START OF FEATURES (the bottom designs) */
-
-#profile-background{
-    background-color: rgba(0, 0, 0, 0.6);
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+/* === PROFILE BACKGROUND OVERLAY === */
+#profile-background {
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
 }
 
-#profile-container{
-    display: flex;
-    flex-direction: column;
-    width: 1000px;
-    height: 500px;
-    background-color: white;
+/* === KID-DO-READS LEARNER IDENTIFICATION CARD DESIGN === */
+#profile-container {
+  display: flex;
+  flex-direction: column;
+  width: 650px;
+  max-width: 95%;
+  min-height: 400px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem 2rem;
+  position: relative;
+  animation: fadeInUp 0.3s ease;
+}
+
+#profile-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+#profile-button-container p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+#profile-button-container img {
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+}
+
+#information-container {
+  display: flex;
+  width: 100%;
+  flex-grow: 1;
+  gap: 1.5rem;
+}
+
+#information-container article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  flex-basis: 30%;
+}
+
+#information-container article img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 3px solid #ffb15c;
+  background-color: #f5f5f5;
+}
+
+#information-container article span {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #444;
+  text-align: center;
+}
+
+/* === ACHIEVEMENTS & BADGES BOX (MADE LONGER) === */
+#information-container aside {
+  flex-grow: 1;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px solid #e3e3e3;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 450px; /* made longer */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+#information-container aside h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.6rem;
+}
+
+#information-container aside p {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* === ACTIVITY SECTION (MEDIUM RECTANGLE) === */
+#activity-container {
+  width: 650px;
+  max-width: 95%;
+  min-height: 250px;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1.5px solid #ffb15c;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  margin: 1.5rem auto;
+  padding: 1rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#activity-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+#activity-container h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #ffb15c;
+  padding-bottom: 0.3rem;
+}
+
+#activity-container p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* === DROPDOWN MENU STYLING === */
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+/* HOVER EFFECT FOR ACTIVITY & ASSESSMENTS */
+.nav-item:hover {
+  background-color: #ffb15c;
+  color: #fff;
+}
+
+.nav-item img,
+.nav-item span,
+.nav-item ion-icon {
+  transition: filter 0.18s ease, color 0.18s ease;
+}
+
+.nav-item:hover img {
+  filter: brightness(0) invert(1);
+}
+
+/* DROPDOWN ARROW */
+.dropdown-arrow {
+  margin-left: auto;
+  font-size: 1.05rem;
+  transition: transform 0.28s ease;
+  color: inherit;
+}
+
+.dropdown-arrow.rotate {
+  transform: rotate(180deg);
+}
+
+/* DROPDOWN MENU BASE */
+.nav-item .dropdown {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 200;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height 0.28s ease, opacity 0.22s ease, transform 0.22s ease;
+}
+
+.nav-item .dropdown.active {
+  max-height: 480px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* DROPDOWN ITEMS */
+.dropdown li {
+  list-style: none;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.dropdown li:hover {
+  background-color: #ffb15c;
+  color: #fff;
+}
+
+/* === ALIGN PROFILE BUTTON WITH ACTIVITIES & ASSESSMENTS === */
+#student-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-left: 10px;
+}
+
+#student-info img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+#profile-button {
+  padding-left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+#profile-button:hover {
+  background-color: #ffb15c;
+  color: #fff;
+}
+
+#profile-button:hover ion-icon {
+  color: #fff;
+}
+
+/* === RESPONSIVE === */
+@media screen and (max-width: 936px) {
+  #profile-container {
+    width: 95%;
     padding: 1rem;
-}
+  }
 
-#profile-button-container{
-    display: flex;
-    width: 100%;
-
-    & > p{
-        flex-grow: 1;
-    }
-
-    & > img{
-        inline-size: 50px;
-    }
-}
-
-#information-container{
-    display: flex;
-    width: 100%;
-    flex-grow: 1;
-    & > article{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex-basis: 20%;
-
-        & > img{
-            inline-size: 100px;
-            object-fit: cover;
-        }
-    }
-    & > aside{
-        flex-grow: 1;
-        border: solid black 1px;
-    }
-}
-
-#display-contents{
-    /* change to grid later */
-    display: flex;
+  #information-container {
     flex-direction: column;
+  }
 
-    & > .content{
-        display: flex;
-        & > .teacher-name {
-            margin-right: auto;
-        }
-    }
-
+  #activity-container {
+    width: 95%;
+  }
 }
 
-@media screen and (max-width: 936px){
-    main > section{
-        height: 800px;
-    }
+/* === ANIMATIONS === */
+@keyframes fadeInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === INDIVIDUAL ACTIVITY CARD === */
+.activity-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1.5px solid #ffb15c;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  padding: 12px 18px;
+  width: 90%;
+  max-width: 700px;
+  margin: 10px auto;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.activity-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.activity-info p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.activity-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.activity-buttons button {
+  background: #ffb15c;
+  border: none;
+  color: white;
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.activity-buttons button:hover {
+  background-color: #ff9233;
+}
+
+/* === FIXED RECTANGULAR ACTIVITY BOX LAYOUT === */
+#display-contents {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* align from left */
+  align-items: flex-start;
+  gap: 16px;
+  padding: 10px 15px; /* tighter padding for better alignment */
+  margin-top: -5px; /* moves slightly up */
+  margin-left: -10px; /* moves slightly left */
+}
+
+/* === FIXED MEDIUM RECTANGULAR BOX === */
+.content {
+  flex: 0 0 240px; /* keeps consistent medium width without growing */
+  height: 150px;   /* medium height */
+  background: #ffffff;
+  border: 1.5px solid #ffb15c;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.content:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.content .activity-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.content .teacher-name {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.content .button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.content .button-container button {
+  background: #ffb15c;
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.content .button-container button:hover {
+  background-color: #ff9233;
 }
