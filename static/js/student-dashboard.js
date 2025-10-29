@@ -127,22 +127,19 @@ function studentProfile() {
 
     const studentImage = document.createElement('img');
     studentImage.classList.add('learner-photo');
-    studentImage.src = localStorage.getItem('image') || defaultProfilePicture;
+    studentImage.src = sessionStorage.getItem('image') || defaultProfilePicture;
     studentImage.alt = "Learner Photo";
 
     const learnerDetails = document.createElement('div');
     learnerDetails.classList.add('learner-details');
 
     const studentName = document.createElement('h3');
-    studentName.textContent = localStorage.getItem('fullName');
+    studentName.textContent = sessionStorage.getItem('fullName');
 
     const studentId = document.createElement('p');
-    studentId.textContent = "Learner ID: " + (localStorage.getItem('id') || "N/A");
+    studentId.textContent = "Learner ID: " + (sessionStorage.getItem('id') || "N/A");
 
-    const studentSection = document.createElement('p');
-    studentSection.textContent = "Section: N/A";
-
-    learnerDetails.append(studentName, studentId, studentSection);
+    learnerDetails.append(studentName, studentId);
     cardBody.append(studentImage, learnerDetails);
     card.append(cardBody);
 
