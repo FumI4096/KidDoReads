@@ -442,22 +442,22 @@ function addContent(content_container, content_id, content_title, content_detail
 
 function editGamePageTo(url){
     switch(url){
-        case 1: //word audio match
+        case 1: 
             window.location.href = '/word_audio_match_edit';
             break;
-        case 2: // listen and choose
+        case 2: 
             window.location.href = '/listen_and_choose_edit';
             break;
-        case 3: //sound alike match
+        case 3: 
             window.location.href = '/sound_alike_match_edit';
             break;
-        case 4: //meaning maker
+        case 4: 
             window.location.href = '/meaning_maker_edit';
             break;
-        case 5: //what happens next
+        case 5: 
             window.location.href = '/what_happens_next_edit';
             break;
-        case 6: //picture + clues
+        case 6: 
             window.location.href = '/picture_clues_edit';
             break;
     }
@@ -465,22 +465,22 @@ function editGamePageTo(url){
 
 function previewGamePageTo(url){
     switch(url){
-        case 1: // word audio match
+        case 1:
             window.location.href = '/word_audio_match_answer';
             break;
-        case 2: // listen and choose
+        case 2:
             window.location.href = '/listen_and_choose_answer';
             break;
-        case 3: //sound alike match
+        case 3:
             window.location.href = '/sound_alike_match_answer';
             break;
-        case 4: //meaning maker
+        case 4:
             window.location.href = '/meaning_maker_answer';
             break;
-        case 5: //what happens next
+        case 5:
             window.location.href = '/what_happens_next_answer';
             break;
-            case 6: //picture + clues
+            case 6:
             window.location.href = '/picture_clues_answer';
             break;
     }
