@@ -166,6 +166,7 @@ function createContent(){
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("currentActivityId", result.content_id)
                 sessionStorage.setItem("contentType", JSON.stringify(setContentType(selectContent.value)))
+                await insertTtsId(sessionStorage.getItem("currentActivityId"))
                 editGamePageTo(parseInt(selectContent.value))
             }
             else{
@@ -181,6 +182,34 @@ function createContent(){
     });
 
 
+}
+
+async function insertTtsId(id){
+    const url = "/create-tts"
+
+    const formData = new FormData();
+
+    formData.append('tts_id', id)
+
+    const response = await fetch(url, {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json()
+
+    try{
+        if (response.ok && result.status){
+            sessionStorage.setItem("currentTtsId", result.ttsId)
+            console.log("TTS INSERTED SUCCESSFULLY")
+        }
+        else{
+            console.log(result.message)
+        }
+    }
+    catch(e){
+        console.log("SHIT: " + e)
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -385,6 +414,7 @@ function addContent(content_container, content_id, content_title, content_detail
             sessionStorage.setItem("questions", "[]")
         }
         sessionStorage.setItem("currentActivityId", content_id)
+        sessionStorage.setItem("currentTtsId", content_id)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
         sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
@@ -395,13 +425,14 @@ function addContent(content_container, content_id, content_title, content_detail
         if (Object.keys(content_details).length >= 1){
             sessionStorage.setItem("questions", JSON.stringify(content_details))
             sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
+            sessionStorage.setItem("currentTtsId", content_id)
+            sessionStorage.setItem("currentActivityTitle", content_title)
             previewGamePageTo(content_type)
         }
         else{
             notification.notify("No questions in this activity. Please questions and try again", "error")
         }
 
-        sessionStorage.setItem("currentActivityTitle", content_title)
     })
 
     newContent.appendChild(buttonActionContainer);
