@@ -7,12 +7,8 @@ const saveButton = document.getElementById("save-button")
 const nextButton = document.getElementById("next-button")
 const previousButton = document.getElementById("previous-button")
 const editButton = document.getElementById("edit-button")
-let removeMode = false
-let disableSaveButton = false
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 let currentQuestion = 0
-let originalChoiceElements = []
-let originalAnswerElements = []
 
 const teacherId = sessionStorage.getItem("id")
 const contentId = sessionStorage.getItem("currentActivityId")
@@ -94,10 +90,6 @@ function setFormToViewMode() {
     else{
         previousButton.disabled = false;
     } 
-
-    if(removeMode){
-        removeMode = false
-    }
 }
 
 function setFormToEditMode() {
