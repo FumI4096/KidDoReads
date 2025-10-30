@@ -18,90 +18,194 @@ body{
     padding: 3rem 14rem;
 }
 
+#category-display{
+    font-family: "Italic-Poppins";
+    font-style: italic;
+}
 header{
     display: flex;
     justify-content: space-between;
 }
 
 #question-container{
-    height: 500px;
+    height: 350px;
+    width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    background: #616161;
+    background: white;
+    box-shadow: var(--box-shadow-1);
     border-radius: 1rem;
+    padding: 0 6rem;
+    margin-bottom: 1rem;
 
-    & > #question{
-        width: 700px;
-        text-align: center;
-        outline: none;
-        border: none;
-        border-bottom: 1px solid white;
-        background: transparent;
-        font-size: 2.5rem;
-        color: white;
+    & > #word-container{
+        flex-basis: 70%;
+        color: rgb(0, 0, 0);
 
-        &::placeholder{
-            color: rgb(197, 197, 197);
-            font-size: 2.5rem;
+        & > label{
+            font-size: 2rem;
+            font-family: 'Bold-Poppins';
+        }
+        
+        & > #question{
+            font-size: 1.8rem;
+            border: none;
+            border-bottom: 0.2rem solid black;
+            outline: none;
+            background: transparent;
+            
+            &::placeholder{
+                color: rgb(175, 175, 175);
+                font-size: 1.8rem;
+            }
         }
     }
-}
 
-#choices-container{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 2rem;
-    row-gap: 1rem;
-    padding: 1rem 13rem;
-
-    & > .choice-box{
+    & > #tts-button-container{
         display: flex;
-        gap: 0.5rem;
-        justify-content: center;
-        align-items: center;
-        background-color: rgb(182, 182, 182);
-        height: auto;
-        padding: 1rem;
-        border-radius: 100px;
-
-        & > *{
-            font-size: 1.4rem;
-            color: white
-        }
-
-        & > .choice{
+        flex-direction: column;
+        gap: 1rem;
+        
+        & > .tts-button{
             height: auto;
-            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.8rem 5rem;
             border: none;
-            background: transparent;
+            border-radius: 100px;
 
-            &::placeholder{
-                color: rgb(233, 233, 233);
+            & > span {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            & > img{
+                inline-size: 23px;
             }
         }
 
+        & > #tts-convert-button > img{
+            filter: invert(100%);
+            inline-size: 23px;
+        }
+
+
     }
 }
+
+#content-display{
+    font-family: "Bold-Poppins";
+}
+
+#main-sheet-container{
+    padding: 1rem 10;
+    display: flex;
+    margin-bottom: auto;
+    gap: 1rem;
+
+    & > #choices-container{
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 1rem;
+        & > p{
+            font-size: 1.2rem;
+        }
+        & > #choice-box-container{
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            & > .choice-box{
+                display: flex;
+                width: 100%;
+                gap: 0.5rem;
+                justify-content: start;
+                align-items: center;
+                background-color: rgb(182, 182, 182);
+                height: auto;
+                padding: 1rem 1rem 1rem 4rem;
+                border-radius: 100px;
+        
+                & > *{
+                    font-size: 1.4rem;
+                    color: white
+                }
+        
+                & > .choice{
+                    height: auto;
+                    outline: none;
+                    border: none;
+                    background: transparent;
+        
+                    &::placeholder{
+                        color: rgb(233, 233, 233);
+                    }
+                }
+        
+            }
+        }
+    }
+}
+
 
 #answer-container{
-    margin-bottom: auto;
+    flex: 1;
     display: flex;
-    justify-content: space-between;
-    padding: 0 13rem;
-}
-
-.answer-options{
-    align-self: flex-end;
-    display: flex;
-    gap: 0.5rem;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    gap: 1rem;
 
-    & > label{
-        font-size: 1.2rem;
+    & > h3{
+        margin-bottom: auto;
     }
 }
+
+
+.answer-options {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.answer-options input[type="radio"] {
+    display: none;
+}
+
+/* Custom radio button */
+.answer-options label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 66px;
+    height: 66px;
+    border: none;
+    border-radius: 3px;
+    background-color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 15px;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Checked state */
+.answer-options input[type="radio"]:checked + label {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+    box-shadow: none;
+}
+
 
 #button-container{
     display: flex;
