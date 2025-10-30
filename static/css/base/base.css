@@ -31,7 +31,7 @@ header{
         font-family: 'Medium-Poppins';
         font-weight: bold;
         font-size: 1.5rem;
-        color: transparent;
+        color: var(--accent-color-orange);
         background-clip: text;
     }
 
@@ -94,7 +94,8 @@ main > aside{
     }
 
     & > ul > .navigator:hover{ 
-        background-color: rgba(255, 255, 255, 0.4);
+        color: var(--white-text);
+        border: 2px solid var(--accent-color-almond);
         border-radius: 100px;
     }
 
@@ -154,6 +155,13 @@ main > aside{
     color: var(--accent-color-almond);
     border-radius: 100px;
     box-shadow: var(--box-shadow-1);
+}
+
+#category-type {
+    font-family: Medium-Poppins;
+    color: var(--primary-color-300);
+    font-size: 3rem;
+    
 }
 
 main > aside > img{

@@ -40,7 +40,7 @@ main{
         font-family: 'Medium-Poppins';
         font-weight: bold;
         font-size: 3rem;
-        background-image: linear-gradient(to right, var(--tertiary-color-wood), var(--secondary-color));
+        background-color: var(--accent-color-orange);
         color: transparent;
         background-clip: text;
 
@@ -118,7 +118,7 @@ form > div > ion-icon{
 }
 
 #login-button{
-    background-color: var(--accent-color-almond);
+    background-color: var(--accent-color-orange);
     width: 20rem;
     border: none;
     border-radius: 100px;
@@ -129,10 +129,10 @@ form > div > ion-icon{
     font-size: 1rem;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    color: var(--black-text);
+    color: white;
 
     &:hover{
-        background-color: #c7ac86;
+        background-color: var(--success-color);
         color: white;
     }
 

@@ -109,7 +109,7 @@ main > section{
         -webkit-appearance: none;
         -moz-appearance: none; 
         appearance: none; 
-        background-color: var(--accent-color);
+        background-color: var(--accent-color-orange);
         background-image: url('../images/cusztomize-dropdown-select-1.svg');
         background-repeat: no-repeat;
         background-size: 20px;
@@ -164,7 +164,8 @@ main > section{
 }
 
 #submit-user-button{
-    background-color: var(--primary-color);
+    background-color: var(--success-color);
+    color:white;
     padding: 0.5rem 0;
     width: 80px;
     font-size: 0.80rem;
@@ -176,7 +177,7 @@ main > section{
 }
 
 #cancel-user-button{
-    background-color: var(--accent-color);
+    background-color: var(--danger-color);
     color: white;
     padding: 0.5rem 0;
     width: 80px;
@@ -231,7 +232,7 @@ table{
 thead > tr{
     height: 4.0rem;
     color: black;
-    background-image: var(--secondary-tertiary-color-1);
+    background-image: var(--primary-gradient-1);
     position: sticky;
     top: 0;
 
@@ -299,7 +300,8 @@ td > p{
 }
 
 .edit-buttons{
-    background-color: var(--primary-color);
+    background-color: var(--edit-color);
+    color: var(--white-text);
     width: 40%;
     padding: 0.7rem 0;
     font-size: 0.83rem;
@@ -311,16 +313,26 @@ td > p{
 
 }
 
-#submit-user-button:hover, .edit-buttons:hover, #delete-input-container > aside > input:nth-child(1):hover{
-    background-color: var(--primary-color-200);
+#submit-user-button:hover, .edit-buttons:hover {
+    background-color: var(--edit-hover-color);
+    color: var(--white-text)
 }
 
-#submit-user-button:hover, .edit-buttons:active, #delete-input-container > aside > input:nth-child(1):active{
-    background-color: var(--primary-color-300);
+#submit-user-button:hover, .edit-buttons:active {
+    background-color: var(--active-state-color);
+}
+
+#delete-input-container > aside > input:nth-child(1):hover {
+    background-color: var(--success-color);
+    color: var(--white-text)
+}   
+
+#delete-input-container > aside > input:nth-child(1):active {
+    background-color: var(--success-color);
 }
 
 .delete-buttons{
-    background-color: var(--accent-color);
+    background-color: var( --danger-color);
     color: white;
     width: 40%;
     padding: 0.7rem 0;
@@ -334,11 +346,11 @@ td > p{
 
 
 #cancel-user-button:hover, .delete-buttons:hover,#delete-input-container > aside > input:nth-child(2):hover{
-    background-color: var(--accent-color-200);
+    background-color: var(--danger-hover-color);
 }
 
 #cancel-user-button:hover, .delete-buttons:active,#delete-input-container > aside > input:nth-child(2):active{
-    background-color: var(--accent-color-300);
+    background-color: var(--danger-hover-color);
 }
 
 .toggle-password{
@@ -361,7 +373,7 @@ td > p{
     z-index: 10;
     display: grid;
     place-content: center;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: var(--dim-background);
 }
 
 #delete-input-container{
@@ -372,7 +384,7 @@ td > p{
     align-content: center;
     padding: 2rem 3rem;
     gap: 3rem;
-    background-color: var(--black-text);
+    background-color: var(--grey-text);
     box-shadow: var(--box-shadow-1);
 
     & > p {
@@ -388,7 +400,8 @@ td > p{
         align-items: center;
 
         & > input:nth-child(1){
-            background-color: var(--primary-color);
+            background-color: transparent;
+            color: var(--white-text);
             width: 25%;
             padding: 0.7rem 0;
             font-size: 0.83rem;
@@ -400,7 +413,7 @@ td > p{
         }
 
         & > input:nth-child(2){
-            background-color: var(--accent-color);
+            background-color: var(--accent-color-orange);
             color: white;
             width: 25%;
             padding: 0.7rem 0;
