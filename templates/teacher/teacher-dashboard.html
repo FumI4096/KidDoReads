@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KidDoReads</title>
     <!-- Link to external CSS file for styling -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}"> <!--sidebar-->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher-dashboard.css') }}">
 
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png')  }}">   
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/mascot/kdr-mascot.png')  }}">   
 </head>
 <body>
     <!-- Ionicons script tags for module and nomodule support -->
@@ -17,7 +17,6 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     <header>
-        <img src="{{url_for('static', filename='images/kdr-logo.png')}}" />
         <span>Kid-Do-Reads</span>
     </header>
 
@@ -29,15 +28,15 @@
             </section>
             <ul>
                 <li class="toggle-user" id="activities-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}" />
+                    <img src="{{url_for('static', filename='images/sidebar-icons/light-bulb.svg') }}" />
                     <span>Activities</span>
                 </li>
                 <li id="assessments-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}" />
+                    <img src="{{url_for('static', filename='images/sidebar-icons/paper-test.svg') }}" />
                     <span>Assessments</span>
                 </li>                
                 <li id="progress-record-button">
-                    <img src="{{url_for('static', filename='images/circle-progress-indicator.png') }}" />
+                    <img src="{{url_for('static', filename='images/sidebar-icons/progress-circle.svg') }}" />
                     <span>Student Progress</span>
                 </li>
                 <li id="log-out-button">
