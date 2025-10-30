@@ -245,7 +245,7 @@ async function showContents() {
     function contentStructure(){
         const contentContainer = document.getElementById('content-container')
 
-        if (!(contentContainer)){
+        if (!contentContainer){
             const div = document.createElement("div");
             div.setAttribute('id', "content-container");
             mainSection.appendChild(div);
