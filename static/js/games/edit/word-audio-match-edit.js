@@ -21,6 +21,10 @@ const contentDisplay = document.getElementById("content-display")
 
 const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
 
+const ttsConvertButton = document.getElementById('tts-convert-button')
+const ttsPlayButton = document.getElementById('tts-play-button')
+const ttsDeleteButton = document.getElementById('tts-delete-button')
+
 categoryDisplay.textContent = storedTypes.category
 contentDisplay.textContent = storedTypes.content
 
@@ -60,6 +64,7 @@ toTeacherPageButton.addEventListener('click', () => {
     sessionStorage.removeItem('questions')
     sessionStorage.removeItem('currentActivityId')
     sessionStorage.removeItem('currentActivityTitle')
+    sessionStorage.removeItem('ttsInputs')
     sessionStorage.removeItem("contentType")
     window.location.href = '/teacher_dashboard'
 });
