@@ -8,11 +8,14 @@ const nextButton = document.getElementById("next-button")
 const previousButton = document.getElementById("previous-button")
 const editButton = document.getElementById("edit-button")
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
+let ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
 let currentQuestion = 0
 
 const teacherId = sessionStorage.getItem("id")
 const contentId = sessionStorage.getItem("currentActivityId")
+const ttsId = contentId
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
+
 const categoryDisplay = document.getElementById("category-display")
 const contentDisplay = document.getElementById("content-display")
 
@@ -20,6 +23,36 @@ const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
 
 categoryDisplay.textContent = storedTypes.category
 contentDisplay.textContent = storedTypes.content
+
+
+ttsConvertButton.addEventListener("click", async () => {
+    const speechesExist = Boolean(ttsObject[currentQuestion])
+
+    if (speechesExist){
+        const ttsData = ttsObject[currentQuestion]
+        console.log(ttsData)
+
+        // Clear all inputs first
+        ttsInputOne.value = "";
+        ttsInputTwo.value = "";
+        ttsInputThree.value = "";
+        
+        // Fill inputs based on index
+        ttsData.texts.forEach(item => {
+            if (item.index === 1) {
+                ttsInputOne.value = item.text;
+            } else if (item.index === 2) {
+                ttsInputTwo.value = item.text;
+            } else if (item.index === 3) {
+                ttsInputThree.value = item.text;
+            }
+        });
+    }
+    
+    const ttsInputStatementContainer = document.createElement("div");
+    ttsInputStatementContainer.setAttribute('id', "tts-input-statement-container") 
+    
+})
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
 toTeacherPageButton.addEventListener('click', () => {
