@@ -217,30 +217,25 @@ document.addEventListener("DOMContentLoaded", async function() {
     await showContents()
 });
 
-function moveStudentInfo(){
-    if (window.innerWidth <= 936 && !isInMainSection) {
-        mainSection.insertBefore(teacherInfo, mainSection.firstChild);
-        isInMainSection = true;
-    } else if (window.innerWidth > 936 && isInMainSection) {
-        mainAside.insertBefore(teacherInfo, mainAside.firstChild);
-        isInMainSection = false;
-    }
-    
-}
-
 //parameters to be whether if it is an assessment or activities(contents)
 async function showContents() {
-    mainSection.innerHTML = '';
-
+    mainSection.innerHTML = ''
+    mainSection.appendChild(categoryTypeStructure())
+    mainSection.appendChild(contentStructure())
     const url = `/contents/${id}`;
     const response = await fetch(url);
     const result = await response.json();
 
     try{
         if (response.ok && result.status){
-            result.data.forEach(data => {
-                addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.content_type, data.content_type_name, data.isHidden)
-            })
+            if (result.data && result.data.length > 0) {
+                result.data.forEach(data => {
+                    addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.content_type, data.content_type_name, data.isHidden)
+                })
+            }
+            else{
+                contentStructure().appendChild(addContainerButtonStructure())
+            }
         }
         else{
             console.log(result.message)
@@ -256,14 +251,43 @@ async function showContents() {
     function contentStructure(){
         const contentContainer = document.getElementById('content-container')
 
-        if (!(contentContainer)){
+        if (!contentContainer){
             const div = document.createElement("div");
             div.setAttribute('id', "content-container");
-            mainSection.appendChild(div);
+
             return div
         }
 
         return contentContainer
+    }
+
+    function addContainerButtonStructure(){
+        const button = document.createElement("button")
+        const span = document.createElement("span")
+        const img = document.createElement("img")
+
+        button.setAttribute('id', 'add-content-button')
+        span.textContent = 'Add New Activity'
+        img.src = '../../static/images/white-add-button.svg'
+
+        button.append(span, img)
+        button.addEventListener('click', createContent)
+
+        return button
+    }
+
+    function categoryTypeStructure(){
+        const categoryType = document.getElementById('category-type')
+        
+        if(!categoryType){
+            const p = document.createElement("p")
+            p.setAttribute('id', "category-type")
+            p.textContent = "Activities"
+
+            return p;
+        }
+
+        return categoryType
     }
 }
 
@@ -1188,6 +1212,17 @@ function formatDate(dateString) {
     hours = hours ? hours : 12;
     
     return `${month} ${day}, ${year} ${hours}:${minutes} ${ampm}`;
+}
+
+function moveStudentInfo(){
+    if (window.innerWidth <= 936 && !isInMainSection) {
+        mainSection.insertBefore(teacherInfo, mainSection.firstChild);
+        isInMainSection = true;
+    } else if (window.innerWidth > 936 && isInMainSection) {
+        mainAside.insertBefore(teacherInfo, mainAside.firstChild);
+        isInMainSection = false;
+    }
+    
 }
 
 moveStudentInfo();
