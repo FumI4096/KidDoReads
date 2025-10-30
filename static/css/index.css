@@ -11,7 +11,7 @@ html, body{
 }
 
 main{
-    background: var(--background-1) url('../images/kdr-mascot.png') no-repeat;
+    background: var(--background) url('../images/mascot/kdr-mascot.png') no-repeat;
     background-size: 400px;
     background-position-y: 10%;
     background-position-x: 10%;
