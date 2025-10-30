@@ -7,6 +7,7 @@ from api.auth_api import auth_bp
 from api.user_api import user_bp
 from api.contents_api import contents_bp
 from api.attempt_api import attempt_bp
+from api.tts_api import tts_bp
 from routes.status_error_routes import errors
 from routes.home_routes import home_bp
 from routes.edit_games_routes import edit_games_bp
@@ -32,6 +33,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(contents_bp)
 app.register_blueprint(attempt_bp)
+app.register_blueprint(tts_bp)
 
 
 if __name__ == '__main__':

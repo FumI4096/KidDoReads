@@ -165,6 +165,8 @@ function createContent(){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("currentActivityId", result.content_id)
+                sessionStorage.setItem("contentType", JSON.stringify(setContentType(selectContent.value)))
+                await insertTtsId(sessionStorage.getItem("currentActivityId"))
                 editGamePageTo(parseInt(selectContent.value))
             }
             else{
@@ -180,6 +182,34 @@ function createContent(){
     });
 
 
+}
+
+async function insertTtsId(id){
+    const url = "/create-tts"
+
+    const formData = new FormData();
+
+    formData.append('tts_id', id)
+
+    const response = await fetch(url, {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json()
+
+    try{
+        if (response.ok && result.status){
+            sessionStorage.setItem("currentTtsId", result.ttsId)
+            console.log("TTS INSERTED SUCCESSFULLY")
+        }
+        else{
+            console.log(result.message)
+        }
+    }
+    catch(e){
+        console.log("SHIT: " + e)
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -384,21 +414,25 @@ function addContent(content_container, content_id, content_title, content_detail
             sessionStorage.setItem("questions", "[]")
         }
         sessionStorage.setItem("currentActivityId", content_id)
+        sessionStorage.setItem("currentTtsId", content_id)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
+        sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
         editGamePageTo(content_type)
     })
 
     previewButton.addEventListener('click', async () => {
         if (Object.keys(content_details).length >= 1){
             sessionStorage.setItem("questions", JSON.stringify(content_details))
+            sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
+            sessionStorage.setItem("currentTtsId", content_id)
+            sessionStorage.setItem("currentActivityTitle", content_title)
             previewGamePageTo(content_type)
         }
         else{
             notification.notify("No questions in this activity. Please questions and try again", "error")
         }
 
-        sessionStorage.setItem("currentActivityTitle", content_title)
     })
 
     newContent.appendChild(buttonActionContainer);
@@ -408,22 +442,22 @@ function addContent(content_container, content_id, content_title, content_detail
 
 function editGamePageTo(url){
     switch(url){
-        case 1: //word audio match
+        case 1: 
             window.location.href = '/word_audio_match_edit';
             break;
-        case 2: // listen and choose
+        case 2: 
             window.location.href = '/listen_and_choose_edit';
             break;
-        case 3: //sound alike match
+        case 3: 
             window.location.href = '/sound_alike_match_edit';
             break;
-        case 4: //meaning maker
+        case 4: 
             window.location.href = '/meaning_maker_edit';
             break;
-        case 5: //what happens next
+        case 5: 
             window.location.href = '/what_happens_next_edit';
             break;
-        case 6: //picture + clues
+        case 6: 
             window.location.href = '/picture_clues_edit';
             break;
     }
@@ -431,25 +465,72 @@ function editGamePageTo(url){
 
 function previewGamePageTo(url){
     switch(url){
-        case 1: // word audio match
+        case 1:
             window.location.href = '/word_audio_match_answer';
             break;
-        case 2: // listen and choose
+        case 2:
             window.location.href = '/listen_and_choose_answer';
             break;
-        case 3: //sound alike match
+        case 3:
             window.location.href = '/sound_alike_match_answer';
             break;
-        case 4: //meaning maker
+        case 4:
             window.location.href = '/meaning_maker_answer';
             break;
-        case 5: //what happens next
+        case 5:
             window.location.href = '/what_happens_next_answer';
             break;
-            case 6: //picture + clues
+            case 6:
             window.location.href = '/picture_clues_answer';
             break;
     }
+}
+
+function setContentType(type){
+    if (type === 1){
+        return {
+            category: "Pronunciation", 
+            content: "Word Audio Match"
+        }
+    }
+    else if (type === 2){
+        return {
+            category: "Phonemic Awareness", 
+            content: "Listen & Choose"
+
+        }
+        
+    }
+    else if (type === 3){
+        return {
+            category: "Word Recognition", 
+            content: "Sound-Alike Match"
+
+        }
+
+    }
+    else if (type === 4){
+        return {
+            category: "Word Recognition", 
+            content: "Meaning Maker"
+
+        }
+    }
+    else if (type === 5){
+        return {
+            category: "Reading Comprehension", 
+            content: "What Happens Next?"
+
+        }
+    }
+    else {
+        return {
+            category: "Reading Comprehension", 
+            content: "Picture + Clues"
+
+        }
+    }
+
 }
 
 // 1. Login as a teacher first

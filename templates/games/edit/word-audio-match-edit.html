@@ -7,39 +7,67 @@
     <link rel="stylesheet" href=" {{url_for('static', filename='css/games/edit/word-audio-matching-edit.css')}} ">
 </head>
 <body>
+    <span id="category-display"></span>
     <header>
+        <span id="content-display"></span>
         <p id="display-activity-title"></p>
         <button id="to-teacher-page-button">Save and Exit</button>
     </header>
     <section id="question-container">
-        <input type="text" id="question" name="" placeholder="Input your question here">
+        <div id="word-container">
+            <label for="question">
+                Key Word:
+            </label>
+            <input type="text" id="question" name="question" placeholder="Enter Word Here">
+        </div>
+        <div id="tts-button-container">
+            <button class="tts-button" id="tts-convert-button">
+                <img src="{{url_for('static', filename='images/tts-convert-icon.png')}}" alt="convert-icon"/>
+                <span>Convert Text-To-Speech</span>
+            </button>
+            <button class="tts-button" id="tts-play-button">
+                <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>
+                <span>Play Speech</span>
+            </button>
+            <button class="tts-button" id="tts-delete-button">
+                <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
+                <span>Delete Speech</span>
+            </button>
+        </div>
     </section>
-    <section id="choices-container">
-        <div class="choice-box">
-            <p class="choice-letter">A.</p>
-            <input class="choice" id="choice-a" type="text" placeholder="Enter a choice">
-        </div>
-        <div class="choice-box">
-            <p class="choice-letter">B.</p>
-            <input class="choice" id="choice-b" type="text" placeholder="Enter a choice">
-        </div>
-        <div class="choice-box">
-            <p class="choice-letter">C.</p>
-            <input class="choice" id="choice-c" type="text" placeholder="Enter a choice">
-        </div>
+    
+    <section id="main-sheet-container">
+        <section id="choices-container">
+            <p><strong>Instruction:</strong> Choose the correct spelling from the choices you see.</p>
+            <div id="choice-box-container">
+                <div class="choice-box">
+                    <p class="choice-letter">A.</p>
+                    <input class="choice" id="choice-a" type="text" placeholder="Enter a choice">
+                </div>
+                <div class="choice-box">
+                    <p class="choice-letter">B.</p>
+                    <input class="choice" id="choice-b" type="text" placeholder="Enter a choice">
+                </div>
+                <div class="choice-box">
+                    <p class="choice-letter">C.</p>
+                    <input class="choice" id="choice-c" type="text" placeholder="Enter a choice">
+                </div>
+            </div>
+    
+        </section>
+        <aside id="answer-container">
+            <h3>Choose an Answer:</h3>
+            <div class="answer-options">
+                <input type="radio" id="answer-a" name="answer" value="a">
+                <label for="answer-a">A</label>
+                <input type="radio" id="answer-b" name="answer" value="b">
+                <label for="answer-b">B</label>
+                <input type="radio" id="answer-c" name="answer" value="c">
+                <label for="answer-c">C</label>
+            </div>
+        </aside>
 
     </section>
-    <aside id="answer-container">
-        <h3>Choose an Answer:</h3>
-        <div class="answer-options">
-            <input type="radio" id="answer-a" name="answer" value="a">
-            <label for="answer-a">A</label>
-            <input type="radio" id="answer-b" name="answer" value="b">
-            <label for="answer-b">B</label>
-            <input type="radio" id="answer-c" name="answer" value="c">
-            <label for="answer-c">C</label>
-        </div>
-    </aside>
     <div id="button-container">
         <button id="previous-button">Previous</button>
         <section>
