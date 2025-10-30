@@ -165,6 +165,7 @@ function createContent(){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("currentActivityId", result.content_id)
+                sessionStorage.setItem("contentType", JSON.stringify(setContentType(selectContent.value)))
                 editGamePageTo(parseInt(selectContent.value))
             }
             else{
@@ -386,12 +387,14 @@ function addContent(content_container, content_id, content_title, content_detail
         sessionStorage.setItem("currentActivityId", content_id)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
+        sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
         editGamePageTo(content_type)
     })
 
     previewButton.addEventListener('click', async () => {
         if (Object.keys(content_details).length >= 1){
             sessionStorage.setItem("questions", JSON.stringify(content_details))
+            sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
             previewGamePageTo(content_type)
         }
         else{
@@ -450,6 +453,53 @@ function previewGamePageTo(url){
             window.location.href = '/picture_clues_answer';
             break;
     }
+}
+
+function setContentType(type){
+    if (type === 1){
+        return {
+            category: "Pronunciation", 
+            content: "Word Audio Match"
+        }
+    }
+    else if (type === 2){
+        return {
+            category: "Phonemic Awareness", 
+            content: "Listen & Choose"
+
+        }
+        
+    }
+    else if (type === 3){
+        return {
+            category: "Word Recognition", 
+            content: "Sound-Alike Match"
+
+        }
+
+    }
+    else if (type === 4){
+        return {
+            category: "Word Recognition", 
+            content: "Meaning Maker"
+
+        }
+    }
+    else if (type === 5){
+        return {
+            category: "Reading Comprehension", 
+            content: "What Happens Next?"
+
+        }
+    }
+    else {
+        return {
+            category: "Reading Comprehension", 
+            content: "Picture + Clues"
+
+        }
+    }
+
 }
 
 // 1. Login as a teacher first

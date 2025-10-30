@@ -17,6 +17,13 @@ let originalAnswerElements = []
 const teacherId = sessionStorage.getItem("id")
 const contentId = sessionStorage.getItem("currentActivityId")
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
+const categoryDisplay = document.getElementById("category-display")
+const contentDisplay = document.getElementById("content-display")
+
+const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
+
+categoryDisplay.textContent = storedTypes.category
+contentDisplay.textContent = storedTypes.content
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
 toTeacherPageButton.addEventListener('click', () => {
@@ -24,6 +31,7 @@ toTeacherPageButton.addEventListener('click', () => {
     sessionStorage.removeItem('questions')
     sessionStorage.removeItem('currentActivityId')
     sessionStorage.removeItem('currentActivityTitle')
+    sessionStorage.removeItem("contentType")
     window.location.href = '/teacher_dashboard'
 });
 
