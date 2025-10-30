@@ -217,17 +217,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     await showContents()
 });
 
-function moveStudentInfo(){
-    if (window.innerWidth <= 936 && !isInMainSection) {
-        mainSection.insertBefore(teacherInfo, mainSection.firstChild);
-        isInMainSection = true;
-    } else if (window.innerWidth > 936 && isInMainSection) {
-        mainAside.insertBefore(teacherInfo, mainAside.firstChild);
-        isInMainSection = false;
-    }
-    
-}
-
 //parameters to be whether if it is an assessment or activities(contents)
 async function showContents() {
     mainSection.innerHTML = '';
@@ -1188,6 +1177,17 @@ function formatDate(dateString) {
     hours = hours ? hours : 12;
     
     return `${month} ${day}, ${year} ${hours}:${minutes} ${ampm}`;
+}
+
+function moveStudentInfo(){
+    if (window.innerWidth <= 936 && !isInMainSection) {
+        mainSection.insertBefore(teacherInfo, mainSection.firstChild);
+        isInMainSection = true;
+    } else if (window.innerWidth > 936 && isInMainSection) {
+        mainAside.insertBefore(teacherInfo, mainAside.firstChild);
+        isInMainSection = false;
+    }
+    
 }
 
 moveStudentInfo();
