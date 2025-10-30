@@ -43,3 +43,8 @@
     font-family: 'Extra-Light-Poppins';
     src: url('../fonts/Poppins-ExtraLight.ttf') format('truetype');
 }
+
+@font-face{
+    font-family: 'Italic-Poppins';
+    src: url('../fonts/Poppins-Italic.ttf') format('truetype');
+}
