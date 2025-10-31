@@ -1,18 +1,40 @@
 :root{
+    /*forest color palette*/
     --background: #E8E1D7;
-    --black-text: #47443F;
     --primary-color: #677C69;
     --primary-color-200: #40534D;
     --primary-color-300: #1A3637;
     --primary-color-700: #0f291d;
+
+    --secondary-color: #FDAD16;
+    --secondary-color-200: #ff9900;
+
     --accent-color-teal: #6ECEDA;
     --accent-color-almond: #D6BC97;
-    --tertiary-color-wood: #2D221D;
-    --secondary-color: #FDAD16;
-    --tertiary-color: #FF6428;
+    --accent-color-orange: #FF6428;
+    --accent-color-wood: #2D221D;
+
     --primary-accent-color-1: linear-gradient(var(--primary-color-200), var(--primary-color));
-    --secondary-tertiary-color-1: linear-gradient(to right, var(--secondary-color) 70%, var(--tertiary-color));
-    --box-shadow-1: 0 3px 5px rgba(0, 0, 0, 0.3); 
+    --primary-gradient-1: linear-gradient(to right, var(--primary-color-300) 60%, var(--primary-color));
+
+    /* Semantic Colors */
+
+    --success-color: #FDAD16;
+    --success-color-hover: #33df8f;
+    --danger-color: #FF6428;
+    --danger-hover-color: #e44e13;
+    --edit-color: #40534D;
+    --edit-hover-color: #1A3637;
+    --active-state-color: #FDAD16;
+
+    /* Text Colors */
+    --white-text: white;
+    --black-text: black;
+    --grey-text: #47443F;
+
+    /* Other Variables */
+    --box-shadow-1: 0 3px 5px rgba(0, 0, 0, 0.3);
+    --dim-background: rgba(0, 0, 0, 0.6);
     --layout-padding: 0.7rem 5rem;
 }
 
@@ -45,5 +67,3 @@
     font-family: 'Italic-Poppins';
     src: url('../fonts/Poppins-Italic.ttf') format('truetype');
 }
-
-/*updated font src*/
