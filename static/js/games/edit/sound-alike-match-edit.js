@@ -264,7 +264,7 @@ async function saveCurrentQuestion(e){
         answer: getAnswer
     };
 
-    questionExist = Boolean(questionObject[currentQuestion])
+    let questionExist = Boolean(questionObject[currentQuestion])
 
     if(JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])){
         setFormToViewMode()
