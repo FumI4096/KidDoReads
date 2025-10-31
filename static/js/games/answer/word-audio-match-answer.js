@@ -93,6 +93,10 @@ function updateNavigationButtons() {
 
 function loadQuestion(index) {
     console.log(index)
+    console.log("loadQuestion() called with index:", index);
+    console.log("questionObject:", questionObject);
+    console.log("questionObject length:", questionObject ? questionObject.length : "undefined");
+
     if (index < 0 || index >= questionObject.length) {
         console.error("Invalid question index");
         return;
