@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
-from modules.utils import get_db
+from openai import OpenAI
+import os
+from modules.utils import get_db, get_tts_key, get_upload_audio
 
 tts_bp = Blueprint('tts_bp', __name__)
 
@@ -18,4 +20,33 @@ def create_text_to_speech():
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-    
+@tts_bp.route('/api/generate-speech', methods=["POST"])
+def generate_speech():    
+    try:
+        client = OpenAI(api_key=get_tts_key())
+        folder = get_upload_audio()
+        data = request.json
+        text = data.get('text')
+        ttsId = data.get('id')
+        
+        # Generate speech using OpenAI TTS
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="alloy", 
+            input=text
+        )
+        
+        filename = f"speech_{hash(text+ttsId)}.mp3"
+        filepath = os.path.join(folder, filename)
+        
+        response.stream_to_file(filepath)
+        
+        audio_url = f'/static/upload_audio/{filename}'
+        
+        return jsonify({
+            'status': True,
+            'message': 'Speech generated successfully',
+            'audio_url': audio_url
+        })
+    except Exception as e:
+        return jsonify({'status': False, 'message': str(e)})
