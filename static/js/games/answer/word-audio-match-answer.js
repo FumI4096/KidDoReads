@@ -9,7 +9,7 @@ const answerContainer = document.getElementById("answer-container");
 
 answerContainer.style.display = 'none'
 
-let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
+let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]"); /* revert from keyword -> question */
 
 let currentQuestion = 0;
 let finalScore = 0; 

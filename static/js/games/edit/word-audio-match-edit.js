@@ -1,6 +1,6 @@
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
-const questionInput = document.getElementById("question")
+const questionInput = document.getElementById("question") /* revert from keyword -> question */
 const choicesContainer = document.getElementById("choices-container")
 const answerContainer = document.getElementById("answer-container")
 const saveButton = document.getElementById("save-button")
