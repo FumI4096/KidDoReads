@@ -1,3 +1,6 @@
+import SpeechManager from '../../modules/SpeechManager.js'
+import Notification from '../../modules/Notification.js'
+
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
 const questionInput = document.getElementById("question")
@@ -13,7 +16,7 @@ let currentQuestion = 0
 
 const teacherId = sessionStorage.getItem("id")
 const contentId = sessionStorage.getItem("currentActivityId")
-const ttsId = contentId
+const ttsId = sessionStorage.getItem("currentTtsId")
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
 
 const categoryDisplay = document.getElementById("category-display")
@@ -25,48 +28,106 @@ const ttsConvertButton = document.getElementById('tts-convert-button')
 const ttsPlayButton = document.getElementById('tts-play-button')
 const ttsDeleteButton = document.getElementById('tts-delete-button')
 
+ttsConvertButton.disabled = true
+ttsPlayButton.disabled = true
+ttsDeleteButton.disabled = true
+
+const ttsButtons = [ttsConvertButton, ttsPlayButton, ttsDeleteButton]
+
 categoryDisplay.textContent = storedTypes.category
 contentDisplay.textContent = storedTypes.content
 
+const notifObject = new Notification()
 
 ttsConvertButton.addEventListener("click", async () => {
-    const speechesExist = Boolean(ttsObject[currentQuestion])
+    // Get the span element
+    const buttonSpan = ttsConvertButton.querySelector('span');
+    const originalText = buttonSpan.textContent;
+    
+    ttsConvertButton.disabled = true;
+    buttonSpan.textContent = "Converting..."
+    
+    try {
+        await SpeechManager.generateSpeech(questionInput.value, ttsId.toString());
 
-    if (speechesExist){
-        const ttsData = ttsObject[currentQuestion]
-        console.log(ttsData)
+        const newSpeech = {
+            audioUrl: SpeechManager.getAudioFile(),
+            text: questionInput.value,
+            ttsId: ttsId
+        };
 
-        // Clear all inputs first
-        ttsInputOne.value = "";
-        ttsInputTwo.value = "";
-        ttsInputThree.value = "";
+        // Store by currentQuestion as key
+        ttsObject[currentQuestion] = newSpeech;
+
+        console.log("Current Audio is:", JSON.stringify(ttsObject));
+
+        // Keep button disabled, enable play and delete
+        ttsPlayButton.disabled = false;
+        ttsDeleteButton.disabled = false;
         
-        // Fill inputs based on index
-        ttsData.texts.forEach(item => {
-            if (item.index === 1) {
-                ttsInputOne.value = item.text;
-            } else if (item.index === 2) {
-                ttsInputTwo.value = item.text;
-            } else if (item.index === 3) {
-                ttsInputThree.value = item.text;
-            }
-        });
+        buttonSpan.textContent = "Converted"
+        notifObject.notify('Text converted successfully!', 'success')
+        
+    } catch (error) {
+        console.error('Error generating speech:', error);
+        notifObject.notify('Failed to generate speech', 'error');
+        
+        // Reset button on error
+        ttsConvertButton.disabled = false;
+        buttonSpan.textContent = originalText;
     }
+});
+
+ttsPlayButton.addEventListener("click", () => {
+    //if current question exist
+    if (ttsObject[currentQuestion]) {
+        SpeechManager.play(ttsObject[currentQuestion].audioUrl, ttsPlayButton);
+    } 
+    else {
+        notifObject.notify("No speech to play", "error");
+    }
+})
+
+ttsDeleteButton.addEventListener("click", async () => {
+    const ttsConverButtonSpan = ttsConvertButton.querySelector("span")
+    //delete current speech
+    if (!ttsObject[currentQuestion]) {
+        Notification.notify("No speech to delete", "error");
+        return;
+    }
+
+    SpeechManager.setAudioFile(ttsObject[currentQuestion].audioUrl);
     
-    const ttsInputStatementContainer = document.createElement("div");
-    ttsInputStatementContainer.setAttribute('id', "tts-input-statement-container") 
+    const deleted = await SpeechManager.deleteSpeech();
     
+    if (deleted) {
+        delete ttsObject[currentQuestion];
+        sessionStorage.setItem('ttsInputs', JSON.stringify(ttsObject));
+        
+        console.log("TTS after deletion:", ttsObject);
+        
+        ttsPlayButton.disabled = true;
+        ttsDeleteButton.disabled = true;
+        ttsConvertButton.disabled = false;
+
+        ttsConverButtonSpan.textContent = 'Convert Text-To-Speech'
+        
+        notifObject.notify("Speech deleted successfully", "success");
+    } else {
+        notifObject.notify("Failed to delete speech", "error");
+    }
 })
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
-toTeacherPageButton.addEventListener('click', () => {
-    sessionStorage.removeItem('originalActivityTitle')
-    sessionStorage.removeItem('questions')
-    sessionStorage.removeItem('currentActivityId')
-    sessionStorage.removeItem('currentActivityTitle')
-    sessionStorage.removeItem('ttsInputs')
-    sessionStorage.removeItem("contentType")
-    window.location.href = '/teacher_dashboard'
+toTeacherPageButton.addEventListener('click', async () => {
+    await saveCurrentQuestion(event);
+    sessionStorage.removeItem('originalActivityTitle');
+    sessionStorage.removeItem('questions');
+    sessionStorage.removeItem('currentActivityId');
+    sessionStorage.removeItem('currentActivityTitle');
+    sessionStorage.removeItem('ttsInputs');
+    sessionStorage.removeItem("contentType");
+    window.location.href = '/teacher_dashboard';
 });
 
 saveButton.addEventListener("click", saveCurrentQuestion)
@@ -187,7 +248,8 @@ async function saveCurrentQuestion(e){
         answer: getAnswer
     };
 
-    questionExist = Boolean(questionObject[currentQuestion])
+
+    let questionExist = Boolean(questionObject[currentQuestion])
 
     if(JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])){
         setFormToViewMode()
@@ -241,12 +303,15 @@ function clearForm(){
     const choices = choicesContainer.querySelectorAll(".choice-box .choice");
     const checkedAnswer = document.querySelector('input[name="answer"]:checked');
 
+    ttsConvertButton.querySelector('span').textContent = "Convert Text-To-Speech"
+
     choices.forEach(choice => choice.value = "");
 
     if (checkedAnswer) {
         checkedAnswer.checked = false;
     }
 
+    console.log(ttsObject)
 }
 
 function nextForm(){
@@ -283,6 +348,7 @@ function loadQuestion(index) {
         console.log("Invalid index");
         return;
     }
+
 
     const answerHeader = document.createElement("h3")
     answerHeader.textContent = "Choose an Answer:"
@@ -326,4 +392,18 @@ function firstQuestionExist(length){
         return false
     }
 }
+
+// Handling tts buttons
+(
+    questionInput.addEventListener("input", () => {
+        if (questionInput.value === ''){
+            ttsConvertButton.disabled = true
+            
+        }
+        else{
+            ttsConvertButton.disabled = false
+
+        }
+    })
+)
 
