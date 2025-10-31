@@ -1,46 +1,60 @@
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
-const addChoiceButton = document.getElementById("add-choice-button")
-const removeChoiceButton = document.getElementById("remove-choice-button")
-const choicesContainer = document.querySelector(".choices-container")
-const answerContainer = document.querySelector(".answer-container")
+const prefixSuffixInput = document.getElementById("prefix-suffix")
+const prefixSuffixMeaningInput = document.getElementById("prefix-suffix-meaning")
+const questionInput = document.getElementById("question")
+const choicesContainer = document.getElementById("choice-box-container")
+const answerContainer = document.getElementById("answer-container")
 const saveButton = document.getElementById("save-button")
 const nextButton = document.getElementById("next-button")
 const previousButton = document.getElementById("previous-button")
 const editButton = document.getElementById("edit-button")
-let removeMode = false
-let disableSaveButton = false
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
+let ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
 let currentQuestion = 0
-let originalChoiceElements = []
-let originalAnswerElements = []
 
 const teacherId = sessionStorage.getItem("id")
+const contentId = sessionStorage.getItem("currentActivityId")
+const ttsId = contentId
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
+
+const categoryDisplay = document.getElementById("category-display")
+const contentDisplay = document.getElementById("content-display")
+
+const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
+
+const ttsConvertButton = document.getElementById('tts-convert-button')
+const ttsPlayButton = document.getElementById('tts-play-button')
+const ttsDeleteButton = document.getElementById('tts-delete-button')
+
+categoryDisplay.textContent = storedTypes.category
+contentDisplay.textContent = storedTypes.content
+
+
+ttsConvertButton.addEventListener("click", async () => {
+    const speechesExist = Boolean(ttsObject[currentQuestion])
+
+    if (speechesExist){
+        const ttsData = ttsObject[currentQuestion]
+        console.log(ttsData)
+    }
+    
+    const ttsInputStatementContainer = document.createElement("div");
+    ttsInputStatementContainer.setAttribute('id', "tts-input-statement-container") 
+    
+})
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
 toTeacherPageButton.addEventListener('click', () => {
+    sessionStorage.removeItem('originalActivityTitle')
     sessionStorage.removeItem('questions')
+    sessionStorage.removeItem('currentActivityId')
+    sessionStorage.removeItem('currentActivityTitle')
+    sessionStorage.removeItem('ttsInputs')
+    sessionStorage.removeItem("contentType")
     window.location.href = '/teacher_dashboard'
 });
 
-addChoiceButton.addEventListener("click", addChoice)
-removeChoiceButton.addEventListener("click", removeChoice)
-choicesContainer.addEventListener("click", (e) => {
-    const choiceElement = e.target.closest(".choice-box");
-
-    if (removeMode && choiceElement && choicesContainer.querySelectorAll(".choice-box").length > 2) {
-        choiceElement.remove();
-        relabelChoices();
-
-        const answerElements = answerContainer.querySelectorAll("input, label")
-
-        answerElements[answerElements.length - 1].remove()
-        answerElements[answerElements.length - 2].remove()
-        
-    }
-    checkInputState()
-});
 saveButton.addEventListener("click", saveCurrentQuestion)
 editButton.addEventListener("click", setFormToEditMode)
 nextButton.addEventListener("click", nextForm)
@@ -51,13 +65,13 @@ document.addEventListener("input", () => {
 
 if (firstQuestionExist(questionObject.length)) {
     loadQuestion(0);
-    document.querySelector(".question").readOnly = true;
+    prefixSuffixInput.readOnly = true;
+    prefixSuffixMeaningInput.readOnly = true;
+    questionInput.readOnly = true;
     answerRadioButtonsDisable(true)
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
     });
-    addChoiceButton.disabled = true
-    removeChoiceButton.disabled = true
     editButton.style.display = "inline"
     previousButton.disabled = true
     saveButton.style.display = "none"
@@ -73,13 +87,15 @@ if (firstQuestionExist(questionObject.length)) {
 
 //check if some inputs are filled or missing
 function checkInputState() {
-    const getQuestion = document.querySelector(".question").value.trim();
+    const getPrefixSuffix = prefixSuffixInput.value.trim();
+    const getPrefixSuffixMeaning = prefixSuffixMeaningInput.value.trim();
+    const getQuestion = questionInput.value.trim();
     const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
     const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
     const getChoices = Array.from(choicesContainer.querySelectorAll(".choice-box .choice"));
     const hasEmptyChoice = getChoices.some(choice => choice.value.trim() === "");
 
-    if (getQuestion && getAnswer && !hasEmptyChoice) {
+    if (getPrefixSuffix && getPrefixSuffixMeaning && getQuestion && getAnswer && !hasEmptyChoice) {
         saveButton.disabled = false;
     } else {
         saveButton.disabled = true;
@@ -90,19 +106,12 @@ function setFormToViewMode() {
     saveButton.style.display = "none"
     editButton.style.display = "inline"
     nextButton.disabled = false; 
-    addChoiceButton.disabled = true;
-    removeChoiceButton.disabled = true;
     answerRadioButtonsDisable(true)
-    document.querySelector(".question").readOnly = true;
+    prefixSuffixInput.readOnly = true;
+    prefixSuffixMeaningInput.readOnly = true;
+    questionInput.readOnly = true;
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
-    });
-    const choicesElements = choicesContainer.querySelectorAll(".choice-box")
-    choicesElements.forEach(element => {
-        if (removeChoiceButton.disabled == true){
-            element.classList.remove("choice-box-hover")
-            
-        }
     });
 
     if(currentQuestion === 0){
@@ -111,21 +120,16 @@ function setFormToViewMode() {
     else{
         previousButton.disabled = false;
     } 
-
-    if(removeMode){
-        removeChoiceButton.textContent = "Remove Choice"
-        removeMode = false
-    }
 }
 
 function setFormToEditMode() {
     saveButton.style.display = "inline"
     editButton.style.display = "none"
     checkInputState()
-    document.querySelector(".question").readOnly = false;
+    prefixSuffixInput.readOnly = false;
+    prefixSuffixMeaningInput.readOnly = false;
+    questionInput.readOnly = false;
     answerRadioButtonsDisable(false)
-    addChoiceButton.disabled = false;
-    removeChoiceButton.disabled = false;
     nextButton.disabled = true;
 
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
@@ -137,104 +141,28 @@ function setFormToEditMode() {
     }
 }
 
-function addChoice(){
-    choiceCount = choicesContainer.querySelectorAll(".choice-box").length
-    choiceCharacter = ""
-    const answerOptions = document.querySelector(".answer-options")
-
-    switch (choiceCount + 1){
-        case 1:
-            choiceCharacter = "A"
-            break
-        case 2:
-            choiceCharacter = "B"
-            break        
-        case 3:
-            choiceCharacter = "C"
-            break
-        case 4:
-            choiceCharacter = "D"
-            break
-    }
-
-    if(choiceCount != 4){
-        const choiceInput = document.createElement("input")
-        const choiceDiv = document.createElement("div")
-        const choiceLetter = document.createElement("p")
-        
-        choiceLetter.classList.add("choice-letter")
-        choiceLetter.textContent = choiceCharacter + "."
-        
-        choiceInput.type = "text"
-        choiceInput.name = choiceCharacter
-        choiceInput.placeholder = "Enter a choice"
-        choiceInput.classList.add("choice")
-        
-        choiceDiv.classList.add("choice-box")
-        choiceDiv.append(choiceLetter)
-        choiceDiv.append(choiceInput)
-        choicesContainer.appendChild(choiceDiv)
-
-        const answerRadioButton = document.createElement("input")
-        const answerLabel = document.createElement("label")
-
-        answerRadioButton.type = "radio"
-        answerRadioButton.setAttribute("id", choiceCharacter.toLowerCase())
-        answerRadioButton.name = "answer"
-        answerRadioButton.value = choiceCharacter.toLowerCase()
-
-        answerLabel.textContent = choiceCharacter
-        answerLabel.setAttribute('for', choiceCharacter.toLowerCase())
-
-        answerOptions.append(answerRadioButton, answerLabel)
-        
-    }
-
-    checkInputState()
-
-}
-
-function removeChoice() {
-    removeMode = !removeMode
-    removeChoiceButton.textContent = removeMode ? "Cancel Choice Removing" : "Remove Choice"
-    const choicesElements = choicesContainer.querySelectorAll(".choice-box")
-    choicesElements.forEach(element => {
-        if (removeMode){
-            element.classList.add("choice-toggle-hover")
-        }
-        else{
-            element.classList.remove("choice-toggle-hover");
-        }
-    });
-
-    if (removeMode){
-        saveButton.disabled = true
-    }
-    else{
-        checkInputState()
-    }
-
-    addChoiceButton.disabled = removeMode
-}
-
-function relabelChoices() {
-    const choiceElements = choicesContainer.querySelectorAll(".choice-box");
-    choiceElements.forEach((element, index) => {
-        const letter = String.fromCharCode(65 + index);
-        element.querySelector(".choice-letter").textContent = letter + ".";
-    });
-}
-
 async function saveCurrentQuestion(e){
     e.preventDefault()
 
-    const getQuestion = document.querySelector(".question").value
+    const getPrefixSuffix = prefixSuffixInput.value.trim()
+    const getPrefixSuffixMeaning = prefixSuffixMeaningInput.value.trim()
+    const getQuestion = questionInput.value.trim()
     const getChoices = choicesContainer.querySelectorAll(".choice-box .choice")
-    const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
-    const getAnswer = checkedRadioButton.value ? checkedRadioButton.value : null
+    const checkedRadioButton = answerContainer.querySelector('input[name="answer"]:checked')
+    const getAnswer = checkedRadioButton ? checkedRadioButton.value : null
+    var noPrefixSuffix = false
+    var noPrefixSuffixMeaning = false
     var noQuestion = false
     var noChoices = false
     var noAnswer = false
+
+    if (getPrefixSuffix === ""){
+        noPrefixSuffix = true
+    }
+
+    if (getPrefixSuffixMeaning === ""){
+        noPrefixSuffixMeaning = true
+    }
 
     if (getQuestion === ""){
         noQuestion = true
@@ -254,17 +182,20 @@ async function saveCurrentQuestion(e){
         noAnswer = true
     }
 
-    if (noQuestion || noChoices || noAnswer){
+    if (noPrefixSuffix || noPrefixSuffixMeaning || noQuestion || noChoices || noAnswer){
         console.log("Please put the valid requirements")
+        return;
     }
 
     const newQuestion = {
+        prefixSuffix: getPrefixSuffix,
+        prefixSuffixMeaning: getPrefixSuffixMeaning,
         question: getQuestion,
         choices: currentChoices,
         answer: getAnswer
     };
 
-    questionExist = Boolean(questionObject[currentQuestion])
+    let questionExist = Boolean(questionObject[currentQuestion])
 
     if(JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])){
         setFormToViewMode()
@@ -286,20 +217,27 @@ async function saveCurrentQuestion(e){
     const formData = new FormData()
     formData.append('content', sessionStorage.getItem("questions"))
     formData.append('id', teacherId)
-    formData.append('content_name', currentTitle)
+    formData.append('content_id', contentId)
+    formData.append('total_questions', questionObject.length)
 
     const response = await fetch('/update_content', {
         method: 'POST',
         body: formData,
     });
 
-    const result = await response.json()        
-    if (result.status) {
-        console.log(result.message);
-    } 
-    else {
-        console.error("Error saving content:", result.message);
+    const result = await response.json()      
+    try{
+        if (response.ok && result.status) {
+            console.log(result.message);
+        } 
+        else {
+            console.log("Error saving content:", result.message);
+        }
+
     }
+    catch (error){
+        console.error(error);
+    } 
 
     setFormToViewMode()
 
@@ -307,25 +245,13 @@ async function saveCurrentQuestion(e){
 }
 
 function clearForm(){
-    document.querySelector(".question").value = ""
-
+    prefixSuffixInput.value = ""
+    prefixSuffixMeaningInput.value = ""
+    questionInput.value = ""
     const choices = choicesContainer.querySelectorAll(".choice-box .choice");
-    const answers = answerContainer.querySelectorAll('input, label');
-
     const checkedAnswer = document.querySelector('input[name="answer"]:checked');
 
     choices.forEach(choice => choice.value = "");
-    if (choices.length > 2) {
-        for (let i = 2; i < choices.length; i++) {
-            choices[i].parentElement.remove();
-        }
-    }
-
-    if (answers.length > 4){
-        for(let i = 4; i < answers.length; i++){
-            answers[i].remove()
-        }
-    }
 
     if (checkedAnswer) {
         checkedAnswer.checked = false;
@@ -367,57 +293,27 @@ function loadQuestion(index) {
         console.log("Invalid index");
         return;
     }
-
-    const answerHeader = document.createElement("h3")
-    answerHeader.textContent = "Choose an Answer:"
-    const answerOptions = document.createElement("div")
-    answerOptions.className = "answer-options"
     
     const questionData = questionObject[index];
-    document.querySelector(".question").value = questionData.question;
+    prefixSuffixInput.value = questionData.prefixSuffix || "";
+    prefixSuffixMeaningInput.value = questionData.prefixSuffixMeaning || "";
+    questionInput.value = questionData.question || "";
 
-    const choicesContainer = document.querySelector(".choices-container");
-    choicesContainer.innerHTML = '';
-    answerContainer.innerHTML = '';
-    answerContainer.appendChild(answerHeader)
+    const choiceA = document.getElementById('choice-a')
+    const choiceB = document.getElementById('choice-b')
+    const choiceC = document.getElementById('choice-c')
 
-    const choiceLetters = ['A', 'B', 'C', 'D'];
-    questionData.choices.forEach((choiceText, i) => {
-        const choiceBox = document.createElement('div');
-        choiceBox.className = 'choice-box';
+    choiceA.value = questionData.choices[0] || ""
+    choiceB.value = questionData.choices[1] || ""
+    choiceC.value = questionData.choices[2] || ""
 
-        const choiceLetter = document.createElement('p');
-        choiceLetter.className = 'choice-letter';
-        choiceLetter.textContent = choiceLetters[i] + ".";
+    const radioA = document.getElementById('answer-a');
+    const radioB = document.getElementById('answer-b');
+    const radioC = document.getElementById('answer-c');
 
-        const choiceInput = document.createElement('input');
-        choiceInput.className = 'choice';
-        choiceInput.type = 'text';
-        choiceInput.placeholder = 'Enter a choice';
-        choiceInput.value = choiceText; 
-        choiceBox.appendChild(choiceLetter);
-        choiceBox.appendChild(choiceInput);
-        choicesContainer.appendChild(choiceBox);
-
-        const answerRadioButton = document.createElement("input")
-        const answerLabel = document.createElement("label")
-
-        answerRadioButton.type = "radio"
-        answerRadioButton.setAttribute("id", choiceLetters[i].toLowerCase())
-        answerRadioButton.name = "answer"
-        answerRadioButton.value = choiceLetters[i].toLowerCase()
-
-        answerLabel.textContent = choiceLetters[i]
-        answerLabel.setAttribute('for', choiceLetters[i].toLowerCase())
-
-        if (questionData.answer === choiceLetters[i].toLowerCase()){
-            answerRadioButton.checked = true;
-        } 
-
-        answerOptions.append(answerRadioButton, answerLabel)
-    });
-
-    answerContainer.appendChild(answerOptions)
+    if (radioA) radioA.checked = (questionData.answer === 'a');
+    if (radioB) radioB.checked = (questionData.answer === 'b');
+    if (radioC) radioC.checked = (questionData.answer === 'c');
 
     currentQuestion = index; 
 }
@@ -437,4 +333,3 @@ function firstQuestionExist(length){
         return false
     }
 }
-
