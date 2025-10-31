@@ -285,21 +285,11 @@ moveStudentInfo();
         sectionLabel.id = 'section-label';
         sectionLabel.textContent = 'Select an Activity or Assessment';
 
-        // --- Style ---
-        sectionLabel.style.fontFamily = "'Light-Poppins', Light-Poppins";
-        sectionLabel.style.fontSize = '1.5rem';
-        sectionLabel.style.fontWeight = '500';
-        sectionLabel.style.color = '#222';
-        sectionLabel.style.margin = '0 0 1rem 0';
-        sectionLabel.style.paddingLeft = '0.5rem';
-        sectionLabel.style.backgroundColor = 'transparent';
-        sectionLabel.style.lineHeight = '1.2';
-
         // Insert label before the main display area
         const displayArea = document.getElementById('display-contents');
         displayArea.parentNode.insertBefore(sectionLabel, displayArea);
     }
-
+    
     // Add click listeners to all dropdown items
     document.querySelectorAll('#activities-record-button .dropdown li').forEach(item => {
         item.addEventListener('click', async () => {
@@ -316,8 +306,6 @@ moveStudentInfo();
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
             item.classList.add('active');
-
-            
         });
     });
 
@@ -327,7 +315,6 @@ moveStudentInfo();
             const navType = parentNav.querySelector('span').textContent.trim(); // e.g. "Activities" or "Assessments"
             const clickedName = item.textContent.trim();
 
-            
             displayContents.innerHTML = ''
             //add showAssessments() to be created
 
@@ -337,8 +324,6 @@ moveStudentInfo();
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
             item.classList.add('active');
-
-            
         });
     });
 })();
