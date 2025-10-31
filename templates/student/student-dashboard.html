@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/student-dashboard.css') }}">
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png') }}">
 </head>
 <body>
     <!-- Ionicons -->
@@ -29,13 +29,13 @@
             <ul>
                 <!-- Profile -->
                 <li id="profile-button">
-                    <img src="{{ url_for('static', filename='images/person.png') }}" alt="Profile Icon">
+                    <img src="{{ url_for('static', filename='images/sidebar-icons/person.svg') }}" alt="Profile Icon">
                     <span>Profile</span>
                 </li>
 
                 <!-- Activities -->
                 <li class="nav-item" id="activities-record-button">
-                    <img src="{{ url_for('static', filename='images/person.png') }}" alt="Activities Icon">
+                    <img src="{{ url_for('static', filename='images/sidebar-icons/paper-test.svg') }}" alt="Activities Icon">
                     <span>Activities</span>
                     <ion-icon name="chevron-down-outline" class="dropdown-arrow"></ion-icon>
                     <ul class="dropdown">
@@ -50,7 +50,7 @@
 
                 <!-- Assessments -->
                 <li class="nav-item" id="assessments-record-button">
-                    <img src="{{ url_for('static', filename='images/person.png') }}" alt="Assessments Icon">
+                    <img src="{{ url_for('static', filename='images/sidebar-icons/progress-circle.svg') }}" alt="Assessments Icon">
                     <span>Assessments</span>
                     <ion-icon name="chevron-down-outline" class="dropdown-arrow"></ion-icon>
                     <ul class="dropdown">
