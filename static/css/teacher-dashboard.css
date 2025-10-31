@@ -186,7 +186,8 @@ main > section{
     width: 340px;
 
     & > option{
-        background-color: var(--black-text);
+        background-color: var(--white-text);
+        color: var(--black-text);
         font-family: 'Light-Poppins';
         font-size: 0.8rem;
         
