@@ -23,18 +23,18 @@
             <label for="key-word">
                 <strong>Key Word:</strong>
             </label>
-            <input type="text" id="key-word" name="key-word" placeholder="Enter key word here">
+            <input type="text" id="question" name="question" placeholder="Enter key word here">
         </div>
         <div class="tts-buttons">
-            <button class="tts-button convert-button" id="tts-convert-button-1">
+            <button class="tts-button" id="tts-convert-button-1">
                 <img src="{{url_for('static', filename='images/tts-convert-icon.png')}}" alt="convert-icon"/>
                 Convert Text-to-Speech
             </button>
-            <button class="tts-button play-button" id="tts-play-button-1">
+            <button class="tts-button" id="tts-play-button-1">
                 <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>
                 Play Text-to-Speech
-            </button>
-            <button class="tts-button delete-button" id="tts-delete-button-1">
+            </button> 
+            <button class="tts-button" id="tts-delete-button-1">
                 <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
                 Delete Text-to-Speech
             </button>
@@ -83,6 +83,6 @@
 
     </div>
     
-    <script type="module" src="{{url_for('static', filename='js/games/edit/what-happens-next-edit.js')}}"></script>
+    <script type="module" src="{{url_for('static', filename='js/games/edit/word-audio-match-edit.js')}}"></script>
 </body>
 </html>

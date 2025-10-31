@@ -1,6 +1,6 @@
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
-const questionInput = document.getElementById("question")
+const questionInput = document.getElementById("question") /* revert from keyword -> question */
 const choicesContainer = document.getElementById("choices-container")
 const answerContainer = document.getElementById("answer-container")
 const saveButton = document.getElementById("save-button")
@@ -21,9 +21,9 @@ const contentDisplay = document.getElementById("content-display")
 
 const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
 
-const ttsConvertButton = document.getElementById('tts-convert-button')
-const ttsPlayButton = document.getElementById('tts-play-button')
-const ttsDeleteButton = document.getElementById('tts-delete-button')
+const ttsConvertButton = document.getElementById('tts-convert-button-1')
+const ttsPlayButton = document.getElementById('tts-play-button-1')
+const ttsDeleteButton = document.getElementById('tts-delete-button-1')
 
 categoryDisplay.textContent = storedTypes.category
 contentDisplay.textContent = storedTypes.content
@@ -59,7 +59,9 @@ ttsConvertButton.addEventListener("click", async () => {
 })
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
-toTeacherPageButton.addEventListener('click', () => {
+toTeacherPageButton.addEventListener('click', async (e) => {
+    await saveCurrentQuestion(e);
+
     sessionStorage.removeItem('originalActivityTitle')
     sessionStorage.removeItem('questions')
     sessionStorage.removeItem('currentActivityId')
@@ -101,16 +103,13 @@ if (firstQuestionExist(questionObject.length)) {
 function checkInputState() {
     const getQuestion = questionInput.value.trim();
     const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
-    const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
+    const getAnswer = checkedRadioButton ? checkedRadioButton.value : null;
     const getChoices = Array.from(choicesContainer.querySelectorAll(".choice-box .choice"));
     const hasEmptyChoice = getChoices.some(choice => choice.value.trim() === "");
 
-    if (getQuestion && getAnswer && !hasEmptyChoice) {
-        saveButton.disabled = false;
-    } else {
-        saveButton.disabled = true;
-    }
+    saveButton.disabled = !(getQuestion && getAnswer && !hasEmptyChoice);
 }
+
 
 function setFormToViewMode() {
     saveButton.style.display = "none"
@@ -187,7 +186,8 @@ async function saveCurrentQuestion(e){
         answer: getAnswer
     };
 
-    questionExist = Boolean(questionObject[currentQuestion])
+
+    const questionExist = Boolean(questionObject[currentQuestion])
 
     if(JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])){
         setFormToViewMode()
