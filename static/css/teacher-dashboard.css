@@ -15,6 +15,7 @@ main > section{
 /* START OF FEATURES (the bottom designs) */
 
 #content-container{
+    color: var(--white-text);
     gap: 1rem;
     height: auto;
     display: grid;
@@ -26,12 +27,12 @@ main > section{
     height: 200px;
 }
 
-#for-the-kiddos {
+/* #for-the-kiddos {
     font-family: 'Bold-Poppins';
     font-size: 1.2rem;
     color: transparent;
     -webkit-text-stroke: 2px black;
-}
+} */
 
 .content {
     background-color: var(--primary-color);
