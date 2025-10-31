@@ -5,9 +5,9 @@ const nextButton = document.getElementById("next-button");
 const previousButton = document.getElementById("previous-button");
 const answerContainer = document.getElementById("answer-container"); 
 
-let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
+let keywordObject = JSON.parse(sessionStorage.getItem("keywords") || "[]");
 
-let currentQuestion = 0;
+let currentKeyword = 0;
 let finalScore = 0; 
 
 const storedAnswers = sessionStorage.getItem("userAnswers");
@@ -31,16 +31,16 @@ else if(sessionStorage.getItem("role") === "teacher"){
 nextButton.addEventListener("click", () => { saveAndNavigate(1); }); 
 previousButton.addEventListener("click", () => { saveAndNavigate(-1); });
 
-loadQuestion(0);
+loadKeyword(0);
 
 // 3. Core Logic (Simplified for Preview)
 
 function saveAndNavigate(direction) {
     const selectedRadio = document.querySelector('input[name="preview_answer"]:checked');
     if (selectedRadio) {
-        userAnswers[currentQuestion] = selectedRadio.value;
-    } else if (userAnswers[currentQuestion]) {
-        delete userAnswers[currentQuestion]; 
+        userAnswers[currentKeyword] = selectedRadio.value;
+    } else if (userAnswers[currentKeyword]) {
+        delete userAnswers[currentKeyword]; 
     }
 
     sessionStorage.setItem("userAnswers", JSON.stringify(userAnswers));
@@ -51,14 +51,14 @@ function saveAndNavigate(direction) {
     }
 
     if (direction === 1) { 
-        if (currentQuestion < questionObject.length - 1) {
-            currentQuestion++;
-            loadQuestion(currentQuestion);
+        if (currentKeyword < keywordObject.length - 1) {
+            currentKeyword++;
+            loadKeyword(currentKeyword);
         } 
     } else if (direction === -1) { 
-        if (currentQuestion > 0) {
-            currentQuestion--;
-            loadQuestion(currentQuestion);
+        if (currentKeyword > 0) {
+            currentKeyword--;
+            loadKeyword(currentKeyword);
         }
     }
 }
@@ -66,18 +66,18 @@ function saveAndNavigate(direction) {
 function showFinalScore() {
     // 1. Calculate the final score
     let correctCount = 0;
-    questionObject.forEach((question, index) => {
-        if (userAnswers[index] === question.answer) {
+    keywordObject.forEach((keyword, index) => {
+        if (userAnswers[index] === keyword.answer) {
             correctCount++;
         }
     });
     finalScore = correctCount;
 
     // 2. Display the results page
-    const totalQuestions = questionObject.length;
+    const totalKeywords = keywordObject.length;
     
     // Clear the main content areas
-    document.querySelector(".question-container").innerHTML = '';
+    document.querySelector(".keyword-container").innerHTML = '';
     choicesContainer.innerHTML = '';
     answerContainer.innerHTML = '';
     
@@ -86,7 +86,7 @@ function showFinalScore() {
     scoreMessage.textContent = "Quiz Complete!";
     
     const resultDetails = document.createElement('p');
-    resultDetails.innerHTML = `You answered <strong>${finalScore}</strong> out of <strong>${totalQuestions}</strong> questions correctly.`;
+    resultDetails.innerHTML = `You answered <strong>${finalScore}</strong> out of <strong>${totalKeywords}</strong> keywords correctly.`;
     resultDetails.style.fontSize = '1.2em';
     
     choicesContainer.append(scoreMessage, resultDetails);
@@ -96,7 +96,7 @@ function showFinalScore() {
 }
 
 function updateNavigationButtons() {
-    if (currentQuestion === questionObject.length - 1) {
+    if (currentKeyword === keywordObject.length - 1) {
         nextButton.textContent = "Submit";
         nextButton.addEventListener("click", () => { saveAndNavigate(2); });
     } else {
@@ -105,31 +105,31 @@ function updateNavigationButtons() {
         nextButton.addEventListener("click", () => { saveAndNavigate(1); });
     }
 
-    previousButton.disabled = (currentQuestion === 0);
-    nextButton.disabled = (questionObject.length === 0);
+    previousButton.disabled = (currentKeyword === 0);
+    nextButton.disabled = (keywordObject.length === 0);
 }
 
-function loadQuestion(index) {
+function loadKeyword(index) {
     console.log(index)
-    if (index < 0 || index >= questionObject.length) {
-        console.error("Invalid question index");
+    if (index < 0 || index >= keywordObject.length) {
+        console.error("Invalid keyword index");
         return;
     }
 
-    const questionData = questionObject[index];
+    const keywordData = keywordObject[index];
 
-    const questionElement = document.getElementById("question-text");
-    questionElement.textContent = questionData.question;
+    const keywordElement = document.getElementById("keyword-text");
+    keywordElement.textContent = keywordData.keyword;
 
     choicesContainer.innerHTML = '';
     answerContainer.innerHTML = '';
     
-    const qNum = document.getElementById("question-number-display");
-    qNum.textContent = `Question ${index + 1} of ${questionObject.length}`;
+    const qNum = document.getElementById("keyword-number-display");
+    qNum.textContent = `Keyword ${index + 1} of ${keywordObject.length}`;
 
     const choiceLetters = ['A', 'B', 'C', 'D']; 
     
-    questionData.choices.forEach((choiceText, i) => {
+    keywordData.choices.forEach((choiceText, i) => {
         const choiceBox = document.createElement('div');
         choiceBox.className = 'choice-box';
 
@@ -159,9 +159,9 @@ function loadQuestion(index) {
         choicesContainer.appendChild(choiceBox);
     });
     
-    currentQuestion = index;
-    previousButton.disabled = (currentQuestion === 0);
-    nextButton.disabled = (currentQuestion === questionObject.length - 1);
+    currentKeyword = index;
+    previousButton.disabled = (currentKeyword === 0);
+    nextButton.disabled = (currentKeyword === keywordObject.length - 1);
 
     updateNavigationButtons();
 }

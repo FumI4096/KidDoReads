@@ -9,7 +9,7 @@ const answerContainer = document.getElementById("answer-container");
 
 answerContainer.style.display = 'none'
 
-let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
+let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]"); /* revert from keyword -> question */
 
 let currentQuestion = 0;
 let finalScore = 0; 
@@ -93,6 +93,10 @@ function updateNavigationButtons() {
 
 function loadQuestion(index) {
     console.log(index)
+    console.log("loadQuestion() called with index:", index);
+    console.log("questionObject:", questionObject);
+    console.log("questionObject length:", questionObject ? questionObject.length : "undefined");
+
     if (index < 0 || index >= questionObject.length) {
         console.error("Invalid question index");
         return;
