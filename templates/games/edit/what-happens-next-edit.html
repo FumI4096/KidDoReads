@@ -4,99 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>What Happens Next?</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/games/edit/what-happens-next-edit.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/sidebar.css') }}">
-
-
+    <link rel="stylesheet" href="{{url_for('static', filename='css/games/edit/what-happens-next-edit.css')}}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}">   
 </head>
 <body>
- <!-- Ionicons script tags for module and nomodule support -->
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-    <div id="side-bar">
-    <!-- <header>
-            <img src="{{url_for('static', filename='images/kdr-logo.png')}}" />
-            <span>Kid-Do-Reads</span>
-        </header> -->
-
-        <aside>
-            <section id="teacher-info">
-                <img alt="image" id="teacher_picture">
-                <span id="teacher_name">Teacher</span>
-            </section>
-            <ul>
-                <li class="toggle-user" id="activities-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}" />
-                    <span>Activities</span>
-                </li>
-                <li id="assessments-record-button">
-                    <img src="{{url_for('static', filename='images/person.png') }}" />
-                    <span>Assessments</span>
-                </li>                
-                <li id="progress-record-button">
-                    <img src="{{url_for('static', filename='images/circle-progress-indicator.png') }}" />
-                    <span>Student Progress</span>
-                </li>
-                <li id="log-out-button">
-                    <ion-icon name="log-out"></ion-icon>
-                    <span>Log Out</span>
-                </li>
-            </ul>
-            
-        </aside>
-    </div>
-    
-    <section id="content">
-        <header>
-            <p id="display-activity-title">Display Activity</p>
-            <button id="to-teacher-page-button">Save and Exit</button>
-        </header>
-
-        <section id="passage-container">
-            <input type="text" id="passage" name="" placeholder="Enter your passage here">
-        </section>
-
-    <section id="choices-container">
-        <div class="choice-box">
-            <p class="choice-letter">A.</p>
-            <input class="choice" id="choice-a" type="text" placeholder="Enter a choice">
+    <header>
+        <div id="category-and-game-type">
+            <span id="category-display"></span>
+            <span id="content-display"></span>
         </div>
-        <div class="choice-box">
-            <p class="choice-letter">B.</p>
-            <input class="choice" id="choice-b" type="text" placeholder="Enter a choice">
+        <p id="display-activity-title"></p>
+        <button id="to-teacher-page-button">Save and Exit</button>
+    </header>
+    <!-- Section 1: Title -->
+    <section class="input-section">
+        <div class="number-badge">1</div>
+        <div class="input-content">
+            <label for="key-word">
+                <strong>Title:</strong>
+            </label>
+            <input type="text" id="key-word" name="key-word" placeholder="Enter passage title here">
         </div>
-        <div class="choice-box">
-            <p class="choice-letter">C.</p>
-            <input class="choice" id="choice-c" type="text" placeholder="Enter a choice">
+        <div class="tts-buttons">
+            <button class="tts-button convert-button" id="tts-convert-button-1">
+                <img src="{{url_for('static', filename='images/tts-convert-icon.png')}}" alt="convert-icon"/>
+                Convert Text-to-Speech
+            </button>
+            <div class="button-row">
+                <button class="icon-button delete-button" id="tts-delete-button-1">
+                    <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
+                </button>
+                <button class="tts-button play-button" id="tts-play-button-1">
+                    <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>
+                    Play Text-to-Speech
+                </button>
+            </div>
         </div>
     </section>
 
-    <aside id="answer-container">
-        <h3>Choose an Answer:</h3>
-        <div class="answer-options">
-            <input type="radio" id="answer-a" name="answer" value="a">
-            <label for="answer-a">A</label>
-            <input type="radio" id="answer-b" name="answer" value="b">
-            <label for="answer-b">B</label>
-            <input type="radio" id="answer-c" name="answer" value="c">
-            <label for="answer-c">C</label>
+    <!-- Section 2: Sentence -->
+    <section class="input-section">
+        <div class="number-badge">2</div>
+        <div class="input-content">
+            <label for="sentence">
+                <strong>Passage:</strong>
+            </label>
+            <textarea id="passage" name="passage" placeholder="Enter passage or short story here"></textarea>
         </div>
-    </aside>
+        <div class="tts-buttons">
+            <button class="tts-button convert-button" id="tts-convert-button-2">
+                <img src="{{url_for('static', filename='images/tts-convert-icon.png')}}" alt="convert-icon"/>
+                Convert Text-to-Speech
+            </button>
+            <div class="button-row">
+                <button class="icon-button delete-button" id="tts-delete-button-2">
+                    <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
+                </button>
+                <button class="tts-button play-button" id="tts-play-button-2">
+                    <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>  
+                    Play Text-to-Speech
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <section id="main-sheet-container">
+        <section id="choices-container">
+            <p><strong>Instruction:</strong> Choose what happens next in the story.</p>
+            <div id="choice-box-container">
+                <div class="choice-box">
+                    <p class="choice-letter">A.</p>
+                    <input class="choice" id="choice-a" type="text" placeholder="Enter a choice">
+                </div>
+                <div class="choice-box">
+                    <p class="choice-letter">B.</p>
+                    <input class="choice" id="choice-b" type="text" placeholder="Enter a choice">
+                </div>
+                <div class="choice-box">
+                    <p class="choice-letter">C.</p>
+                    <input class="choice" id="choice-c" type="text" placeholder="Enter a choice">
+                </div>
+            </div>
+    
+        </section>
+        <aside id="answer-container">
+            <h3>Choose Correct Answer:</h3>
+            <div class="answer-options">
+                <input type="radio" id="answer-a" name="answer" value="a">
+                <label for="answer-a">A</label>
+                <input type="radio" id="answer-b" name="answer" value="b">
+                <label for="answer-b">B</label>
+                <input type="radio" id="answer-c" name="answer" value="c">
+                <label for="answer-c">C</label>
+            </div>
+        </aside>
+
+    </section>
     <div id="button-container">
         <button id="previous-button">Previous</button>
-            <section>
-                <button id="save-button">Save</button>
-                <!-- <button id="edit-button">Edit</button> -->
-            </section>
+        <section>
+            <button id="save-button">Save</button>
+            <button id="edit-button">Edit</button>
+        </section>
         <button id="next-button">Next</button>
 
     </div>
-    </section>
     
-    <script type=module src="{{ url_for('static', filename='js/games/edit/what-happens-next-edit.js') }}"></script>
-
-
-    
+    <script type="module" src="{{url_for('static', filename='js/games/edit/what-happens-next-edit.js')}}"></script>
 </body>
 </html>
