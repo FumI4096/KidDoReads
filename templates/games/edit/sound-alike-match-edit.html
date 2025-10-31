@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sound-Alike Match</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='css/games/edit/sound-alike-match-edit.css')}}">
+    <title>Edit Game | Sound Alike Match</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/edit-game-layout.css')}}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}">   
 </head>
 <body>
-    <span id="category-display"></span>
     <header>
-        <span id="content-display"></span>
+        <div id="category-and-game-type">
+            <span id="category-display"></span>
+            <span id="content-display"></span>
+        </div>
         <p id="display-activity-title"></p>
         <button id="to-teacher-page-button">Save and Exit</button>
     </header>
@@ -20,22 +23,21 @@
             <label for="key-word">
                 <strong>Key Word:</strong>
             </label>
-            <input type="text" id="key-word" name="key-word" placeholder="Enter word here">
+            <input type="text" id="key-word" name="key-word" placeholder="Enter keyword here">
         </div>
         <div class="tts-buttons">
             <button class="tts-button convert-button" id="tts-convert-button-1">
                 <img src="{{url_for('static', filename='images/tts-convert-icon.png')}}" alt="convert-icon"/>
                 Convert Text-to-Speech
             </button>
-            <div class="button-row">
-                <button class="icon-button delete-button" id="tts-delete-button-1">
-                    <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
-                </button>
-                <button class="tts-button play-button" id="tts-play-button-1">
-                    <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>
-                    Play Text-to-Speech
-                </button>
-            </div>
+            <button class="tts-button play-button" id="tts-play-button-1">
+                <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>
+                Play Text-to-Speech
+            </button>
+            <button class="tts-button delete-button" id="tts-delete-button-1">
+                <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
+                Delete Text-to-Speech
+            </button>
         </div>
     </section>
 
@@ -46,22 +48,20 @@
             <label for="sentence">
                 <strong>Sentence:</strong>
             </label>
-            <input type="text" id="sentence" name="sentence" placeholder="Enter Sentence Here">
+            <input type="text" id="sentence" name="sentence" placeholder="Use the word in a sentence."></input>
         </div>
         <div class="tts-buttons">
             <button class="tts-button convert-button" id="tts-convert-button-2">
                 <img src="{{url_for('static', filename='images/tts-convert-icon.png')}}" alt="convert-icon"/>
                 Convert Text-to-Speech
+            <button class="tts-button play-button" id="tts-play-button-2">
+                <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>  
+                Play Text-to-Speech
             </button>
-            <div class="button-row">
-                <button class="icon-button delete-button" id="tts-delete-button-2">
-                    <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
-                </button>
-                <button class="tts-button play-button" id="tts-play-button-2">
-                    <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>  
-                    Play Text-to-Speech
-                </button>
-            </div>
+            <button class="tts-button delete-button" id="tts-delete-button-2">
+                <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
+                Delete Text-to-Speech
+            </button>
         </div>
     </section>
     
@@ -107,6 +107,6 @@
 
     </div>
     
-    <script type="module" src="{{url_for('static', filename='js/games/edit/sound-alike-match-edit.js')}}"></script>
+    <script type="module" src="{{url_for('static', filename='js/games/edit/what-happens-next-edit.js')}}"></script>
 </body>
 </html>

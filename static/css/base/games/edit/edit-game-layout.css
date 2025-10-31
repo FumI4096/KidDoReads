@@ -1,0 +1,315 @@
+@import "../../../variables.css";
+
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: 'Regular-Poppins';
+}
+
+html, body{
+    height: 100%;
+    width: 100%;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 14rem;
+    gap: 1.5rem;
+}
+
+/* HEADER SECTION */
+
+header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+    }
+}
+
+#category-display{
+    font-family: "Italic-Poppins";
+    font-style: italic;
+}
+
+header #content-display {
+    font-size: 2.5rem;
+    font-family: 'Bold-Poppins';
+}
+
+/* BUTTON STYLES */
+
+#to-teacher-page-button, #previous-button, #save-button, #edit-button, #next-button {
+    padding: 0.4rem 1.5rem;
+    width: 10rem;
+    border: none;
+    border-radius: 25px;
+    background-color: grey;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+        /* TTS Buttons */
+
+.tts-buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    min-width: 280px;
+}
+
+.tts-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.tts-button img{
+    width: 18px;
+    height: 18px;
+}
+
+.convert-button{
+    background-color: #6b6b6b;
+    color: white;
+}
+
+.convert-button:hover{
+    background-color: #555;
+}
+
+.convert-button img{
+    filter: invert(100%);
+}
+
+.button-row{
+    display: flex;
+    gap: 0.7rem;
+}
+
+.icon-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.icon-button img{
+    width: 20px;
+    height: 20px;
+}
+
+.delete-button{
+    background-color: white;
+    border: 2px solid #e0e0e0;
+}
+
+.delete-button:hover{
+    background-color: #f5f5f5;
+}
+
+.play-button{
+    flex: 1;
+    background-color: white;
+    color: #000;
+    border: 2px solid #e0e0e0;
+}
+
+.play-button:hover{
+    background-color: #f5f5f5;
+}
+
+/* Input Sections */
+
+textarea { /* passage input - multilines */
+    resize: vertical;
+    min-height: 100px;
+    max-width: 60rem;
+    font-size: 1.2rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.5rem 0.5rem;
+    color: #999;
+    box-shadow: var(--box-shadow-1);
+}
+
+.input-section{ /* rectangle container with box shadow */
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: white;
+    padding: 2rem 3rem;
+    border-radius: 1rem;
+    box-shadow: var(--box-shadow-1);
+}
+
+.number-badge{ /* section number */
+    font-size: 6rem;
+    font-weight: 300;
+    color: #d3d3d3;
+    line-height: 1;
+    min-width: 80px;
+    text-align: center;
+}
+
+.input-content{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-content label{
+    font-size: 1.3rem;
+    font-family: 'Bold-Poppins';
+}
+
+.input-content input{
+    font-size: 1.2rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.5rem 0;
+    color: #999;
+}
+
+.input-content input::placeholder{
+    color: #ccc;
+}
+
+
+#content-display{
+    font-family: "Bold-Poppins";
+}
+
+#main-sheet-container{
+    padding: 1rem 10;
+    display: flex;
+    margin-bottom: auto;
+    gap: 1rem;
+
+    & > #choices-container{
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 1rem;
+        & > p{
+            font-size: 1.2rem;
+        }
+        & > #choice-box-container{
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            & > .choice-box{
+                display: flex;
+                width: 70%;
+                gap: 0.5rem;
+                justify-content: start;
+                align-items: center;
+                background-color: rgb(182, 182, 182);
+                height: auto;
+                padding: 1rem 1rem 1rem 4rem;
+                border-radius: 100px;
+        
+                & > *{
+                    font-size: 1.2rem;
+                    color: white
+                }
+        
+                & > .choice{
+                    height: auto;
+                    outline: none;
+                    border: none;
+                    background: transparent;
+        
+                    &::placeholder{
+                        color: rgb(233, 233, 233);
+                    }
+                }
+        
+            }
+        }
+    }
+}
+
+
+#answer-container{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+
+    & > h3{
+        margin-bottom: auto;
+    }
+}
+
+
+.answer-options {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.answer-options input[type="radio"] {
+    display: none;
+}
+
+/* Custom radio button */
+.answer-options label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 66px;
+    height: 66px;
+    border: none;
+    border-radius: 3px;
+    background-color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 15px;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Checked state */
+.answer-options input[type="radio"]:checked + label {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+    box-shadow: none;
+}
+
+
+#button-container{
+    display: flex;
+    justify-content: space-between;
+}

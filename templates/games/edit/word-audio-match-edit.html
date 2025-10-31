@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Audio Matching</title>
-    <link rel="stylesheet" href=" {{url_for('static', filename='css/games/edit/word-audio-matching-edit.css')}} ">
+    <title>Edit Game | Word Audio Match</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/edit-game-layout.css')}}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}">   
 </head>
 <body>
-    <span id="category-display"></span>
     <header>
-        <span id="content-display"></span>
+        <div id="category-and-game-type">
+            <span id="category-display"></span>
+            <span id="content-display"></span>
+        </div>
         <p id="display-activity-title"></p>
         <button id="to-teacher-page-button">Save and Exit</button>
     </header>
-    <section id="question-container">
-        <div id="word-container">
-            <label for="question">
-                Key Word:
+    <!-- Section 1: Key Word -->
+    <section class="input-section">
+        <div class="number-badge">1</div>
+        <div class="input-content">
+            <label for="key-word">
+                <strong>Key Word:</strong>
             </label>
-            <input type="text" id="question" name="question" placeholder="Enter Word Here">
+            <input type="text" id="key-word" name="key-word" placeholder="Enter key word here">
         </div>
-        <div id="tts-button-container">
-            <button class="tts-button" id="tts-convert-button">
+        <div class="tts-buttons">
+            <button class="tts-button convert-button" id="tts-convert-button-1">
                 <img src="{{url_for('static', filename='images/tts-convert-icon.png')}}" alt="convert-icon"/>
-                <span>Convert Text-To-Speech</span>
+                Convert Text-to-Speech
             </button>
-            <button class="tts-button" id="tts-play-button">
+            <button class="tts-button play-button" id="tts-play-button-1">
                 <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>
-                <span>Play Speech</span>
+                Play Text-to-Speech
             </button>
-            <button class="tts-button" id="tts-delete-button">
+            <button class="tts-button delete-button" id="tts-delete-button-1">
                 <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
-                <span>Delete Speech</span>
+                Delete Text-to-Speech
             </button>
         </div>
     </section>
@@ -56,7 +61,7 @@
     
         </section>
         <aside id="answer-container">
-            <h3>Choose an Answer:</h3>
+            <h3>Choose Correct Answer:</h3>
             <div class="answer-options">
                 <input type="radio" id="answer-a" name="answer" value="a">
                 <label for="answer-a">A</label>
@@ -78,6 +83,6 @@
 
     </div>
     
-    <script type="module" src=" {{url_for('static', filename='js/games/edit/word-audio-match-edit.js')}} "></script>
+    <script type="module" src="{{url_for('static', filename='js/games/edit/what-happens-next-edit.js')}}"></script>
 </body>
 </html>
