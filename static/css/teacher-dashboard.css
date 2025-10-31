@@ -233,7 +233,61 @@ main > section{
     }
 }
 
+/* === PROGRESS TABLE DESIGN (Black & White base) === */
 
+#progress-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: 'Regular-Poppins';
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#progress-table thead {
+    background: linear-gradient(90deg, #000, #555);
+    color: #fff;
+    font-family: 'Bold-Poppins';
+    text-align: left;
+}
+
+#progress-table thead th {
+    padding: 1rem;
+    font-size: 0.95rem;
+}
+
+#progress-table tbody tr {
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+#progress-table tbody tr:nth-child(even) {
+    background-color: #efefef;
+}
+
+#progress-table tbody tr:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+#progress-table td {
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #222;
+    border-bottom: 1px solid #ccc;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Optional — if you want rounded look like the design */
+#progress-table-container {
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    padding: 1rem;
+}
 
 
 
