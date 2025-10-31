@@ -415,3 +415,21 @@ main > section {
 .content .button-container button:hover {
   background-color: #ff9233;
 }
+
+/* === SECTION LABEL === */
+#section-label {
+  font-family: 'Light-Poppins', Light-Poppins;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #222;
+  margin: 0 0 1rem 0;
+  padding-left: 0.5rem;
+  background-color: transparent;
+  line-height: 1.2;
+}
+
+/* === ACTIVE DROPDOWN ITEM === */
+.dropdown li.active {
+  background-color: #ffb15c;
+  color: #fff;
+}
