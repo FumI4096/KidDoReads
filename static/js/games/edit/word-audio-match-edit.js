@@ -303,38 +303,48 @@ function setFormToEditMode() {
     }
 }
 
-async function saveCurrentQuestion(e){
-    e.preventDefault()
+async function saveCurrentQuestion(e) {
+    e.preventDefault();
 
-    const getQuestion = questionInput.value
-    const getChoices = choicesContainer.querySelectorAll(".choice-box .choice")
-    const checkedRadioButton = answerContainer.querySelector('input[name="answer"]:checked')
-    const getAnswer = checkedRadioButton.value ? checkedRadioButton.value : null
-    var noQuestion = false
-    var noChoices = false
-    var noAnswer = false
+    const getQuestion = questionInput.value.trim();
+    const getChoices = choicesContainer.querySelectorAll(".choice-box .choice");
+    const checkedRadioButton = answerContainer.querySelector('input[name="answer"]:checked');
+    const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
 
-    if (getQuestion === ""){
-        noQuestion = true
-    }
-
-    const currentChoices = []
-    
-    for(let i = 0; i < getChoices.length; i++){
-        if (getChoices[i].value.trim() === ""){
-            noChoices = true
-            break
-        }
-        currentChoices.push(getChoices[i].value.trim())
-    }
-
-    if (getAnswer === null){
-        noAnswer = true
-    }
-
-    if (noQuestion || noChoices || noAnswer){
-        console.log("Please put the valid requirements")
+    if (!getQuestion) {
+        notifObject.notify("Please enter a question", "error");
         return;
+    }
+
+    const currentChoices = [];
+    for (let i = 0; i < getChoices.length; i++) {
+        if (getChoices[i].value.trim() === "") {
+            notifObject.notify("Please fill all choices", "error");
+            return;
+        }
+        currentChoices.push(getChoices[i].value.trim());
+    }
+
+    if (!getAnswer) {
+        notifObject.notify("Please select an answer", "error");
+        return;
+    }
+
+    const audioUrl = getAudioForQuestion(currentQuestion);
+    if (!audioUrl) {
+        notifObject.notify("Please generate speech for this question", "error");
+        return;
+    }
+
+    const currentAudioFile = keyWordTtsObj.getAudioFile();
+    if (currentAudioFile) {
+        ttsObject[currentQuestion] = { 
+            audioUrl: currentAudioFile 
+        };
+        sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
+        keyWordTtsObj.clearAudioFile();
+        
+        originalQuestionText = getQuestion;
     }
 
     const newQuestion = {
@@ -343,53 +353,52 @@ async function saveCurrentQuestion(e){
         answer: getAnswer
     };
 
-
-    const questionExist = Boolean(questionObject[currentQuestion])
-
-    if(JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])){
-        setFormToViewMode()
+    if (JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])) {
+        setFormToViewMode();
         return;
     }
 
-    if (questionExist){
-        console.log("Question Exist")
+    const questionExist = Boolean(questionObject[currentQuestion]);
+    if (questionExist) {
+        console.log("Updating existing question");
         questionObject[currentQuestion] = newQuestion;
-    }
-    else{
+    } 
+    else {
+        console.log("Adding new question");
         questionObject.push(newQuestion);
         currentQuestion = questionObject.length - 1;
-
     }
 
-    sessionStorage.setItem("questions", JSON.stringify(questionObject))
+    sessionStorage.setItem("questions", JSON.stringify(questionObject));
+    const formData = new FormData();
+    formData.append('content', sessionStorage.getItem("questions"));
+    formData.append('id', teacherId);
+    formData.append('content_id', contentId);
+    formData.append('total_questions', questionObject.length);
 
-    const formData = new FormData()
-    formData.append('content', sessionStorage.getItem("questions"))
-    formData.append('id', teacherId)
-    formData.append('content_id', contentId)
-    formData.append('total_questions', questionObject.length)
+    try {
+        const response = await fetch('/update_content', {
+            method: 'POST',
+            body: formData,
+        });
 
-    const response = await fetch('/update_content', {
-        method: 'POST',
-        body: formData,
-    });
-
-    const result = await response.json()      
-    try{
-        if (response.ok && result.status) {
+        const result = await response.json();
+        
+        if(response.ok && result.status) {
             console.log(result.message);
+            notifObject.notify('Question saved successfully!', 'success');
         } 
         else {
             console.log("Error saving content:", result.message);
+            notifObject.notify('Failed to save question', 'error');
         }
-
-    }
-    catch (error){
-        console.error(error);
     } 
+    catch (error) {
+        console.error(error);
+        notifObject.notify('Error saving question', 'error');
+    }
 
-    setFormToViewMode()
-
+    setFormToViewMode();
     console.log("Currently on Question:", currentQuestion + 1);
 }
 
