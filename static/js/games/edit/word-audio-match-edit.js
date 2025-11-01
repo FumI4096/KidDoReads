@@ -169,12 +169,6 @@ function checkInputState() {
     const isComplete = getQuestion && getAnswer && hasAudio && !hasEmptyChoice && !needsReconvert;
 
     saveButton.disabled = !isComplete;
-    
-    // Show notification if trying to save with changed text
-    if (needsReconvert && getQuestion && getAnswer && !hasEmptyChoice) {
-        // User has everything filled but needs to reconvert
-        console.log("⚠️ Question text changed - reconversion required before saving");
-    }
 }
 
 function changeTtsConverButtonText(text) {
@@ -201,7 +195,6 @@ ttsConvertButton.addEventListener("click", async () => {
                 delete ttsObject[currentQuestion];
                 sessionStorage.setItem('ttsInputs', JSON.stringify(ttsObject));
                 keyWordTtsObj.clearAudioFile();
-                console.log("Old speech deleted for reconversion");
             } else {
                 throw new Error("Failed to delete old speech");
             }
@@ -399,7 +392,6 @@ async function saveCurrentQuestion(e) {
     }
 
     setFormToViewMode();
-    console.log("Currently on Question:", currentQuestion + 1);
 }
 
 function clearForm() {
