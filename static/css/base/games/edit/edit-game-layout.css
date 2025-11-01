@@ -57,6 +57,10 @@ header #content-display {
     transition: all 0.3s ease;
 }
 
+#to-teacher-page-button:disabled, #previous-button:disabled, #save-button:disabled, #edit-button:disabled, #next-button:disabled {
+    background-color: rgb(214, 214, 214);
+}
+
         /* TTS Buttons */
 
 .tts-buttons{
