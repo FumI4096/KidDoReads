@@ -69,6 +69,92 @@ if (firstQuestionExist(questionObject.length)) {
     previousButton.disabled = true;
     saveButton.disabled = true;
 }
+
+/**
+ * Check if the current question text differs from what was originally converted
+ */
+function hasQuestionTextChanged() {
+    const currentText = questionInput.value.trim();
+    const audioExists = getAudioForQuestion(currentQuestion) !== null;
+    
+    // If no audio exists, question hasn't been converted yet
+    if (!audioExists) {
+        return false;
+    }
+    
+    return currentText !== originalQuestionText;
+}
+
+function getAudioForQuestion(index) {
+    // First check if there's a newly generated audio file (not yet saved)
+    const currentAudioFile = keyWordTtsObj.getAudioFile();
+    
+    // If we're checking the current question and there's a new audio file, return it
+    if (index === currentQuestion && currentAudioFile) {
+        return currentAudioFile;
+    }
+    
+    // Otherwise check stored TTS object
+    const ttsData = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+    if (ttsData[index] && ttsData[index].audioUrl) {
+        return ttsData[index].audioUrl;
+    }
+    
+    return null;
+}
+
+/**
+ * Update TTS button states based on current audio availability
+ */
+function updateTtsButtonStates(isEditMode = false) {
+    const audioUrl = getAudioForQuestion(currentQuestion);
+    const hasAudio = audioUrl !== null;
+    const hasQuestionText = questionInput.value.trim() !== '';
+    const questionChanged = hasQuestionTextChanged();
+    
+    if (isEditMode) {
+        // In edit mode
+        if (hasAudio && !questionChanged) {
+            // Audio exists and text hasn't changed - show "Reconvert" (optional), enable play
+            ttsConvertButton.disabled = false;
+            ttsPlayButton.disabled = false;
+            changeTtsConverButtonText("Reconvert Text-To-Speech");
+        } 
+        else if (hasAudio && questionChanged) {
+            // Audio exists but text HAS changed - MUST reconvert (required)
+            ttsConvertButton.disabled = false;
+            ttsPlayButton.disabled = false; // Can still play old audio
+            changeTtsConverButtonText("Reconvert Text-To-Speech (Required)");
+        } 
+        else if (hasQuestionText) {
+            // No audio but has text - show "Convert"
+            ttsConvertButton.disabled = false;
+            ttsPlayButton.disabled = true;
+            changeTtsConverButtonText("Convert Text-To-Speech");
+        } 
+        else {
+            // No audio, no text - disable all
+            ttsConvertButton.disabled = true;
+            ttsPlayButton.disabled = true;
+            changeTtsConverButtonText("Convert Text-To-Speech");
+        }
+    } 
+    else {
+        // In view mode - disable convert, enable play if audio exists
+        ttsConvertButton.disabled = true;
+        ttsPlayButton.disabled = !hasAudio;
+        
+        if (hasAudio) {
+            changeTtsConverButtonText("Converted");
+        } 
+        else {
+            changeTtsConverButtonText("Convert Text-To-Speech");
+        }
+    }
+    
+    console.log(`TTS Buttons Updated - Question ${currentQuestion + 1}, Audio: ${hasAudio ? 'Yes' : 'No'}, Changed: ${questionChanged}, Edit Mode: ${isEditMode}`);
+}
+
 function checkInputState() {
     const getQuestion = questionInput.value.trim();
     const checkedRadioButton = document.querySelector('input[name="answer"]:checked');
@@ -90,6 +176,90 @@ function checkInputState() {
         console.log("⚠️ Question text changed - reconversion required before saving");
     }
 }
+
+function changeTtsConverButtonText(text) {
+    const span = ttsConvertButton.querySelector('span');
+    span.textContent = text;
+}
+
+ttsConvertButton.addEventListener("click", async () => {
+    const audioUrl = getAudioForQuestion(currentQuestion);
+    const isReconvert = audioUrl !== null; //check if audio exist to consider as RECONVERTING
+    
+    ttsConvertButton.disabled = true;
+    changeTtsConverButtonText(isReconvert ? "Reconverting..." : "Converting...");
+    
+    try {
+        // If reconverting, delete the old speech first
+        if (isReconvert) {
+            keyWordTtsObj.setAudioFile(audioUrl);
+            const deleted = await keyWordTtsObj.deleteSpeech();
+            
+            if (deleted) {
+                // Remove from ttsObject
+                ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+                delete ttsObject[currentQuestion];
+                sessionStorage.setItem('ttsInputs', JSON.stringify(ttsObject));
+                keyWordTtsObj.clearAudioFile();
+                console.log("Old speech deleted for reconversion");
+            } else {
+                throw new Error("Failed to delete old speech");
+            }
+        }
+        
+        // Generate new speech
+        await keyWordTtsObj.generateSpeech(questionInput.value, ttsId.toString());
+
+        originalQuestionText = questionInput.value.trim();
+
+        updateTtsButtonStates(true); // true = edit mode
+        checkInputState();
+        
+        notifObject.notify(
+            isReconvert ? 'Speech reconverted successfully!' : 'Text converted successfully!', 
+            'success'
+        );
+        
+    } catch (error) {
+        console.error('Error generating speech:', error);
+        notifObject.notify(
+            isReconvert ? 'Failed to reconvert speech' : 'Failed to generate speech', 
+            'error'
+        );
+        
+        updateTtsButtonStates(true);
+    }
+});
+
+ttsPlayButton.addEventListener("click", () => {
+    const audioUrl = getAudioForQuestion(currentQuestion);
+    
+    if (audioUrl) {
+        keyWordTtsObj.play(audioUrl, ttsPlayButton);
+    } else {
+        notifObject.notify("No speech to play", "error");
+    }
+});
+
+questionInput.addEventListener("input", () => {
+    const isEditMode = editButton.style.display === "none";
+    if (isEditMode) {
+        const hasAudio = getAudioForQuestion(currentQuestion) !== null;
+        const hasText = questionInput.value.trim() !== '';
+        const questionChanged = hasQuestionTextChanged();
+        
+        if (hasAudio && questionChanged && hasText) {
+            changeTtsConverButtonText("Reconvert Text-To-Speech (Required)");
+        } else if (hasAudio && !questionChanged) {
+            changeTtsConverButtonText("Reconvert Text-To-Speech");
+        } else if (!hasAudio && hasText) {
+            changeTtsConverButtonText("Convert Text-To-Speech");
+        }
+        
+        updateTtsButtonStates(true);
+    }
+    checkInputState();
+});
 
 function setFormToViewMode() {
     console.log("View Mode - Question", currentQuestion + 1);
