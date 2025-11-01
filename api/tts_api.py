@@ -50,3 +50,42 @@ def generate_speech():
         })
     except Exception as e:
         return jsonify({'status': False, 'message': str(e)})
+    
+@tts_bp.route('/api/delete-speech', methods=['DELETE'])
+def delete_speech():
+    try:
+        folder = get_upload_audio()
+        data = request.json
+        filename = data.get('filename')
+        
+        if not filename:
+            return jsonify({
+                'status': False,
+                'message': 'No filename provided'
+            }), 400
+        
+        if not filename.endswith('.mp3') or '/' in filename or '\\' in filename:
+            return jsonify({
+                'status': False,
+                'message': 'Invalid filename'
+            }), 400
+        
+        filepath = os.path.join(folder, filename)
+        
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            return jsonify({
+                'status': True,
+                'message': 'Speech deleted successfully'
+            })
+        else:
+            return jsonify({
+                'status': False,
+                'message': 'File not found'
+            }), 404
+            
+    except Exception as e:
+        return jsonify({
+            'status': False,
+            'message': f'Error deleting speech: {str(e)}'
+        }), 500
