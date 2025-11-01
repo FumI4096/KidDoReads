@@ -3,16 +3,18 @@ import Notification from '../../modules/Notification.js'
 
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
-const questionInput = document.getElementById("question") /* revert from keyword -> question */
+const questionInput = document.getElementById("question")
 const choicesContainer = document.getElementById("choices-container")
 const answerContainer = document.getElementById("answer-container")
 const saveButton = document.getElementById("save-button")
 const nextButton = document.getElementById("next-button")
 const previousButton = document.getElementById("previous-button")
 const editButton = document.getElementById("edit-button")
+
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 let ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
 let currentQuestion = 0
+let originalQuestionText = "" // Track the original question text that was converted
 
 const teacherId = sessionStorage.getItem("id")
 const contentId = sessionStorage.getItem("currentActivityId")
@@ -26,181 +28,107 @@ const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
 
 const ttsConvertButton = document.getElementById('tts-convert-button-1')
 const ttsPlayButton = document.getElementById('tts-play-button-1')
-const ttsDeleteButton = document.getElementById('tts-delete-button-1')
-
-ttsConvertButton.disabled = true
-ttsPlayButton.disabled = true
-ttsDeleteButton.disabled = true
-
-const ttsButtons = [ttsConvertButton, ttsPlayButton, ttsDeleteButton]
 
 categoryDisplay.textContent = storedTypes.category
 contentDisplay.textContent = storedTypes.content
 
 const notifObject = new Notification()
+const keyWordTtsObj = new SpeechManager()
 
-ttsConvertButton.addEventListener("click", async () => {
-    // Get the span element
-    const buttonSpan = ttsConvertButton.querySelector('span');
-    const originalText = buttonSpan.textContent;
-    
-    ttsConvertButton.disabled = true;
-    buttonSpan.textContent = "Converting..."
-    
-    try {
-        await SpeechManager.generateSpeech(questionInput.value, ttsId.toString());
+saveButton.addEventListener("click", saveCurrentQuestion);
+editButton.addEventListener("click", setFormToEditMode);
+nextButton.addEventListener("click", nextForm);
+previousButton.addEventListener("click", previousForm);
 
-        const newSpeech = {
-            audioUrl: SpeechManager.getAudioFile(),
-            text: questionInput.value,
-            ttsId: ttsId
-        };
+displayActivityTitle.textContent = `Title: ${currentTitle}`;
 
-        // Store by currentQuestion as key
-        ttsObject[currentQuestion] = newSpeech;
-
-        console.log("Current Audio is:", JSON.stringify(ttsObject));
-
-        // Keep button disabled, enable play and delete
-        ttsPlayButton.disabled = false;
-        ttsDeleteButton.disabled = false;
-        
-        buttonSpan.textContent = "Converted"
-        notifObject.notify('Text converted successfully!', 'success')
-        
-    } catch (error) {
-        console.error('Error generating speech:', error);
-        notifObject.notify('Failed to generate speech', 'error');
-        
-        // Reset button on error
-        ttsConvertButton.disabled = false;
-        buttonSpan.textContent = originalText;
-    }
-});
-
-ttsPlayButton.addEventListener("click", () => {
-    //if current question exist
-    if (ttsObject[currentQuestion]) {
-        SpeechManager.play(ttsObject[currentQuestion].audioUrl, ttsPlayButton);
-    } 
-    else {
-        notifObject.notify("No speech to play", "error");
-    }
-})
-
-ttsDeleteButton.addEventListener("click", async () => {
-    const ttsConverButtonSpan = ttsConvertButton.querySelector("span")
-    //delete current speech
-    if (!ttsObject[currentQuestion]) {
-        Notification.notify("No speech to delete", "error");
-        return;
-    }
-
-    SpeechManager.setAudioFile(ttsObject[currentQuestion].audioUrl);
-    
-    const deleted = await SpeechManager.deleteSpeech();
-    
-    if (deleted) {
-        delete ttsObject[currentQuestion];
-        sessionStorage.setItem('ttsInputs', JSON.stringify(ttsObject));
-        
-        console.log("TTS after deletion:", ttsObject);
-        
-        ttsPlayButton.disabled = true;
-        ttsDeleteButton.disabled = true;
-        ttsConvertButton.disabled = false;
-
-        ttsConverButtonSpan.textContent = 'Convert Text-To-Speech'
-        
-        notifObject.notify("Speech deleted successfully", "success");
-    } else {
-        notifObject.notify("Failed to delete speech", "error");
-    }
-})
-
-displayActivityTitle.textContent = `Title: ${currentTitle}`
 toTeacherPageButton.addEventListener('click', async () => {
-    await saveCurrentQuestion(event);
     sessionStorage.removeItem('originalActivityTitle');
     sessionStorage.removeItem('questions');
     sessionStorage.removeItem('currentActivityId');
     sessionStorage.removeItem('currentActivityTitle');
     sessionStorage.removeItem('ttsInputs');
     sessionStorage.removeItem("contentType");
+    keyWordTtsObj = null
     window.location.href = '/teacher_dashboard';
 });
 
-saveButton.addEventListener("click", saveCurrentQuestion)
-editButton.addEventListener("click", setFormToEditMode)
-nextButton.addEventListener("click", nextForm)
-previousButton.addEventListener("click", previousForm)
 document.addEventListener("input", () => {
     checkInputState();
 });
 
 if (firstQuestionExist(questionObject.length)) {
     loadQuestion(0);
-    questionInput.readOnly = true;
-    answerRadioButtonsDisable(true)
-    choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
-        choice.readOnly = true;
-    });
-    editButton.style.display = "inline"
-    previousButton.disabled = true
-    saveButton.style.display = "none"
+    setFormToViewMode();
+    previousButton.disabled = true;
 } else {
     clearForm();
-    editButton.style.display = "none"
-    saveButton.style.display = "inline"
-    nextButton.disabled = true
-    previousButton.disabled = true
-    saveButton.disabled = true
+    editButton.style.display = "none";
+    saveButton.style.display = "inline";
+    nextButton.disabled = true;
+    previousButton.disabled = true;
+    saveButton.disabled = true;
 }
-
-
-//check if some inputs are filled or missing
 function checkInputState() {
     const getQuestion = questionInput.value.trim();
-    const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
-    const getAnswer = checkedRadioButton ? checkedRadioButton.value : null;
+    const checkedRadioButton = document.querySelector('input[name="answer"]:checked');
+    const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
     const getChoices = Array.from(choicesContainer.querySelectorAll(".choice-box .choice"));
     const hasEmptyChoice = getChoices.some(choice => choice.value.trim() === "");
+    const hasAudio = getAudioForQuestion(currentQuestion) !== null;
+    const questionChanged = hasQuestionTextChanged();
 
-    saveButton.disabled = !(getQuestion && getAnswer && !hasEmptyChoice);
+    // Can't save if question text changed but hasn't been reconverted
+    const needsReconvert = hasAudio && questionChanged;
+    const isComplete = getQuestion && getAnswer && hasAudio && !hasEmptyChoice && !needsReconvert;
+
+    saveButton.disabled = !isComplete;
+    
+    // Show notification if trying to save with changed text
+    if (needsReconvert && getQuestion && getAnswer && !hasEmptyChoice) {
+        // User has everything filled but needs to reconvert
+        console.log("⚠️ Question text changed - reconversion required before saving");
+    }
 }
 
-
 function setFormToViewMode() {
-    saveButton.style.display = "none"
-    editButton.style.display = "inline"
-    nextButton.disabled = false; 
-    answerRadioButtonsDisable(true)
+    console.log("View Mode - Question", currentQuestion + 1);
+    
+    updateTtsButtonStates(false); 
+    
+    saveButton.style.display = "none";
+    editButton.style.display = "inline";
+    nextButton.disabled = false;
+    
+    answerRadioButtonsDisable(true);
     questionInput.readOnly = true;
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
     });
 
-    if(currentQuestion === 0){
-        previousButton.disabled = true;
-    }
-    else{
-        previousButton.disabled = false;
-    } 
+    previousButton.disabled = currentQuestion === 0;
 }
 
 function setFormToEditMode() {
-    saveButton.style.display = "inline"
-    editButton.style.display = "none"
-    checkInputState()
+    console.log("Edit Mode - Question", currentQuestion + 1);
+    
+    originalQuestionText = questionInput.value.trim();
+    
+    updateTtsButtonStates(true); // true = edit mode
+    
+    saveButton.style.display = "inline";
+    editButton.style.display = "none";
+    checkInputState();
+    
     questionInput.readOnly = false;
-    answerRadioButtonsDisable(false)
+    answerRadioButtonsDisable(false);
     nextButton.disabled = true;
 
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = false;
     });
 
-    if (editButton.style.display === "none" && currentQuestion === questionObject.length - 1){
+    if (currentQuestion === questionObject.length - 1) {
         previousButton.disabled = true;
     }
 }
@@ -295,48 +223,57 @@ async function saveCurrentQuestion(e){
     console.log("Currently on Question:", currentQuestion + 1);
 }
 
-function clearForm(){
-    questionInput.value = ""
+function clearForm() {
+    keyWordTtsObj.clearAudioFile();
+    originalQuestionText = ""; 
+    updateTtsButtonStates(true); // true = edit mode
+    
+    questionInput.value = "";
     const choices = choicesContainer.querySelectorAll(".choice-box .choice");
     const checkedAnswer = document.querySelector('input[name="answer"]:checked');
 
-    ttsConvertButton.querySelector('span').textContent = "Convert Text-To-Speech"
-
     choices.forEach(choice => choice.value = "");
-
     if (checkedAnswer) {
         checkedAnswer.checked = false;
     }
-
-    console.log(ttsObject)
 }
 
-function nextForm(){
+function nextForm() {
     questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
-    previousButton.style.display = "inline"
-    previousButton.disabled = false
+    ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+    
+    previousButton.style.display = "inline";
+    previousButton.disabled = false;
+    
     if (currentQuestion < questionObject.length - 1) {
-        currentQuestion++
-        console.log("Next Question: " + currentQuestion)
-        loadQuestion(currentQuestion)
-        
+        currentQuestion++;
+        console.log("Next Question: " + (currentQuestion + 1));
+        loadQuestion(currentQuestion);
     } else {
         clearForm();
-        currentQuestion = questionObject.length; 
+        currentQuestion = questionObject.length;
         console.log("Ready to create Question:", currentQuestion + 1);
-        setFormToEditMode()
+        setFormToEditMode();
     }
-    
 }
 
 function previousForm() {
     if (currentQuestion > 0) {
-        currentQuestion--
-        if (currentQuestion + 1 == 1){
-            checkInputState()
+        // Check if we're on a new unsaved question (beyond the array length)
+        if (currentQuestion === questionObject.length) {
+            // Check if user has generated speech 
+            console.log(keyWordTtsObj.getAudioFile())
+            const hasGeneratedSpeech = keyWordTtsObj.getAudioFile() !== "";
+            
+            if (hasGeneratedSpeech) {
+                notifObject.notify("Please save the current question before navigating", "error");
+                return;
+            }
         }
+        
+        currentQuestion--;
         loadQuestion(currentQuestion);
-        setFormToViewMode()
+        setFormToViewMode();
     }
 }
 
@@ -346,22 +283,19 @@ function loadQuestion(index) {
         return;
     }
 
-
-    const answerHeader = document.createElement("h3")
-    answerHeader.textContent = "Choose an Answer:"
-    const answerOptions = document.createElement("div")
-    answerOptions.className = "answer-options"
-    
     const questionData = questionObject[index];
     questionInput.value = questionData.question;
+    
+    // Store the original question text when loading
+    originalQuestionText = questionData.question;
 
-    const choiceA = document.getElementById('choice-a')
-    const choiceB = document.getElementById('choice-b')
-    const choiceC = document.getElementById('choice-c')
+    const choiceA = document.getElementById('choice-a');
+    const choiceB = document.getElementById('choice-b');
+    const choiceC = document.getElementById('choice-c');
 
-    choiceA.value = questionData.choices[0] || ""
-    choiceB.value = questionData.choices[1] || ""
-    choiceC.value = questionData.choices[2] || ""
+    choiceA.value = questionData.choices[0] || "";
+    choiceB.value = questionData.choices[1] || "";
+    choiceC.value = questionData.choices[2] || "";
 
     const radioA = document.getElementById('answer-a');
     const radioB = document.getElementById('answer-b');
@@ -371,36 +305,19 @@ function loadQuestion(index) {
     if (radioB) radioB.checked = (questionData.answer === 'b');
     if (radioC) radioC.checked = (questionData.answer === 'c');
 
-    currentQuestion = index; 
+    currentQuestion = index;
+    
+    updateTtsButtonStates(false); // Start in view mode
 }
 
-function answerRadioButtonsDisable(state){
-    const radioButtons = answerContainer.querySelectorAll('input')
+function answerRadioButtonsDisable(state) {
+    const radioButtons = answerContainer.querySelectorAll('input');
     radioButtons.forEach(element => {
-        element.disabled = state
-    })
+        element.disabled = state;
+    });
 }
 
-function firstQuestionExist(length){
-    if (length > 0){
-        return true
-    }
-    else{
-        return false
-    }
+function firstQuestionExist(length) {
+    return length > 0;
 }
-
-// Handling tts buttons
-(
-    questionInput.addEventListener("input", () => {
-        if (questionInput.value === ''){
-            ttsConvertButton.disabled = true
-            
-        }
-        else{
-            ttsConvertButton.disabled = false
-
-        }
-    })
-)
 
