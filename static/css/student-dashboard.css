@@ -26,9 +26,9 @@ main > section {
 #profile-container {
   display: flex;
   flex-direction: column;
-  width: 650px;
+  width: 800px;
   max-width: 95%;
-  min-height: 400px;
+  min-height: 500px;
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
@@ -432,4 +432,24 @@ main > section {
 .dropdown li.active {
   background-color: #ffb15c;
   color: #fff;
+}
+
+/* === BADGE DISPLAY STYLING === */
+.badge-display {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.badge-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+#badges-container p {
+  text-align: center;
+  color: #777;
+  font-style: italic;
 }
