@@ -49,7 +49,6 @@ toTeacherPageButton.addEventListener('click', async () => {
     sessionStorage.removeItem('currentActivityTitle');
     sessionStorage.removeItem('ttsInputs');
     sessionStorage.removeItem("contentType");
-    keyWordTtsObj = null
     window.location.href = '/teacher_dashboard';
 });
 
