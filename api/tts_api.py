@@ -29,7 +29,6 @@ def generate_speech():
         text = data.get('text')
         ttsId = data.get('id')
         
-        # Generate speech using OpenAI TTS
         response = client.audio.speech.create(
             model="tts-1",
             voice="alloy", 
@@ -60,8 +59,7 @@ def delete_speech():
         
         if not filename:
             return jsonify({
-                'status': False,
-                'message': 'No filename provided'
+                'status': False, 'message': 'No filename provided'
             }), 400
         
         if not filename.endswith('.mp3') or '/' in filename or '\\' in filename:
@@ -75,17 +73,16 @@ def delete_speech():
         if os.path.exists(filepath):
             os.remove(filepath)
             return jsonify({
-                'status': True,
-                'message': 'Speech deleted successfully'
+                'status': True, 'message': 'Speech deleted successfully'
             })
         else:
             return jsonify({
-                'status': False,
-                'message': 'File not found'
+                'status': False, 'message': 'File not found'
             }), 404
             
     except Exception as e:
         return jsonify({
             'status': False,
             'message': f'Error deleting speech: {str(e)}'
-        }), 500
+        })
+    
