@@ -1,261 +1,342 @@
+import SpeechManager from '../../modules/SpeechManager.js'
+import Notification from '../../modules/Notification.js'
+
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
-const addChoiceButton = document.getElementById("add-choice-button")
-const removeChoiceButton = document.getElementById("remove-choice-button")
-const choicesContainer = document.querySelector(".choices-container")
-const answerContainer = document.querySelector(".answer-container")
+const questionInput = document.getElementById("question")
+const choicesContainer = document.getElementById("choices-container")
+const answerContainer = document.getElementById("answer-container")
 const saveButton = document.getElementById("save-button")
 const nextButton = document.getElementById("next-button")
 const previousButton = document.getElementById("previous-button")
 const editButton = document.getElementById("edit-button")
-let removeMode = false
-let disableSaveButton = false
+
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
+let ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
 let currentQuestion = 0
-let originalChoiceElements = []
-let originalAnswerElements = []
+let originalQuestionText = "" // Track the original question text that was converted
 
 const teacherId = sessionStorage.getItem("id")
+const contentId = sessionStorage.getItem("currentActivityId")
+const ttsId = sessionStorage.getItem("currentTtsId")
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
 
-displayActivityTitle.textContent = `Title: ${currentTitle}`
-toTeacherPageButton.addEventListener('click', () => {
-    sessionStorage.removeItem('questions')
-    window.location.href = '/teacher_dashboard'
+const categoryDisplay = document.getElementById("category-display")
+const contentDisplay = document.getElementById("content-display")
+
+const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
+
+const ttsConvertButton = document.getElementById('tts-convert-button-1')
+const ttsPlayButton = document.getElementById('tts-play-button-1')
+
+categoryDisplay.textContent = storedTypes.category
+contentDisplay.textContent = storedTypes.content
+
+const notifObject = new Notification()
+const keyWordTtsObj = new SpeechManager()
+
+saveButton.addEventListener("click", saveCurrentQuestion);
+editButton.addEventListener("click", setFormToEditMode);
+nextButton.addEventListener("click", nextForm);
+previousButton.addEventListener("click", previousForm);
+
+displayActivityTitle.textContent = `Title: ${currentTitle}`;
+
+toTeacherPageButton.addEventListener('click', async () => {
+    sessionStorage.removeItem('originalActivityTitle');
+    sessionStorage.removeItem('questions');
+    sessionStorage.removeItem('currentActivityId');
+    sessionStorage.removeItem('currentActivityTitle');
+    sessionStorage.removeItem('ttsInputs');
+    sessionStorage.removeItem("contentType");
+    window.location.href = '/teacher_dashboard';
 });
 
-addChoiceButton.addEventListener("click", addChoice)
-removeChoiceButton.addEventListener("click", removeChoice)
-choicesContainer.addEventListener("click", (e) => {
-    const choiceElement = e.target.closest(".choice-box");
-
-    if (removeMode && choiceElement && choicesContainer.querySelectorAll(".choice-box").length > 2) {
-        choiceElement.remove();
-        relabelChoices();
-
-        const answerElements = answerContainer.querySelectorAll("input, label")
-
-        answerElements[answerElements.length - 1].remove()
-        answerElements[answerElements.length - 2].remove()
-        
-    }
-    checkInputState()
-});
-saveButton.addEventListener("click", saveCurrentQuestion)
-editButton.addEventListener("click", setFormToEditMode)
-nextButton.addEventListener("click", nextForm)
-previousButton.addEventListener("click", previousForm)
 document.addEventListener("input", () => {
     checkInputState();
 });
 
 if (firstQuestionExist(questionObject.length)) {
     loadQuestion(0);
-    document.querySelector(".question").readOnly = true;
-    answerRadioButtonsDisable(true)
-    choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
-        choice.readOnly = true;
-    });
-    addChoiceButton.disabled = true
-    removeChoiceButton.disabled = true
-    editButton.style.display = "inline"
-    previousButton.disabled = true
-    saveButton.style.display = "none"
+    setFormToViewMode();
+    previousButton.disabled = true;
 } else {
     clearForm();
-    editButton.style.display = "none"
-    saveButton.style.display = "inline"
-    nextButton.disabled = true
-    previousButton.disabled = true
-    saveButton.disabled = true
+    editButton.style.display = "none";
+    saveButton.style.display = "inline";
+    nextButton.disabled = true;
+    previousButton.disabled = true;
+    saveButton.disabled = true;
 }
 
+/**
+ * Check if the current question text differs from what was originally converted
+ */
+function hasQuestionTextChanged() {
+    const currentText = questionInput.value.trim();
+    const audioExists = getAudioForQuestion(currentQuestion) !== null;
+    
+    // If no audio exists, question hasn't been converted yet
+    if (!audioExists) {
+        return false;
+    }
+    
+    return currentText !== originalQuestionText;
+}
 
-//check if some inputs are filled or missing
+function getAudioForQuestion(index) {
+    // First check if there's a newly generated audio file (not yet saved)
+    const currentAudioFile = keyWordTtsObj.getAudioFile();
+    
+    // If we're checking the current question and there's a new audio file, return it
+    if (index === currentQuestion && currentAudioFile) {
+        return currentAudioFile;
+    }
+    
+    // Otherwise check stored TTS object
+    const ttsData = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+    if (ttsData[index] && ttsData[index].audioUrl) {
+        return ttsData[index].audioUrl;
+    }
+    
+    return null;
+}
+
+/**
+ * Update TTS button states based on current audio availability
+ */
+function updateTtsButtonStates(isEditMode = false) {
+    const audioUrl = getAudioForQuestion(currentQuestion);
+    const hasAudio = audioUrl !== null;
+    const hasQuestionText = questionInput.value.trim() !== '';
+    const questionChanged = hasQuestionTextChanged();
+    
+    if (isEditMode) {
+        // In edit mode
+        if (hasAudio && !questionChanged) {
+            // Audio exists and text hasn't changed - show "Reconvert" (optional), enable play
+            ttsConvertButton.disabled = false;
+            ttsPlayButton.disabled = false;
+            changeTtsConverButtonText("Reconvert Text-To-Speech");
+        } 
+        else if (hasAudio && questionChanged) {
+            // Audio exists but text HAS changed - MUST reconvert (required)
+            ttsConvertButton.disabled = false;
+            ttsPlayButton.disabled = false; // Can still play old audio
+            changeTtsConverButtonText("Reconvert Text-To-Speech (Required)");
+        } 
+        else if (hasQuestionText) {
+            // No audio but has text - show "Convert"
+            ttsConvertButton.disabled = false;
+            ttsPlayButton.disabled = true;
+            changeTtsConverButtonText("Convert Text-To-Speech");
+        } 
+        else {
+            // No audio, no text - disable all
+            ttsConvertButton.disabled = true;
+            ttsPlayButton.disabled = true;
+            changeTtsConverButtonText("Convert Text-To-Speech");
+        }
+    } 
+    else {
+        // In view mode - disable convert, enable play if audio exists
+        ttsConvertButton.disabled = true;
+        ttsPlayButton.disabled = !hasAudio;
+        
+        if (hasAudio) {
+            changeTtsConverButtonText("Converted");
+        } 
+        else {
+            changeTtsConverButtonText("Convert Text-To-Speech");
+        }
+    }
+    
+    console.log(`TTS Buttons Updated - Question ${currentQuestion + 1}, Audio: ${hasAudio ? 'Yes' : 'No'}, Changed: ${questionChanged}, Edit Mode: ${isEditMode}`);
+}
+
 function checkInputState() {
-    const getQuestion = document.querySelector(".question").value.trim();
-    const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
+    const getQuestion = questionInput.value.trim();
+    const checkedRadioButton = document.querySelector('input[name="answer"]:checked');
     const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
     const getChoices = Array.from(choicesContainer.querySelectorAll(".choice-box .choice"));
     const hasEmptyChoice = getChoices.some(choice => choice.value.trim() === "");
+    const hasAudio = getAudioForQuestion(currentQuestion) !== null;
+    const questionChanged = hasQuestionTextChanged();
 
-    if (getQuestion && getAnswer && !hasEmptyChoice) {
-        saveButton.disabled = false;
-    } else {
-        saveButton.disabled = true;
-    }
+    // Can't save if question text changed but hasn't been reconverted
+    const needsReconvert = hasAudio && questionChanged;
+    const isComplete = getQuestion && getAnswer && hasAudio && !hasEmptyChoice && !needsReconvert;
+
+    saveButton.disabled = !isComplete;
 }
 
+function changeTtsConverButtonText(text) {
+    const span = ttsConvertButton.querySelector('span');
+    span.textContent = text;
+}
+
+ttsConvertButton.addEventListener("click", async () => {
+    const audioUrl = getAudioForQuestion(currentQuestion);
+    const isReconvert = audioUrl !== null; //check if audio exist to consider as RECONVERTING
+    
+    ttsConvertButton.disabled = true;
+    changeTtsConverButtonText(isReconvert ? "Reconverting..." : "Converting...");
+    
+    try {
+        // If reconverting, delete the old speech first
+        if (isReconvert) {
+            keyWordTtsObj.setAudioFile(audioUrl);
+            const deleted = await keyWordTtsObj.deleteSpeech();
+            
+            if (deleted) {
+                // Remove from ttsObject
+                ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+                delete ttsObject[currentQuestion];
+                sessionStorage.setItem('ttsInputs', JSON.stringify(ttsObject));
+                keyWordTtsObj.clearAudioFile();
+            } else {
+                throw new Error("Failed to delete old speech");
+            }
+        }
+        
+        // Generate new speech
+        await keyWordTtsObj.generateSpeech(questionInput.value, ttsId.toString());
+
+        originalQuestionText = questionInput.value.trim();
+
+        updateTtsButtonStates(true); // true = edit mode
+        checkInputState();
+        
+        notifObject.notify(
+            isReconvert ? 'Speech reconverted successfully!' : 'Text converted successfully!', 
+            'success'
+        );
+        
+    } catch (error) {
+        console.error('Error generating speech:', error);
+        notifObject.notify(
+            isReconvert ? 'Failed to reconvert speech' : 'Failed to generate speech', 
+            'error'
+        );
+        
+        updateTtsButtonStates(true);
+    }
+});
+
+ttsPlayButton.addEventListener("click", () => {
+    const audioUrl = getAudioForQuestion(currentQuestion);
+    
+    if (audioUrl) {
+        keyWordTtsObj.play(audioUrl, ttsPlayButton);
+    } else {
+        notifObject.notify("No speech to play", "error");
+    }
+});
+
+questionInput.addEventListener("input", () => {
+    const isEditMode = editButton.style.display === "none";
+    if (isEditMode) {
+        const hasAudio = getAudioForQuestion(currentQuestion) !== null;
+        const hasText = questionInput.value.trim() !== '';
+        const questionChanged = hasQuestionTextChanged();
+        
+        if (hasAudio && questionChanged && hasText) {
+            changeTtsConverButtonText("Reconvert Text-To-Speech (Required)");
+        } else if (hasAudio && !questionChanged) {
+            changeTtsConverButtonText("Reconvert Text-To-Speech");
+        } else if (!hasAudio && hasText) {
+            changeTtsConverButtonText("Convert Text-To-Speech");
+        }
+        
+        updateTtsButtonStates(true);
+    }
+    checkInputState();
+});
+
 function setFormToViewMode() {
-    saveButton.style.display = "none"
-    editButton.style.display = "inline"
-    nextButton.disabled = false; 
-    addChoiceButton.disabled = true;
-    removeChoiceButton.disabled = true;
-    answerRadioButtonsDisable(true)
-    document.querySelector(".question").readOnly = true;
+    console.log("View Mode - Question", currentQuestion + 1);
+    
+    updateTtsButtonStates(false); 
+    
+    saveButton.style.display = "none";
+    editButton.style.display = "inline";
+    nextButton.disabled = false;
+    
+    answerRadioButtonsDisable(true);
+    questionInput.readOnly = true;
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = true;
     });
-    const choicesElements = choicesContainer.querySelectorAll(".choice-box")
-    choicesElements.forEach(element => {
-        if (removeChoiceButton.disabled == true){
-            element.classList.remove("choice-box-hover")
-            
-        }
-    });
 
-    if(currentQuestion === 0){
-        previousButton.disabled = true;
-    }
-    else{
-        previousButton.disabled = false;
-    } 
-
-    if(removeMode){
-        removeChoiceButton.textContent = "Remove Choice"
-        removeMode = false
-    }
+    previousButton.disabled = currentQuestion === 0;
 }
 
 function setFormToEditMode() {
-    saveButton.style.display = "inline"
-    editButton.style.display = "none"
-    checkInputState()
-    document.querySelector(".question").readOnly = false;
-    answerRadioButtonsDisable(false)
-    addChoiceButton.disabled = false;
-    removeChoiceButton.disabled = false;
+    console.log("Edit Mode - Question", currentQuestion + 1);
+    
+    originalQuestionText = questionInput.value.trim();
+    
+    updateTtsButtonStates(true); // true = edit mode
+    
+    saveButton.style.display = "inline";
+    editButton.style.display = "none";
+    checkInputState();
+    
+    questionInput.readOnly = false;
+    answerRadioButtonsDisable(false);
     nextButton.disabled = true;
 
     choicesContainer.querySelectorAll(".choice-box .choice").forEach(choice => {
         choice.readOnly = false;
     });
 
-    if (editButton.style.display === "none" && currentQuestion === questionObject.length - 1){
+    if (currentQuestion === questionObject.length - 1) {
         previousButton.disabled = true;
     }
 }
 
-function addChoice(){
-    choiceCount = choicesContainer.querySelectorAll(".choice-box").length
-    choiceCharacter = ""
-    const answerOptions = document.querySelector(".answer-options")
+async function saveCurrentQuestion(e) {
+    e.preventDefault();
 
-    switch (choiceCount + 1){
-        case 1:
-            choiceCharacter = "A"
-            break
-        case 2:
-            choiceCharacter = "B"
-            break        
-        case 3:
-            choiceCharacter = "C"
-            break
-        case 4:
-            choiceCharacter = "D"
-            break
+    const getQuestion = questionInput.value.trim();
+    const getChoices = choicesContainer.querySelectorAll(".choice-box .choice");
+    const checkedRadioButton = answerContainer.querySelector('input[name="answer"]:checked');
+    const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
+
+    if (!getQuestion) {
+        notifObject.notify("Please enter a question", "error");
+        return;
     }
 
-    if(choiceCount != 4){
-        const choiceInput = document.createElement("input")
-        const choiceDiv = document.createElement("div")
-        const choiceLetter = document.createElement("p")
-        
-        choiceLetter.classList.add("choice-letter")
-        choiceLetter.textContent = choiceCharacter + "."
-        
-        choiceInput.type = "text"
-        choiceInput.name = choiceCharacter
-        choiceInput.placeholder = "Enter a choice"
-        choiceInput.classList.add("choice")
-        
-        choiceDiv.classList.add("choice-box")
-        choiceDiv.append(choiceLetter)
-        choiceDiv.append(choiceInput)
-        choicesContainer.appendChild(choiceDiv)
-
-        const answerRadioButton = document.createElement("input")
-        const answerLabel = document.createElement("label")
-
-        answerRadioButton.type = "radio"
-        answerRadioButton.setAttribute("id", choiceCharacter.toLowerCase())
-        answerRadioButton.name = "answer"
-        answerRadioButton.value = choiceCharacter.toLowerCase()
-
-        answerLabel.textContent = choiceCharacter
-        answerLabel.setAttribute('for', choiceCharacter.toLowerCase())
-
-        answerOptions.append(answerRadioButton, answerLabel)
-        
-    }
-
-    checkInputState()
-
-}
-
-function removeChoice() {
-    removeMode = !removeMode
-    removeChoiceButton.textContent = removeMode ? "Cancel Choice Removing" : "Remove Choice"
-    const choicesElements = choicesContainer.querySelectorAll(".choice-box")
-    choicesElements.forEach(element => {
-        if (removeMode){
-            element.classList.add("choice-toggle-hover")
+    const currentChoices = [];
+    for (let i = 0; i < getChoices.length; i++) {
+        if (getChoices[i].value.trim() === "") {
+            notifObject.notify("Please fill all choices", "error");
+            return;
         }
-        else{
-            element.classList.remove("choice-toggle-hover");
-        }
-    });
-
-    if (removeMode){
-        saveButton.disabled = true
-    }
-    else{
-        checkInputState()
+        currentChoices.push(getChoices[i].value.trim());
     }
 
-    addChoiceButton.disabled = removeMode
-}
-
-function relabelChoices() {
-    const choiceElements = choicesContainer.querySelectorAll(".choice-box");
-    choiceElements.forEach((element, index) => {
-        const letter = String.fromCharCode(65 + index);
-        element.querySelector(".choice-letter").textContent = letter + ".";
-    });
-}
-
-async function saveCurrentQuestion(e){
-    e.preventDefault()
-
-    const getQuestion = document.querySelector(".question").value
-    const getChoices = choicesContainer.querySelectorAll(".choice-box .choice")
-    const checkedRadioButton = document.querySelector('input[name="answer"]:checked')
-    const getAnswer = checkedRadioButton.value ? checkedRadioButton.value : null
-    var noQuestion = false
-    var noChoices = false
-    var noAnswer = false
-
-    if (getQuestion === ""){
-        noQuestion = true
+    if (!getAnswer) {
+        notifObject.notify("Please select an answer", "error");
+        return;
     }
 
-    const currentChoices = []
-    
-    for(let i = 0; i < getChoices.length; i++){
-        if (getChoices[i].value.trim() === ""){
-            noChoices = true
-            break
-        }
-        currentChoices.push(getChoices[i].value.trim())
+    const audioUrl = getAudioForQuestion(currentQuestion);
+    if (!audioUrl) {
+        notifObject.notify("Please generate speech for this question", "error");
+        return;
     }
 
-    if (getAnswer === null){
-        noAnswer = true
-    }
-
-    if (noQuestion || noChoices || noAnswer){
-        console.log("Please put the valid requirements")
+    const currentAudioFile = keyWordTtsObj.getAudioFile();
+    if (currentAudioFile) {
+        ttsObject[currentQuestion] = { 
+            audioUrl: currentAudioFile 
+        };
+        sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
+        keyWordTtsObj.clearAudioFile();
+        
+        originalQuestionText = getQuestion;
     }
 
     const newQuestion = {
@@ -264,101 +345,135 @@ async function saveCurrentQuestion(e){
         answer: getAnswer
     };
 
-    questionExist = Boolean(questionObject[currentQuestion])
-
-    if(JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])){
-        setFormToViewMode()
+    if (JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])) {
+        setFormToViewMode();
         return;
     }
 
-    if (questionExist){
-        console.log("Question Exist")
+    try{
+        const formDataTts = new FormData()
+    
+        formDataTts.append('ttsId', ttsId)
+        formDataTts.append('ttsAudios', sessionStorage.getItem("ttsInputs"))
+        const speechUrl = '/update-speech'
+
+        const response = await fetch(speechUrl, {
+            method: 'POST',
+            body: formDataTts
+        })
+
+        const result = await response.json()
+
+        if (response.ok && result.status){
+            console.log("Audios stored succesfully")
+            notifObject.notify(result.message, "success")
+        }
+        else{
+            console.log(result.message)
+            notifObject.notify(result.message, "error")
+
+        }
+    }
+    catch (error){
+        console.log(error)
+        notifObject.notify("Cannot save Questions", "error")
+
+    }
+
+    const questionExist = Boolean(questionObject[currentQuestion]);
+    if (questionExist) {
+        console.log("Updating existing question");
         questionObject[currentQuestion] = newQuestion;
-    }
-    else{
-        questionObject.push(newQuestion);
-        currentQuestion = questionObject.length - 1;
-
-    }
-
-    sessionStorage.setItem("questions", JSON.stringify(questionObject))
-
-    const formData = new FormData()
-    formData.append('content', sessionStorage.getItem("questions"))
-    formData.append('id', teacherId)
-    formData.append('content_name', currentTitle)
-
-    const response = await fetch('/update_content', {
-        method: 'POST',
-        body: formData,
-    });
-
-    const result = await response.json()        
-    if (result.status) {
-        console.log(result.message);
     } 
     else {
-        console.error("Error saving content:", result.message);
+        console.log("Adding new question");
+        questionObject.push(newQuestion);
+        currentQuestion = questionObject.length - 1;
     }
 
-    setFormToViewMode()
+    try {
+        sessionStorage.setItem("questions", JSON.stringify(questionObject));
+        const formData = new FormData();
+        formData.append('content', sessionStorage.getItem("questions"));
+        formData.append('id', teacherId);
+        formData.append('content_id', contentId);
+        formData.append('total_questions', questionObject.length);
 
-    console.log("Currently on Question:", currentQuestion + 1);
+        const response = await fetch('/update_content', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const result = await response.json();
+        
+        if(response.ok && result.status) {
+            console.log(result.message);
+            notifObject.notify('Question saved successfully!', 'success');
+        } 
+        else {
+            console.log("Error saving content:", result.message);
+            notifObject.notify('Failed to save question', 'error');
+        }
+    } 
+    catch (error) {
+        console.error(error);
+        notifObject.notify('Error saving question', 'error');
+    }
+
+    setFormToViewMode();
 }
 
-function clearForm(){
-    document.querySelector(".question").value = ""
-
+function clearForm() {
+    keyWordTtsObj.clearAudioFile();
+    originalQuestionText = ""; 
+    updateTtsButtonStates(true); // true = edit mode
+    
+    questionInput.value = "";
     const choices = choicesContainer.querySelectorAll(".choice-box .choice");
-    const answers = answerContainer.querySelectorAll('input, label');
-
     const checkedAnswer = document.querySelector('input[name="answer"]:checked');
 
     choices.forEach(choice => choice.value = "");
-    if (choices.length > 2) {
-        for (let i = 2; i < choices.length; i++) {
-            choices[i].parentElement.remove();
-        }
-    }
-
-    if (answers.length > 4){
-        for(let i = 4; i < answers.length; i++){
-            answers[i].remove()
-        }
-    }
-
     if (checkedAnswer) {
         checkedAnswer.checked = false;
     }
-
 }
 
-function nextForm(){
+function nextForm() {
     questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
-    previousButton.style.display = "inline"
-    previousButton.disabled = false
+    ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+    
+    previousButton.style.display = "inline";
+    previousButton.disabled = false;
+    
     if (currentQuestion < questionObject.length - 1) {
-        currentQuestion++
-        console.log("Next Question: " + currentQuestion)
-        loadQuestion(currentQuestion)
-        
+        currentQuestion++;
+        console.log("Next Question: " + (currentQuestion + 1));
+        loadQuestion(currentQuestion);
     } else {
         clearForm();
-        currentQuestion = questionObject.length; 
+        currentQuestion = questionObject.length;
         console.log("Ready to create Question:", currentQuestion + 1);
-        setFormToEditMode()
+        setFormToEditMode();
     }
-    
 }
 
 function previousForm() {
     if (currentQuestion > 0) {
-        currentQuestion--
-        if (currentQuestion + 1 == 1){
-            checkInputState()
+        // Check if we're on a new unsaved question (beyond the array length)
+        if (currentQuestion === questionObject.length) {
+            // Check if user has generated speech 
+            console.log(keyWordTtsObj.getAudioFile())
+            const hasGeneratedSpeech = keyWordTtsObj.getAudioFile() !== "";
+            
+            if (hasGeneratedSpeech) {
+                notifObject.notify("Please save the current question before navigating", "error");
+                return;
+            }
         }
+        
+        currentQuestion--;
         loadQuestion(currentQuestion);
-        setFormToViewMode()
+        setFormToViewMode();
     }
 }
 
@@ -368,73 +483,41 @@ function loadQuestion(index) {
         return;
     }
 
-    const answerHeader = document.createElement("h3")
-    answerHeader.textContent = "Choose an Answer:"
-    const answerOptions = document.createElement("div")
-    answerOptions.className = "answer-options"
-    
     const questionData = questionObject[index];
-    document.querySelector(".question").value = questionData.question;
+    questionInput.value = questionData.question;
+    
+    // Store the original question text when loading
+    originalQuestionText = questionData.question;
 
-    const choicesContainer = document.querySelector(".choices-container");
-    choicesContainer.innerHTML = '';
-    answerContainer.innerHTML = '';
-    answerContainer.appendChild(answerHeader)
+    const choiceA = document.getElementById('choice-a');
+    const choiceB = document.getElementById('choice-b');
+    const choiceC = document.getElementById('choice-c');
 
-    const choiceLetters = ['A', 'B', 'C', 'D'];
-    questionData.choices.forEach((choiceText, i) => {
-        const choiceBox = document.createElement('div');
-        choiceBox.className = 'choice-box';
+    choiceA.value = questionData.choices[0] || "";
+    choiceB.value = questionData.choices[1] || "";
+    choiceC.value = questionData.choices[2] || "";
 
-        const choiceLetter = document.createElement('p');
-        choiceLetter.className = 'choice-letter';
-        choiceLetter.textContent = choiceLetters[i] + ".";
+    const radioA = document.getElementById('answer-a');
+    const radioB = document.getElementById('answer-b');
+    const radioC = document.getElementById('answer-c');
 
-        const choiceInput = document.createElement('input');
-        choiceInput.className = 'choice';
-        choiceInput.type = 'text';
-        choiceInput.placeholder = 'Enter a choice';
-        choiceInput.value = choiceText; 
-        choiceBox.appendChild(choiceLetter);
-        choiceBox.appendChild(choiceInput);
-        choicesContainer.appendChild(choiceBox);
+    if (radioA) radioA.checked = (questionData.answer === 'a');
+    if (radioB) radioB.checked = (questionData.answer === 'b');
+    if (radioC) radioC.checked = (questionData.answer === 'c');
 
-        const answerRadioButton = document.createElement("input")
-        const answerLabel = document.createElement("label")
-
-        answerRadioButton.type = "radio"
-        answerRadioButton.setAttribute("id", choiceLetters[i].toLowerCase())
-        answerRadioButton.name = "answer"
-        answerRadioButton.value = choiceLetters[i].toLowerCase()
-
-        answerLabel.textContent = choiceLetters[i]
-        answerLabel.setAttribute('for', choiceLetters[i].toLowerCase())
-
-        if (questionData.answer === choiceLetters[i].toLowerCase()){
-            answerRadioButton.checked = true;
-        } 
-
-        answerOptions.append(answerRadioButton, answerLabel)
-    });
-
-    answerContainer.appendChild(answerOptions)
-
-    currentQuestion = index; 
+    currentQuestion = index;
+    
+    updateTtsButtonStates(false); // Start in view mode
 }
 
-function answerRadioButtonsDisable(state){
-    const radioButtons = answerContainer.querySelectorAll('input')
+function answerRadioButtonsDisable(state) {
+    const radioButtons = answerContainer.querySelectorAll('input');
     radioButtons.forEach(element => {
-        element.disabled = state
-    })
+        element.disabled = state;
+    });
 }
 
-function firstQuestionExist(length){
-    if (length > 0){
-        return true
-    }
-    else{
-        return false
-    }
+function firstQuestionExist(length) {
+    return length > 0;
 }
 
