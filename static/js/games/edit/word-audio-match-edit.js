@@ -361,14 +361,14 @@ async function saveCurrentQuestion(e) {
         currentQuestion = questionObject.length - 1;
     }
 
-    sessionStorage.setItem("questions", JSON.stringify(questionObject));
-    const formData = new FormData();
-    formData.append('content', sessionStorage.getItem("questions"));
-    formData.append('id', teacherId);
-    formData.append('content_id', contentId);
-    formData.append('total_questions', questionObject.length);
-
     try {
+        sessionStorage.setItem("questions", JSON.stringify(questionObject));
+        const formData = new FormData();
+        formData.append('content', sessionStorage.getItem("questions"));
+        formData.append('id', teacherId);
+        formData.append('content_id', contentId);
+        formData.append('total_questions', questionObject.length);
+
         const response = await fetch('/update_content', {
             method: 'POST',
             body: formData,
