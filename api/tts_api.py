@@ -9,13 +9,22 @@ tts_bp = Blueprint('tts_bp', __name__)
 def create_text_to_speech():
     try:
         db = get_db()
-        id = request.form.get('tts_id')
-        status, message, new_id = db.create_tts_record(id)
+        content_id = request.form.get('content_id')
         
-        if status:
-            return jsonify({"status": True, "message": message, "ttsId": new_id})
-        else:
-            return jsonify({"status": False, "message": message})            
+        statusCreatedTtsId, messageCreatedTtsId, new_id = db.create_tts_record(content_id)
+        if not statusCreatedTtsId:
+            return jsonify({"status": False, "message": f"Failed to create TTS record: {messageCreatedTtsId}"})
+
+        statusContentUpdated, messageContentUpdated = db.update_tts_id_in_content_after_creation(content_id, new_id)
+
+        if not statusContentUpdated:
+            return jsonify({"status": False, "message": f"TTS created but content update failed: {messageContentUpdated}"})
+
+        return jsonify({
+            "status": True, 
+            "message": "TTS record created and content updated successfully",
+            "ttsId": new_id
+        })         
         
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
@@ -85,4 +94,21 @@ def delete_speech():
             'status': False,
             'message': f'Error deleting speech: {str(e)}'
         })
+    
+@tts_bp.route('/update-speech', methods=["POST"])
+def update_speech():
+    try:
+        db = get_db()
+        tts_id = request.form.get('ttsId')
+        ttsAudios = request.form.get('ttsAudios')
+        
+        status, message = db.update_tts_record(tts_id, ttsAudios)
+        
+        if status:
+            return jsonify({'status': True, 'message': message})
+        else:
+            return jsonify({'status': False, 'message': message})    
+    except Exception as e:
+        return jsonify({'status': False, 'message': str(e)})
+    
     
