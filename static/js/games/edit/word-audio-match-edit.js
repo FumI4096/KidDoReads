@@ -350,6 +350,36 @@ async function saveCurrentQuestion(e) {
         return;
     }
 
+    try{
+        const formDataTts = new FormData()
+    
+        formDataTts.append('ttsId', ttsId)
+        formDataTts.append('ttsAudios', sessionStorage.getItem("ttsInputs"))
+        const speechUrl = '/update-speech'
+
+        const response = await fetch(speechUrl, {
+            method: 'POST',
+            body: formDataTts
+        })
+
+        const result = await response.json()
+
+        if (response.ok && result.status){
+            console.log("Audios stored succesfully")
+            notifObject.notify(result.message, "success")
+        }
+        else{
+            console.log(result.message)
+            notifObject.notify(result.message, "error")
+
+        }
+    }
+    catch (error){
+        console.log(error)
+        notifObject.notify("Cannot save Questions", "error")
+
+    }
+
     const questionExist = Boolean(questionObject[currentQuestion]);
     if (questionExist) {
         console.log("Updating existing question");
