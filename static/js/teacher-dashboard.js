@@ -450,6 +450,7 @@ function addContent(content_container, content_id, content_title, content_detail
     previewButton.addEventListener('click', async () => {
         if (Object.keys(content_details).length >= 1){
             sessionStorage.setItem("questions", JSON.stringify(content_details))
+            sessionStorage.setItem("ttsInputs", JSON.stringify(tts_json))
             sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
             sessionStorage.setItem("currentTtsId", content_id)
             sessionStorage.setItem("currentActivityTitle", content_title)
