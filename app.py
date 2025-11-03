@@ -22,6 +22,7 @@ db = Database()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['TTS_KEY'] = os.getenv('TTS_API_KEY')
+app.config['CHATBOT_KEY'] = os.getenv('CHATBOT_API_KEY')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['UPLOAD_AUDIO'] = UPLOAD_AUDIO
 app.config["PROPAGATE_EXCEPTIONS"] = False

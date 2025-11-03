@@ -28,3 +28,6 @@ def get_upload_audio():
 
 def get_tts_key():
     return current_app.config['TTS_KEY']
+
+def get_chatbot_key():
+    return current_app.config['CHATBOT_KEY']
