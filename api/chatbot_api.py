@@ -13,8 +13,6 @@ def chatbot_message():
         
         message = data.get('userMessage')
         
-        print(message)
-        
         client = OpenAI(api_key=get_chatbot_key()) 
         
         response = client.chat.completions.create(
@@ -28,7 +26,6 @@ def chatbot_message():
         )
         
         reply = response.choices[0].message.content
-        print(reply)
         return jsonify({'status': True, 'botResponse': reply})
         
     except Exception as e:
