@@ -167,7 +167,7 @@ function createContent(){
                 sessionStorage.setItem("currentActivityId", result.content_id)
                 sessionStorage.setItem("contentType", JSON.stringify(setContentType(parseInt(selectContent.value))))
                 await insertTtsId(sessionStorage.getItem("currentActivityId"))
-                editGamePageTo(parseInt(selectContent.value))
+                // editGamePageTo(parseInt(selectContent.value))
             }
             else{
                 console.log(result.message)
