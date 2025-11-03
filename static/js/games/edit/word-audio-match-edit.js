@@ -117,25 +117,25 @@ function updateTtsButtonStates(isEditMode = false) {
             // Audio exists and text hasn't changed - show "Reconvert" (optional), enable play
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = false;
-            changeTtsConverButtonText("Reconvert Text-To-Speech");
+            changeTtsConvertButtonText("Reconvert Text-To-Speech");
         } 
         else if (hasAudio && questionChanged) {
             // Audio exists but text HAS changed - MUST reconvert (required)
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = false; // Can still play old audio
-            changeTtsConverButtonText("Reconvert Text-To-Speech (Required)");
+            changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
         } 
         else if (hasQuestionText) {
             // No audio but has text - show "Convert"
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = true;
-            changeTtsConverButtonText("Convert Text-To-Speech");
+            changeTtsConvertButtonText("Convert Text-To-Speech");
         } 
         else {
             // No audio, no text - disable all
             ttsConvertButton.disabled = true;
             ttsPlayButton.disabled = true;
-            changeTtsConverButtonText("Convert Text-To-Speech");
+            changeTtsConvertButtonText("Convert Text-To-Speech");
         }
     } 
     else {
@@ -144,10 +144,10 @@ function updateTtsButtonStates(isEditMode = false) {
         ttsPlayButton.disabled = !hasAudio;
         
         if (hasAudio) {
-            changeTtsConverButtonText("Converted");
+            changeTtsConvertButtonText("Converted");
         } 
         else {
-            changeTtsConverButtonText("Convert Text-To-Speech");
+            changeTtsConvertButtonText("Convert Text-To-Speech");
         }
     }
     
@@ -170,7 +170,7 @@ function checkInputState() {
     saveButton.disabled = !isComplete;
 }
 
-function changeTtsConverButtonText(text) {
+function changeTtsConvertButtonText(text) {
     const span = ttsConvertButton.querySelector('span');
     span.textContent = text;
 }
@@ -180,7 +180,7 @@ ttsConvertButton.addEventListener("click", async () => {
     const isReconvert = audioUrl !== null; //check if audio exist to consider as RECONVERTING
     
     ttsConvertButton.disabled = true;
-    changeTtsConverButtonText(isReconvert ? "Reconverting..." : "Converting...");
+    changeTtsConvertButtonText(isReconvert ? "Reconverting..." : "Converting...");
     
     try {
         // If reconverting, delete the old speech first
@@ -241,11 +241,11 @@ questionInput.addEventListener("input", () => {
         const questionChanged = hasQuestionTextChanged();
         
         if (hasAudio && questionChanged && hasText) {
-            changeTtsConverButtonText("Reconvert Text-To-Speech (Required)");
+            changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
         } else if (hasAudio && !questionChanged) {
-            changeTtsConverButtonText("Reconvert Text-To-Speech");
+            changeTtsConvertButtonText("Reconvert Text-To-Speech");
         } else if (!hasAudio && hasText) {
-            changeTtsConverButtonText("Convert Text-To-Speech");
+            changeTtsConvertButtonText("Convert Text-To-Speech");
         }
         
         updateTtsButtonStates(true);
@@ -520,4 +520,3 @@ function answerRadioButtonsDisable(state) {
 function firstQuestionExist(length) {
     return length > 0;
 }
-
