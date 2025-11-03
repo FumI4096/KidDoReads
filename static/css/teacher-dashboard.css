@@ -289,5 +289,10 @@ main > section{
     padding: 1rem;
 }
 
+#chatbot-button{
+    position: fixed;
+    right: 10%;
+    bottom: 10%;
+}
 
 

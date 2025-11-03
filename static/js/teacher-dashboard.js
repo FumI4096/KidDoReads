@@ -11,10 +11,14 @@ const mainAside = document.querySelector('main > aside');
 const mainSection = document.querySelector('main > section');
 const teacherInfo = document.getElementById('teacher-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
+const chatbotButton = document.getElementById('chatbot-button')
 const notification = new Notification();
 let isInMainSection = false;
+let chatConversation = [];
 
 const id = sessionStorage.getItem("id")
+
+chatbotButton.addEventListener('click', conversationStructure)
 
 logOutButton.addEventListener('click', () => {
     localStorage.clear();
@@ -1227,5 +1231,92 @@ function moveStudentInfo(){
     }
     
 }
+
+async function conversationStructure(){
+    const conversationContainer = document.createElement('div')
+    const conversationMessagesContainer = document.createElement('div')
+    const sendMessageContainer = document.createElement('div')
+
+    conversationContainer.setAttribute('id', 'conversation-container')
+    conversationMessagesContainer.setAttribute('id', 'conversation-messages-container')
+    sendMessageContainer.setAttribute('id', 'send-message-container')
+
+    //conversationMessagesContainer elements
+    const userMessageContainer = document.createElement('div')
+    userMessageContainer.classList.add('user-message-container')
+    const botMessageContainer = document.createElement('div')
+    botMessageContainer.classList.add('bot-message-container')
+
+    try{
+        const getHistory = `/chat-history/${id}`
+        const response = await fetch(getHistory)
+        const result = await response.json()
+
+        if(response.ok){
+            if(result.status){
+                result.history.forEach(history => {
+                    displayChatHistory(history.botMessage, history.userMessage)
+                })
+
+            }
+            else{
+                console.log("No History Yet")
+                console.log(result.history)
+            }
+        }
+        else{
+            console.log(result.message)
+        }
+    }
+    catch (error){
+        console.log("Error on displaying conversation: " + error)
+    }
+    
+    async function displayChatHistory(botMessage, userMessage){
+        const userImage = document.createElement('img')
+        const userMessageStatement = document.createElement('p')
+        const botImage = document.createElement('img')
+        const botMessageStatement = document.createElement('p')
+
+        userMessageStatement.textContent = userMessage
+        botMessageStatement.textContent = botMessage
+    }
+}
+
+// async function sendMessage(){
+//     const message = "Hello there"
+//     let botMessage = ""
+//     const sendMessageUrl = '/api/chatbot/response'
+
+//     try{
+//         const response = await fetch(sendMessageUrl, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({
+//                 userMessage: message,
+//             })
+//         })
+
+//         const reply = await response.json()
+
+//         if (response.ok && reply.status){
+//             botMessage = reply.botResponse
+//             console.log(botMessage)
+//             chatConversation.push(message, botMessage)
+//         }
+//         else{
+//             console.log(reply.status)
+//         }
+//     }
+//     catch (error){
+//         console.log("Error on chatbot: " + error)
+//     }
+
+    
+
+//     console.log(chatConversation)
+// }
 
 moveStudentInfo();
