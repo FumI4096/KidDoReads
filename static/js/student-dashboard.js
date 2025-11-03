@@ -144,7 +144,44 @@ function studentProfile() {
     card.append(cardBody);
 
     userContainer.append(card);
-    badgesContainer.innerHTML = `<h4>Achievements & Badges</h4><p>No badges earned yet.</p>`;
+
+    // REVISION: Retrieve badge from sessionStorage and validate it exists
+    // This checks if badge is not null, not the string 'null', and not empty
+    const badgeImage = sessionStorage.getItem('badge');
+    const hasBadge = badgeImage && badgeImage !== 'null' && badgeImage !== '';
+
+    // REVISION: Create the "Achievements & Badges" header
+    const badgesHeader = document.createElement('h4');
+    badgesHeader.textContent = 'Achievements & Badges';
+    badgesContainer.appendChild(badgesHeader);
+
+    // REVISION: If badge exists, display it; otherwise show "no badges" message
+    if (hasBadge) {
+        // REVISION: Create container div with class 'badge-display' for styling
+        const badgeImgContainer = document.createElement('div');
+        badgeImgContainer.classList.add('badge-display');
+        
+        // REVISION: Create img element for the badge with class 'badge-image'
+        const badgeImg = document.createElement('img');
+        badgeImg.src = badgeImage; // Use the badge path from sessionStorage
+        badgeImg.alt = 'Achievement Badge';
+        badgeImg.classList.add('badge-image'); // This class will be styled in CSS
+        
+        // REVISION: Add error handler to log if badge image fails to load
+        // Useful for debugging incorrect paths or missing files
+        badgeImg.onerror = function() {
+            console.error('Failed to load badge image from:', this.src);
+        };
+        
+        // REVISION: Append badge image to container, then container to badges section
+        badgeImgContainer.appendChild(badgeImg);
+        badgesContainer.appendChild(badgeImgContainer);
+    } else {
+        // REVISION: If no badge exists, display a friendly message
+        const noBadgesMsg = document.createElement('p');
+        noBadgesMsg.textContent = 'No badges earned yet.';
+        badgesContainer.appendChild(noBadgesMsg);
+    }
 
     informationContainer.append(userContainer, badgesContainer);
     profileContainer.append(profileHeader, informationContainer);
@@ -251,6 +288,18 @@ async function showUserInfo() {
                 sessionStorage.setItem("image", defaultProfilePicture);
                 studentPicture.src = sessionStorage.getItem("image");
             }
+            
+            // REVISION: Store badge from backend or set test badge
+            // TEMPORARY: Using test badge for now
+           sessionStorage.setItem("badge", "../static/images/badge.PNG");
+            
+            // FUTURE: Replace above line with this when backend is ready:
+            // if (result.data[0].badge) {
+            //     sessionStorage.setItem("badge", result.data[0].badge);
+            // } else {
+            //     sessionStorage.setItem("badge", null);
+            // }
+            
         } else {
             notification.notify("User details can't be retrieved at the moment. Please try again.", "error");
         }

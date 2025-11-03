@@ -165,7 +165,7 @@ function createContent(){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("currentActivityId", result.content_id)
-                sessionStorage.setItem("contentType", JSON.stringify(setContentType(selectContent.value)))
+                sessionStorage.setItem("contentType", JSON.stringify(setContentType(parseInt(selectContent.value))))
                 await insertTtsId(sessionStorage.getItem("currentActivityId"))
                 editGamePageTo(parseInt(selectContent.value))
             }
@@ -189,7 +189,7 @@ async function insertTtsId(id){
 
     const formData = new FormData();
 
-    formData.append('tts_id', id)
+    formData.append('content_id', id)
 
     const response = await fetch(url, {
         method: "POST",
@@ -201,7 +201,7 @@ async function insertTtsId(id){
     try{
         if (response.ok && result.status){
             sessionStorage.setItem("currentTtsId", result.ttsId)
-            console.log("TTS INSERTED SUCCESSFULLY")
+            console.log(result.message)
         }
         else{
             console.log(result.message)
@@ -230,7 +230,7 @@ async function showContents() {
         if (response.ok && result.status){
             if (result.data && result.data.length > 0) {
                 result.data.forEach(data => {
-                    addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.content_type, data.content_type_name, data.isHidden)
+                    addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.tts_json, data.content_type, data.content_type_name, data.isHidden)
                 })
             }
             else{
@@ -325,7 +325,7 @@ async function showUserInfo(){
     }
 }
 
-function addContent(content_container, content_id, content_title, content_details, content_type, content_type_name, content_hidden){
+function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
@@ -433,9 +433,11 @@ function addContent(content_container, content_id, content_title, content_detail
     editButton.addEventListener('click', async () => {
         if (Object.keys(content_details).length !== 0){
             sessionStorage.setItem("questions", JSON.stringify(content_details))
+            sessionStorage.setItem("ttsInputs", JSON.stringify(tts_json))
         }
         else{
             sessionStorage.setItem("questions", "[]")
+            sessionStorage.setItem("ttsInputs", "[]")
         }
         sessionStorage.setItem("currentActivityId", content_id)
         sessionStorage.setItem("currentTtsId", content_id)
@@ -448,6 +450,7 @@ function addContent(content_container, content_id, content_title, content_detail
     previewButton.addEventListener('click', async () => {
         if (Object.keys(content_details).length >= 1){
             sessionStorage.setItem("questions", JSON.stringify(content_details))
+            sessionStorage.setItem("ttsInputs", JSON.stringify(tts_json))
             sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
             sessionStorage.setItem("currentTtsId", content_id)
             sessionStorage.setItem("currentActivityTitle", content_title)

@@ -33,13 +33,16 @@ def get_contents(teacher_id):
         for row in rows:
             quiz_contents_str = row[2] or "{}"
             quiz_contents_json = json.loads(quiz_contents_str)
+            quiz_tts_str = row[3] or "{}"
+            quiz_tts_json = json.loads(quiz_tts_str)
             contents.append({
                 "content_id": row[0],
                 "content_title": row[1],
                 "content_json": quiz_contents_json,
-                "content_type": row[3],
-                "content_type_name": row[4],
-                "isHidden": row[5]
+                "tts_json": quiz_tts_json,
+                "content_type": row[4],
+                "content_type_name": row[5],
+                "isHidden": row[6]
             })
             
         if status:
@@ -60,13 +63,16 @@ def get_contents_for_students(type):
         for row in rows:
             quiz_contents_str = row[3] or "{}"
             quiz_contents_json = json.loads(quiz_contents_str)
+            quiz_tts_str = row[4] or "{}"
+            quiz_tts_json = json.loads(quiz_tts_str)
             contents.append({
                 "content_id": row[0],
                 "teacher_name": row[1],
                 "content_title": row[2],
                 "content_json": quiz_contents_json,
-                "content_type": row[4],
-                "isHidden": row[5]
+                "tts_json": quiz_tts_json,
+                "content_type": row[5],
+                "isHidden": row[6]
             })
             
         if status:

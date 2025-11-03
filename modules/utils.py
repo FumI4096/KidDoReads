@@ -22,3 +22,9 @@ def get_db():
 
 def get_upload_folder():
     return current_app.config['UPLOAD_FOLDER']
+
+def get_upload_audio():
+    return current_app.config['UPLOAD_AUDIO']
+
+def get_tts_key():
+    return current_app.config['TTS_KEY']
