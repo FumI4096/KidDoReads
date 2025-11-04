@@ -1,14 +1,25 @@
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
+const questionContainer = document.querySelector(".question-container");
 const choicesContainer = document.querySelector(".choices-container");
+const buttonContainer = document.getElementById('button-container')
 const nextButton = document.getElementById("next-button");
 const previousButton = document.getElementById("previous-button");
 const answerContainer = document.getElementById("answer-container"); 
 
-let keywordObject = JSON.parse(sessionStorage.getItem("keywords") || "[]");
+answerContainer.style.display = 'none'
 
-let currentKeyword = 0;
+let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]"); /* revert from keyword -> question */
+
+let currentQuestion = 0;
 let finalScore = 0; 
+
+const submitButton = document.createElement('button')
+const finishButton = document.createElement('button')
+finishButton.setAttribute('id', 'finish-button')
+finishButton.textContent = "Finish"
+submitButton.setAttribute('id', 'submit-button')
+submitButton.textContent = 'Submit'
 
 const storedAnswers = sessionStorage.getItem("userAnswers");
 const userAnswers = storedAnswers ? JSON.parse(storedAnswers) : {};
@@ -17,30 +28,33 @@ const currentTitle = sessionStorage.getItem("currentActivityTitle");
 
 if(sessionStorage.getItem("role") === "student"){
     toDashboardPageButton.style.display = 'none'
-    displayActivityTitle.textContent = `Preview: ${currentTitle}`;
+    displayActivityTitle.textContent = `Title: ${currentTitle}`;
 }
 else if(sessionStorage.getItem("role") === "teacher"){
     toDashboardPageButton.textContent = "Exit Preview"; 
-    displayActivityTitle.textContent = currentTitle;
+    displayActivityTitle.textContent = `Preview Title: ${currentTitle}`;
     toDashboardPageButton.addEventListener('click', () => {
         window.location.href = '/teacher_dashboard';
     });
 
 }
 
+submitButton.addEventListener("click", () => {
+    saveAndNavigate(2);
+})
+
 nextButton.addEventListener("click", () => { saveAndNavigate(1); }); 
+
 previousButton.addEventListener("click", () => { saveAndNavigate(-1); });
 
-loadKeyword(0);
-
-// 3. Core Logic (Simplified for Preview)
+loadQuestion(0);
 
 function saveAndNavigate(direction) {
     const selectedRadio = document.querySelector('input[name="preview_answer"]:checked');
     if (selectedRadio) {
-        userAnswers[currentKeyword] = selectedRadio.value;
-    } else if (userAnswers[currentKeyword]) {
-        delete userAnswers[currentKeyword]; 
+        userAnswers[currentQuestion] = selectedRadio.value;
+    } else if (userAnswers[currentQuestion]) {
+        delete userAnswers[currentQuestion]; 
     }
 
     sessionStorage.setItem("userAnswers", JSON.stringify(userAnswers));
@@ -51,85 +65,56 @@ function saveAndNavigate(direction) {
     }
 
     if (direction === 1) { 
-        if (currentKeyword < keywordObject.length - 1) {
-            currentKeyword++;
-            loadKeyword(currentKeyword);
+        if (currentQuestion < questionObject.length - 1) {
+            currentQuestion++;
+            loadQuestion(currentQuestion);
         } 
     } else if (direction === -1) { 
-        if (currentKeyword > 0) {
-            currentKeyword--;
-            loadKeyword(currentKeyword);
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion(currentQuestion);
         }
     }
-}
-
-function showFinalScore() {
-    // 1. Calculate the final score
-    let correctCount = 0;
-    keywordObject.forEach((keyword, index) => {
-        if (userAnswers[index] === keyword.answer) {
-            correctCount++;
-        }
-    });
-    finalScore = correctCount;
-
-    // 2. Display the results page
-    const totalKeywords = keywordObject.length;
-    
-    // Clear the main content areas
-    document.querySelector(".keyword-container").innerHTML = '';
-    choicesContainer.innerHTML = '';
-    answerContainer.innerHTML = '';
-    
-    // Display the score
-    const scoreMessage = document.createElement('h2');
-    scoreMessage.textContent = "Quiz Complete!";
-    
-    const resultDetails = document.createElement('p');
-    resultDetails.innerHTML = `You answered <strong>${finalScore}</strong> out of <strong>${totalKeywords}</strong> keywords correctly.`;
-    resultDetails.style.fontSize = '1.2em';
-    
-    choicesContainer.append(scoreMessage, resultDetails);
-
-    nextButton.style.display = 'none';
-    previousButton.style.display = 'none';
 }
 
 function updateNavigationButtons() {
-    if (currentKeyword === keywordObject.length - 1) {
-        nextButton.textContent = "Submit";
-        nextButton.addEventListener("click", () => { saveAndNavigate(2); });
+
+    if (currentQuestion === questionObject.length - 1) {
+        nextButton.remove()
+        previousButton.insertAdjacentElement('afterend', submitButton)
     } else {
-        nextButton.removeEventListener('click', showFinalScore);
-        nextButton.textContent = "Next";
-        nextButton.addEventListener("click", () => { saveAndNavigate(1); });
+        submitButton.remove()
+        previousButton.insertAdjacentElement('afterend', nextButton)
     }
 
-    previousButton.disabled = (currentKeyword === 0);
-    nextButton.disabled = (keywordObject.length === 0);
+    previousButton.disabled = (currentQuestion === 0);
+    nextButton.disabled = (questionObject.length === 0);
 }
 
-function loadKeyword(index) {
+function loadQuestion(index) {
     console.log(index)
-    if (index < 0 || index >= keywordObject.length) {
-        console.error("Invalid keyword index");
+    console.log("loadQuestion() called with index:", index);
+    console.log("questionObject:", questionObject);
+    console.log("questionObject length:", questionObject ? questionObject.length : "undefined");
+
+    if (index < 0 || index >= questionObject.length) {
+        console.error("Invalid question index");
         return;
     }
 
-    const keywordData = keywordObject[index];
+    const questionData = questionObject[index];
 
-    const keywordElement = document.getElementById("keyword-text");
-    keywordElement.textContent = keywordData.keyword;
+    const questionElement = document.getElementById("question-text");
+    questionElement.textContent = questionData.question;
 
     choicesContainer.innerHTML = '';
-    answerContainer.innerHTML = '';
     
-    const qNum = document.getElementById("keyword-number-display");
-    qNum.textContent = `Keyword ${index + 1} of ${keywordObject.length}`;
+    const qNum = document.getElementById("question-number-display");
+    qNum.textContent = `Question ${index + 1} of ${questionObject.length}`;
 
     const choiceLetters = ['A', 'B', 'C', 'D']; 
     
-    keywordData.choices.forEach((choiceText, i) => {
+    questionData.choices.forEach((choiceText, i) => {
         const choiceBox = document.createElement('div');
         choiceBox.className = 'choice-box';
 
@@ -159,9 +144,117 @@ function loadKeyword(index) {
         choicesContainer.appendChild(choiceBox);
     });
     
-    currentKeyword = index;
-    previousButton.disabled = (currentKeyword === 0);
-    nextButton.disabled = (currentKeyword === keywordObject.length - 1);
+    currentQuestion = index;
+    previousButton.disabled = (currentQuestion === 0);
+    nextButton.disabled = (currentQuestion === questionObject.length - 1);
 
     updateNavigationButtons();
+}
+
+function showFinalScore() {
+    const showAnswer = document.querySelector('tbody');
+
+    questionContainer.style.display = 'none';
+    choicesContainer.style.display = 'none';
+    answerContainer.style.display = 'block';
+
+    showAnswer.innerHTML = "";
+
+    let correctCount = 0;
+    questionObject.forEach((question, index) => {
+        const userAnswer = userAnswers[index] || "No answer";
+        const correctAnswer = question.answer;
+        const isCorrect = userAnswer === correctAnswer;
+
+        if (isCorrect) correctCount++;
+
+        // Create a new table row
+        const row = document.createElement('tr');
+        const questionNoCell = document.createElement('td')
+        questionNoCell.textContent = `${index + 1}.`
+        const userCell = document.createElement('td');
+        userCell.textContent = userAnswer;
+        const correctCell = document.createElement('td');
+        correctCell.textContent = correctAnswer;
+        const resultCell = document.createElement('td');
+        resultCell.textContent = isCorrect ? "✅ Correct" : "❌ Wrong";
+
+        row.style.textAlign = "center"
+        // Optional styling for clarity
+        if (isCorrect) {
+            row.style.backgroundColor = "#d4edda"; // light green for correct
+        } else {
+            row.style.backgroundColor = "#f8d7da"; // light red for wrong
+        }
+
+        // Append all cells to the row
+        row.appendChild(questionNoCell)
+        row.appendChild(userCell);
+        row.appendChild(correctCell);
+        row.appendChild(resultCell);
+
+        // Append the row to the table body
+        showAnswer.appendChild(row);
+    });
+    finalScore = correctCount;
+
+    const totalQuestions = questionObject.length;
+
+    const displayScore = document.getElementById('question-number-display')
+
+    nextButton.style.display = 'none';
+    previousButton.style.display = 'none';
+    submitButton.style.display = 'none'
+    toDashboardPageButton.style.display = 'none'
+
+    displayScore.textContent = `Total Score: ${finalScore} / ${totalQuestions}`
+    buttonContainer.appendChild(finishButton)
+    buttonContainer.style.justifyContent = 'flex-end'
+
+    if(sessionStorage.getItem("role") === "student"){
+        
+        finishButton.addEventListener("click" , async () => {
+            const formData = new FormData()
+            
+            formData.append("student_id", sessionStorage.getItem("id"))
+            formData.append("content_id", sessionStorage.getItem("currentContentId"))
+            formData.append("score", finalScore)
+            
+            const response = await fetch('/attempt', {
+                method: "POST",
+                body: formData
+            })
+            
+            const result = await response.json()
+    
+            try{
+                if (response.ok && result.status){
+                    sessionStorage.removeItem('questions')
+                    sessionStorage.removeItem('currentContentId')
+                    sessionStorage.removeItem('currentActivityTitle')
+                    sessionStorage.removeItem("userAnswers")
+                    console.log("Success")
+                    window.location.href = '/student_dashboard';
+                }
+                else{
+                    console.log(result.message)
+                }
+            }
+            catch (error){
+                console.log(error)
+            }
+        })
+
+
+    }
+    else if(sessionStorage.getItem("role") === "teacher"){
+        sessionStorage.removeItem('questions')
+        sessionStorage.removeItem('currentActivityTitle')
+        sessionStorage.removeItem('userAnswers')
+
+        finishButton.addEventListener("click", () => {
+            window.location.href = '/teacher_dashboard';
+        })
+
+    }
 }
