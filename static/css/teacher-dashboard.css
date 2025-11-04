@@ -218,6 +218,32 @@ main > section{
     }
 }
 
+
+/* Student Progress */
+
+#select-category, #select-content {
+    font-family: 'Regular-Poppins';
+    background-color: var(--accent-color-wood);
+    color: var(--white-text);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+#select-category option, #select-content option {
+    background-color: var(--white-text);
+}
+
+#select-category:hover, #select-content:hover {
+    background-color: var(--accent-color-almond);
+    color: var(--black-text);
+}
+
 #progress-table{
     width: 100%;
     table-layout: fixed;
@@ -232,7 +258,6 @@ main > section{
         }
     }
 }
-
 /* === PROGRESS TABLE DESIGN (Black & White base) === */
 
 #progress-table {
@@ -245,10 +270,10 @@ main > section{
 }
 
 #progress-table thead {
-    background: linear-gradient(90deg, #000, #555);
-    color: #fff;
-    font-family: 'Bold-Poppins';
-    text-align: left;
+    background: var(--primary-accent-color-1);
+    color: var(--white-text);
+    font-family: 'Regular-Poppins';
+    text-align: center;
 }
 
 #progress-table thead th {
@@ -289,5 +314,64 @@ main > section{
     padding: 1rem;
 }
 
+#chatbot-button{
+    position: fixed;
+    right: 10%;
+    bottom: 10%;
+}
+
+#conversation-container{
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 350px;
+    position: fixed;
+    right: 10%;
+    bottom: 10%;
+    padding: 1rem;
+    gap: 0.5rem;
+    background-color: white;
+    & > #header-conversation-container, & > #conversation-messages-container, & > #send-message-container {
+        width: 100%;
+
+
+    }
+
+    #header-conversation-container{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        & > img{
+            inline-size: 25px;
+        }
+
+    }
+
+    #conversation-messages-container{
+        display: flex;
+        flex-grow: 1;
+        overflow-y: auto;
+        flex-direction: column;
+        max-height: 100%;
+
+        & > .user-message-container, & > .bot-message-container{
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            & > img{
+                inline-size: 35px;
+            }
+
+            & > p{
+                width: 100%;
+            }
+        }
+
+    }
+
+
+}
 
 

@@ -11,10 +11,13 @@ const mainAside = document.querySelector('main > aside');
 const mainSection = document.querySelector('main > section');
 const teacherInfo = document.getElementById('teacher-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
+const chatbotButton = document.getElementById('chatbot-button')
 const notification = new Notification();
 let isInMainSection = false;
 
+
 const id = sessionStorage.getItem("id")
+
 
 logOutButton.addEventListener('click', () => {
     localStorage.clear();
@@ -1227,5 +1230,223 @@ function moveStudentInfo(){
     }
     
 }
+
+chatbotButton.addEventListener('click', conversationStructure)
+
+
+async function conversationStructure(){
+    let chatConversation = [];
+    const conversationContainer = document.createElement('div')
+    const headerConversationContainer = document.createElement('div')
+    const conversationMessagesContainer = document.createElement('div')
+    const sendMessageContainer = document.createElement('div')
+
+    conversationContainer.setAttribute('id', 'conversation-container')
+    headerConversationContainer.setAttribute('id', 'header-conversation-container')
+    conversationMessagesContainer.setAttribute('id', 'conversation-messages-container')
+    sendMessageContainer.setAttribute('id', 'send-message-container')
+
+    //headerConversationContainer elements
+    const chatbotName = document.createElement('h3')
+    const closeConversationButton = document.createElement('img')
+    chatbotName.textContent = "Chatbot"
+    closeConversationButton.src = '../../static/images/close-outline.svg'
+    closeConversationButton.alt = 'close-button'
+    closeConversationButton.addEventListener('click', () => {
+        conversationContainer.remove()
+    })
+
+    headerConversationContainer.append(chatbotName, closeConversationButton)
+    conversationContainer.appendChild(headerConversationContainer)
+
+    //conversationMessagesContainer elements
+    const userMessageContainer = document.createElement('div')
+    userMessageContainer.classList.add('user-message-container')
+    const botMessageContainer = document.createElement('div')
+    botMessageContainer.classList.add('bot-message-container')
+
+    //sendMessageContainer elements
+    const inputMessage = document.createElement('input')
+    const sendButton = document.createElement('button')
+    inputMessage.placeholder = "Input your message"
+    inputMessage.setAttribute('id', 'input-message')
+    sendButton.textContent = "Send"
+    sendButton.setAttribute('id', 'send-button')
+    sendButton.disabled = true
+    inputMessage.addEventListener('input', () => {
+        sendButton.disabled = inputMessage.value === "" ? true : false;
+    })
+    sendButton.addEventListener('click', async () => {await sendMessage(inputMessage.value.trim())})
+
+    sendMessageContainer.append(inputMessage, sendButton)
+    
+    try{
+        const getHistory = `/chat-history/${id}`
+        const response = await fetch(getHistory)
+        const result = await response.json()
+
+        if(response.ok){
+            if(result.status){
+                result.history.forEach(history => {
+                    chatConversation.push(history)
+                    displayChatHistory(history.botMessage, history.userMessage)
+                })
+
+            }
+            else{
+                console.log("test")
+                const botImage = document.createElement('img')
+                const botMessageStatement = document.createElement('p')
+                botImage.src = ""
+                botImage.alt = "image_bot"
+                botMessageStatement.textContent = 'Hello! How may I assist you today?'
+
+                botMessageContainer.append(botImage, botMessageStatement)
+
+                chatConversation.push({
+                    botMessage: botMessageStatement.textContent
+                })
+                conversationMessagesContainer.appendChild(botMessageContainer)
+
+            }
+
+            conversationContainer.append(conversationMessagesContainer, sendMessageContainer)
+
+        }
+        else{
+            console.log(result.message)
+            return;
+        }
+
+        document.body.appendChild(conversationContainer)
+    }
+    catch (error){
+        console.log("Error on displaying conversation: " + error)
+        return;
+    }
+    
+    async function displayChatHistory(botMessage, userMessage){
+        const userContainer = document.createElement('div')
+        const botContainer = document.createElement('div')
+        userContainer.classList.add('user-message-container')
+        botContainer.classList.add('bot-message-container')
+        const userImage = document.createElement('img')
+        userImage.src = sessionStorage.getItem("image")
+        userImage.alt = "user_image"
+        const userMessageStatement = document.createElement('p')
+        userMessageStatement.textContent = userMessage
+        
+        const botImage = document.createElement('img')
+        botImage.src = ""
+        botImage.alt = "bot_image"
+        const botMessageStatement = document.createElement('p')
+        botMessageStatement.textContent = botMessage
+
+        userContainer.append(userMessageStatement, userImage)
+        botContainer.append(botImage, botMessageStatement)
+
+        conversationMessagesContainer.append(userContainer, botContainer)
+    }
+
+    async function sendMessage(userMessage){
+        const message = userMessage
+        let botMessage = ""
+        const sendMessageUrl = '/api/chatbot/response'
+
+        inputMessage.disabled = true;
+        sendButton.disabled = true;
+
+        try{
+            const response = await fetch(sendMessageUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userMessage: message,
+                })
+            })
+
+            const reply = await response.json()
+
+            if (response.ok && reply.status){
+                botMessage = reply.botResponse
+
+                const botMessageContainer = document.createElement('div')
+                const userMessageContainer = document.createElement('div')
+
+                botMessageContainer.classList.add('bot-message-container')
+                userMessageContainer.classList.add('user-message-container')
+
+                const botImage = document.createElement('img')
+                const botMessageStatement = document.createElement('p')
+                botImage.src = ""
+                botImage.alt = "image_bot"
+                botMessageStatement.textContent = botMessage
+
+                const userImage = document.createElement('img')
+                const userMessageStatement = document.createElement('p')
+                userImage.src = sessionStorage.getItem("image")
+                userImage.alt = "image_user"
+                userMessageStatement.textContent = message
+
+                botMessageContainer.append(botImage, botMessageStatement)
+                userMessageContainer.append(userMessageStatement, userImage)
+
+                conversationMessagesContainer.append(userMessageContainer, botMessageContainer)
+
+                const newConversation = {
+                    userMessage: message,
+                    botMessage: botMessage
+                }
+                chatConversation.push(newConversation)
+
+                updateConversation(chatConversation)
+            }
+            else{
+                console.log(reply.status)
+            }
+        }
+        catch (error){
+            console.log("Error on chatbot: " + error)
+        }
+        finally{
+            inputMessage.value = "";
+            inputMessage.disabled = false;
+        }
+        console.log(chatConversation)
+    }
+
+    async function updateConversation(convoObj){
+        try{
+            const convoUrl = '/update-conversation'
+    
+            const convoBody = new FormData()
+    
+            convoBody.append('teacher_id', id)
+            convoBody.append('conversation', JSON.stringify(convoObj))
+            const response = await fetch(convoUrl, {
+                method: 'PATCH',
+                body: convoBody
+            })
+    
+            const result = await response.json()
+    
+            if(!response.ok && !result){
+                console.log("Error saving conversation")
+                console.log(result.message)
+            }
+            else{
+                console.log(result.message)
+            }
+
+        }
+        catch (error){
+            console.log("Error saving conversation: " + error )
+        }
+    }
+}
+
+
 
 moveStudentInfo();
