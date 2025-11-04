@@ -13,12 +13,13 @@
         <button id="to-dashboard-page-button"></button>
     </header>
     <section class="question-container">
-        <p class="question" id="question-text"></p>
+        <p class="question" id="question-text"></p> <!-- for prefix -->
+        <!-- Add another p element for the meaning -->
     </section>
+    <!-- Add another section for another question container -->
     <section class="choices-container">
-        <!--Changes Here-->
         <div class="choice-box">
-            <label class="choice-label">
+            <label class="choice-label"> 
                 <input type="radio" name="question_choice" value="a">
                 <p class="choice-letter">A.</p>
                 <span class="choice-text">Choice A Text</span>
@@ -34,14 +35,28 @@
         </div>
 
     </section>
-
+    
     <div id="answer-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Question No.</th>
+                    <th>Answer</th>
+                    <th>Correct Answer</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbdody>
+        </table>
     </div>
-    <div class="button-container">
+
+    <div id="button-container">
         <button id="previous-button">Previous</button>
         <button id="next-button">Next</button>
     </div>
     
-    <script src=" {{url_for('static', filename='js/games/preview/word-audio-match-preview.js')}} "></script>
+    <script src=" {{url_for('static', filename='js/games/answer/word-audio-match-answer.js')}} "></script>
 </body>
 </html>
