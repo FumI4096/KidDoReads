@@ -161,7 +161,6 @@ header{
     align-items: center;
     justify-content: flex-start;
     background: #b8bec9;
-    padding: 1.5rem 3rem;
     border-radius: 100px;
     border: none;
     transition: all 0.3s ease;
@@ -193,6 +192,7 @@ header{
     font-size: 1.1rem;
     color: white;
     width: 100%;
+    padding: 1.5rem 3rem;
 }
 
 .choice-letter {
