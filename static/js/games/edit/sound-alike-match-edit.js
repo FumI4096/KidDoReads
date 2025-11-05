@@ -557,28 +557,22 @@ async function saveCurrentQuestion(e) {
     // Save both audio URLs
     const currentKeywordAudio = keyWordTtsObj.getAudioFile();
     const currentSentenceAudio = sentenceTtsObj.getAudioFile();
+    const storedKeywordAudio = ttsObject[currentQuestion]?.keywordUrl;
+    const storedSentenceAudio = ttsObject[currentQuestion]?.sentenceAudio;
     
     let audioChanged = false;
 
-    if (currentKeywordAudio) {
-        // Check if keyword audio is different from stored audio
-        const storedKeywordAudio = ttsObject[currentQuestion]?.keywordUrl;
-        if (storedKeywordAudio !== currentKeywordAudio) {
-            audioChanged = true;
-            console.log("Keyword audio changed:", storedKeywordAudio, "->", currentKeywordAudio);
-        }
+    if (currentKeywordAudio && currentKeywordAudio !== storedKeywordAudio) {
+        audioChanged = true;
+        console.log("Keyword audio changed:", storedKeywordAudio, "->", currentKeywordAudio);
         ttsObject[currentQuestion].keywordUrl = currentKeywordAudio;
         keyWordTtsObj.clearAudioFile();
         originalKeyWordText = getKeyWord;
     }
     
-    if (currentSentenceAudio) {
-        // Check if sentence audio is different from stored audio
-        const storedSentenceAudio = ttsObject[currentQuestion]?.sentenceAudio;
-        if (storedSentenceAudio !== currentSentenceAudio) {
-            audioChanged = true;
-            console.log("Sentence audio changed:", storedSentenceAudio, "->", currentSentenceAudio);
-        }
+    if (currentSentenceAudio && currentSentenceAudio !== storedSentenceAudio) {
+        audioChanged = true;
+        console.log("Sentence audio changed:", storedSentenceAudio, "->", currentSentenceAudio);
         ttsObject[currentQuestion].sentenceAudio = currentSentenceAudio;
         sentenceTtsObj.clearAudioFile();
         originalSentenceText = getSentence;
@@ -590,6 +584,28 @@ async function saveCurrentQuestion(e) {
         choices: currentChoices,
         answer: getAnswer
     };
+
+    const existingQuestion = questionObject[currentQuestion];
+    let questionUnchanged = false;
+
+    if (existingQuestion) {
+        console.log("Comparing questions:");
+        console.log("Existing:", existingQuestion);
+        console.log("New:", newQuestion);
+        
+        // Compare individual properties instead of JSON.stringify
+        const questionKeyWordSame = existingQuestion.keyWord === newQuestion.keyWord;
+        const questionSentenceSame = existingQuestion.sentence === newQuestion.sentence;
+        const answerSame = existingQuestion.answer === newQuestion.answer;
+        
+        // Compare choices array
+        const choicesSame = existingQuestion.choices.length === newQuestion.choices.length && existingQuestion.choices.every((choice, index) => choice === newQuestion.choices[index]);
+        
+        questionUnchanged = questionKeyWordSame && questionSentenceSame && answerSame && choicesSame;
+        console.log("Question unchanged?", questionUnchanged);
+    } else {
+        console.log("No existing question at index", currentQuestion);
+    }
 
     if (audioChanged) {
         try {
@@ -623,8 +639,6 @@ async function saveCurrentQuestion(e) {
             return;
         }
     }
-
-    const questionUnchanged = JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion]);
 
     
     if (!questionUnchanged){

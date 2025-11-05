@@ -13,6 +13,7 @@ const editButton = document.getElementById("edit-button")
 
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 let ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+console.log(ttsObject)
 let currentQuestion = 0
 let originalQuestionText = "" // Track the original question text that was converted
 
@@ -212,11 +213,13 @@ ttsConvertButton.addEventListener("click", async () => {
             const deleted = await keyWordTtsObj.deleteSpeech();
             
             if (deleted) {
-                // Remove from ttsObject
                 ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
-                delete ttsObject[currentQuestion];
+                console.log(ttsObject)
+                if (ttsObject[currentQuestion]) {
+                    ttsObject[currentQuestion].audioUrl = "";
+                }
                 sessionStorage.setItem('ttsInputs', JSON.stringify(ttsObject));
-                keyWordTtsObj.clearAudioFile();
+                console.log(ttsObject)
             } else {
                 throw new Error("Failed to delete old speech");
             }
@@ -357,14 +360,12 @@ async function saveCurrentQuestion(e) {
     }
 
     let audioChanged = false;
-
     const currentAudioFile = keyWordTtsObj.getAudioFile();
-    if (currentAudioFile) {
-        const storedAudio = ttsObject[currentQuestion]?.audioUrl;
-        if (storedAudio !== currentAudioFile){
-            audioChanged = true;
-            console.log("Audio changed:", storedAudio, "->", currentAudioFile);
-        }
+    const storedAudio = ttsObject[currentQuestion]?.audioUrl;
+
+    if (currentAudioFile && storedAudio !== currentAudioFile) {
+        audioChanged = true;
+        console.log("Audio changed:", storedAudio, "->", currentAudioFile);
         ttsObject[currentQuestion].audioUrl = currentAudioFile 
         sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
         keyWordTtsObj.clearAudioFile();
@@ -378,12 +379,42 @@ async function saveCurrentQuestion(e) {
         answer: getAnswer
     };
 
+    // Check if question exists and compare
+    const existingQuestion = questionObject[currentQuestion];
+    let questionUnchanged = false;
+
+    if (existingQuestion) {
+        console.log("Comparing questions:");
+        console.log("Existing:", existingQuestion);
+        console.log("New:", newQuestion);
+        
+        // Compare individual properties instead of JSON.stringify
+        const questionTextSame = existingQuestion.question === newQuestion.question;
+        const answerSame = existingQuestion.answer === newQuestion.answer;
+        
+        // Compare choices array
+        const choicesSame = existingQuestion.choices.length === newQuestion.choices.length && existingQuestion.choices.every((choice, index) => choice === newQuestion.choices[index]);
+        
+        questionUnchanged = questionTextSame && answerSame && choicesSame;
+        console.log("Question unchanged?", questionUnchanged);
+    } else {
+        console.log("No existing question at index", currentQuestion);
+    }
+
+
+    if (questionUnchanged && !audioChanged) {
+        console.log("No changes detected - skipping save");
+        setFormToViewMode();
+        return;
+    }
+
     if(audioChanged){
         try{
             const formDataTts = new FormData()
+            console.log(ttsObject)
         
             formDataTts.append('ttsId', ttsId)
-            formDataTts.append('ttsAudios', sessionStorage.getItem("ttsInputs"))
+            formDataTts.append('ttsAudios', JSON.stringify(ttsObject))
             const speechUrl = '/update-speech'
     
             const response = await fetch(speechUrl, {
@@ -395,6 +426,7 @@ async function saveCurrentQuestion(e) {
     
             if (response.ok && result.status){
                 console.log("Audios stored succesfully")
+                sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
                 notifObject.notify(result.message, "success")
             }
             else{
@@ -410,8 +442,6 @@ async function saveCurrentQuestion(e) {
         }
 
     }
-
-    const questionUnchanged = JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion]);
 
     if(!questionUnchanged){
         const questionExist = Boolean(questionObject[currentQuestion]);
