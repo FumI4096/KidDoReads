@@ -1,5 +1,6 @@
 import SpeechManager from '../../modules/SpeechManager.js'
 import Notification from '../../modules/Notification.js'
+import { decrypt } from '../../modules/SessionHandling.js'
 
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
@@ -19,9 +20,9 @@ console.log(ttsObject[currentQuestion])
 let originalKeyWordText = "" // Track original keyword text
 let originalSentenceText = "" // Track original sentence text
 
-const teacherId = sessionStorage.getItem("id")
-const contentId = sessionStorage.getItem("currentActivityId")
-const ttsId = sessionStorage.getItem("currentTtsId")
+const teacherId = await decrypt(sessionStorage.getItem("id"))
+const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
+const ttsId = await decrypt(sessionStorage.getItem("currentTtsId"))
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
 
 const categoryDisplay = document.getElementById("category-display")

@@ -1,4 +1,5 @@
 import Notification from './modules/Notification.js'
+import { encrypt } from './modules/SessionHandling.js'
 
 const showPasswordButton = document.getElementById('showPasswordButton');
 const unshowPasswordButton = document.getElementById('unshowPasswordButton');
@@ -38,9 +39,11 @@ loginForm.addEventListener('submit', async (e) => {
     try{
 
         if (response.ok && result.status){
-            sessionStorage.setItem("id", result.id);
+            const encryptedId = await encrypt(result.id)
+            sessionStorage.setItem("id", encryptedId);
             if(result.role === "student" || result.role === "teacher"){
-                sessionStorage.setItem("role", result.role)
+                const encryptedRole = await encrypt(result.role)
+                sessionStorage.setItem("role", encryptedRole)
             }
             window.location.href = result.redirectUrl
         }

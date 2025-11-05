@@ -1,5 +1,6 @@
-// === KID-DO-READS MAIN SCRIPT ===
+
 import Notification from './modules/Notification.js';
+import { encrypt, decrypt } from './modules/SessionHandling.js'
 
 const profileButton = document.getElementById("profile-button");
 const logOutButton = document.getElementById('log-out-button');
@@ -10,7 +11,7 @@ const studentInfo = document.getElementById('student-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
 let isInMainSection = false;
 
-const id = sessionStorage.getItem("id");
+const id = await decrypt(sessionStorage.getItem("id"));
 const notification = new Notification();
 
 // === LOGOUT BUTTON ===
@@ -20,7 +21,6 @@ logOutButton.addEventListener('click', () => {
     window.location.href = '/logout';
 });
 
-// === FIXED DROPDOWN FUNCTIONALITY (ACTIVITIES + ASSESSMENTS) ===
 (() => {
     const activityNav = document.getElementById('activities-record-button');
     const assessmentNav = document.getElementById('assessments-record-button');
@@ -95,8 +95,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     await showUserInfo();
 });
 
-// === STUDENT PROFILE MODAL ===
-function studentProfile() {
+async function studentProfile() {
     const profileBackground = document.createElement('div');
     const profileContainer = document.createElement('div');
     const profileHeader = document.createElement('nav');
@@ -127,17 +126,17 @@ function studentProfile() {
 
     const studentImage = document.createElement('img');
     studentImage.classList.add('learner-photo');
-    studentImage.src = sessionStorage.getItem('image') || defaultProfilePicture;
+    studentImage.src = await decrypt(sessionStorage.getItem('image'));
     studentImage.alt = "Learner Photo";
 
     const learnerDetails = document.createElement('div');
     learnerDetails.classList.add('learner-details');
 
     const studentName = document.createElement('h3');
-    studentName.textContent = sessionStorage.getItem('fullName');
+    studentName.textContent = await decrypt(sessionStorage.getItem('fullName'));
 
     const studentId = document.createElement('p');
-    studentId.textContent = "Learner ID: " + (sessionStorage.getItem('id') || "N/A");
+    studentId.textContent = "Learner ID: " + await decrypt( (sessionStorage.getItem('id')) || "N/A");
 
     learnerDetails.append(studentName, studentId);
     cardBody.append(studentImage, learnerDetails);
@@ -277,21 +276,21 @@ async function showUserInfo() {
     const result = await response.json();
     try {
         if (response.ok && result.status) {
-            sessionStorage.setItem("fullName", result.data[0].fullName);
+            sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
             const studentName = document.getElementById('student_name');
             const studentPicture = document.getElementById('student_picture');
-            studentName.textContent = sessionStorage.getItem("fullName");
+            studentName.textContent = await decrypt(sessionStorage.getItem("fullName"));
             if (result.data[0].image) {
-                sessionStorage.setItem("image", result.data[0].image);
-                studentPicture.src = sessionStorage.getItem("image");
+                sessionStorage.setItem("image", await encrypt(result.data[0].image));
+                studentPicture.src = await decrypt(sessionStorage.getItem("image"));
             } else {
-                sessionStorage.setItem("image", defaultProfilePicture);
-                studentPicture.src = sessionStorage.getItem("image");
+                sessionStorage.setItem("image", await encrypt(defaultProfilePicture));
+                studentPicture.src = await decrypt(sessionStorage.getItem("image"));
             }
             
             // REVISION: Store badge from backend or set test badge
             // TEMPORARY: Using test badge for now
-           sessionStorage.setItem("badge", "../static/images/badge.PNG");
+            sessionStorage.setItem("badge", "../static/images/badge.PNG");
             
             // FUTURE: Replace above line with this when backend is ready:
             // if (result.data[0].badge) {

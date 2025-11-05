@@ -1,6 +1,7 @@
 import Notification from './modules/Notification.js'
 import NavigationManager from './modules/NavigationManager.js';
 import NAVIGATION_LEVELS from './modules/NavigationLevels.js';
+import { encrypt, decrypt } from './modules/SessionHandling.js'
 
 const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
@@ -16,7 +17,7 @@ const notification = new Notification();
 let isInMainSection = false;
 
 
-const id = sessionStorage.getItem("id")
+const id = await decrypt(sessionStorage.getItem("id"))
 
 
 logOutButton.addEventListener('click', () => {
@@ -301,19 +302,19 @@ async function showUserInfo(){
 
     try{
         if (response.ok && result.status){
-            sessionStorage.setItem("fullName", result.data[0].fullName);
+            sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
 
             const teacherName = document.getElementById('teacher_name')
             const teacherPicture = document.getElementById('teacher_picture')
 
-            teacherName.textContent = sessionStorage.getItem("fullName")
+            teacherName.textContent = await decrypt(sessionStorage.getItem("fullName"))
             if (result.data[0].image){
-                sessionStorage.setItem("image", result.data[0].image)
-                teacherPicture.src = sessionStorage.getItem("image")
+                sessionStorage.setItem("image", await encrypt(result.data[0].image))
+                teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
             else{
-                sessionStorage.setItem("image", defaultProfilePicture)
-                teacherPicture.src = sessionStorage.getItem("image")
+                sessionStorage.setItem("image", await encrypt(defaultProfilePicture))
+                teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
 
         }
@@ -328,7 +329,8 @@ async function showUserInfo(){
     }
 }
 
-function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
+async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
+    const encryptedContentId = await encrypt(content_id)
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
@@ -442,8 +444,8 @@ function addContent(content_container, content_id, content_title, content_detail
             sessionStorage.setItem("questions", "[]")
             sessionStorage.setItem("ttsInputs", "[]")
         }
-        sessionStorage.setItem("currentActivityId", content_id)
-        sessionStorage.setItem("currentTtsId", content_id)
+        sessionStorage.setItem("currentActivityId", encryptedContentId)
+        sessionStorage.setItem("currentTtsId", encryptedContentId)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
         sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
@@ -455,7 +457,6 @@ function addContent(content_container, content_id, content_title, content_detail
             sessionStorage.setItem("questions", JSON.stringify(content_details))
             sessionStorage.setItem("ttsInputs", JSON.stringify(tts_json))
             sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
-            sessionStorage.setItem("currentTtsId", content_id)
             sessionStorage.setItem("currentActivityTitle", content_title)
             previewGamePageTo(content_type)
         }
@@ -1331,7 +1332,7 @@ async function conversationStructure(){
         userContainer.classList.add('user-message-container')
         botContainer.classList.add('bot-message-container')
         const userImage = document.createElement('img')
-        userImage.src = sessionStorage.getItem("image")
+        userImage.src = await decrypt(sessionStorage.getItem("image"))
         userImage.alt = "user_image"
         const userMessageStatement = document.createElement('p')
         userMessageStatement.textContent = userMessage
