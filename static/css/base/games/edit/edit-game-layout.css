@@ -99,10 +99,10 @@ header #content-display {
 
         }
     }
-    & > #tts-convert-button-1 > img{
+    /* & > #tts-convert-button > img{
         filter: invert(100%);
         inline-size: 23px;
-    }
+    } */
 }
 
 /* Input Sections */
