@@ -175,9 +175,32 @@ function changeTtsConvertButtonText(text) {
     span.textContent = text;
 }
 
+function hasDuplicateQuestion() {
+    const currentKeyword = questionInput.value.trim().toLowerCase();
+    
+    if (!currentKeyword) return false;
+    
+    for (let i = 0; i < questionObject.length; i++) {
+        // Skip current question
+        if (i === currentQuestion) continue;
+        
+        const otherKeyword = questionObject[i].question?.trim().toLowerCase();
+        
+        if (otherKeyword === currentKeyword) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 ttsConvertButton.addEventListener("click", async () => {
     const audioUrl = getAudioForQuestion(currentQuestion);
     const isReconvert = audioUrl !== null; //check if audio exist to consider as RECONVERTING
+
+    if(hasDuplicateQuestion()){
+        notifObject.notify("Duplicated keyword detected in this question. Please provide another text", "error")
+    }
     
     ttsConvertButton.disabled = true;
     changeTtsConvertButtonText(isReconvert ? "Reconverting..." : "Converting...");
@@ -323,16 +346,26 @@ async function saveCurrentQuestion(e) {
     }
 
     const audioUrl = getAudioForQuestion(currentQuestion);
+
+    if (!ttsObject[currentQuestion]) {
+        ttsObject[currentQuestion] = {};
+    }
+
     if (!audioUrl) {
         notifObject.notify("Please generate speech for this question", "error");
         return;
     }
 
+    let audioChanged = false;
+
     const currentAudioFile = keyWordTtsObj.getAudioFile();
     if (currentAudioFile) {
-        ttsObject[currentQuestion] = { 
-            audioUrl: currentAudioFile 
-        };
+        const storedAudio = ttsObject[currentQuestion]?.audioUrl;
+        if (storedAudio !== currentAudioFile){
+            audioChanged = true;
+            console.log("Audio changed:", storedAudio, "->", currentAudioFile);
+        }
+        ttsObject[currentQuestion].audioUrl = currentAudioFile 
         sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
         keyWordTtsObj.clearAudioFile();
         
@@ -345,79 +378,81 @@ async function saveCurrentQuestion(e) {
         answer: getAnswer
     };
 
-    if (JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])) {
-        setFormToViewMode();
-        return;
-    }
-
-    try{
-        const formDataTts = new FormData()
-    
-        formDataTts.append('ttsId', ttsId)
-        formDataTts.append('ttsAudios', sessionStorage.getItem("ttsInputs"))
-        const speechUrl = '/update-speech'
-
-        const response = await fetch(speechUrl, {
-            method: 'POST',
-            body: formDataTts
-        })
-
-        const result = await response.json()
-
-        if (response.ok && result.status){
-            console.log("Audios stored succesfully")
-            notifObject.notify(result.message, "success")
-        }
-        else{
-            console.log(result.message)
-            notifObject.notify(result.message, "error")
-
-        }
-    }
-    catch (error){
-        console.log(error)
-        notifObject.notify("Cannot save Questions", "error")
-
-    }
-
-    const questionExist = Boolean(questionObject[currentQuestion]);
-    if (questionExist) {
-        console.log("Updating existing question");
-        questionObject[currentQuestion] = newQuestion;
-    } 
-    else {
-        console.log("Adding new question");
-        questionObject.push(newQuestion);
-        currentQuestion = questionObject.length - 1;
-    }
-
-    try {
-        sessionStorage.setItem("questions", JSON.stringify(questionObject));
-        const formData = new FormData();
-        formData.append('content', sessionStorage.getItem("questions"));
-        formData.append('id', teacherId);
-        formData.append('content_id', contentId);
-        formData.append('total_questions', questionObject.length);
-
-        const response = await fetch('/update_content', {
-            method: 'POST',
-            body: formData,
-        });
-
-        const result = await response.json();
+    if(audioChanged){
+        try{
+            const formDataTts = new FormData()
         
-        if(response.ok && result.status) {
-            console.log(result.message);
-            notifObject.notify('Question saved successfully!', 'success');
+            formDataTts.append('ttsId', ttsId)
+            formDataTts.append('ttsAudios', sessionStorage.getItem("ttsInputs"))
+            const speechUrl = '/update-speech'
+    
+            const response = await fetch(speechUrl, {
+                method: 'POST',
+                body: formDataTts
+            })
+    
+            const result = await response.json()
+    
+            if (response.ok && result.status){
+                console.log("Audios stored succesfully")
+                notifObject.notify(result.message, "success")
+            }
+            else{
+                console.log(result.message)
+                notifObject.notify(result.message, "error")
+    
+            }
+        }
+        catch (error){
+            console.log(error)
+            notifObject.notify("Cannot save Questions", "error")
+    
+        }
+
+    }
+
+    const questionUnchanged = JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion]);
+
+    if(!questionUnchanged){
+        const questionExist = Boolean(questionObject[currentQuestion]);
+        if (questionExist) {
+            console.log("Updating existing question");
+            questionObject[currentQuestion] = newQuestion;
         } 
         else {
-            console.log("Error saving content:", result.message);
-            notifObject.notify('Failed to save question', 'error');
+            console.log("Adding new question");
+            questionObject.push(newQuestion);
+            currentQuestion = questionObject.length - 1;
         }
-    } 
-    catch (error) {
-        console.error(error);
-        notifObject.notify('Error saving question', 'error');
+
+        try {
+            sessionStorage.setItem("questions", JSON.stringify(questionObject));
+            const formData = new FormData();
+            formData.append('content', sessionStorage.getItem("questions"));
+            formData.append('id', teacherId);
+            formData.append('content_id', contentId);
+            formData.append('total_questions', questionObject.length);
+
+            const response = await fetch('/update_content', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+            
+            if(response.ok && result.status) {
+                console.log(result.message);
+                notifObject.notify('Question saved successfully!', 'success');
+            } 
+            else {
+                console.log("Error saving content:", result.message);
+                notifObject.notify('Failed to save question', 'error');
+            }
+        } 
+        catch (error) {
+            console.error(error);
+            notifObject.notify('Error saving question', 'error');
+        }
     }
 
     setFormToViewMode();
@@ -487,7 +522,19 @@ function loadQuestion(index) {
     questionInput.value = questionData.question;
     
     // Store the original question text when loading
-    originalQuestionText = questionData.question;
+    originalQuestionText = questionData.question || "";
+
+    const ttsData = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+    if (ttsData[index]) {
+        if (ttsData[index].audioUrl) {
+            keyWordTtsObj.setAudioFile(ttsData[index].audioUrl);
+        } else {
+            keyWordTtsObj.clearAudioFile();
+        }
+    } else {
+        // No audio for this question yet
+        keyWordTtsObj.clearAudioFile();
+    }
 
     const choiceA = document.getElementById('choice-a');
     const choiceB = document.getElementById('choice-b');
