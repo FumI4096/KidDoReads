@@ -13,23 +13,31 @@
         <button id="to-dashboard-page-button"></button>
     </header>
     <section class="question-container">
-        <p class="question" id="question-text"></p> <!-- add title element :> -->
+        <p class="question" id="title"></p> <!-- revert from keyword -> question -->
+        <p class="question" id="passage"></p> <!-- revert from keyword -> question -->
+        <button id="tts-speaker-button">TTS SPEAKER</button>
     </section>
-
     <section class="choices-container">
         <div class="choice-box">
             <label class="choice-label"> 
-                <input type="radio" name="question_choice" value="a">
+                <input type="radio" name="answer" value="a" id="answer-a">
                 <p class="choice-letter">A.</p>
-                <span class="choice-text">Choice A Text</span>
+                <span class="choice-text" id="choice-a">Choice A Text</span>
             </label>
         </div>
 
         <div class="choice-box">
             <label class="choice-label">
-                <input type="radio" name="question_choice" value="b">
+                <input type="radio" name="answer" value="b" id="answer-b">
                 <p class="choice-letter">B.</p>
-                <span class="choice-text">Choice B Text</span>
+                <span class="choice-text" id="choice-b">Choice B Text</span>
+            </label>
+        </div>
+        <div class="choice-box">
+            <label class="choice-label">
+                <input type="radio" name="answer" value="c" id="answer-c">
+                <p class="choice-letter">C.</p>
+                <span class="choice-text" id="choice-c">Choice B Text</span>
             </label>
         </div>
 
@@ -56,6 +64,6 @@
         <button id="next-button">Next</button>
     </div>
     
-    <script src=" {{url_for('static', filename='js/games/answer/word-audio-match-answer.js')}} "></script>
+    <script type=module src=" {{url_for('static', filename='js/games/answer/what-happens-next-answer.js')}} "></script>
 </body>
 </html>
