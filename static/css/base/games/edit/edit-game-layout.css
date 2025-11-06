@@ -118,6 +118,7 @@ textarea { /* passage input - multilines */
     padding: 0.5rem 0.5rem;
     color: #999;
     box-shadow: var(--box-shadow-1);
+    
 }
 
 .input-section{ /* rectangle container with box shadow */
