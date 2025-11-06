@@ -511,7 +511,7 @@ function previewGamePageTo(url){
         case 5:
             window.location.href = '/what_happens_next_answer';
             break;
-            case 6:
+        case 6:
             window.location.href = '/picture_clues_answer';
             break;
     }

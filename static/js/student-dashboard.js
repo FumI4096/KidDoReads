@@ -1,4 +1,3 @@
-
 import Notification from './modules/Notification.js';
 import { encrypt, decrypt } from './modules/SessionHandling.js'
 
@@ -216,6 +215,7 @@ async function showContent(contentTypeNum) {
                     data.teacher_name,
                     data.content_title,
                     data.content_json,
+                    data.tts_json,
                     data.content_type,
                     data.isHidden,
                     "Activity"
@@ -230,7 +230,7 @@ async function showContent(contentTypeNum) {
     }
 }
 
-function addContent(content_id, teacher_name, content_title, content_details, content_type, content_hidden, category_type) {
+function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, content_hidden, category_type) {
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const teacherName = document.createElement("p");
@@ -259,10 +259,11 @@ function addContent(content_id, teacher_name, content_title, content_details, co
 
     newContent.style.display = content_hidden ? 'none' : 'flex';
 
-    playActivityButton.addEventListener('click', () => {
+    playActivityButton.addEventListener('click', async () => {
         sessionStorage.setItem("currentActivityTitle", content_title);
-        sessionStorage.setItem("currentContentId", content_id);
+        sessionStorage.setItem("currentContentId", await encrypt(content_id));
         sessionStorage.setItem("questions", JSON.stringify(content_details));
+        sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
         answerPageTo(content_type);
     });
 
@@ -313,11 +314,20 @@ function answerPageTo(url) {
         case 1:
             window.location.href = '/word_audio_match_answer';
             break;
-        case 'Phonemic Awareness: Listen & Choose':
-        case 'Word Recognition: Sound-Alike Match':
-        case 'Word Recognition: Meaning Maker':
-        case 'Reading Comprehension: What Happens Next?':
-        case 'Reading Comprehension: Picture + Clues':
+        case 2:
+            window.location.href = '/listen_and_choose_answer';
+            break;
+        case 3:
+            window.location.href = '/sound_alike_match_answer';
+            break;
+        case 4:
+            window.location.href = '/meaning_maker_answer';
+            break;
+        case 5:
+            window.location.href = '/what_happens_next_answer';
+            break;
+        case 6:
+            window.location.href = '/picture_clues_answer';
             break;
     }
 }
