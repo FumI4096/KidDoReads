@@ -168,9 +168,9 @@ function createContent(){
             if (response.ok && result.status){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
-                sessionStorage.setItem("currentActivityId", result.content_id)
+                sessionStorage.setItem("currentActivityId", await encrypt(result.content_id))
                 sessionStorage.setItem("contentType", JSON.stringify(setContentType(parseInt(selectContent.value))))
-                await insertTtsId(sessionStorage.getItem("currentActivityId"))
+                await insertTtsId(await decrypt(sessionStorage.getItem("currentActivityId")))
                 editGamePageTo(parseInt(selectContent.value))
             }
             else{
@@ -204,7 +204,7 @@ async function insertTtsId(id){
 
     try{
         if (response.ok && result.status){
-            sessionStorage.setItem("currentTtsId", result.ttsId)
+            sessionStorage.setItem("currentTtsId", await encrypt(result.ttsId))
             console.log(result.message)
         }
         else{
