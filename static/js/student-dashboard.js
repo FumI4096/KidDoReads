@@ -15,7 +15,6 @@ const notification = new Notification();
 
 // === LOGOUT BUTTON ===
 logOutButton.addEventListener('click', () => {
-    localStorage.clear();
     sessionStorage.clear();
     window.location.href = '/logout';
 });
@@ -90,7 +89,7 @@ profileButton.addEventListener('click', studentProfile);
 window.addEventListener('resize', moveStudentInfo);
 
 document.addEventListener("DOMContentLoaded", async function() {
-    await showContent(1);
+    await showContent(0);
     await showUserInfo();
 });
 
@@ -234,15 +233,18 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const teacherName = document.createElement("p");
-    const categoryType = document.createElement("p")
+    const contentType = document.createElement("p")
+    const categoryType = document.createElement("p");
     newContent.classList.add("content");
     activityName.classList.add("activity-name");
     teacherName.classList.add("teacher-name");
+    contentType.classList.add("category-type")
     categoryType.classList.add("category-type");
     activityName.innerHTML = content_title;
     teacherName.innerHTML = teacher_name;
+    contentType.innerHTML = getContentName(content_type)
     categoryType.innerHTML = category_type;
-    newContent.append(activityName, teacherName, categoryType);
+    newContent.append(activityName, teacherName, categoryType, contentType);
 
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add("button-container");
@@ -268,6 +270,23 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
     });
 
     displayContents.appendChild(newContent);
+}
+
+function getContentName(type){
+    switch(type){
+        case 1:
+            return 'Pronunciation: Word Audio Match'
+        case 2:
+            return 'Phonemic Awareness: Listen & Choose'
+        case 3:
+            return 'Word Recognition: Sound-Alike Match'
+        case 4:
+            return 'Word Recognition: Meaning Maker?'
+        case 5:
+            return 'Reading Comprehension: What Happens Next?'
+        case 6: 
+            return 'Reading Comprehension: Picture + Clues'
+    }
 }
 
 // === USER INFO ===
@@ -359,7 +378,7 @@ moveStudentInfo();
             showContent(parseInt(item.dataset.action))
 
             // Update the label dynamically
-            sectionLabel.textContent = `${navType} – ${clickedName}`;
+            sectionLabel.textContent = parseInt(item.dataset.action) !== 0 ? `${navType} – ${clickedName}` : 'Select an Activity or Assessment';
 
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
@@ -377,7 +396,7 @@ moveStudentInfo();
             //add showAssessments() to be created
 
             // Update the label dynamically
-            sectionLabel.textContent = `${navType} – ${clickedName}`;
+            sectionLabel.textContent = parseInt(item.dataset.action) !== 0 ? `${navType} – ${clickedName}` : "Select an Activity or Assessment";
 
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
