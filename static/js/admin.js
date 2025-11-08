@@ -1,4 +1,5 @@
 import Notification from './modules/Notification.js'
+import { encrypt, decrypt } from './modules/SessionHandling.js'
 
 const mainForm = document.getElementById('main-form')
 const tableBody = document.querySelector("tbody");
@@ -496,7 +497,7 @@ function moveAdminInfo(){
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
-    const id = sessionStorage.getItem("id")
+    const id = await decrypt(sessionStorage.getItem("id"))
 
     const url = `/user/${id}`;
 
@@ -504,19 +505,19 @@ document.addEventListener("DOMContentLoaded", async function() {
         const response = await fetch(url);
         const result = await response.json();
         if (response.ok && result.status){
-            sessionStorage.setItem("fullName", result.data[0].fullName);
+            sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
     
             const adminName = document.getElementById('admin_name')
             const adminPicture = document.getElementById('admin_picture')
     
-            adminName.textContent = sessionStorage.getItem("fullName")
+            adminName.textContent = await decrypt(sessionStorage.getItem("fullName"))
             if (result.data[0].image){
-                sessionStorage.setItem("image", result.data[0].image)
-                adminPicture.src = sessionStorage.getItem("image")
+                sessionStorage.setItem("image", await encrypt(result.data[0].image))
+                adminPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
             else{
-                sessionStorage.setItem("image", defaultProfilePicture)
-                adminPicture.src = sessionStorage.getItem("image")
+                sessionStorage.setItem("image", await encrypt(defaultProfilePicture))
+                adminPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
     
         }
