@@ -36,14 +36,51 @@ const userAnswers = storedAnswers ? JSON.parse(storedAnswers) : {};
 
 const currentTitle = sessionStorage.getItem("currentActivityTitle");
 
-if(sessionStorage.getItem("role") === "student"){
-    toDashboardPageButton.style.display = 'none'
+if(await decrypt(sessionStorage.getItem("role")) === "student"){
+    toDashboardPageButton.textContent = 'Save and Exit'
     displayActivityTitle.textContent = `Title: ${currentTitle}`;
+    toDashboardPageButton.addEventListener('click', async () => {
+        const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
+
+        const formData = new FormData()
+        formData.append("attempt_id", attemptId)
+        formData.append("answer", JSON.stringify(userAnswers))
+        
+        const response = await fetch('/save_attempt', {
+            method: 'PATCH',
+            body: formData
+        });
+
+        const result = await response.json()
+
+        console.log(result.status)
+
+        if (response.ok && result.status){
+
+            sessionStorage.removeItem('questions')
+            sessionStorage.removeItem('currentContentId')
+            sessionStorage.removeItem('currentActivityTitle')
+            sessionStorage.removeItem('ttsObjects')
+            sessionStorage.removeItem("userAnswers")
+            sessionStorage.removeItem('currentAttemptId');
+            window.location.href = '/student_dashboard';
+        }
+        else{
+            console.log(result.message)
+        }
+        
+
+    })
 }
-else if(sessionStorage.getItem("role") === "teacher"){
+else if(await decrypt(sessionStorage.getItem("role")) === "teacher"){
     toDashboardPageButton.textContent = "Exit Preview"; 
     displayActivityTitle.textContent = `Preview Title: ${currentTitle}`;
     toDashboardPageButton.addEventListener('click', () => {
+
+        sessionStorage.removeItem('questions')
+        sessionStorage.removeItem('ttsObjects')
+        sessionStorage.removeItem('currentActivityTitle')
+        sessionStorage.removeItem('userAnswers')
         window.location.href = '/teacher_dashboard';
     });
 
@@ -65,6 +102,18 @@ nextButton.addEventListener("click", () => { saveAndNavigate(1); });
 previousButton.addEventListener("click", () => { saveAndNavigate(-1); });
 
 loadQuestion(0);
+
+function setupRadioListeners() {
+    const radios = document.querySelectorAll('input[name="answer"]');
+    radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            // Save answer immediately when radio is clicked
+            userAnswers[currentQuestion] = radio.value;
+            sessionStorage.setItem("userAnswers", JSON.stringify(userAnswers));
+            console.log(`Saved answer for question ${currentQuestion}:`, radio.value);
+        });
+    });
+}
 
 function saveAndNavigate(direction) {
     const selectedRadio = document.querySelector('input[name="answer"]:checked');
@@ -165,6 +214,7 @@ function loadQuestion(index) {
     nextButton.disabled = (currentQuestion === questionObject.length - 1);
 
     updateNavigationButtons();
+    setupRadioListeners();
 }
 
 async function showFinalScore() {
@@ -232,12 +282,12 @@ async function showFinalScore() {
         finishButton.addEventListener("click" , async () => {
             const formData = new FormData()
             
-            formData.append("student_id", await decrypt(sessionStorage.getItem("id")))
-            formData.append("content_id", await decrypt(sessionStorage.getItem("currentContentId")))
+            formData.append("answer", JSON.stringify(userAnswers))
+            formData.append("attempt_id", await decrypt(sessionStorage.getItem("currentAttemptId")))
             formData.append("score", finalScore)
             
-            const response = await fetch('/attempt', {
-                method: "POST",
+            const response = await fetch('/finish_attempt', {
+                method: "PATCH",
                 body: formData
             })
             
@@ -248,9 +298,9 @@ async function showFinalScore() {
                     sessionStorage.removeItem('questions')
                     sessionStorage.removeItem('currentContentId')
                     sessionStorage.removeItem('currentActivityTitle')
+                    sessionStorage.removeItem('currentAttemptId')
                     sessionStorage.removeItem('ttsObjects')
                     sessionStorage.removeItem("userAnswers")
-                    console.log("Success")
                     window.location.href = '/student_dashboard';
                 }
                 else{
