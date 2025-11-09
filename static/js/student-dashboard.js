@@ -266,10 +266,112 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         sessionStorage.setItem("currentContentId", await encrypt(content_id));
         sessionStorage.setItem("questions", JSON.stringify(content_details));
         sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
-        answerPageTo(content_type);
+
+        const formData = new FormData()
+        
+        formData.append("student_id", id)
+        formData.append("content_id", await decrypt(sessionStorage.getItem("currentContentId")))
+        
+        const response = await fetch('/attempt', {
+            method: "POST",
+            body: formData
+        })
+        
+        const result = await response.json()
+
+        try{
+            if (response.ok && result.status){
+                if(result.hasExistingAnswer){   
+                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type)
+
+                }
+                else{
+                    sessionStorage.setItem("userAnswers", JSON.stringify({}))
+                    sessionStorage.setItem("currentAttemptId", await encrypt(result.attemptId))
+                    answerPageTo(content_type);
+                }
+            }
+            else{
+                console.log(result.message)
+            }
+        }
+        catch (error){
+            console.log(error)
+        }
     });
 
+    checkProgressButton.addEventListener('click', async () => {
+        const url = `/attempts/activities/students/${id}/${content_id}/filter/0`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (response.ok && result.status){
+            result.attemptScores.forEach(attempt => {
+                displayAttemptScores(attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date));
+            });
+        }
+    })
     displayContents.appendChild(newContent);
+
+    function hasUnfinishedAttemptContainer(answer, attempt_id, type){
+        const unfinishedAttemptContainer = document.createElement('div')
+        const unfinishedAttemptWrapper = document.createElement('div')
+        const statement = document.createElement('p')
+        const buttonContainer = document.createElement('div')
+        const resumeButton = document.createElement('button')
+        const closeButton = document.createElement('button')
+
+        unfinishedAttemptContainer.setAttribute('id', 'unfinished-attempt-container')
+        unfinishedAttemptWrapper.setAttribute('id', 'unfinished-attempt-wrapper')
+
+        statement.textContent = "Uh Oh! An unfinished and saved activity detected! Please finish it!"
+
+        resumeButton.textContent = "Resume Activity"
+        closeButton.textContent = "Resume Later"
+
+        buttonContainer.append(resumeButton, closeButton)
+
+        unfinishedAttemptWrapper.appendChild(statement)
+        unfinishedAttemptWrapper.appendChild(buttonContainer)
+
+        unfinishedAttemptContainer.appendChild(unfinishedAttemptWrapper)
+
+        resumeButton.addEventListener('click', async () => {
+            const formData = new FormData();
+            formData.append("attempt_id", attempt_id);
+            
+            const response = await fetch('/resume_attempt', {
+                method: "PATCH",
+                body: formData
+            });
+
+            const result = await response.json()
+
+            if (response.ok && result.status){
+
+                sessionStorage.setItem("userAnswers", JSON.stringify(answer))
+                sessionStorage.setItem("currentAttemptId", await encrypt(attempt_id))
+                answerPageTo(type)
+            }
+            else{
+                console.log(result.message)
+            }
+        })
+
+        closeButton.addEventListener('click', () => {
+            unfinishedAttemptContainer.remove()
+        })
+
+        document.body.appendChild(unfinishedAttemptContainer)
+    }
+
+}
+
+function displayAttemptScores(counted_attempts, score, status, date) {
+    console.log("Attempt: " + counted_attempts)
+    console.log("Score: " + score)
+    console.log("Status: " + status)
+    console.log("Date: " + date)
 }
 
 function getContentName(type){
@@ -287,6 +389,24 @@ function getContentName(type){
         case 6: 
             return 'Reading Comprehension: Picture + Clues'
     }
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString + '+08:00');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    
+    return `${month} ${day}, ${year} ${hours}:${minutes} ${ampm}`;
 }
 
 // === USER INFO ===

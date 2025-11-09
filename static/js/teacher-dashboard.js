@@ -632,16 +632,19 @@ function getAttemptScoreHeaderRow(){
     const attemptScoreHeaderRow = document.createElement('tr')
     const countAttemptHeader = document.createElement('th')
     const scoreAttemptHeader = document.createElement('th')
+    const statusAttemptHeader = document.createElement('th')
     const dateHeader = document.createElement('th')
 
     attemptScoreHeaderRow.setAttribute('id', 'attempt-score-header-row')
 
     countAttemptHeader.textContent = 'Attempt Count'
     scoreAttemptHeader.textContent = 'Score'
+    statusAttemptHeader.textContent = 'Status'
     dateHeader.textContent = 'Attempt Submitted Date'
 
     attemptScoreHeaderRow.appendChild(countAttemptHeader)
     attemptScoreHeaderRow.appendChild(scoreAttemptHeader)
+    attemptScoreHeaderRow.appendChild(statusAttemptHeader)
     attemptScoreHeaderRow.appendChild(dateHeader)
 
     return attemptScoreHeaderRow
@@ -1161,7 +1164,7 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
         try {
             if (response.ok && result.status) {
                 result.attemptScores.forEach(attempt => {
-                    displayAttemptScores(table_body, attempt.attempt_count, attempt.score, formatDate(attempt.date));
+                    displayAttemptScores(table_body, attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date));
                 });
             }
         } catch (error) {
@@ -1183,20 +1186,23 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
  * 
  */
 
-function displayAttemptScores(table_body, counted_attempts, score, date) {
+function displayAttemptScores(table_body, counted_attempts, score, status, date) {
     const attemptScoreDataRow = document.createElement('tr');
     const countAttemptRow = document.createElement('td');
     const scoreAttemptRow = document.createElement('td');
+    const statusAttemptRow = document.createElement('td')
     const dateRow = document.createElement('td');
 
     attemptScoreDataRow.classList.add('attempt-score-data-row');
 
     countAttemptRow.textContent = counted_attempts;
     scoreAttemptRow.textContent = score;
+    statusAttemptRow.textContent = status
     dateRow.textContent = date;
 
     attemptScoreDataRow.appendChild(countAttemptRow);
     attemptScoreDataRow.appendChild(scoreAttemptRow);
+    attemptScoreDataRow.appendChild(statusAttemptRow);
     attemptScoreDataRow.appendChild(dateRow);
 
     table_body.appendChild(attemptScoreDataRow);
