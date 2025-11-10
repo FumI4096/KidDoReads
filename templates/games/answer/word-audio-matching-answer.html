@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Audio Matching</title>
-    <link rel="stylesheet" href=" {{url_for('static', filename='css/games/answer/word-audio-matching-answer.css')}} ">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
 </head>
 <body>
     <header>
@@ -14,7 +14,10 @@
     </header>
     <section class="question-container">
         <p class="question" id="question-text"></p> <!-- revert from keyword -> question -->
-        <button id="tts-speaker-button">TTS SPEAKER</button>
+        <button id="tts-speaker-button">
+        <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+        Play Me
+    </button>
     </section>
     <section class="choices-container">
         <div class="choice-box">
