@@ -281,7 +281,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 
         try{
             if (response.ok && result.status){
-                if(result.hasExistingAnswer){   
+                if(result.hasUnfinished){   
                     hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type)
 
                 }
