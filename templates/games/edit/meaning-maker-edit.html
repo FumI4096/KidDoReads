@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meaning Maker</title>
+    <title>Editing | Meaning Maker</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/games/edit/meaning-maker-edit.css')}}">
 </head>
 <body>
@@ -42,18 +42,13 @@
         </div>
         <div class="tts-buttons">
             <button class="tts-button convert-button" id="tts-convert-button">
-                <img src="{{url_for('static', filename='images/tts-convert-icon.png')}}" alt="convert-icon"/>
-                Convert Text-to-Speech
+                <img src="{{url_for('static', filename='images/tts-icons/tts-convert-icon.svg')}}" alt="convert-icon"/>
+                <span>Convert Text-to-Speech</span>
             </button>
-            <div class="button-row">
-                <button class="icon-button delete-button" id="tts-delete-button">
-                    <img src="{{url_for('static', filename='images/tts-delete-icon.png')}}" alt="delete-icon"/>
-                </button>
-                <button class="tts-button play-button" id="tts-play-button">
-                    <img src="{{url_for('static', filename='images/tts-play-icon.png')}}" alt="play-icon"/>
-                    Play Text-to-Speech
-                </button>
-            </div>
+            <button class="tts-button play-button" id="tts-play-button">
+                <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+                <span>Play Text-to-Speech</span>
+            </button>
         </div>
     </section>
     

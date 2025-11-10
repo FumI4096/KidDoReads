@@ -1,6 +1,7 @@
 import Notification from './modules/Notification.js'
 import NavigationManager from './modules/NavigationManager.js';
 import NAVIGATION_LEVELS from './modules/NavigationLevels.js';
+import { encrypt, decrypt } from './modules/SessionHandling.js'
 
 const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
@@ -11,10 +12,13 @@ const mainAside = document.querySelector('main > aside');
 const mainSection = document.querySelector('main > section');
 const teacherInfo = document.getElementById('teacher-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
+const chatbotButton = document.getElementById('chatbot-button')
 const notification = new Notification();
 let isInMainSection = false;
 
-const id = sessionStorage.getItem("id")
+
+const id = await decrypt(sessionStorage.getItem("id"))
+
 
 logOutButton.addEventListener('click', () => {
     localStorage.clear();
@@ -164,10 +168,10 @@ function createContent(){
             if (response.ok && result.status){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
-                sessionStorage.setItem("currentActivityId", result.content_id)
+                sessionStorage.setItem("currentActivityId", await encrypt(result.content_id))
                 sessionStorage.setItem("contentType", JSON.stringify(setContentType(parseInt(selectContent.value))))
-                await insertTtsId(sessionStorage.getItem("currentActivityId"))
-                // editGamePageTo(parseInt(selectContent.value))
+                await insertTtsId(await decrypt(sessionStorage.getItem("currentActivityId")))
+                editGamePageTo(parseInt(selectContent.value))
             }
             else{
                 console.log(result.message)
@@ -200,7 +204,7 @@ async function insertTtsId(id){
 
     try{
         if (response.ok && result.status){
-            sessionStorage.setItem("currentTtsId", result.ttsId)
+            sessionStorage.setItem("currentTtsId", await encrypt(result.ttsId))
             console.log(result.message)
         }
         else{
@@ -298,19 +302,19 @@ async function showUserInfo(){
 
     try{
         if (response.ok && result.status){
-            sessionStorage.setItem("fullName", result.data[0].fullName);
+            sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
 
             const teacherName = document.getElementById('teacher_name')
             const teacherPicture = document.getElementById('teacher_picture')
 
-            teacherName.textContent = sessionStorage.getItem("fullName")
+            teacherName.textContent = await decrypt(sessionStorage.getItem("fullName"))
             if (result.data[0].image){
-                sessionStorage.setItem("image", result.data[0].image)
-                teacherPicture.src = sessionStorage.getItem("image")
+                sessionStorage.setItem("image", await encrypt(result.data[0].image))
+                teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
             else{
-                sessionStorage.setItem("image", defaultProfilePicture)
-                teacherPicture.src = sessionStorage.getItem("image")
+                sessionStorage.setItem("image", await encrypt(defaultProfilePicture))
+                teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
 
         }
@@ -325,7 +329,8 @@ async function showUserInfo(){
     }
 }
 
-function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
+async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
+    const encryptedContentId = await encrypt(content_id)
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
@@ -439,8 +444,8 @@ function addContent(content_container, content_id, content_title, content_detail
             sessionStorage.setItem("questions", "[]")
             sessionStorage.setItem("ttsInputs", "[]")
         }
-        sessionStorage.setItem("currentActivityId", content_id)
-        sessionStorage.setItem("currentTtsId", content_id)
+        sessionStorage.setItem("currentActivityId", encryptedContentId)
+        sessionStorage.setItem("currentTtsId", encryptedContentId)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
         sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
@@ -452,7 +457,6 @@ function addContent(content_container, content_id, content_title, content_detail
             sessionStorage.setItem("questions", JSON.stringify(content_details))
             sessionStorage.setItem("ttsInputs", JSON.stringify(tts_json))
             sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
-            sessionStorage.setItem("currentTtsId", content_id)
             sessionStorage.setItem("currentActivityTitle", content_title)
             previewGamePageTo(content_type)
         }
@@ -507,7 +511,7 @@ function previewGamePageTo(url){
         case 5:
             window.location.href = '/what_happens_next_answer';
             break;
-            case 6:
+        case 6:
             window.location.href = '/picture_clues_answer';
             break;
     }
@@ -628,16 +632,19 @@ function getAttemptScoreHeaderRow(){
     const attemptScoreHeaderRow = document.createElement('tr')
     const countAttemptHeader = document.createElement('th')
     const scoreAttemptHeader = document.createElement('th')
+    const statusAttemptHeader = document.createElement('th')
     const dateHeader = document.createElement('th')
 
     attemptScoreHeaderRow.setAttribute('id', 'attempt-score-header-row')
 
     countAttemptHeader.textContent = 'Attempt Count'
     scoreAttemptHeader.textContent = 'Score'
+    statusAttemptHeader.textContent = 'Status'
     dateHeader.textContent = 'Attempt Submitted Date'
 
     attemptScoreHeaderRow.appendChild(countAttemptHeader)
     attemptScoreHeaderRow.appendChild(scoreAttemptHeader)
+    attemptScoreHeaderRow.appendChild(statusAttemptHeader)
     attemptScoreHeaderRow.appendChild(dateHeader)
 
     return attemptScoreHeaderRow
@@ -1157,7 +1164,7 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
         try {
             if (response.ok && result.status) {
                 result.attemptScores.forEach(attempt => {
-                    displayAttemptScores(table_body, attempt.attempt_count, attempt.score, formatDate(attempt.date));
+                    displayAttemptScores(table_body, attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date));
                 });
             }
         } catch (error) {
@@ -1179,20 +1186,23 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
  * 
  */
 
-function displayAttemptScores(table_body, counted_attempts, score, date) {
+function displayAttemptScores(table_body, counted_attempts, score, status, date) {
     const attemptScoreDataRow = document.createElement('tr');
     const countAttemptRow = document.createElement('td');
     const scoreAttemptRow = document.createElement('td');
+    const statusAttemptRow = document.createElement('td')
     const dateRow = document.createElement('td');
 
     attemptScoreDataRow.classList.add('attempt-score-data-row');
 
     countAttemptRow.textContent = counted_attempts;
     scoreAttemptRow.textContent = score;
+    statusAttemptRow.textContent = status
     dateRow.textContent = date;
 
     attemptScoreDataRow.appendChild(countAttemptRow);
     attemptScoreDataRow.appendChild(scoreAttemptRow);
+    attemptScoreDataRow.appendChild(statusAttemptRow);
     attemptScoreDataRow.appendChild(dateRow);
 
     table_body.appendChild(attemptScoreDataRow);
@@ -1227,5 +1237,223 @@ function moveStudentInfo(){
     }
     
 }
+
+chatbotButton.addEventListener('click', conversationStructure)
+
+
+async function conversationStructure(){
+    let chatConversation = [];
+    const conversationContainer = document.createElement('div')
+    const headerConversationContainer = document.createElement('div')
+    const conversationMessagesContainer = document.createElement('div')
+    const sendMessageContainer = document.createElement('div')
+
+    conversationContainer.setAttribute('id', 'conversation-container')
+    headerConversationContainer.setAttribute('id', 'header-conversation-container')
+    conversationMessagesContainer.setAttribute('id', 'conversation-messages-container')
+    sendMessageContainer.setAttribute('id', 'send-message-container')
+
+    //headerConversationContainer elements
+    const chatbotName = document.createElement('h3')
+    const closeConversationButton = document.createElement('img')
+    chatbotName.textContent = "Chatbot"
+    closeConversationButton.src = '../../static/images/close-outline.svg'
+    closeConversationButton.alt = 'close-button'
+    closeConversationButton.addEventListener('click', () => {
+        conversationContainer.remove()
+    })
+
+    headerConversationContainer.append(chatbotName, closeConversationButton)
+    conversationContainer.appendChild(headerConversationContainer)
+
+    //conversationMessagesContainer elements
+    const userMessageContainer = document.createElement('div')
+    userMessageContainer.classList.add('user-message-container')
+    const botMessageContainer = document.createElement('div')
+    botMessageContainer.classList.add('bot-message-container')
+
+    //sendMessageContainer elements
+    const inputMessage = document.createElement('input')
+    const sendButton = document.createElement('button')
+    inputMessage.placeholder = "Input your message"
+    inputMessage.setAttribute('id', 'input-message')
+    sendButton.textContent = "Send"
+    sendButton.setAttribute('id', 'send-button')
+    sendButton.disabled = true
+    inputMessage.addEventListener('input', () => {
+        sendButton.disabled = inputMessage.value === "" ? true : false;
+    })
+    sendButton.addEventListener('click', async () => {await sendMessage(inputMessage.value.trim())})
+
+    sendMessageContainer.append(inputMessage, sendButton)
+    
+    try{
+        const getHistory = `/chat-history/${id}`
+        const response = await fetch(getHistory)
+        const result = await response.json()
+
+        if(response.ok){
+            if(result.status){
+                result.history.forEach(history => {
+                    chatConversation.push(history)
+                    displayChatHistory(history.botMessage, history.userMessage)
+                })
+
+            }
+            else{
+                console.log("test")
+                const botImage = document.createElement('img')
+                const botMessageStatement = document.createElement('p')
+                botImage.src = ""
+                botImage.alt = "image_bot"
+                botMessageStatement.textContent = 'Hello! How may I assist you today?'
+
+                botMessageContainer.append(botImage, botMessageStatement)
+
+                chatConversation.push({
+                    botMessage: botMessageStatement.textContent
+                })
+                conversationMessagesContainer.appendChild(botMessageContainer)
+
+            }
+
+            conversationContainer.append(conversationMessagesContainer, sendMessageContainer)
+
+        }
+        else{
+            console.log(result.message)
+            return;
+        }
+
+        document.body.appendChild(conversationContainer)
+    }
+    catch (error){
+        console.log("Error on displaying conversation: " + error)
+        return;
+    }
+    
+    async function displayChatHistory(botMessage, userMessage){
+        const userContainer = document.createElement('div')
+        const botContainer = document.createElement('div')
+        userContainer.classList.add('user-message-container')
+        botContainer.classList.add('bot-message-container')
+        const userImage = document.createElement('img')
+        userImage.src = await decrypt(sessionStorage.getItem("image"))
+        userImage.alt = "user_image"
+        const userMessageStatement = document.createElement('p')
+        userMessageStatement.textContent = userMessage
+        
+        const botImage = document.createElement('img')
+        botImage.src = ""
+        botImage.alt = "bot_image"
+        const botMessageStatement = document.createElement('p')
+        botMessageStatement.textContent = botMessage
+
+        userContainer.append(userMessageStatement, userImage)
+        botContainer.append(botImage, botMessageStatement)
+
+        conversationMessagesContainer.append(userContainer, botContainer)
+    }
+
+    async function sendMessage(userMessage){
+        const message = userMessage
+        let botMessage = ""
+        const sendMessageUrl = '/api/chatbot/response'
+
+        inputMessage.disabled = true;
+        sendButton.disabled = true;
+
+        try{
+            const response = await fetch(sendMessageUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userMessage: message,
+                })
+            })
+
+            const reply = await response.json()
+
+            if (response.ok && reply.status){
+                botMessage = reply.botResponse
+
+                const botMessageContainer = document.createElement('div')
+                const userMessageContainer = document.createElement('div')
+
+                botMessageContainer.classList.add('bot-message-container')
+                userMessageContainer.classList.add('user-message-container')
+
+                const botImage = document.createElement('img')
+                const botMessageStatement = document.createElement('p')
+                botImage.src = ""
+                botImage.alt = "image_bot"
+                botMessageStatement.textContent = botMessage
+
+                const userImage = document.createElement('img')
+                const userMessageStatement = document.createElement('p')
+                userImage.src = sessionStorage.getItem("image")
+                userImage.alt = "image_user"
+                userMessageStatement.textContent = message
+
+                botMessageContainer.append(botImage, botMessageStatement)
+                userMessageContainer.append(userMessageStatement, userImage)
+
+                conversationMessagesContainer.append(userMessageContainer, botMessageContainer)
+
+                const newConversation = {
+                    userMessage: message,
+                    botMessage: botMessage
+                }
+                chatConversation.push(newConversation)
+
+                updateConversation(chatConversation)
+            }
+            else{
+                console.log(reply.status)
+            }
+        }
+        catch (error){
+            console.log("Error on chatbot: " + error)
+        }
+        finally{
+            inputMessage.value = "";
+            inputMessage.disabled = false;
+        }
+        console.log(chatConversation)
+    }
+
+    async function updateConversation(convoObj){
+        try{
+            const convoUrl = '/update-conversation'
+    
+            const convoBody = new FormData()
+    
+            convoBody.append('teacher_id', id)
+            convoBody.append('conversation', JSON.stringify(convoObj))
+            const response = await fetch(convoUrl, {
+                method: 'PATCH',
+                body: convoBody
+            })
+    
+            const result = await response.json()
+    
+            if(!response.ok && !result){
+                console.log("Error saving conversation")
+                console.log(result.message)
+            }
+            else{
+                console.log(result.message)
+            }
+
+        }
+        catch (error){
+            console.log("Error saving conversation: " + error )
+        }
+    }
+}
+
+
 
 moveStudentInfo();

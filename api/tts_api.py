@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from openai import OpenAI
+import time
 import os
 from modules.utils import get_db, get_tts_key, get_upload_audio
 
@@ -44,7 +45,9 @@ def generate_speech():
             input=text
         )
         
-        filename = f"speech_{hash(text+ttsId)}.mp3"
+        # Add timestamp to make filename unique
+        timestamp = int(time.time() * 1000)  # milliseconds for more precision
+        filename = f"speech_{hash(text+ttsId)}_{timestamp}.mp3"
         filepath = os.path.join(folder, filename)
         
         response.stream_to_file(filepath)

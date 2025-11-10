@@ -1,5 +1,6 @@
 import SpeechManager from '../../modules/SpeechManager.js'
 import Notification from '../../modules/Notification.js'
+import { decrypt } from '../../modules/SessionHandling.js'
 
 const displayActivityTitle = document.getElementById('display-activity-title')
 const toTeacherPageButton = document.getElementById('to-teacher-page-button')
@@ -13,12 +14,13 @@ const editButton = document.getElementById("edit-button")
 
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 let ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+console.log(ttsObject)
 let currentQuestion = 0
 let originalQuestionText = "" // Track the original question text that was converted
 
-const teacherId = sessionStorage.getItem("id")
-const contentId = sessionStorage.getItem("currentActivityId")
-const ttsId = sessionStorage.getItem("currentTtsId")
+const teacherId = await decrypt(sessionStorage.getItem("id"))
+const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
+const ttsId = await decrypt(sessionStorage.getItem("currentTtsId"))
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
 
 const categoryDisplay = document.getElementById("category-display")
@@ -117,25 +119,25 @@ function updateTtsButtonStates(isEditMode = false) {
             // Audio exists and text hasn't changed - show "Reconvert" (optional), enable play
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = false;
-            changeTtsConverButtonText("Reconvert Text-To-Speech");
+            changeTtsConvertButtonText("Reconvert Text-To-Speech");
         } 
         else if (hasAudio && questionChanged) {
             // Audio exists but text HAS changed - MUST reconvert (required)
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = false; // Can still play old audio
-            changeTtsConverButtonText("Reconvert Text-To-Speech (Required)");
+            changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
         } 
         else if (hasQuestionText) {
             // No audio but has text - show "Convert"
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = true;
-            changeTtsConverButtonText("Convert Text-To-Speech");
+            changeTtsConvertButtonText("Convert Text-To-Speech");
         } 
         else {
             // No audio, no text - disable all
             ttsConvertButton.disabled = true;
             ttsPlayButton.disabled = true;
-            changeTtsConverButtonText("Convert Text-To-Speech");
+            changeTtsConvertButtonText("Convert Text-To-Speech");
         }
     } 
     else {
@@ -144,10 +146,10 @@ function updateTtsButtonStates(isEditMode = false) {
         ttsPlayButton.disabled = !hasAudio;
         
         if (hasAudio) {
-            changeTtsConverButtonText("Converted");
+            changeTtsConvertButtonText("Converted");
         } 
         else {
-            changeTtsConverButtonText("Convert Text-To-Speech");
+            changeTtsConvertButtonText("Convert Text-To-Speech");
         }
     }
     
@@ -170,17 +172,40 @@ function checkInputState() {
     saveButton.disabled = !isComplete;
 }
 
-function changeTtsConverButtonText(text) {
+function changeTtsConvertButtonText(text) {
     const span = ttsConvertButton.querySelector('span');
     span.textContent = text;
+}
+
+function hasDuplicateQuestion() {
+    const currentKeyword = questionInput.value.trim().toLowerCase();
+    
+    if (!currentKeyword) return false;
+    
+    for (let i = 0; i < questionObject.length; i++) {
+        // Skip current question
+        if (i === currentQuestion) continue;
+        
+        const otherKeyword = questionObject[i].question?.trim().toLowerCase();
+        
+        if (otherKeyword === currentKeyword) {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 ttsConvertButton.addEventListener("click", async () => {
     const audioUrl = getAudioForQuestion(currentQuestion);
     const isReconvert = audioUrl !== null; //check if audio exist to consider as RECONVERTING
+
+    if(hasDuplicateQuestion()){
+        notifObject.notify("Duplicated keyword detected in this question. Please provide another text", "error")
+    }
     
     ttsConvertButton.disabled = true;
-    changeTtsConverButtonText(isReconvert ? "Reconverting..." : "Converting...");
+    changeTtsConvertButtonText(isReconvert ? "Reconverting..." : "Converting...");
     
     try {
         // If reconverting, delete the old speech first
@@ -189,11 +214,13 @@ ttsConvertButton.addEventListener("click", async () => {
             const deleted = await keyWordTtsObj.deleteSpeech();
             
             if (deleted) {
-                // Remove from ttsObject
                 ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
-                delete ttsObject[currentQuestion];
+                console.log(ttsObject)
+                if (ttsObject[currentQuestion]) {
+                    ttsObject[currentQuestion].audioUrl = "";
+                }
                 sessionStorage.setItem('ttsInputs', JSON.stringify(ttsObject));
-                keyWordTtsObj.clearAudioFile();
+                console.log(ttsObject)
             } else {
                 throw new Error("Failed to delete old speech");
             }
@@ -241,11 +268,11 @@ questionInput.addEventListener("input", () => {
         const questionChanged = hasQuestionTextChanged();
         
         if (hasAudio && questionChanged && hasText) {
-            changeTtsConverButtonText("Reconvert Text-To-Speech (Required)");
+            changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
         } else if (hasAudio && !questionChanged) {
-            changeTtsConverButtonText("Reconvert Text-To-Speech");
+            changeTtsConvertButtonText("Reconvert Text-To-Speech");
         } else if (!hasAudio && hasText) {
-            changeTtsConverButtonText("Convert Text-To-Speech");
+            changeTtsConvertButtonText("Convert Text-To-Speech");
         }
         
         updateTtsButtonStates(true);
@@ -323,16 +350,24 @@ async function saveCurrentQuestion(e) {
     }
 
     const audioUrl = getAudioForQuestion(currentQuestion);
+
+    if (!ttsObject[currentQuestion]) {
+        ttsObject[currentQuestion] = {};
+    }
+
     if (!audioUrl) {
         notifObject.notify("Please generate speech for this question", "error");
         return;
     }
 
+    let audioChanged = false;
     const currentAudioFile = keyWordTtsObj.getAudioFile();
-    if (currentAudioFile) {
-        ttsObject[currentQuestion] = { 
-            audioUrl: currentAudioFile 
-        };
+    const storedAudio = ttsObject[currentQuestion]?.audioUrl;
+
+    if (currentAudioFile && storedAudio !== currentAudioFile) {
+        audioChanged = true;
+        console.log("Audio changed:", storedAudio, "->", currentAudioFile);
+        ttsObject[currentQuestion].audioUrl = currentAudioFile 
         sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
         keyWordTtsObj.clearAudioFile();
         
@@ -345,79 +380,110 @@ async function saveCurrentQuestion(e) {
         answer: getAnswer
     };
 
-    if (JSON.stringify(newQuestion) === JSON.stringify(questionObject[currentQuestion])) {
+    // Check if question exists and compare
+    const existingQuestion = questionObject[currentQuestion];
+    let questionUnchanged = false;
+
+    if (existingQuestion) {
+        console.log("Comparing questions:");
+        console.log("Existing:", existingQuestion);
+        console.log("New:", newQuestion);
+        
+        // Compare individual properties instead of JSON.stringify
+        const questionTextSame = existingQuestion.question === newQuestion.question;
+        const answerSame = existingQuestion.answer === newQuestion.answer;
+        
+        // Compare choices array
+        const choicesSame = existingQuestion.choices.length === newQuestion.choices.length && existingQuestion.choices.every((choice, index) => choice === newQuestion.choices[index]);
+        
+        questionUnchanged = questionTextSame && answerSame && choicesSame;
+        console.log("Question unchanged?", questionUnchanged);
+    } else {
+        console.log("No existing question at index", currentQuestion);
+    }
+
+
+    if (questionUnchanged && !audioChanged) {
+        console.log("No changes detected - skipping save");
         setFormToViewMode();
         return;
     }
 
-    try{
-        const formDataTts = new FormData()
-    
-        formDataTts.append('ttsId', ttsId)
-        formDataTts.append('ttsAudios', sessionStorage.getItem("ttsInputs"))
-        const speechUrl = '/update-speech'
-
-        const response = await fetch(speechUrl, {
-            method: 'POST',
-            body: formDataTts
-        })
-
-        const result = await response.json()
-
-        if (response.ok && result.status){
-            console.log("Audios stored succesfully")
-            notifObject.notify(result.message, "success")
-        }
-        else{
-            console.log(result.message)
-            notifObject.notify(result.message, "error")
-
-        }
-    }
-    catch (error){
-        console.log(error)
-        notifObject.notify("Cannot save Questions", "error")
-
-    }
-
-    const questionExist = Boolean(questionObject[currentQuestion]);
-    if (questionExist) {
-        console.log("Updating existing question");
-        questionObject[currentQuestion] = newQuestion;
-    } 
-    else {
-        console.log("Adding new question");
-        questionObject.push(newQuestion);
-        currentQuestion = questionObject.length - 1;
-    }
-
-    try {
-        sessionStorage.setItem("questions", JSON.stringify(questionObject));
-        const formData = new FormData();
-        formData.append('content', sessionStorage.getItem("questions"));
-        formData.append('id', teacherId);
-        formData.append('content_id', contentId);
-        formData.append('total_questions', questionObject.length);
-
-        const response = await fetch('/update_content', {
-            method: 'POST',
-            body: formData,
-        });
-
-        const result = await response.json();
+    if(audioChanged){
+        try{
+            const formDataTts = new FormData()
+            console.log(ttsObject)
         
-        if(response.ok && result.status) {
-            console.log(result.message);
-            notifObject.notify('Question saved successfully!', 'success');
+            formDataTts.append('ttsId', ttsId)
+            formDataTts.append('ttsAudios', JSON.stringify(ttsObject))
+            const speechUrl = '/update-speech'
+    
+            const response = await fetch(speechUrl, {
+                method: 'POST',
+                body: formDataTts
+            })
+    
+            const result = await response.json()
+    
+            if (response.ok && result.status){
+                console.log("Audios stored succesfully")
+                sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
+                notifObject.notify(result.message, "success")
+            }
+            else{
+                console.log(result.message)
+                notifObject.notify(result.message, "error")
+    
+            }
+        }
+        catch (error){
+            console.log(error)
+            notifObject.notify("Cannot save Questions", "error")
+    
+        }
+
+    }
+
+    if(!questionUnchanged){
+        const questionExist = Boolean(questionObject[currentQuestion]);
+        if (questionExist) {
+            console.log("Updating existing question");
+            questionObject[currentQuestion] = newQuestion;
         } 
         else {
-            console.log("Error saving content:", result.message);
-            notifObject.notify('Failed to save question', 'error');
+            console.log("Adding new question");
+            questionObject.push(newQuestion);
+            currentQuestion = questionObject.length - 1;
         }
-    } 
-    catch (error) {
-        console.error(error);
-        notifObject.notify('Error saving question', 'error');
+
+        try {
+            sessionStorage.setItem("questions", JSON.stringify(questionObject));
+            const formData = new FormData();
+            formData.append('content', sessionStorage.getItem("questions"));
+            formData.append('id', teacherId);
+            formData.append('content_id', contentId);
+            formData.append('total_questions', questionObject.length);
+
+            const response = await fetch('/update_content', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+            
+            if(response.ok && result.status) {
+                console.log(result.message);
+                notifObject.notify('Question saved successfully!', 'success');
+            } 
+            else {
+                console.log("Error saving content:", result.message);
+                notifObject.notify('Failed to save question', 'error');
+            }
+        } 
+        catch (error) {
+            console.error(error);
+            notifObject.notify('Error saving question', 'error');
+        }
     }
 
     setFormToViewMode();
@@ -487,7 +553,19 @@ function loadQuestion(index) {
     questionInput.value = questionData.question;
     
     // Store the original question text when loading
-    originalQuestionText = questionData.question;
+    originalQuestionText = questionData.question || "";
+
+    const ttsData = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
+    if (ttsData[index]) {
+        if (ttsData[index].audioUrl) {
+            keyWordTtsObj.setAudioFile(ttsData[index].audioUrl);
+        } else {
+            keyWordTtsObj.clearAudioFile();
+        }
+    } else {
+        // No audio for this question yet
+        keyWordTtsObj.clearAudioFile();
+    }
 
     const choiceA = document.getElementById('choice-a');
     const choiceB = document.getElementById('choice-b');
@@ -520,4 +598,3 @@ function answerRadioButtonsDisable(state) {
 function firstQuestionExist(length) {
     return length > 0;
 }
-

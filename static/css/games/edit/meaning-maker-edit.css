@@ -151,8 +151,13 @@ header{
     color: white;
 }
 
-.convert-button:hover{
+.convert-button:not(:disabled):hover{
     background-color: #555;
+}
+
+.convert-button:disabled{
+    background-color: #dbdbdb;
+    cursor:not-allowed
 }
 
 .convert-button img{
@@ -181,15 +186,6 @@ header{
     height: 20px;
 }
 
-.delete-button{
-    background-color: white;
-    border: 2px solid #e0e0e0;
-}
-
-.delete-button:hover{
-    background-color: #f5f5f5;
-}
-
 .play-button{
     flex: 1;
     background-color: white;
@@ -197,8 +193,15 @@ header{
     border: 2px solid #e0e0e0;
 }
 
-.play-button:hover{
+.play-button:not(:disabled):hover{
     background-color: #f5f5f5;
+}
+.play-button:disabled{
+    cursor: not-allowed;
+
+    & > *{
+        opacity: 0.5;
+    }
 }
 
 #main-sheet-container{

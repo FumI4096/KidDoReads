@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Audio Matching</title>
-    <link rel="stylesheet" href=" {{url_for('static', filename='css/games/preview/word-audio-matching-preview.css')}} ">
+    <link rel="stylesheet" href=" {{url_for('static', filename='css/games/answer/word-audio-matching-answer.css')}} ">
 </head>
 <body>
     <header>
@@ -13,35 +13,57 @@
         <button id="to-dashboard-page-button"></button>
     </header>
     <section class="question-container">
-        <!--Changes Here-->
-        <p class="question" id="question-text"></p>
+        <p class="question" id="title"></p> <!-- revert from keyword -> question -->
+        <p class="question" id="passage"></p> <!-- revert from keyword -> question -->
+        <button id="tts-speaker-button">TTS SPEAKER</button>
     </section>
     <section class="choices-container">
         <div class="choice-box">
-            <label class="choice-label">
-                <input type="radio" name="question_choice" value="a">
+            <label class="choice-label"> 
+                <input type="radio" name="answer" value="a" id="answer-a">
                 <p class="choice-letter">A.</p>
-                <span class="choice-text">Choice A Text</span>
+                <span class="choice-text" id="choice-a">Choice A Text</span>
             </label>
         </div>
 
         <div class="choice-box">
             <label class="choice-label">
-                <input type="radio" name="question_choice" value="b">
+                <input type="radio" name="answer" value="b" id="answer-b">
                 <p class="choice-letter">B.</p>
-                <span class="choice-text">Choice B Text</span>
+                <span class="choice-text" id="choice-b">Choice B Text</span>
+            </label>
+        </div>
+        <div class="choice-box">
+            <label class="choice-label">
+                <input type="radio" name="answer" value="c" id="answer-c">
+                <p class="choice-letter">C.</p>
+                <span class="choice-text" id="choice-c">Choice B Text</span>
             </label>
         </div>
 
     </section>
-
+    
     <div id="answer-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Question No.</th>
+                    <th>Answer</th>
+                    <th>Correct Answer</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbdody>
+        </table>
     </div>
-    <div class="button-container">
+
+    <div id="button-container">
         <button id="previous-button">Previous</button>
         <button id="next-button">Next</button>
     </div>
     
-    <script src=" {{url_for('static', filename='js/games/preview/word-audio-match-preview.js')}} "></script>
+    <script type=module src=" {{url_for('static', filename='js/games/answer/what-happens-next-answer.js')}} "></script>
 </body>
 </html>

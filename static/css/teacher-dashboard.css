@@ -248,52 +248,46 @@ main > section{
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: 'Regular-Poppins';
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-height: 100%;
+    overflow-y: auto;
+
+    & > thead{
+        background: var(--primary-accent-color-1);
+        color: var(--white-text);
+        font-family: 'Regular-Poppins';
+        text-align: center;
+
+        & > tr > th{
+
+            padding: 1rem;
+            font-size: 0.95rem;
+        }
+
+    }
 
     & > tbody{
         & > tr {
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+            &:nth-child(even){
+                background-color: #efefef;
+            }
             & > .link:hover {
+                background-color: #e0e0e0;
                 text-decoration: underline;
                 cursor: pointer;
+            }
+            & > td{
+                text-align: center;
             }
         }
     }
 }
 /* === PROGRESS TABLE DESIGN (Black & White base) === */
-
-#progress-table {
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 10px;
-    overflow: hidden;
-    font-family: 'Regular-Poppins';
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-#progress-table thead {
-    background: var(--primary-accent-color-1);
-    color: var(--white-text);
-    font-family: 'Regular-Poppins';
-    text-align: center;
-}
-
-#progress-table thead th {
-    padding: 1rem;
-    font-size: 0.95rem;
-}
-
-#progress-table tbody tr {
-    background-color: #f9f9f9;
-    transition: background-color 0.3s ease;
-}
-
-#progress-table tbody tr:nth-child(even) {
-    background-color: #efefef;
-}
-
-#progress-table tbody tr:hover {
-    background-color: #e0e0e0;
-    cursor: pointer;
-}
 
 #progress-table td {
     padding: 1rem;
@@ -314,5 +308,64 @@ main > section{
     padding: 1rem;
 }
 
+#chatbot-button{
+    position: fixed;
+    right: 10%;
+    bottom: 10%;
+}
+
+#conversation-container{
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 350px;
+    position: fixed;
+    right: 10%;
+    bottom: 10%;
+    padding: 1rem;
+    gap: 0.5rem;
+    background-color: white;
+    & > #header-conversation-container, & > #conversation-messages-container, & > #send-message-container {
+        width: 100%;
+
+
+    }
+
+    #header-conversation-container{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        & > img{
+            inline-size: 25px;
+        }
+
+    }
+
+    #conversation-messages-container{
+        display: flex;
+        flex-grow: 1;
+        overflow-y: auto;
+        flex-direction: column;
+        max-height: 100%;
+
+        & > .user-message-container, & > .bot-message-container{
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            & > img{
+                inline-size: 35px;
+            }
+
+            & > p{
+                width: 100%;
+            }
+        }
+
+    }
+
+
+}
 
 

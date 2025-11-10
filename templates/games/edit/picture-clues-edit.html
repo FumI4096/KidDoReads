@@ -4,45 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Audio Matching</title>
-    <link rel="stylesheet" href=" {{url_for('static', filename='css/word-audio-matching')}} ">
+    <link rel="stylesheet" href=" {{url_for('static', filename='css/games/edit/picture-clues-edit.css')}} ">
 </head>
 <body>
     <header>
         <p id="display-activity-title"></p>
         <button id="to-teacher-page-button">Save and Exit</button>
     </header>
-    <section class="question-container">
+    <section class="picture-container">
         <!--CHANGES HERE-->
-        <input type="text" class="question" name="" placeholder="Input your question here">
+        <div id="image-box-1">
+            <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
+        </div>
+        <div id="image-box-2">
+            <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
+        </div>
+        <div id="image-box-3">
+            <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
+        </div>
     </section>
-    <section class="choices-container">
-        <div class="choice-box">
-            <p class="choice-letter">A.</p>
-            <input class="choice" type="text" placeholder="Enter a choice">
-        </div>
-        <div class="choice-box">
-            <p class="choice-letter">B.</p>
-            <input class="choice" type="text" placeholder="Enter a choice">
-        </div>
+    <section id="main-sheet-container">
+        <section id="choices-container">
+            <p><strong>Instruction:</strong> Choose the correct spelling from the choices you see.</p>
+            <div id="choice-box-container">
+                <div class="choice-box">
+                    <p class="choice-letter">A.</p>
+                    <input class="choice" id="choice-a" type="text" placeholder="Enter a choice">
+                </div>
+                <div class="choice-box">
+                    <p class="choice-letter">B.</p>
+                    <input class="choice" id="choice-b" type="text" placeholder="Enter a choice">
+                </div>
+                <div class="choice-box">
+                    <p class="choice-letter">C.</p>
+                    <input class="choice" id="choice-c" type="text" placeholder="Enter a choice">
+                </div>
+            </div>
+    
+        </section>
+        <aside id="answer-container">
+            <h3>Choose Correct Answer:</h3>
+            <div class="answer-options">
+                <input type="radio" id="answer-a" name="answer" value="a">
+                <label for="answer-a">A</label>
+                <input type="radio" id="answer-b" name="answer" value="b">
+                <label for="answer-b">B</label>
+                <input type="radio" id="answer-c" name="answer" value="c">
+                <label for="answer-c">C</label>
+            </div>
+        </aside>
 
     </section>
-    <aside class="answer-container">
-        <h3>Choose an Answer:</h3>
-        <div class="answer-options">
-            <input type="radio" id="a" name="answer" value="a">
-            <label for="a">A</label>
-            <input type="radio" id="b" name="answer" value="b">
-            <label for="b">B</label>
-        </div>
-    </aside>
-    <div class="button-container">
+    <div id="button-container">
         <button id="previous-button">Previous</button>
         <section>
-            <button id="add-choice-button">Add Choice</button>
-            <button id="remove-choice-button">Remove Choice</button>
             <button id="save-button">Save</button>
             <button id="edit-button">Edit</button>
-            
         </section>
         <button id="next-button">Next</button>
 

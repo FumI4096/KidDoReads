@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from modules.utils import get_db
+import json
 
 attempt_bp = Blueprint('attempt_bp', __name__)
 
@@ -9,17 +10,82 @@ def game_attempt():
         db = get_db()
         content_id = request.form.get('content_id')
         student_id = request.form.get('student_id')
-        score = request.form.get('score')
         
-        status, message = db.create_attempt(content_id, student_id, score)
+        status, message, attempt_id, student_answer = db.get_or_create_attempt(content_id, student_id)
+        
+        student_answer_str = student_answer or "{}"
+        student_answer_json = json.loads(student_answer_str)
+        
+        print(message)
         
         if status:
-            return jsonify({"status": status})
+            print(student_answer_json)
+            return jsonify({"status": status, "message": message, "attemptId": attempt_id, "studentAnswer": student_answer_json, "hasExistingAnswer": bool(student_answer_json)})
         else:
             return jsonify({"status": status, "message": message})
         
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
+    
+@attempt_bp.route('/resume_attempt', methods=['PATCH'])
+def resume_attempt():
+    """
+    Update status to ANSWERING when user actually resumes
+    """
+    try:
+        db = get_db()
+        attempt_id = request.form.get('attempt_id')
+        
+        status, message = db.resume_attempt(attempt_id)
+        
+        
+        if status:
+            return jsonify({"status": True, "message": message})
+        else:
+            print(message)
+            return jsonify({"status": False, "message": message})
+        
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+
+@attempt_bp.route('/save_attempt', methods=['PATCH'])
+def save_attempt():
+    try:
+        db = get_db()
+        answer = request.form.get('answer')
+        attempt_id = request.form.get('attempt_id')
+        
+        status, message = db.save_and_exit(answer, attempt_id)
+        
+        print(message)
+        
+        if status:
+            return jsonify({"status": status, "message": message})
+        else:
+            return jsonify({"status": status, "message": message})
+        
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+    
+@attempt_bp.route('/finish_attempt', methods=['PATCH'])
+def finish_attempt():
+    try:
+        db = get_db()
+        answer = request.form.get('answer')
+        score = request.form.get('score')
+        attempt_id = request.form.get('attempt_id')
+        
+        status, message = db.finish_attempt(answer, score, attempt_id)
+        
+        print(message)
+        
+        if status:
+            return jsonify({"status": status, "message": message})
+        else:
+            return jsonify({"status": status, "message": message})
+        
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})    
     
 @attempt_bp.route('/attempts/activities/<int:teacher_id>/<int:content_type>', methods=['GET'])
 def student_progress(teacher_id, content_type):
@@ -104,7 +170,8 @@ def student_attempt_scores(student_id, content_id, filter):
             attempt_scores.append({
                 "attempt_count": row[0],
                 "score": row[1],
-                "date": row[2]
+                "status": row[2],
+                "date": row[3]
             })
         
         if status:
