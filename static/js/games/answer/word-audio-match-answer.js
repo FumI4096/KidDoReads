@@ -1,3 +1,5 @@
+import { decrypt } from '../../modules/SessionHandling.js'
+import MascotPlaySpeech from '../../modules/MascotPlaySpeech.js'
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
 const questionContainer = document.querySelector(".question-container");
@@ -6,10 +8,15 @@ const buttonContainer = document.getElementById('button-container')
 const nextButton = document.getElementById("next-button");
 const previousButton = document.getElementById("previous-button");
 const answerContainer = document.getElementById("answer-container"); 
+const ttsSpeakerButton = document.getElementById('tts-speaker-button')
 
 answerContainer.style.display = 'none'
 
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]"); /* revert from keyword -> question */
+let ttsObject = JSON.parse(sessionStorage.getItem("ttsObjects") || "[]");
+let currentAudio = ""
+
+const ttsMascotPlay = new MascotPlaySpeech()
 
 let currentQuestion = 0;
 let finalScore = 0; 
@@ -26,18 +33,59 @@ const userAnswers = storedAnswers ? JSON.parse(storedAnswers) : {};
 
 const currentTitle = sessionStorage.getItem("currentActivityTitle");
 
-if(sessionStorage.getItem("role") === "student"){
-    toDashboardPageButton.style.display = 'none'
+if(await decrypt(sessionStorage.getItem("role")) === "student"){
+    toDashboardPageButton.textContent = 'Save and Exit'
     displayActivityTitle.textContent = `Title: ${currentTitle}`;
+    toDashboardPageButton.addEventListener('click', async () => {
+        const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
+
+        const formData = new FormData()
+        formData.append("attempt_id", attemptId)
+        formData.append("answer", JSON.stringify(userAnswers))
+        
+        const response = await fetch('/save_attempt', {
+            method: 'PATCH',
+            body: formData
+        });
+
+        const result = await response.json()
+
+        console.log(result.status)
+
+        if (response.ok && result.status){
+
+            sessionStorage.removeItem('questions')
+            sessionStorage.removeItem('currentContentId')
+            sessionStorage.removeItem('currentActivityTitle')
+            sessionStorage.removeItem('ttsObjects')
+            sessionStorage.removeItem("userAnswers")
+            sessionStorage.removeItem('currentAttemptId');
+            window.location.href = '/student_dashboard';
+        }
+        else{
+            console.log(result.message)
+        }
+        
+
+    })
 }
-else if(sessionStorage.getItem("role") === "teacher"){
+else if(await decrypt(sessionStorage.getItem("role")) === "teacher"){
     toDashboardPageButton.textContent = "Exit Preview"; 
     displayActivityTitle.textContent = `Preview Title: ${currentTitle}`;
     toDashboardPageButton.addEventListener('click', () => {
+
+        sessionStorage.removeItem('questions')
+        sessionStorage.removeItem('ttsObjects')
+        sessionStorage.removeItem('currentActivityTitle')
+        sessionStorage.removeItem('userAnswers')
         window.location.href = '/teacher_dashboard';
     });
 
 }
+
+ttsSpeakerButton.addEventListener('click', () => {
+    playAudio(currentAudio)
+})
 
 submitButton.addEventListener("click", () => {
     saveAndNavigate(2);
@@ -49,8 +97,20 @@ previousButton.addEventListener("click", () => { saveAndNavigate(-1); });
 
 loadQuestion(0);
 
+function setupRadioListeners() {
+    const radios = document.querySelectorAll('input[name="answer"]');
+    radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            // Save answer immediately when radio is clicked
+            userAnswers[currentQuestion] = radio.value;
+            sessionStorage.setItem("userAnswers", JSON.stringify(userAnswers));
+            console.log(`Saved answer for question ${currentQuestion}:`, radio.value);
+        });
+    });
+}
+
 function saveAndNavigate(direction) {
-    const selectedRadio = document.querySelector('input[name="preview_answer"]:checked');
+    const selectedRadio = document.querySelector('input[name="answer"]:checked');
     if (selectedRadio) {
         userAnswers[currentQuestion] = selectedRadio.value;
     } else if (userAnswers[currentQuestion]) {
@@ -75,6 +135,10 @@ function saveAndNavigate(direction) {
             loadQuestion(currentQuestion);
         }
     }
+}
+
+function playAudio(audio){
+    ttsMascotPlay.play(audio)
 }
 
 function updateNavigationButtons() {
@@ -103,55 +167,43 @@ function loadQuestion(index) {
     }
 
     const questionData = questionObject[index];
+    const ttsData = ttsObject[index]
+
+    currentAudio = ttsData.audioUrl
 
     const questionElement = document.getElementById("question-text");
     questionElement.textContent = questionData.question;
-
-    choicesContainer.innerHTML = '';
     
     const qNum = document.getElementById("question-number-display");
     qNum.textContent = `Question ${index + 1} of ${questionObject.length}`;
 
-    const choiceLetters = ['A', 'B', 'C', 'D']; 
-    
-    questionData.choices.forEach((choiceText, i) => {
-        const choiceBox = document.createElement('div');
-        choiceBox.className = 'choice-box';
+    const choiceA = document.getElementById('choice-a')
+    const choiceB = document.getElementById('choice-b')
+    const choiceC = document.getElementById('choice-c')
 
-        const choiceLabel = document.createElement('label');
-        choiceLabel.className = 'choice-label';
+    console.log(choiceA)
 
-        const answerRadioButton = document.createElement("input");
-        answerRadioButton.type = "radio";
-        answerRadioButton.name = "preview_answer"; 
-        answerRadioButton.value = choiceLetters[i].toLowerCase(); 
-        
-        if (userAnswers[index] === answerRadioButton.value) {
-            answerRadioButton.checked = true;
-        }
+    choiceA.textContent = questionData.choices[0] || "";
+    choiceB.textContent = questionData.choices[1] || "";
+    choiceC.textContent = questionData.choices[2] || "";
 
-        const choiceLetter = document.createElement('p');
-        choiceLetter.className = 'choice-letter';
-        choiceLetter.textContent = choiceLetters[i] + ".";
-        
-        const choiceContent = document.createElement('span');
-        choiceContent.className = 'choice-text';
-        choiceContent.textContent = choiceText; 
-        
+    const radioA = document.getElementById('answer-a');
+    const radioB = document.getElementById('answer-b');
+    const radioC = document.getElementById('answer-c');
 
-        choiceLabel.append(answerRadioButton, choiceLetter, choiceContent);
-        choiceBox.appendChild(choiceLabel);
-        choicesContainer.appendChild(choiceBox);
-    });
+    if (radioA) radioA.checked = (userAnswers[index] === 'a');
+    if (radioB) radioB.checked = (userAnswers[index] === 'b');
+    if (radioC) radioC.checked = (userAnswers[index] === 'c');
     
     currentQuestion = index;
     previousButton.disabled = (currentQuestion === 0);
     nextButton.disabled = (currentQuestion === questionObject.length - 1);
 
     updateNavigationButtons();
+    setupRadioListeners();
 }
 
-function showFinalScore() {
+async function showFinalScore() {
     const showAnswer = document.querySelector('tbody');
 
     questionContainer.style.display = 'none';
@@ -211,17 +263,17 @@ function showFinalScore() {
     buttonContainer.appendChild(finishButton)
     buttonContainer.style.justifyContent = 'flex-end'
 
-    if(sessionStorage.getItem("role") === "student"){
+    if(await decrypt(sessionStorage.getItem("role")) === "student"){
         
         finishButton.addEventListener("click" , async () => {
             const formData = new FormData()
             
-            formData.append("student_id", sessionStorage.getItem("id"))
-            formData.append("content_id", sessionStorage.getItem("currentContentId"))
+            formData.append("answer", JSON.stringify(userAnswers))
+            formData.append("attempt_id", await decrypt(sessionStorage.getItem("currentAttemptId")))
             formData.append("score", finalScore)
             
-            const response = await fetch('/attempt', {
-                method: "POST",
+            const response = await fetch('/finish_attempt', {
+                method: "PATCH",
                 body: formData
             })
             
@@ -232,8 +284,9 @@ function showFinalScore() {
                     sessionStorage.removeItem('questions')
                     sessionStorage.removeItem('currentContentId')
                     sessionStorage.removeItem('currentActivityTitle')
+                    sessionStorage.removeItem('currentAttemptId')
+                    sessionStorage.removeItem('ttsObjects')
                     sessionStorage.removeItem("userAnswers")
-                    console.log("Success")
                     window.location.href = '/student_dashboard';
                 }
                 else{
@@ -247,8 +300,9 @@ function showFinalScore() {
 
 
     }
-    else if(sessionStorage.getItem("role") === "teacher"){
+    else if(await decrypt(sessionStorage.getItem("role")) === "teacher"){
         sessionStorage.removeItem('questions')
+        sessionStorage.removeItem('ttsObjects')
         sessionStorage.removeItem('currentActivityTitle')
         sessionStorage.removeItem('userAnswers')
 

@@ -1,5 +1,5 @@
-// === KID-DO-READS MAIN SCRIPT ===
 import Notification from './modules/Notification.js';
+import { encrypt, decrypt } from './modules/SessionHandling.js'
 
 const profileButton = document.getElementById("profile-button");
 const logOutButton = document.getElementById('log-out-button');
@@ -10,17 +10,15 @@ const studentInfo = document.getElementById('student-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
 let isInMainSection = false;
 
-const id = sessionStorage.getItem("id");
+const id = await decrypt(sessionStorage.getItem("id"));
 const notification = new Notification();
 
 // === LOGOUT BUTTON ===
 logOutButton.addEventListener('click', () => {
-    localStorage.clear();
     sessionStorage.clear();
     window.location.href = '/logout';
 });
 
-// === FIXED DROPDOWN FUNCTIONALITY (ACTIVITIES + ASSESSMENTS) ===
 (() => {
     const activityNav = document.getElementById('activities-record-button');
     const assessmentNav = document.getElementById('assessments-record-button');
@@ -91,12 +89,11 @@ profileButton.addEventListener('click', studentProfile);
 window.addEventListener('resize', moveStudentInfo);
 
 document.addEventListener("DOMContentLoaded", async function() {
-    await showContent(1);
+    await showContent(0);
     await showUserInfo();
 });
 
-// === STUDENT PROFILE MODAL ===
-function studentProfile() {
+async function studentProfile() {
     const profileBackground = document.createElement('div');
     const profileContainer = document.createElement('div');
     const profileHeader = document.createElement('nav');
@@ -127,17 +124,17 @@ function studentProfile() {
 
     const studentImage = document.createElement('img');
     studentImage.classList.add('learner-photo');
-    studentImage.src = sessionStorage.getItem('image') || defaultProfilePicture;
+    studentImage.src = await decrypt(sessionStorage.getItem('image'));
     studentImage.alt = "Learner Photo";
 
     const learnerDetails = document.createElement('div');
     learnerDetails.classList.add('learner-details');
 
     const studentName = document.createElement('h3');
-    studentName.textContent = sessionStorage.getItem('fullName');
+    studentName.textContent = await decrypt(sessionStorage.getItem('fullName'));
 
     const studentId = document.createElement('p');
-    studentId.textContent = "Learner ID: " + (sessionStorage.getItem('id') || "N/A");
+    studentId.textContent = "Learner ID: " + await decrypt( (sessionStorage.getItem('id')) || "N/A");
 
     learnerDetails.append(studentName, studentId);
     cardBody.append(studentImage, learnerDetails);
@@ -217,6 +214,7 @@ async function showContent(contentTypeNum) {
                     data.teacher_name,
                     data.content_title,
                     data.content_json,
+                    data.tts_json,
                     data.content_type,
                     data.isHidden,
                     "Activity"
@@ -231,19 +229,22 @@ async function showContent(contentTypeNum) {
     }
 }
 
-function addContent(content_id, teacher_name, content_title, content_details, content_type, content_hidden, category_type) {
+function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, content_hidden, category_type) {
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const teacherName = document.createElement("p");
-    const categoryType = document.createElement("p")
+    const contentType = document.createElement("p")
+    const categoryType = document.createElement("p");
     newContent.classList.add("content");
     activityName.classList.add("activity-name");
     teacherName.classList.add("teacher-name");
+    contentType.classList.add("category-type")
     categoryType.classList.add("category-type");
     activityName.innerHTML = content_title;
     teacherName.innerHTML = teacher_name;
+    contentType.innerHTML = getContentName(content_type)
     categoryType.innerHTML = category_type;
-    newContent.append(activityName, teacherName, categoryType);
+    newContent.append(activityName, teacherName, categoryType, contentType);
 
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add("button-container");
@@ -260,14 +261,152 @@ function addContent(content_id, teacher_name, content_title, content_details, co
 
     newContent.style.display = content_hidden ? 'none' : 'flex';
 
-    playActivityButton.addEventListener('click', () => {
+    playActivityButton.addEventListener('click', async () => {
         sessionStorage.setItem("currentActivityTitle", content_title);
-        sessionStorage.setItem("currentContentId", content_id);
+        sessionStorage.setItem("currentContentId", await encrypt(content_id));
         sessionStorage.setItem("questions", JSON.stringify(content_details));
-        answerPageTo(content_type);
+        sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
+
+        const formData = new FormData()
+        
+        formData.append("student_id", id)
+        formData.append("content_id", await decrypt(sessionStorage.getItem("currentContentId")))
+        
+        const response = await fetch('/attempt', {
+            method: "POST",
+            body: formData
+        })
+        
+        const result = await response.json()
+
+        try{
+            if (response.ok && result.status){
+                if(result.hasExistingAnswer){   
+                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type)
+
+                }
+                else{
+                    sessionStorage.setItem("userAnswers", JSON.stringify({}))
+                    sessionStorage.setItem("currentAttemptId", await encrypt(result.attemptId))
+                    answerPageTo(content_type);
+                }
+            }
+            else{
+                console.log(result.message)
+            }
+        }
+        catch (error){
+            console.log(error)
+        }
     });
 
+    checkProgressButton.addEventListener('click', async () => {
+        const url = `/attempts/activities/students/${id}/${content_id}/filter/0`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (response.ok && result.status){
+            result.attemptScores.forEach(attempt => {
+                displayAttemptScores(attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date));
+            });
+        }
+    })
     displayContents.appendChild(newContent);
+
+    function hasUnfinishedAttemptContainer(answer, attempt_id, type){
+        const unfinishedAttemptContainer = document.createElement('div')
+        const unfinishedAttemptWrapper = document.createElement('div')
+        const statement = document.createElement('p')
+        const buttonContainer = document.createElement('div')
+        const resumeButton = document.createElement('button')
+        const closeButton = document.createElement('button')
+
+        unfinishedAttemptContainer.setAttribute('id', 'unfinished-attempt-container')
+        unfinishedAttemptWrapper.setAttribute('id', 'unfinished-attempt-wrapper')
+
+        statement.textContent = "Uh Oh! An unfinished and saved activity detected! Please finish it!"
+
+        resumeButton.textContent = "Resume Activity"
+        closeButton.textContent = "Resume Later"
+
+        buttonContainer.append(resumeButton, closeButton)
+
+        unfinishedAttemptWrapper.appendChild(statement)
+        unfinishedAttemptWrapper.appendChild(buttonContainer)
+
+        unfinishedAttemptContainer.appendChild(unfinishedAttemptWrapper)
+
+        resumeButton.addEventListener('click', async () => {
+            const formData = new FormData();
+            formData.append("attempt_id", attempt_id);
+            
+            const response = await fetch('/resume_attempt', {
+                method: "PATCH",
+                body: formData
+            });
+
+            const result = await response.json()
+
+            if (response.ok && result.status){
+
+                sessionStorage.setItem("userAnswers", JSON.stringify(answer))
+                sessionStorage.setItem("currentAttemptId", await encrypt(attempt_id))
+                answerPageTo(type)
+            }
+            else{
+                console.log(result.message)
+            }
+        })
+
+        closeButton.addEventListener('click', () => {
+            unfinishedAttemptContainer.remove()
+        })
+
+        document.body.appendChild(unfinishedAttemptContainer)
+    }
+
+}
+
+function displayAttemptScores(counted_attempts, score, status, date) {
+    console.log("Attempt: " + counted_attempts)
+    console.log("Score: " + score)
+    console.log("Status: " + status)
+    console.log("Date: " + date)
+}
+
+function getContentName(type){
+    switch(type){
+        case 1:
+            return 'Pronunciation: Word Audio Match'
+        case 2:
+            return 'Phonemic Awareness: Listen & Choose'
+        case 3:
+            return 'Word Recognition: Sound-Alike Match'
+        case 4:
+            return 'Word Recognition: Meaning Maker?'
+        case 5:
+            return 'Reading Comprehension: What Happens Next?'
+        case 6: 
+            return 'Reading Comprehension: Picture + Clues'
+    }
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString + '+08:00');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    
+    return `${month} ${day}, ${year} ${hours}:${minutes} ${ampm}`;
 }
 
 // === USER INFO ===
@@ -277,21 +416,21 @@ async function showUserInfo() {
     const result = await response.json();
     try {
         if (response.ok && result.status) {
-            sessionStorage.setItem("fullName", result.data[0].fullName);
+            sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
             const studentName = document.getElementById('student_name');
             const studentPicture = document.getElementById('student_picture');
-            studentName.textContent = sessionStorage.getItem("fullName");
+            studentName.textContent = await decrypt(sessionStorage.getItem("fullName"));
             if (result.data[0].image) {
-                sessionStorage.setItem("image", result.data[0].image);
-                studentPicture.src = sessionStorage.getItem("image");
+                sessionStorage.setItem("image", await encrypt(result.data[0].image));
+                studentPicture.src = await decrypt(sessionStorage.getItem("image"));
             } else {
-                sessionStorage.setItem("image", defaultProfilePicture);
-                studentPicture.src = sessionStorage.getItem("image");
+                sessionStorage.setItem("image", await encrypt(defaultProfilePicture));
+                studentPicture.src = await decrypt(sessionStorage.getItem("image"));
             }
             
             // REVISION: Store badge from backend or set test badge
             // TEMPORARY: Using test badge for now
-           sessionStorage.setItem("badge", "../static/images/badge.PNG");
+            sessionStorage.setItem("badge", "../static/images/badge.PNG");
             
             // FUTURE: Replace above line with this when backend is ready:
             // if (result.data[0].badge) {
@@ -314,11 +453,20 @@ function answerPageTo(url) {
         case 1:
             window.location.href = '/word_audio_match_answer';
             break;
-        case 'Phonemic Awareness: Listen & Choose':
-        case 'Word Recognition: Sound-Alike Match':
-        case 'Word Recognition: Meaning Maker':
-        case 'Reading Comprehension: What Happens Next?':
-        case 'Reading Comprehension: Picture + Clues':
+        case 2:
+            window.location.href = '/listen_and_choose_answer';
+            break;
+        case 3:
+            window.location.href = '/sound_alike_match_answer';
+            break;
+        case 4:
+            window.location.href = '/meaning_maker_answer';
+            break;
+        case 5:
+            window.location.href = '/what_happens_next_answer';
+            break;
+        case 6:
+            window.location.href = '/picture_clues_answer';
             break;
     }
 }
@@ -350,7 +498,7 @@ moveStudentInfo();
             showContent(parseInt(item.dataset.action))
 
             // Update the label dynamically
-            sectionLabel.textContent = `${navType} – ${clickedName}`;
+            sectionLabel.textContent = parseInt(item.dataset.action) !== 0 ? `${navType} – ${clickedName}` : 'Select an Activity or Assessment';
 
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
@@ -368,7 +516,7 @@ moveStudentInfo();
             //add showAssessments() to be created
 
             // Update the label dynamically
-            sectionLabel.textContent = `${navType} – ${clickedName}`;
+            sectionLabel.textContent = parseInt(item.dataset.action) !== 0 ? `${navType} – ${clickedName}` : "Select an Activity or Assessment";
 
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));

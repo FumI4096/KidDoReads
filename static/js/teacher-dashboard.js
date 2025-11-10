@@ -1,6 +1,7 @@
 import Notification from './modules/Notification.js'
 import NavigationManager from './modules/NavigationManager.js';
 import NAVIGATION_LEVELS from './modules/NavigationLevels.js';
+import { encrypt, decrypt } from './modules/SessionHandling.js'
 
 const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
@@ -16,7 +17,7 @@ const notification = new Notification();
 let isInMainSection = false;
 
 
-const id = sessionStorage.getItem("id")
+const id = await decrypt(sessionStorage.getItem("id"))
 
 
 logOutButton.addEventListener('click', () => {
@@ -167,9 +168,9 @@ function createContent(){
             if (response.ok && result.status){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
-                sessionStorage.setItem("currentActivityId", result.content_id)
+                sessionStorage.setItem("currentActivityId", await encrypt(result.content_id))
                 sessionStorage.setItem("contentType", JSON.stringify(setContentType(parseInt(selectContent.value))))
-                await insertTtsId(sessionStorage.getItem("currentActivityId"))
+                await insertTtsId(await decrypt(sessionStorage.getItem("currentActivityId")))
                 editGamePageTo(parseInt(selectContent.value))
             }
             else{
@@ -203,7 +204,7 @@ async function insertTtsId(id){
 
     try{
         if (response.ok && result.status){
-            sessionStorage.setItem("currentTtsId", result.ttsId)
+            sessionStorage.setItem("currentTtsId", await encrypt(result.ttsId))
             console.log(result.message)
         }
         else{
@@ -301,19 +302,19 @@ async function showUserInfo(){
 
     try{
         if (response.ok && result.status){
-            sessionStorage.setItem("fullName", result.data[0].fullName);
+            sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
 
             const teacherName = document.getElementById('teacher_name')
             const teacherPicture = document.getElementById('teacher_picture')
 
-            teacherName.textContent = sessionStorage.getItem("fullName")
+            teacherName.textContent = await decrypt(sessionStorage.getItem("fullName"))
             if (result.data[0].image){
-                sessionStorage.setItem("image", result.data[0].image)
-                teacherPicture.src = sessionStorage.getItem("image")
+                sessionStorage.setItem("image", await encrypt(result.data[0].image))
+                teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
             else{
-                sessionStorage.setItem("image", defaultProfilePicture)
-                teacherPicture.src = sessionStorage.getItem("image")
+                sessionStorage.setItem("image", await encrypt(defaultProfilePicture))
+                teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
 
         }
@@ -328,7 +329,8 @@ async function showUserInfo(){
     }
 }
 
-function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
+async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
+    const encryptedContentId = await encrypt(content_id)
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
@@ -442,8 +444,8 @@ function addContent(content_container, content_id, content_title, content_detail
             sessionStorage.setItem("questions", "[]")
             sessionStorage.setItem("ttsInputs", "[]")
         }
-        sessionStorage.setItem("currentActivityId", content_id)
-        sessionStorage.setItem("currentTtsId", content_id)
+        sessionStorage.setItem("currentActivityId", encryptedContentId)
+        sessionStorage.setItem("currentTtsId", encryptedContentId)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
         sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
@@ -455,7 +457,6 @@ function addContent(content_container, content_id, content_title, content_detail
             sessionStorage.setItem("questions", JSON.stringify(content_details))
             sessionStorage.setItem("ttsInputs", JSON.stringify(tts_json))
             sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
-            sessionStorage.setItem("currentTtsId", content_id)
             sessionStorage.setItem("currentActivityTitle", content_title)
             previewGamePageTo(content_type)
         }
@@ -510,7 +511,7 @@ function previewGamePageTo(url){
         case 5:
             window.location.href = '/what_happens_next_answer';
             break;
-            case 6:
+        case 6:
             window.location.href = '/picture_clues_answer';
             break;
     }
@@ -631,16 +632,19 @@ function getAttemptScoreHeaderRow(){
     const attemptScoreHeaderRow = document.createElement('tr')
     const countAttemptHeader = document.createElement('th')
     const scoreAttemptHeader = document.createElement('th')
+    const statusAttemptHeader = document.createElement('th')
     const dateHeader = document.createElement('th')
 
     attemptScoreHeaderRow.setAttribute('id', 'attempt-score-header-row')
 
     countAttemptHeader.textContent = 'Attempt Count'
     scoreAttemptHeader.textContent = 'Score'
+    statusAttemptHeader.textContent = 'Status'
     dateHeader.textContent = 'Attempt Submitted Date'
 
     attemptScoreHeaderRow.appendChild(countAttemptHeader)
     attemptScoreHeaderRow.appendChild(scoreAttemptHeader)
+    attemptScoreHeaderRow.appendChild(statusAttemptHeader)
     attemptScoreHeaderRow.appendChild(dateHeader)
 
     return attemptScoreHeaderRow
@@ -1160,7 +1164,7 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
         try {
             if (response.ok && result.status) {
                 result.attemptScores.forEach(attempt => {
-                    displayAttemptScores(table_body, attempt.attempt_count, attempt.score, formatDate(attempt.date));
+                    displayAttemptScores(table_body, attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date));
                 });
             }
         } catch (error) {
@@ -1182,20 +1186,23 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
  * 
  */
 
-function displayAttemptScores(table_body, counted_attempts, score, date) {
+function displayAttemptScores(table_body, counted_attempts, score, status, date) {
     const attemptScoreDataRow = document.createElement('tr');
     const countAttemptRow = document.createElement('td');
     const scoreAttemptRow = document.createElement('td');
+    const statusAttemptRow = document.createElement('td')
     const dateRow = document.createElement('td');
 
     attemptScoreDataRow.classList.add('attempt-score-data-row');
 
     countAttemptRow.textContent = counted_attempts;
     scoreAttemptRow.textContent = score;
+    statusAttemptRow.textContent = status
     dateRow.textContent = date;
 
     attemptScoreDataRow.appendChild(countAttemptRow);
     attemptScoreDataRow.appendChild(scoreAttemptRow);
+    attemptScoreDataRow.appendChild(statusAttemptRow);
     attemptScoreDataRow.appendChild(dateRow);
 
     table_body.appendChild(attemptScoreDataRow);
@@ -1331,7 +1338,7 @@ async function conversationStructure(){
         userContainer.classList.add('user-message-container')
         botContainer.classList.add('bot-message-container')
         const userImage = document.createElement('img')
-        userImage.src = sessionStorage.getItem("image")
+        userImage.src = await decrypt(sessionStorage.getItem("image"))
         userImage.alt = "user_image"
         const userMessageStatement = document.createElement('p')
         userMessageStatement.textContent = userMessage

@@ -248,52 +248,46 @@ main > section{
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: 'Regular-Poppins';
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-height: 100%;
+    overflow-y: auto;
+
+    & > thead{
+        background: var(--primary-accent-color-1);
+        color: var(--white-text);
+        font-family: 'Regular-Poppins';
+        text-align: center;
+
+        & > tr > th{
+
+            padding: 1rem;
+            font-size: 0.95rem;
+        }
+
+    }
 
     & > tbody{
         & > tr {
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+            &:nth-child(even){
+                background-color: #efefef;
+            }
             & > .link:hover {
+                background-color: #e0e0e0;
                 text-decoration: underline;
                 cursor: pointer;
+            }
+            & > td{
+                text-align: center;
             }
         }
     }
 }
 /* === PROGRESS TABLE DESIGN (Black & White base) === */
-
-#progress-table {
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 10px;
-    overflow: hidden;
-    font-family: 'Regular-Poppins';
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-#progress-table thead {
-    background: var(--primary-accent-color-1);
-    color: var(--white-text);
-    font-family: 'Regular-Poppins';
-    text-align: center;
-}
-
-#progress-table thead th {
-    padding: 1rem;
-    font-size: 0.95rem;
-}
-
-#progress-table tbody tr {
-    background-color: #f9f9f9;
-    transition: background-color 0.3s ease;
-}
-
-#progress-table tbody tr:nth-child(even) {
-    background-color: #efefef;
-}
-
-#progress-table tbody tr:hover {
-    background-color: #e0e0e0;
-    cursor: pointer;
-}
 
 #progress-table td {
     padding: 1rem;
