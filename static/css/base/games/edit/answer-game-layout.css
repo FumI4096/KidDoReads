@@ -1,0 +1,265 @@
+@import "../../variables.css";
+
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: 'Regular-Poppins';
+}
+
+html, body{
+    height: 100%;
+    width: 100%;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 14rem;
+    gap: 1.5rem;
+    background-color: #f5f5f5;
+}
+
+#category-display{
+    font-family: "Italic-Poppins";
+    font-style: italic;
+}
+
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.header-left {
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+.header-center {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000;
+}
+
+.header-right button {
+    background: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header-right button:hover {
+    background: #f9fafb;
+}
+
+/* Choices Container */
+.choices-container{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin: 0 auto 3rem;
+    max-width: 1200px;
+    padding: 0 2rem;
+}
+
+.choice-box:nth-child(3) {
+    grid-column: 1 / -1;
+    max-width: 600px;
+    justify-self: center;
+}
+
+.choice-box{
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: flex-start;
+    background: #b8bec9;
+    border-radius: 100px;
+    border: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 450px;
+}
+
+.choice-box:hover{
+    background: #9ca3af;
+}
+
+.choice-box.selected,
+.choice-box:active,
+.choice-box:focus {
+    background: #6b7280;
+}
+
+/* If using input radio checked state */
+.choice-box:has(input[type="radio"]:checked) {
+    background: #6b7280;
+}
+
+.choice-label{
+    display: flex;
+    gap: 1rem;            
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    font-size: 1.05rem;
+    color: white;
+    width: 100%;
+    padding: 1.5rem 2.5rem;
+}
+
+.choice-letter {
+    font-weight: 700;
+    font-size: 1.15rem;
+    min-width: 24px;
+    text-align: center;
+}
+
+.choice-text {
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* Hide all radio inputs completely */
+.choice-box input[type="radio"],
+.choice-label input[type="radio"],
+.choices-container input[type="radio"] {
+    display: none !important;
+}
+
+/* Button Container */
+#button-container{
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.nav-button {
+    background: #d1d5db;
+    color: #374151;
+    border: none;
+    padding: 0.8rem 2.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+    background: #b8bec9;
+}
+
+.nav-button.primary {
+    background: #6b7280;
+    color: white;
+}
+
+.nav-button.primary:hover {
+    background: #4b5563;
+}
+
+/* TTS Speaker Button Styling */
+#tts-speaker-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #374151;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+#tts-speaker-button:hover {
+    background: #d1d5db;
+}
+
+#tts-speaker-button img {
+    width: 18px;
+    height: 18px;
+}
+
+/* Update question container to use flexbox for better layout */
+.question-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    background: white;
+    border-radius: 0.5rem;
+    padding: 4rem 3rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e5e5;
+    margin-bottom: 2rem;
+    min-height: 250px;
+}
+
+.question-container .question {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #000;
+    text-align: center;
+}
+
+/* Fix body layout to ensure buttons stay at bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 14rem;
+    gap: 1.5rem;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+/* Header button styling - Exit Preview/Exit Activity */
+.header-right button,
+#to-dashboard-page-button {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header-right button:hover,
+#to-dashboard-page-button:hover {
+    background: #4b5563;
+}
+
+/* Update button styling to match your design */
+#previous-button,
+#next-button,
+#submit-button {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 0.6rem 2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#previous-button:hover,
+#next-button:hover,
+#submit-button:hover {
+    background: #4b5563;
+}
