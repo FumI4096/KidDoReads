@@ -36,3 +36,16 @@ export async function checkAssessmentAttemptsByStudentID(student_id){
         console.log(result.message)
     }
 }
+
+export async function checkPerfectScoresByStudentID(student_id){
+    const url = `/achievement/perfect_scores/${student_id}`
+
+    const response = await fetch(url)
+    const result = await response.json()
+    if (response.ok && result.status){
+        console.log("ASSESSMENT ACHIEVEMENT DETECTED")
+    }
+    else{
+        console.log(result.message)
+    }
+}

@@ -287,6 +287,7 @@ async function showFinalScore() {
                     await checkAttemptsByStudentID(studentId)
                     await checkActivityAttemptsByStudentID(studentId)
                     await checkAssessmentAttemptsByStudentID(studentId)
+                    await checkPerfectScoresByStudentID(studentId)
                     sessionStorage.removeItem('questions')
                     sessionStorage.removeItem('currentContentId')
                     sessionStorage.removeItem('currentActivityTitle')

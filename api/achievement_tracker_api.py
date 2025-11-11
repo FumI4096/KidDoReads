@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from modules.utils import get_db
-from modules.achievement import checkCount, firstFinishedGame
+from modules.achievement import checkCount, firstFinishedGame, checkPerfectScoreCount
 import json
 
 achievement_bp = Blueprint('achievement_bp', __name__)
@@ -87,6 +87,42 @@ def assessment_attempt_achievement(student_id):
         
         if status and firstFinishedGame(row, achievementStatus):
             insertStatus, message = db.insert_achievement_for_student(student_id, 2)
+            
+            print(message)
+            
+            if insertStatus:
+                return jsonify({"status": True, "message": message})
+            else:
+                return jsonify({"status": False, "message": message})
+        else:
+            print("Achievement not yet achieved")
+            return jsonify({"status": False, "message": "No Achievement yet in Assessment"})
+            
+            
+
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+
+@achievement_bp.route('/achievement/perfect_scores/<int:student_id>', methods=['GET'])
+def assessment_attempt_achievement(student_id):
+    try:
+        db = get_db()
+        
+        status, count = db.get_perfect_scores(student_id) 
+        
+        print("Count:", count)
+        
+        countStatus, achievement_id = checkPerfectScoreCount(count)
+        
+        achievementStatus = db.has_achievement(student_id, achievement_id)
+    
+        if achievementStatus:
+            return jsonify({"status": False, "message": "Achievement already exists"})
+        
+        
+        
+        if status and countStatus:
+            insertStatus, message = db.insert_achievement_for_student(student_id, achievement_id)
             
             print(message)
             
