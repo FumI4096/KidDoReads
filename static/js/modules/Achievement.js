@@ -43,7 +43,7 @@ export async function checkPerfectScoresByStudentID(student_id){
     const response = await fetch(url)
     const result = await response.json()
     if (response.ok && result.status){
-        console.log("ASSESSMENT ACHIEVEMENT DETECTED")
+        console.log("PERFECT SCORE ACHIEVEMENT DETECTED")
     }
     else{
         console.log(result.message)
