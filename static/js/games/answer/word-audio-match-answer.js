@@ -287,13 +287,13 @@ async function showFinalScore() {
                     await checkAttemptsByStudentID(studentId)
                     await checkActivityAttemptsByStudentID(studentId)
                     await checkAssessmentAttemptsByStudentID(studentId)
-                    // sessionStorage.removeItem('questions')
-                    // sessionStorage.removeItem('currentContentId')
-                    // sessionStorage.removeItem('currentActivityTitle')
-                    // sessionStorage.removeItem('currentAttemptId')
-                    // sessionStorage.removeItem('ttsObjects')
-                    // sessionStorage.removeItem("userAnswers")
-                    // window.location.href = '/student_dashboard';
+                    sessionStorage.removeItem('questions')
+                    sessionStorage.removeItem('currentContentId')
+                    sessionStorage.removeItem('currentActivityTitle')
+                    sessionStorage.removeItem('currentAttemptId')
+                    sessionStorage.removeItem('ttsObjects')
+                    sessionStorage.removeItem("userAnswers")
+                    window.location.href = '/student_dashboard';
                 }
                 else{
                     console.log(result.message)
