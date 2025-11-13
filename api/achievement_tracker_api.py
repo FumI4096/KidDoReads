@@ -104,7 +104,7 @@ def assessment_attempt_achievement(student_id):
         return jsonify({"status": False, "message": str(e)})
 
 @achievement_bp.route('/achievement/perfect_scores/<int:student_id>', methods=['GET'])
-def assessment_attempt_achievement(student_id):
+def perfect_score_achievement(student_id):
     try:
         db = get_db()
         

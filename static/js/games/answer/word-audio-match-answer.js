@@ -1,6 +1,6 @@
 import { decrypt } from '../../modules/SessionHandling.js'
 import MascotPlaySpeech from '../../modules/MascotPlaySpeech.js'
-import { checkAttemptsByStudentID, checkActivityAttemptsByStudentID, checkAssessmentAttemptsByStudentID } from '../../modules/Achievement.js';
+import { checkAttemptsByStudentID, checkActivityAttemptsByStudentID, checkAssessmentAttemptsByStudentID, checkPerfectScoresByStudentID } from '../../modules/Achievement.js';
 
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
