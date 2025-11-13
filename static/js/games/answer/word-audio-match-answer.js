@@ -1,5 +1,7 @@
 import { decrypt } from '../../modules/SessionHandling.js'
 import MascotPlaySpeech from '../../modules/MascotPlaySpeech.js'
+import { checkAttemptsByStudentID, checkActivityAttemptsByStudentID, checkAssessmentAttemptsByStudentID, checkPerfectScoresByStudentID } from '../../modules/Achievement.js';
+
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
 const questionContainer = document.querySelector(".question-container");
@@ -17,6 +19,7 @@ let ttsObject = JSON.parse(sessionStorage.getItem("ttsObjects") || "[]");
 let currentAudio = ""
 
 const ttsMascotPlay = new MascotPlaySpeech()
+const studentId = await decrypt(sessionStorage.getItem("id"))
 
 let currentQuestion = 0;
 let finalScore = 0; 
@@ -281,6 +284,10 @@ async function showFinalScore() {
     
             try{
                 if (response.ok && result.status){
+                    await checkAttemptsByStudentID(studentId)
+                    await checkActivityAttemptsByStudentID(studentId)
+                    await checkAssessmentAttemptsByStudentID(studentId)
+                    await checkPerfectScoresByStudentID(studentId)
                     sessionStorage.removeItem('questions')
                     sessionStorage.removeItem('currentContentId')
                     sessionStorage.removeItem('currentActivityTitle')

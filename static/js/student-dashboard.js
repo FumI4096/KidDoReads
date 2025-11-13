@@ -281,7 +281,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 
         try{
             if (response.ok && result.status){
-                if(result.hasExistingAnswer){   
+                if(result.hasUnfinished){   
                     hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type)
 
                 }
@@ -305,11 +305,58 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         const response = await fetch(url);
         const result = await response.json();
 
+        const attemptScoreContainer = document.createElement('div') //background
+        const attemptScoreWrapper = document.createElement('div')
+        attemptScoreWrapper.setAttribute('id', 'attempt-score-wrapper')
+        const attemptScoreTable = document.createElement('table') //container itself
+        const closeButton = document.createElement('img')
+        closeButton.src = '../../static/images/close-outline.svg'
+        closeButton.alt = "close-button"
+
+        closeButton.addEventListener('click', () => {
+            attemptScoreContainer.remove()
+        })
+
+        attemptScoreWrapper.appendChild(closeButton)
+        const attemptScoreTableHeader = document.createElement('thead')
+        const attemptScoreTableBody = document.createElement('tbody')
+
+        const attemptScoreTableHeaderRow = document.createElement('tr')
+
+        const attemptScoreTableHeaderAttemptNo = document.createElement('th')
+        const attemptScoreTableHeaderScore = document.createElement('th')
+        const attemptScoreTableHeaderStatus = document.createElement('th')
+        const attemptScoreTableHeaderDate = document.createElement('th')
+        attemptScoreTableHeaderAttemptNo.textContent = "Attempt No."
+        attemptScoreTableHeaderScore.textContent = "Score"
+        attemptScoreTableHeaderStatus.textContent = "Status"
+        attemptScoreTableHeaderDate.textContent = "Finished At"
+        
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderAttemptNo)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderScore)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderStatus)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderDate)
+
+        attemptScoreTableHeader.appendChild(attemptScoreTableHeaderRow)
+
+        attemptScoreContainer.setAttribute('id', 'attempt-score-container')
+        attemptScoreTable.setAttribute('id', 'attempt-score-table')
+
+        attemptScoreTable.appendChild(attemptScoreTableHeader)
+
+        
         if (response.ok && result.status){
             result.attemptScores.forEach(attempt => {
-                displayAttemptScores(attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date));
+                attemptScoreTableBody.appendChild(displayAttemptScores(attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date)));
             });
+            attemptScoreTable.appendChild(attemptScoreTableBody)
+            attemptScoreWrapper.appendChild(attemptScoreTable)
+            attemptScoreContainer.appendChild(attemptScoreWrapper)
+
+            document.body.appendChild(attemptScoreContainer)
         }
+
+
     })
     displayContents.appendChild(newContent);
 
@@ -367,11 +414,36 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 
 }
 
-function displayAttemptScores(counted_attempts, score, status, date) {
-    console.log("Attempt: " + counted_attempts)
-    console.log("Score: " + score)
-    console.log("Status: " + status)
-    console.log("Date: " + date)
+function displayAttemptScores(attempt_no, score, status, date) {
+    // Create table row
+    const tableRow = document.createElement('tr')
+    tableRow.className = 'attempt-score-row'
+
+    // Create table cells
+    const attemptNumberCell = document.createElement('td')
+    attemptNumberCell.className = 'attempt-number'
+    attemptNumberCell.textContent = `#${attempt_no}`
+
+    const scoreCell = document.createElement('td')
+    scoreCell.className = 'score'
+    scoreCell.textContent = score
+
+    const statusCell = document.createElement('td')
+    statusCell.className = `status-${status.toLowerCase()}`
+    statusCell.textContent = status
+
+    const dateCell = document.createElement('td')
+    dateCell.className = 'date'
+    dateCell.textContent = date
+
+    // Append all cells to the row
+    tableRow.appendChild(attemptNumberCell)
+    tableRow.appendChild(scoreCell)
+    tableRow.appendChild(statusCell)
+    tableRow.appendChild(dateCell)
+
+    // Append row to the table (which is outside)
+    return tableRow
 }
 
 function getContentName(type){

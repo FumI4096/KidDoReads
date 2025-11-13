@@ -11,7 +11,7 @@ def game_attempt():
         content_id = request.form.get('content_id')
         student_id = request.form.get('student_id')
         
-        status, message, attempt_id, student_answer = db.get_or_create_attempt(content_id, student_id)
+        status, message, attempt_id, student_answer, has_unfinished = db.get_or_create_attempt(content_id, student_id)
         
         student_answer_str = student_answer or "{}"
         student_answer_json = json.loads(student_answer_str)
@@ -20,7 +20,7 @@ def game_attempt():
         
         if status:
             print(student_answer_json)
-            return jsonify({"status": status, "message": message, "attemptId": attempt_id, "studentAnswer": student_answer_json, "hasExistingAnswer": bool(student_answer_json)})
+            return jsonify({"status": status, "message": message, "attemptId": attempt_id, "studentAnswer": student_answer_json, "hasUnfinished": has_unfinished})
         else:
             return jsonify({"status": status, "message": message})
         
