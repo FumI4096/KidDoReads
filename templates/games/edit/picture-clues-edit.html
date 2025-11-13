@@ -8,24 +8,43 @@
 </head>
 <body>
     <header>
+        <div id="category-and-game-type">
+            <span id="category-display"></span>
+            <span id="content-display"></span>
+        </div>
         <p id="display-activity-title"></p>
         <button id="to-teacher-page-button">Save and Exit</button>
     </header>
     <section class="picture-container">
         <!--CHANGES HERE-->
-        <div id="image-box-1">
-            <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
+        <label for="image-input" id="image-display">
+            <input type="file" id="image-input" name="image" accept="image/png, image/jpeg">
+            <span>Upload Image</span>
+            <img src={{url_for('static', filename='images/upload_photo.svg')}}/>
+        </label>
+    </section>
+    <section class="input-section">
+        <div class="number-badge">2</div>
+        <div class="input-content">
+            <label for="question">
+                <strong>Sentence:</strong>
+            </label>
+            <input type="text" id="question" name="question" placeholder="&quot;Which word means 'play again'?&quot;">
         </div>
-        <div id="image-box-2">
-            <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
-        </div>
-        <div id="image-box-3">
-            <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
+        <div class="tts-buttons">
+            <button class="tts-button convert-button" id="tts-convert-button">
+                <img src="{{url_for('static', filename='images/tts-icons/tts-convert-icon.svg')}}" alt="convert-icon"/>
+                <span>Convert Text-to-Speech</span>
+            </button>
+            <button class="tts-button play-button" id="tts-play-button">
+                <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+                <span>Play Text-to-Speech</span>
+            </button>
         </div>
     </section>
     <section id="main-sheet-container">
         <section id="choices-container">
-            <p><strong>Instruction:</strong> Choose the correct spelling from the choices you see.</p>
+            <p><strong>Instruction:</strong> Look at the picture and read the sentence. What do you think is happening? Choose the best answer!</p>
             <div id="choice-box-container">
                 <div class="choice-box">
                     <p class="choice-letter">A.</p>
@@ -65,6 +84,6 @@
 
     </div>
     
-    <script src=" {{url_for('static', filename='js/games/edit/picture-clues-edit.js')}}"></script>
+    <script type="module" src=" {{url_for('static', filename='js/games/edit/picture-clues-edit.js')}}"></script>
 </body>
 </html>
