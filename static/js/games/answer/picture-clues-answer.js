@@ -1,3 +1,5 @@
+import { decrypt } from '../../modules/SessionHandling.js'
+import MascotPlaySpeech from '../../modules/MascotPlaySpeech.js'
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
 const questionContainer = document.querySelector(".question-container");
@@ -6,10 +8,15 @@ const buttonContainer = document.getElementById('button-container')
 const nextButton = document.getElementById("next-button");
 const previousButton = document.getElementById("previous-button");
 const answerContainer = document.getElementById("answer-container"); 
+const ttsSpeakerButton = document.getElementById('tts-speaker-button')
 
 answerContainer.style.display = 'none'
 
 let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]"); /* revert from keyword -> question */
+let ttsObject = JSON.parse(sessionStorage.getItem("ttsObjects") || "[]");
+let currentAudio = ""
+
+const ttsMascotPlay = new MascotPlaySpeech()
 
 let currentQuestion = 0;
 let finalScore = 0; 
@@ -76,6 +83,11 @@ else if(await decrypt(sessionStorage.getItem("role")) === "teacher"){
 
 }
 
+ttsSpeakerButton.addEventListener('click', () => {
+    playAudio(currentAudio)
+})
+
+
 submitButton.addEventListener("click", () => {
     saveAndNavigate(2);
 })
@@ -96,6 +108,10 @@ function setupRadioListeners() {
             console.log(`Saved answer for question ${currentQuestion}:`, radio.value);
         });
     });
+}
+
+function playAudio(audio){
+    ttsMascotPlay.play(audio)
 }
 
 function saveAndNavigate(direction) {
@@ -152,46 +168,33 @@ function loadQuestion(index) {
     }
 
     const questionData = questionObject[index];
+    const ttsData = ttsObject[index]
+
+    currentAudio = ttsData.audioUrl
 
     const questionElement = document.getElementById("question-text");
     questionElement.textContent = questionData.question;
-
-    choicesContainer.innerHTML = '';
     
     const qNum = document.getElementById("question-number-display");
     qNum.textContent = `Question ${index + 1} of ${questionObject.length}`;
 
-    const choiceLetters = ['A', 'B', 'C', 'D']; 
-    
-    questionData.choices.forEach((choiceText, i) => {
-        const choiceBox = document.createElement('div');
-        choiceBox.className = 'choice-box';
+    const choiceA = document.getElementById('choice-a')
+    const choiceB = document.getElementById('choice-b')
+    const choiceC = document.getElementById('choice-c')
 
-        const choiceLabel = document.createElement('label');
-        choiceLabel.className = 'choice-label';
+    console.log(choiceA)
 
-        const answerRadioButton = document.createElement("input");
-        answerRadioButton.type = "radio";
-        answerRadioButton.name = "preview_answer"; 
-        answerRadioButton.value = choiceLetters[i].toLowerCase(); 
-        
-        if (userAnswers[index] === answerRadioButton.value) {
-            answerRadioButton.checked = true;
-        }
+    choiceA.textContent = questionData.choices[0] || "";
+    choiceB.textContent = questionData.choices[1] || "";
+    choiceC.textContent = questionData.choices[2] || "";
 
-        const choiceLetter = document.createElement('p');
-        choiceLetter.className = 'choice-letter';
-        choiceLetter.textContent = choiceLetters[i] + ".";
-        
-        const choiceContent = document.createElement('span');
-        choiceContent.className = 'choice-text';
-        choiceContent.textContent = choiceText; 
-        
+    const radioA = document.getElementById('answer-a');
+    const radioB = document.getElementById('answer-b');
+    const radioC = document.getElementById('answer-c');
 
-        choiceLabel.append(answerRadioButton, choiceLetter, choiceContent);
-        choiceBox.appendChild(choiceLabel);
-        choicesContainer.appendChild(choiceBox);
-    });
+    if (radioA) radioA.checked = (userAnswers[index] === 'a');
+    if (radioB) radioB.checked = (userAnswers[index] === 'b');
+    if (radioC) radioC.checked = (userAnswers[index] === 'c');
     
     currentQuestion = index;
     previousButton.disabled = (currentQuestion === 0);
@@ -300,6 +303,7 @@ function showFinalScore() {
     }
     else if(sessionStorage.getItem("role") === "teacher"){
         sessionStorage.removeItem('questions')
+        sessionStorage.removeItem('ttsObjects')
         sessionStorage.removeItem('currentActivityTitle')
         sessionStorage.removeItem('userAnswers')
 
