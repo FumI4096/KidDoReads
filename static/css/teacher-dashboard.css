@@ -327,9 +327,20 @@ main > section{
 }
 
 #chatbot-button{
+    border-radius: 50%;
+    border: none;
+    background-color: var(--primary-color-200);
+    padding: 1rem;
+    overflow: hidden;
     position: fixed;
     right: 10%;
     bottom: 10%;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
 }
 
 #conversation-container{
