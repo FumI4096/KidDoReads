@@ -67,7 +67,7 @@ main > section{
             font-family: 'Regular-Poppins';
             font-size: 0.9rem;
             color: var(--primary-color-700);
-            transition: transform 0.2s ease;
+            transition: var(--hover-scale);
         }
 
         & > .delete-button{
@@ -95,11 +95,11 @@ main > section{
 
         }
     button:hover {
-        transform: scale(1.05);
+        transform: scale(var(--hover-scale));
     }
 
     .delete-button:hover{
-        transform: scale(1.05);
+        transform: scale(var(--hover-scale));
     }
     
     }
@@ -336,10 +336,10 @@ main > section{
     right: 10%;
     bottom: 10%;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: var(--hover-scale);
 
     &:hover {
-        transform: scale(1.05);
+        transform: scale(var(--hover-scale));
     }
 }
 
