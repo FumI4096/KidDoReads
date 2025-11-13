@@ -78,6 +78,7 @@ main > aside{
         gap: 1.5rem;
         font-family: 'Light-Poppins';
         cursor: pointer;
+        transition: transform 0.2s ease;
 
         & > span {
             font-size: 1rem;
@@ -88,16 +89,6 @@ main > aside{
         & > img{
             inline-size: 20px;
         }
-    }
-
-    & > ul > .navigator{
-        color: var(--accent-color-almond);
-    }
-
-    & > ul > .navigator:hover{ 
-        color: var(--white-text);
-        border: 2px solid var(--accent-color-almond);
-        border-radius: 100px;
     }
 
     & > ul > li:nth-last-child(2){
@@ -127,6 +118,10 @@ main > aside{
     & > ul > #log-out-button > span{
         color: white;
 
+    }
+
+    li:hover{
+        transform: scale(1.05);
     }
 }
 
