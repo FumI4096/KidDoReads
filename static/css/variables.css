@@ -31,11 +31,14 @@
     --white-text: white;
     --black-text: black;
     --grey-text: #47443F;
+    --button-disabled-text: #838281;
 
     /* Other Variables */
     --box-shadow-1: 0 3px 5px rgba(0, 0, 0, 0.3);
     --dim-background: rgba(0, 0, 0, 0.6);
     --layout-padding: 0.7rem 5rem;
+    --hover-scale: 1.05;
+    --transition-ease: transform 0.3s ease;
 }
 
 /* Animations */
