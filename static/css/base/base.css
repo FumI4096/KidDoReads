@@ -103,7 +103,6 @@ main > aside{
     & > ul > #log-out-button:hover::before{
         content: "";
         width: 100%;
-        background-color: white;
         height: 2px;
         position: absolute;
         bottom: 0;
