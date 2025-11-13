@@ -116,6 +116,7 @@ main > section{
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     & > span {
         font-family: 'Regular-Poppins';
@@ -124,6 +125,10 @@ main > section{
 
     &:active{
         background-color: var(--danger-hover-color);
+    }
+
+    &:hover {
+        animation: bounceMultiple 0.6s ease;
     }
 }
 
