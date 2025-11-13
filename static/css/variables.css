@@ -38,6 +38,17 @@
     --layout-padding: 0.7rem 5rem;
 }
 
+/* Animations */
+
+@keyframes bounceMultiple {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-10px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(-5px); }
+}
+
+/* Fonts */
+
 @font-face {
     font-family: 'Regular-Poppins';
     src: url('../fonts/Poppins-Regular.ttf') format('truetype');
