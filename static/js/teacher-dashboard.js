@@ -3,6 +3,8 @@ import NavigationManager from './modules/NavigationManager.js';
 import NAVIGATION_LEVELS from './modules/NavigationLevels.js';
 import { encrypt, decrypt } from './modules/SessionHandling.js'
 
+import { loginSuccess } from './modules/RedirectNotification.js'
+
 const activityNavButton = document.getElementById("activities-record-button");
 const assessmentNavButton = document.getElementById("assessments-record-button");
 const progressNavButton = document.getElementById("progress-record-button");
@@ -1454,6 +1456,6 @@ async function conversationStructure(){
     }
 }
 
-
+loginSuccess()
 
 moveStudentInfo();

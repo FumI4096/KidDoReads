@@ -1,6 +1,8 @@
 import Notification from './modules/Notification.js';
 import { encrypt, decrypt } from './modules/SessionHandling.js'
 
+import { loginSuccess, notifyStudentAchievement } from './modules/RedirectNotification.js'
+
 const profileButton = document.getElementById("profile-button");
 const logOutButton = document.getElementById('log-out-button');
 const mainAside = document.querySelector('main > aside');
@@ -596,3 +598,8 @@ moveStudentInfo();
         });
     });
 })();
+
+loginSuccess()
+
+notifyStudentAchievement(sessionStorage.getItem("achivementId"))
+

@@ -45,6 +45,7 @@ loginForm.addEventListener('submit', async (e) => {
                 const encryptedRole = await encrypt(result.role)
                 sessionStorage.setItem("role", encryptedRole)
             }
+            sessionStorage.setItem("loginSuccess", true);
             window.location.href = result.redirectUrl
         }
         else{
