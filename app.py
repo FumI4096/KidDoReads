@@ -18,6 +18,7 @@ from routes.answer_games_routes import answer_games_bp
 load_dotenv()
 
 UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_IMAGE_PICTURE_CLUES = 'static/upload_picture_clues'
 UPLOAD_AUDIO = 'static/upload_audio'
 os.makedirs(UPLOAD_AUDIO, exist_ok=True)
 db = Database()
@@ -26,6 +27,7 @@ app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['TTS_KEY'] = os.getenv('TTS_API_KEY')
 app.config['CHATBOT_KEY'] = os.getenv('CHATBOT_API_KEY')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_IMAGE_PICTURE_CLUES'] = UPLOAD_IMAGE_PICTURE_CLUES
 app.config['UPLOAD_AUDIO'] = UPLOAD_AUDIO
 app.config["PROPAGATE_EXCEPTIONS"] = False
 app.config['db'] = db

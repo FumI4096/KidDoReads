@@ -7,7 +7,7 @@
     font-family: 'Regular-Poppins';
 }
 
-html, body{
+html{
     height: 100%;
     width: 100%;
 }
@@ -25,27 +25,55 @@ body{
 }
 header{
     display: flex;
+    align-items: center;
     justify-content: space-between;
-}
+    align-items: flex-end;
 
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+    }
+}
 .picture-container{
     display: flex;
     height: 600px;
     width: 100%;
-    justify-content: space-between;
     gap: 1rem;
-
-    & > div{
-        background-color: #000;
-        border-radius: 12px;
-        flex: 1
-
-    }
+    padding: 0 10rem;
 
     & > label{
-        height: 100px;
-        width: 200px;
+        height: 100%;
+        width: 100%;
+        background-color: #e0e0e0;
+        border-radius: 12px;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 0.5rem;
+        cursor: pointer;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        & > span {
+            font-size: 1.2rem;
+        }
+
+        & > input{
+            display: none;
+        }
+
+
     }
+
+    & > label:hover{
+        background-color: #c9c9c9;
+    }
+
+
 
     & > div  > label > img{
         height: 100px;
@@ -60,9 +88,14 @@ header{
     align-items: center;
     gap: 2rem;
     background: white;
-    padding: 2rem 3rem;
+    padding: 1rem 2rem;
     border-radius: 1rem;
     box-shadow: var(--box-shadow-1);
+
+    & > .input-content-full{
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 .number-badge{
