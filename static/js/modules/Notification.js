@@ -10,7 +10,7 @@ class Notification{
     #displayTime = 2000;
     #notificationTimeouts = new WeakMap();
 
-    notify(statement, type){
+    notify(statement, type, title = null, image = null){
         if (typeof(statement) == "string"){
             const existingNotifications = this.#container ? this.#container.querySelectorAll(".notification-box") : [];
             for (const notification of existingNotifications) {
@@ -29,6 +29,9 @@ class Notification{
             }
             else if (type === "success"){
                 notificationBox = this.success(statement)
+            }
+            else if (type === "achievement"){
+                notificationBox = this.achievement(title, statement, image)
             }
 
             this.#container.append(notificationBox);
@@ -106,6 +109,39 @@ class Notification{
 
         return successBox
 
+    }
+
+    achievement(title, statement, image){
+        const achievementBox = this.notificationStructure()
+        achievementBox.style.border = 'solid 2px rgba(255, 153, 0, 1)'
+        achievementBox.style.backgroundColor = 'rgba(255, 250, 240, 1)'
+        
+        const achievementImageElement = document.createElement('img')
+        const achievementImage = image
+
+        achievementImageElement.alt = "Achievement Icon";
+        achievementImageElement.src = achievementImage;
+        achievementImageElement.style.height = "90%";
+
+        const textContainer = document.createElement('div')
+        textContainer.style.display = 'flex'
+        textContainer.style.flexDirection = 'column'
+        textContainer.style.gap = '0.25rem'
+
+        const titleElement = document.createElement('strong')
+        titleElement.textContent = title
+        titleElement.style.fontSize = '1rem'
+        titleElement.style.color = 'rgba(255, 153, 0, 1)'
+
+        const statementElement = document.createElement('span')
+        statementElement.textContent = statement
+        statementElement.style.fontSize = '0.85rem'
+        statementElement.style.color = 'rgba(0, 0, 0, 0.7)'
+
+        textContainer.append(titleElement, statementElement)
+        achievementBox.append(achievementImageElement, textContainer)
+
+        return achievementBox
     }
 }
 
