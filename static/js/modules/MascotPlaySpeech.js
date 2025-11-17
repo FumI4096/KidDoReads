@@ -2,24 +2,34 @@ class MascotPlaySpeech{
 
     #currentAudio = null
     #progressInterval = null
-    #currentButton = null
+    #currentImageElement = null;
+    #imageOne = null;
+    #imageTwo = null;
 
-    play(audioFile) {
+    play(audioFile, imageElement, imageOne, imageTwo) {
         if (this.#currentAudio) {
             this.#stop();
         }
+        
+        // Store the image element and both images for this playback
+        this.#currentImageElement = imageElement;
+        this.#imageOne = imageOne;
+        this.#imageTwo = imageTwo;
+        
+        // Switch to playing image
+        imageElement.src = imageOne;
+        
+        // Add bounce animation
+        imageElement.style.animation = 'none';
+        // Trigger reflow to restart animation
+        void imageElement.offsetWidth;
+        imageElement.style.animation = 'bounce 0.6s ease-in-out';
         
         this.#currentAudio = new Audio(audioFile);
         
         this.#currentAudio.addEventListener('loadedmetadata', () => {
             const duration = this.#currentAudio.duration;
             const startTime = Date.now();
-            
-            // Reset button style if provided
-            // if (this.#currentButton) {
-            //     this.#currentButton.style.background = 'linear-gradient(to right, #4CAF50 0%, #ccc 0%)';
-            // }
-            // will be changed into images, hence the name mascot
             
             // Start playing
             this.#currentAudio.play();
@@ -32,10 +42,7 @@ class MascotPlaySpeech{
                 if (progress >= 100) {
                     this.#stop();
                 }
-                // } else if (this.#currentButton) {
-                //     this.#currentButton.style.background = `linear-gradient(to right, #4CAF50 ${progress}%, #ccc ${progress}%)`;
-                // }
-            }, 50); // Update every 50ms
+            }, 50);
         });
         
         this.#currentAudio.onended = () => {
@@ -58,6 +65,13 @@ class MascotPlaySpeech{
         if (this.#progressInterval) {
             clearInterval(this.#progressInterval);
             this.#progressInterval = null;
+        }
+        
+        // Revert to default image when stopped
+        if (this.#currentImageElement && this.#imageTwo) {
+            this.#currentImageElement.src = this.#imageTwo;
+            // Remove animation when stopped
+            this.#currentImageElement.style.animation = 'none';
         }
     }
 
