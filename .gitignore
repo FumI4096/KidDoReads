@@ -3,5 +3,6 @@ venv/
 database/
 static/uploads
 static/upload_audio
+static/upload_picture_clues
 
 .env
