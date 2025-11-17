@@ -37,6 +37,14 @@ header{
     color: #374151;
 }
 
+#image-display{
+    height: 100%;
+    width: 100%;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .header-center {
     font-size: 1.1rem;
     font-weight: 600;
@@ -194,6 +202,7 @@ header{
 /* Update question container to use flexbox for better layout */
 .question-container {
     display: flex;
+    height: 100%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
