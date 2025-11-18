@@ -7,7 +7,7 @@ class Notification{
     #width = '350px'
     #height = '80px'
     #padding = '10px 20px 10px 20px'
-    #displayTime = 2000;
+    #displayTime = 2500;
     #notificationTimeouts = new WeakMap();
 
     notify(statement, type, title = null, image = null){
@@ -38,7 +38,8 @@ class Notification{
 
             const allNotifications  = this.#container.querySelectorAll(".notification-box")
 
-            const delay = allNotifications.length * this.#displayTime
+            const displayTime = type === "achievement" ? 5000 : this.#displayTime;
+            const delay = allNotifications.length * displayTime
 
             const timeoutId = setTimeout(() => {
                 notificationBox.remove();
