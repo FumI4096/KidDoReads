@@ -5,6 +5,28 @@ import json
 
 achievement_bp = Blueprint('achievement_bp', __name__)
 
+@achievement_bp.route('/achievements/<int:student_id>', methods=['GET'])
+def get_achievement(student_id):
+    try:
+        db = get_db()
+        status, achievements = db.get_achievements_by_student(student_id)
+        
+        rows = achievements
+        achievementResult = []
+        for row in rows:
+            achievementResult.append({
+                "achievement_id": row[0],
+                "earned_at": row[1],
+            })
+        
+        if status:
+            return jsonify({"status": True, "achievements": achievementResult})
+        else:
+            return jsonify({"status": False, "message": "Failed to retrieve achievements"})
+
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+
 @achievement_bp.route('/achievement/finished_attempts/<int:student_id>', methods=['GET'])
 def attempt_achievement(student_id):
     try:
