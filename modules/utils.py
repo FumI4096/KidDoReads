@@ -15,6 +15,20 @@ def role_required(*roles):
         return decorated_function
     return decorator
 
+def tts_prompt(contentType):
+    if contentType == 1:
+        return f"Pronounce this single word very clearly and naturally. Speak it exactly as it is pronounced in English"
+    elif contentType == 2:
+        return f"Pronounce the following word slowly, breaking it into syllables. Pause clearly between each syllable. Do NOT add extra words"
+    # elif contentType == 3:
+    #     return f"Pronounce this single word very clearly and naturally. Speak it exactly as it is pronounced in English. Say only the word. Now say: {keyword}"
+    # elif contentType == 4:
+    #     return f"Pronounce the following word slowly, breaking it into syllables. Pause clearly between each syllable. Do NOT add extra words. Now say: {keyword}"
+    # elif contentType == 5:
+    #     return f"Pronounce this single word very clearly and naturally. Speak it exactly as it is pronounced in English. Say only the word. Now say: {keyword}"
+    # elif contentType == 6:
+    #     return f"Pronounce the following word slowly, breaking it into syllables. Pause clearly between each syllable. Do NOT add extra words. Now say: {keyword}"
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 

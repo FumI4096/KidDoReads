@@ -225,7 +225,7 @@ ttsConvertButton.addEventListener("click", async () => {
         }
         
         // Generate new speech
-        await keyWordTtsObj.generateSpeech(questionInput.value, ttsId.toString());
+        await keyWordTtsObj.generateSpeech(questionInput.value, ttsId.toString(), 2);
 
         originalQuestionText = questionInput.value.trim();
 

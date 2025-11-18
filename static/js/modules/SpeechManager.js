@@ -9,7 +9,7 @@ class SpeechManager{
     #progressInterval = null
     #currentButton = null
 
-    async generateSpeech(input, id){
+    async generateSpeech(input, id, content_type){
         try{
             const response = await fetch(this.#generateUrl, {
                 method: 'POST',
@@ -18,7 +18,8 @@ class SpeechManager{
                 },
                 body: JSON.stringify({
                     text: input,
-                    id: id
+                    id: id,
+                    content_type: content_type
                 })
             })
 

@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from openai import OpenAI
 import time
 import os
-from modules.utils import get_db, get_tts_key, get_upload_audio
+from modules.utils import get_db, get_tts_key, get_upload_audio, tts_prompt
 
 tts_bp = Blueprint('tts_bp', __name__)
 
@@ -38,11 +38,15 @@ def generate_speech():
         data = request.json
         text = data.get('text')
         ttsId = data.get('id')
+        content_type = data.get('content_type')
+        
+        final_prompt = tts_prompt(content_type)
         
         response = client.audio.speech.create(
-            model="tts-1",
-            voice="alloy", 
-            input=text
+            model="gpt-4o-mini-tts",
+            voice="onyx", 
+            input=text,
+            instructions=final_prompt
         )
         
         # Add timestamp to make filename unique
