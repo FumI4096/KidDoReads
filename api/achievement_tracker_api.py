@@ -29,7 +29,7 @@ def attempt_achievement(student_id):
             print(message)
             
             if insertStatus:
-                return jsonify({"status": True, "message": message, "achivementId": achievement_id})
+                return jsonify({"status": True, "message": message, "achievementId": achievement_id})
             else:
                 return jsonify({"status": False, "message": message})
         else:
@@ -127,7 +127,7 @@ def perfect_score_achievement(student_id):
             print(message)
             
             if insertStatus:
-                return jsonify({"status": True, "message": message, "achievement_id": achievement_id})
+                return jsonify({"status": True, "message": message, "achievementId": achievement_id})
             else:
                 return jsonify({"status": False, "message": message})
         else:
