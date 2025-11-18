@@ -26,8 +26,6 @@ const currentTitle = sessionStorage.getItem("currentActivityTitle")
 const categoryDisplay = document.getElementById("category-display")
 const contentDisplay = document.getElementById("content-display")
 
-const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
-
 const ttsConvertButton = document.getElementById('tts-convert-button')
 const ttsPlayButton = document.getElementById('tts-play-button')
 const imageInput = document.getElementById('image-input')
@@ -35,8 +33,8 @@ const imageDisplay = document.getElementById('image-display')
 const imageUploadSpan = imageDisplay.querySelector('span')
 const imageUploadIcon = imageDisplay.querySelector('img')
 
-categoryDisplay.textContent = storedTypes.category
-contentDisplay.textContent = storedTypes.content
+categoryDisplay.textContent = "Reading Comprehension"
+contentDisplay.textContent = "Picture + Clues"
 
 const notifObject = new Notification()
 const keyWordTtsObj = new SpeechManager()

@@ -28,8 +28,6 @@ const currentTitle = sessionStorage.getItem("currentActivityTitle")
 const categoryDisplay = document.getElementById("category-display")
 const contentDisplay = document.getElementById("content-display")
 
-const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
-
 const ttsConvertButton1 = document.getElementById('tts-convert-button-1')
 const ttsPlayButton1 = document.getElementById('tts-play-button-1')
 
@@ -40,8 +38,8 @@ const notifObject = new Notification()
 const keyWordTtsObj = new SpeechManager() // For keyword
 const sentenceTtsObj = new SpeechManager() // For sentence
 
-categoryDisplay.textContent = storedTypes.category
-contentDisplay.textContent = storedTypes.content
+categoryDisplay.textContent = "Word Recognition"
+contentDisplay.textContent = "Sound-Alike Match"
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
 

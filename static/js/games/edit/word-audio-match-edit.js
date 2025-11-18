@@ -25,13 +25,11 @@ const currentTitle = sessionStorage.getItem("currentActivityTitle")
 const categoryDisplay = document.getElementById("category-display")
 const contentDisplay = document.getElementById("content-display")
 
-const storedTypes = JSON.parse(sessionStorage.getItem("contentType"))
-
 const ttsConvertButton = document.getElementById('tts-convert-button-1')
 const ttsPlayButton = document.getElementById('tts-play-button-1')
 
-categoryDisplay.textContent = storedTypes.category
-contentDisplay.textContent = storedTypes.content
+categoryDisplay.textContent = "Pronunciation"
+contentDisplay.textContent = "Word Audio Match"
 
 const notifObject = new Notification()
 const keyWordTtsObj = new SpeechManager()
