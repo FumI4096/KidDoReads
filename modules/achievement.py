@@ -18,11 +18,11 @@ def firstFinishedGame(row, studentHasAchievement):
     
 def checkPerfectScoreCount(count):
     if count == 1:
-        return True, 12,
+        return True, 13,
     if count == 5:
         return True, 14,
     if count == 10:
-        return True, 14,
+        return True, 15,
     
     return False, count
     

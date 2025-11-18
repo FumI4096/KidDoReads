@@ -3,21 +3,21 @@ class MascotPlaySpeech{
     #currentAudio = null
     #progressInterval = null
     #currentImageElement = null;
-    #imageOne = null;
-    #imageTwo = null;
+    #defaultImage = null;
+    #afterButtonPressedImage = null;
 
-    play(audioFile, imageElement, imageOne, imageTwo) {
+    play(audioFile, imageElement, defaultImage, afterButtonPressedImage) {
         if (this.#currentAudio) {
             this.#stop();
         }
         
         // Store the image element and both images for this playback
         this.#currentImageElement = imageElement;
-        this.#imageOne = imageOne;
-        this.#imageTwo = imageTwo;
+        this.#defaultImage = defaultImage;
+        this.#afterButtonPressedImage = afterButtonPressedImage;
         
         // Switch to playing image
-        imageElement.src = imageOne;
+        imageElement.src = this.#afterButtonPressedImage;
         
         // Add bounce animation
         imageElement.style.animation = 'none';
@@ -68,8 +68,8 @@ class MascotPlaySpeech{
         }
         
         // Revert to default image when stopped
-        if (this.#currentImageElement && this.#imageTwo) {
-            this.#currentImageElement.src = this.#imageTwo;
+        if (this.#currentImageElement && this.#defaultImage) {
+            this.#currentImageElement.src = this.#defaultImage;
             // Remove animation when stopped
             this.#currentImageElement.style.animation = 'none';
         }

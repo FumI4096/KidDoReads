@@ -171,7 +171,6 @@ function createContent(){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("currentActivityId", await encrypt(result.content_id))
-                sessionStorage.setItem("contentType", JSON.stringify(setContentType(parseInt(selectContent.value))))
                 await insertTtsId(await decrypt(sessionStorage.getItem("currentActivityId")))
                 editGamePageTo(parseInt(selectContent.value))
             }
@@ -450,7 +449,6 @@ async function addContent(content_container, content_id, content_title, content_
         sessionStorage.setItem("currentTtsId", encryptedContentId)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
-        sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
         editGamePageTo(content_type)
     })
 
@@ -458,7 +456,6 @@ async function addContent(content_container, content_id, content_title, content_
         if (Object.keys(content_details).length >= 1){
             sessionStorage.setItem("questions", JSON.stringify(content_details))
             sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
-            sessionStorage.setItem("contentType", JSON.stringify(setContentType(content_type)))
             sessionStorage.setItem("currentActivityTitle", content_title)
             previewGamePageTo(content_type)
         }
@@ -519,52 +516,6 @@ function previewGamePageTo(url){
     }
 }
 
-function setContentType(type){
-    if (type === 1){
-        return {
-            category: "Pronunciation", 
-            content: "Word Audio Match"
-        }
-    }
-    else if (type === 2){
-        return {
-            category: "Phonemic Awareness", 
-            content: "Listen & Choose"
-
-        }
-        
-    }
-    else if (type === 3){
-        return {
-            category: "Word Recognition", 
-            content: "Sound-Alike Match"
-
-        }
-
-    }
-    else if (type === 4){
-        return {
-            category: "Word Recognition", 
-            content: "Meaning Maker"
-
-        }
-    }
-    else if (type === 5){
-        return {
-            category: "Reading Comprehension", 
-            content: "What Happens Next?"
-
-        }
-    }
-    else {
-        return {
-            category: "Reading Comprehension", 
-            content: "Picture + Clues"
-
-        }
-    }
-
-}
 
 // 1. Login as a teacher first
 // 2. Make a game first (Word Audio Match would be better if other games aren't yet working)
