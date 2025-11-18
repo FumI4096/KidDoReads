@@ -30,15 +30,21 @@
     /* Text Colors */
     --white-text: white;
     --black-text: black;
-    --grey-text: #47443F;
+    --grey-text: #6e6d6c;
     --button-disabled-text: #838281;
 
     /* Other Variables */
     --box-shadow-1: 0 3px 5px rgba(0, 0, 0, 0.3);
     --dim-background: rgba(0, 0, 0, 0.6);
     --layout-padding: 0.7rem 5rem;
+
+    /* Hover Effect - Scale */
     --hover-scale: 1.05;
     --transition-ease: transform 0.3s ease;
+
+    /* Hover Effect - Filter Brightness */
+    --transition-filter: filter 0.3s ease;
+    --filter-saturate-hover: saturate(2.0);
 }
 
 /* Animations */
