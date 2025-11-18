@@ -13,17 +13,22 @@ html, body{
 }
 
 body{
+    padding: 2.4rem 10rem;
+    background-image: url('../../../../images/light-olive-circle.svg'), url('../../../../images/dark-green-circle.svg');
+    background-position: -3% 100%, 100% 0%;
+    background-repeat: no-repeat, no-repeat;
+    background-color: var(--background);
     display: flex;
     flex-direction: column;
-    padding: 3rem 14rem;
-    gap: 1.5rem;
+    gap: 1rem;
+    position: relative;
 }
 
 /* HEADER SECTION */
 
 header{
     display: flex;
-    align-items: center;
+    align-items: end;
     justify-content: space-between;
 
     div {
@@ -31,39 +36,70 @@ header{
         flex-direction: column;
         align-items: left;
     }
+
+    button {
+        display: flex;
+        gap: 1rem;
+        padding: 0.4rem 1.5rem;
+        width: auto;
+        align-items: center;
+        border: none;
+        border-radius: 25px;
+        background-color: var(--accent-color-orange);
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    #category-display{
+        font-family: "Italic-Poppins";
+        font-style: italic;
+    }
+
+    #content-display {
+        font-size: 2.5rem;
+        font-family: 'Bold-Poppins';
+    }
 }
 
-#category-display{
-    font-family: "Italic-Poppins";
-    font-style: italic;
-}
-
-header #content-display {
-    font-size: 2.5rem;
-    font-family: 'Bold-Poppins';
-}
 
 /* BUTTON STYLES */
 
-#to-teacher-page-button, #previous-button, #save-button, #edit-button, #next-button {
+#previous-button, #save-button, #edit-button, #next-button {
     padding: 0.4rem 1.5rem;
     width: 10rem;
-    border: none;
+    border: 1 px solid black;
     border-radius: 25px;
-    background-color: grey;
-    color: white;
+    background-color: none;
+    color: var(--black-text);
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+}
+
+#save-button {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+}
+
+#edit-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+#to-teacher-page-button:hover, #previous-button:hover, #save-button:hover, #edit-button:hover, #next-button:hover{
+    filter: var(--filter-saturate-hover);
 }
 
 #to-teacher-page-button:disabled, #previous-button:disabled, #save-button:disabled, #edit-button:disabled, #next-button:disabled {
     background-color: rgb(214, 214, 214);
+    color: var(--button-disabled-text);
 }
 
 /* TTS Buttons */
 
-.tts-buttons{
+.tts-buttons {
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
@@ -72,11 +108,13 @@ header #content-display {
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 1rem;
         gap: 0.5rem;
         width: 100%;
         padding: 0.8rem 5rem;
         border: none;
         border-radius: 100px;
+        transition: var(--transition-ease);
 
         & > span {
             display: flex;
@@ -96,13 +134,34 @@ header #content-display {
         &:not(:disabled):hover{
             background-color: rgb(212, 212, 212);
             cursor: pointer;
-
+            transform: scale(var(--hover-scale));
         }
     }
-    /* & > #tts-convert-button > img{
-        filter: invert(100%);
-        inline-size: 23px;
-    } */
+
+    & > #tts-convert-button-1{
+
+        &:not(:disabled){
+            background-color: var(--primary-color);
+            color: var(--white-text);
+
+            & > img[alt="convert-icon"]{
+                filter: brightness(0) invert(1);
+            }
+        }
+    }
+
+    & > #tts-play-button-1{
+
+        &:not(:disabled){
+            background: none;
+            border: 1px solid var(--white-text);
+            color: var(--white-text);
+
+            & > img[alt="play-icon"]{
+                filter: invert(74%) sepia(93%) saturate(1400%) hue-rotate(359deg) brightness(101%) contrast(103%);
+            }
+        }
+    }
 }
 
 /* Input Sections */
@@ -125,7 +184,7 @@ textarea { /* passage input - multilines */
     display: flex;
     align-items: center;
     gap: 2rem;
-    background: white;
+    background: var(--accent-color-wood);
     padding: 2rem 3rem;
     border-radius: 1rem;
     box-shadow: var(--box-shadow-1);
@@ -134,7 +193,7 @@ textarea { /* passage input - multilines */
 .number-badge{ /* section number */
     font-size: 6rem;
     font-weight: 300;
-    color: #d3d3d3;
+    color: var(--secondary-color);
     line-height: 1;
     min-width: 80px;
     text-align: center;
@@ -149,6 +208,7 @@ textarea { /* passage input - multilines */
 
 .input-content label{
     font-size: 1.3rem;
+    color: var(--secondary-color);
     font-family: 'Bold-Poppins';
 }
 
@@ -158,7 +218,7 @@ textarea { /* passage input - multilines */
     outline: none;
     background: transparent;
     padding: 0.5rem 0;
-    color: #999;
+    color: var(--white-text);
 }
 
 .input-content input::placeholder{
@@ -194,14 +254,16 @@ textarea { /* passage input - multilines */
                 gap: 0.5rem;
                 justify-content: start;
                 align-items: center;
-                background-color: rgb(182, 182, 182);
+                background-color: var(--background);
+                border: 2px solid black;
                 height: auto;
                 padding: 1rem 1rem 1rem 4rem;
-                border-radius: 100px;
+                border-radius: 20px;
+                box-shadow: var(--box-shadow-1);
         
                 & > *{
                     font-size: 1.2rem;
-                    color: white
+                    color: var(--grey-text);
                 }
         
                 & > .choice{
@@ -211,10 +273,9 @@ textarea { /* passage input - multilines */
                     background: transparent;
         
                     &::placeholder{
-                        color: rgb(233, 233, 233);
+                        color: var(--grey-text);
                     }
                 }
-        
             }
         }
     }
