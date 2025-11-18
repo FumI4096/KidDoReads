@@ -144,43 +144,89 @@ async function studentProfile() {
 
     userContainer.append(card);
 
-    // REVISION: Retrieve badge from sessionStorage and validate it exists
-    // This checks if badge is not null, not the string 'null', and not empty
-    const badgeImage = sessionStorage.getItem('badge');
-    const hasBadge = badgeImage && badgeImage !== 'null' && badgeImage !== '';
 
-    // REVISION: Create the "Achievements & Badges" header
-    const badgesHeader = document.createElement('h4');
-    badgesHeader.textContent = 'Achievements & Badges';
-    badgesContainer.appendChild(badgesHeader);
+    const achievements = [
+        {id: 1, title: "First Step Hero", description: "Finished your first activity!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 2, title: "Brain Starter!", description: "Finished your first assessment!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 3, title: "Starter Star", description: "Finished 3 assessments and activities!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 4, title: "Learning Explorer", description: "Completed 5 assessments and activities!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 5, title: "Super Scholar!", description: "Completed 10 assessments and activities! Keep it up, Super Scholar!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 6, title: "Learning Legend!", description: "Completed 20 assessments and activities! You're now a true Learning Legend!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 7, title: "Sound & Spell Star!", description: "Completed the Word Audio Match Assessment!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 8, title: "Phonics Pro!", description: "Completed the Listen and Choose Assessment!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 9, title: "Wizard Knowledge!", description: "Completed the Meaning Maker Assessment!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 10, title: "The Detective!", description: "Completed the Sound-Alike Match Assessment!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 11, title: "Story Predictor!", description: "Completed the What Happens Next? Assessment!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 12, title: "Clue Finder!", description: "Completed the Picture + Clues Assessment!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 13, title: "Perfect Start!", description: "Achieved your 1st perfect score!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 14, title: "Perfect Streak!", description: "Achieved your 5th perfect score! — You're becoming a real master of learning — keep that streak going!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 15, title: "Perfect Pro!", description: "Achieved your 10th perfect score! You're a true learning champion", image: '../../../static/images/check.png', isAchieved: false}
+    ]
 
-    // REVISION: If badge exists, display it; otherwise show "no badges" message
-    if (hasBadge) {
-        // REVISION: Create container div with class 'badge-display' for styling
-        const badgeImgContainer = document.createElement('div');
-        badgeImgContainer.classList.add('badge-display');
-        
-        // REVISION: Create img element for the badge with class 'badge-image'
-        const badgeImg = document.createElement('img');
-        badgeImg.src = badgeImage; // Use the badge path from sessionStorage
-        badgeImg.alt = 'Achievement Badge';
-        badgeImg.classList.add('badge-image'); // This class will be styled in CSS
-        
-        // REVISION: Add error handler to log if badge image fails to load
-        // Useful for debugging incorrect paths or missing files
-        badgeImg.onerror = function() {
-            console.error('Failed to load badge image from:', this.src);
-        };
-        
-        // REVISION: Append badge image to container, then container to badges section
-        badgeImgContainer.appendChild(badgeImg);
-        badgesContainer.appendChild(badgeImgContainer);
-    } else {
-        // REVISION: If no badge exists, display a friendly message
-        const noBadgesMsg = document.createElement('p');
-        noBadgesMsg.textContent = 'No badges earned yet.';
-        badgesContainer.appendChild(noBadgesMsg);
+    const achievementUrl = `/achievements/${await decrypt(sessionStorage.getItem('id'))}`
+
+
+    const response = await fetch(achievementUrl)
+    const result = await response.json()
+    if (response.ok && result.status){
+        result.achievements.forEach(studentAchievement => {
+            const achievement = achievements.find(a => a.id === studentAchievement.achievement_id);
+            if (achievement) {
+                achievement.isAchieved = true;
+            }
+
+            console.log(achievements)
+        }); 
     }
+    else{
+        console.log(result.message)
+    }
+
+
+    achievements.forEach(achievement => {
+        const achievementCard = document.createElement('div');
+        achievementCard.classList.add('achievement-card');
+        
+        // Add locked/unlocked state class for styling
+        if (achievement.isAchieved) {
+            achievementCard.classList.add('unlocked');
+        } else {
+            achievementCard.classList.add('locked');
+        }
+
+        // REVISION: Create achievement image container
+        const achievementImgContainer = document.createElement('div');
+        achievementImgContainer.classList.add('achievement-icon');
+        
+        const achievementImg = document.createElement('img');
+        achievementImg.src = achievement.image;
+        achievementImg.alt = achievement.title;
+        
+        achievementImgContainer.appendChild(achievementImg);
+
+        // REVISION: Create achievement info container
+        const achievementInfo = document.createElement('div');
+        achievementInfo.classList.add('achievement-info');
+
+        const achievementTitle = document.createElement('h5');
+        achievementTitle.textContent = achievement.title;
+
+        const achievementDesc = document.createElement('p');
+        achievementDesc.textContent = achievement.description;
+
+        achievementInfo.append(achievementTitle, achievementDesc);
+
+        // REVISION: Create lock icon for locked achievements
+        if (!achievement.isAchieved) {
+            const lockIcon = document.createElement('div');
+            lockIcon.classList.add('lock-icon');
+            lockIcon.innerHTML = '🔒';
+            achievementCard.appendChild(lockIcon);
+        }
+
+        achievementCard.append(achievementImgContainer, achievementInfo);
+        badgesContainer.appendChild(achievementCard);
+    });
 
     informationContainer.append(userContainer, badgesContainer);
     profileContainer.append(profileHeader, informationContainer);
