@@ -601,5 +601,9 @@ moveStudentInfo();
 
 loginSuccess()
 
-notifyStudentAchievement(sessionStorage.getItem("achivementId"))
+const achievementIds = JSON.parse(sessionStorage.getItem("achievementIds")) || []
+for (const achievementId of achievementIds) {
+    notifyStudentAchievement(achievementId)
+}
+sessionStorage.removeItem("achievementIds")
 

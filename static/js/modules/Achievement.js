@@ -5,9 +5,7 @@ export async function checkAttemptsByStudentID(student_id){
     const result = await response.json()
     if (response.ok && result.status){
         console.log("ACHIEVEMENT DETECTED")
-
-        sessionStorage.setItem("achievementSuccess", true)
-        sessionStorage.setItem("achivementId", result.achievementId)
+        addAchievementId(result.achievementId)
     }
     else{
         console.log(result.message)
@@ -21,9 +19,7 @@ export async function checkActivityAttemptsByStudentID(student_id){
     const result = await response.json()
     if (response.ok && result.status){
         console.log("ACTIVITY ACHIEVEMENT DETECTED")
-
-        sessionStorage.setItem("achievementSuccess", true)
-        sessionStorage.setItem("achivementId", result.achievementId)
+        addAchievementId(result.achievementId)
     }
     else{
         console.log(result.message)
@@ -37,9 +33,7 @@ export async function checkAssessmentAttemptsByStudentID(student_id){
     const result = await response.json()
     if (response.ok && result.status){
         console.log("ASSESSMENT ACHIEVEMENT DETECTED")
-
-        sessionStorage.setItem("achievementSuccess", true)
-        sessionStorage.setItem("achivementId", result.achievementId)
+        addAchievementId(result.achievementId)
     }
     else{
         console.log(result.message)
@@ -53,11 +47,15 @@ export async function checkPerfectScoresByStudentID(student_id){
     const result = await response.json()
     if (response.ok && result.status){
         console.log("PERFECT SCORE ACHIEVEMENT DETECTED")
-        sessionStorage.setItem("achievementSuccess", true)
-        sessionStorage.setItem("achivementId", result.achievementId)
+        addAchievementId(result.achievementId)
     }
     else{
         console.log(result.message)
     }
 }
 
+function addAchievementId(achievementId){
+    const achievementIds = JSON.parse(sessionStorage.getItem("achievementIds")) || []
+    achievementIds.push(achievementId)
+    sessionStorage.setItem("achievementIds", JSON.stringify(achievementIds))
+}
