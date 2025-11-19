@@ -2,30 +2,31 @@ class MascotPlaySpeech{
 
     #currentAudio = null
     #progressInterval = null
-    #currentImageElement = null;
-    #defaultImage = null;
-    #afterButtonPressedImage = null;
+    // #currentImageElement = null;
+    // #defaultImage = null;
+    // #afterButtonPressedImage = null;
 
-    play(audioFile, imageElement, defaultImage, afterButtonPressedImage) {
+    play(audioFile) {
         if (this.#currentAudio) {
             this.#stop();
         }
         
         // Store the image element and both images for this playback
-        this.#currentImageElement = imageElement;
-        this.#defaultImage = defaultImage;
-        this.#afterButtonPressedImage = afterButtonPressedImage;
+        // this.#currentImageElement = imageElement;
+        // this.#defaultImage = defaultImage;
+        // this.#afterButtonPressedImage = afterButtonPressedImage;
         
         // Switch to playing image
-        imageElement.src = this.#afterButtonPressedImage;
+        // imageElement.src = this.#afterButtonPressedImage;
         
         // Add bounce animation
-        imageElement.style.animation = 'none';
+        // imageElement.style.animation = 'none';
         // Trigger reflow to restart animation
-        void imageElement.offsetWidth;
-        imageElement.style.animation = 'bounce 0.6s ease-in-out';
+        // void imageElement.offsetWidth;
+        // imageElement.style.animation = 'bounce 0.6s ease-in-out';
         
         this.#currentAudio = new Audio(audioFile);
+        console.log(this.#currentAudio);
         
         this.#currentAudio.addEventListener('loadedmetadata', () => {
             const duration = this.#currentAudio.duration;
@@ -68,11 +69,11 @@ class MascotPlaySpeech{
         }
         
         // Revert to default image when stopped
-        if (this.#currentImageElement && this.#defaultImage) {
-            this.#currentImageElement.src = this.#defaultImage;
-            // Remove animation when stopped
-            this.#currentImageElement.style.animation = 'none';
-        }
+        // if (this.#currentImageElement && this.#defaultImage) {
+        //     this.#currentImageElement.src = this.#defaultImage;
+        //     // Remove animation when stopped
+        //     this.#currentImageElement.style.animation = 'none';
+        // }
     }
 
 }
