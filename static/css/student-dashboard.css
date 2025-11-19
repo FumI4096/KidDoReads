@@ -398,30 +398,26 @@ main > section {
   background-color: #ff9233;
 }
 
-/* === FIXED RECTANGULAR ACTIVITY BOX LAYOUT === */
+/* === ACTIVITY BOX LAYOUT (TEACHER STYLE) === */
 #display-contents {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start; /* align from left */
-  align-items: flex-start;
-  gap: 16px;
-  padding: 10px 15px; /* tighter padding for better alignment */
-  margin-top: -5px; /* moves slightly up */
-  margin-left: -10px; /* moves slightly left */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
 }
 
-/* === FIXED MEDIUM RECTANGULAR BOX === */
+/* === ACTIVITY BOX DESIGN (TEACHER STYLE) === */
 .content {
-  flex: 0 0 240px; /* keeps consistent medium width without growing */
-  height: 150px;   /* medium height */
-  background: #ffffff;
-  border: 1.5px solid #ffb15c;
-  border-radius: 10px;
+  flex: 0 0 240px;
+  height: 200px;
+  background-color: var(--primary-color-200);
+  border: none;
+  border-radius: 20px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 12px 14px;
+  padding: 0.7rem 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -430,36 +426,50 @@ main > section {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
+.content .activity-type {
+  font-family: 'Light-Poppins';
+  font-size: 0.8rem;
+  color: var(--white-text);
+  margin-bottom: auto;
+}
+
 .content .activity-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 4px;
+  font-family: 'Bold-Poppins';
+  font-size: 1.3rem;
+  color: var(--white-text);
+  margin-bottom: 0.5rem;
 }
 
 .content .teacher-name {
+  font-family: 'Light-Poppins';
   font-size: 0.85rem;
-  color: #555;
+  color: var(--white-text);
+  margin-bottom: 0.5rem;
 }
 
 .content .button-container {
-  display: flex;
-  justify-content: space-between;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 0.3rem;
+  column-gap: 0.3rem;
   margin-top: auto;
 }
 
 .content .button-container button {
-  background: #ffb15c;
   border: none;
-  color: #fff;
-  font-weight: 500;
-  border-radius: 6px;
-  padding: 6px 10px;
+  height: 30px;
+  border-radius: 100px;
+  background: var(--accent-color-almond);
+  font-family: 'Regular-Poppins';
+  font-size: 0.9rem;
+  color: var(--primary-color-700);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .content .button-container button:hover {
+  transform: scale(1.05);
   background-color: #ff9233;
 }
 
