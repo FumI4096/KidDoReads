@@ -53,6 +53,11 @@ logOutButton.addEventListener('click', () => {
                 dropdownAssessment?.classList.remove('active');
                 arrowAssessment?.classList.remove('rotate');
                 assessmentItem?.classList.remove('active-nav');
+                activityItem?.style.setProperty('z-index', '1000');              // ADD THIS LINE
+                assessmentItem?.style.setProperty('pointer-events', 'none');    // ADD THIS LINE
+            } else {
+                activityItem?.style.removeProperty('z-index');                  // ADD THIS LINE
+                assessmentItem?.style.removeProperty('pointer-events');         // ADD THIS LINE
             }
             return;
         }
@@ -69,6 +74,11 @@ logOutButton.addEventListener('click', () => {
                 dropdownActivity?.classList.remove('active');
                 arrowActivity?.classList.remove('rotate');
                 activityItem?.classList.remove('active-nav');
+                assessmentItem?.style.setProperty('z-index', '1000');           // ADD THIS LINE
+                activityItem?.style.setProperty('pointer-events', 'none');      // ADD THIS LINE
+            } else {
+                assessmentItem?.style.removeProperty('z-index');                // ADD THIS LINE
+                activityItem?.style.removeProperty('pointer-events');           // ADD THIS LINE
             }
             return;
         }
@@ -82,6 +92,11 @@ logOutButton.addEventListener('click', () => {
             dropdownAssessment?.classList.remove('active');
             arrowAssessment?.classList.remove('rotate');
             assessmentItem?.classList.remove('active-nav');
+            
+            activityItem?.style.removeProperty('z-index');                      // ADD THIS LINE
+            assessmentItem?.style.removeProperty('z-index');                    // ADD THIS LINE
+            activityItem?.style.removeProperty('pointer-events');               // ADD THIS LINE
+            assessmentItem?.style.removeProperty('pointer-events');             // ADD THIS LINE
         }
     });
 })();

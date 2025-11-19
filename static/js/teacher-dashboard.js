@@ -1313,7 +1313,10 @@ async function conversationStructure(){
     closeConversationButton.src = '../../static/images/close-outline.svg'
     closeConversationButton.alt = 'close-button'
     closeConversationButton.addEventListener('click', () => {
-        conversationContainer.remove()
+        conversationContainer.classList.add('closing');
+        setTimeout(() => {
+            conversationContainer.remove();
+        }, 300);
     })
 
     headerConversationContainer.append(chatbotName, closeConversationButton)
@@ -1340,6 +1343,11 @@ async function conversationStructure(){
 
     sendMessageContainer.append(inputMessage, sendButton)
     
+    // ADDED: Helper function to scroll to bottom
+    function scrollToBottom() {
+        conversationMessagesContainer.scrollTop = conversationMessagesContainer.scrollHeight;
+    }
+    
     try{
         const getHistory = `/chat-history/${id}`
         const response = await fetch(getHistory)
@@ -1357,8 +1365,8 @@ async function conversationStructure(){
                 console.log("test")
                 const botImage = document.createElement('img')
                 const botMessageStatement = document.createElement('p')
-                botImage.src = ""
-                botImage.alt = "image_bot"
+                botImage.src = "static/images/monmon.png"
+                botImage.alt = "monmon"
                 botMessageStatement.textContent = 'Hello! How may I assist you today?'
 
                 botMessageContainer.append(botImage, botMessageStatement)
@@ -1371,6 +1379,9 @@ async function conversationStructure(){
             }
 
             conversationContainer.append(conversationMessagesContainer, sendMessageContainer)
+            
+            // ADDED: Scroll to bottom after loading history
+            setTimeout(scrollToBottom, 100);
 
         }
         else{
@@ -1397,7 +1408,7 @@ async function conversationStructure(){
         userMessageStatement.textContent = userMessage
         
         const botImage = document.createElement('img')
-        botImage.src = ""
+        botImage.src = "static/images/monmon.png" // ADDED: Fixed bot image source
         botImage.alt = "bot_image"
         const botMessageStatement = document.createElement('p')
         botMessageStatement.textContent = botMessage
@@ -1440,13 +1451,13 @@ async function conversationStructure(){
 
                 const botImage = document.createElement('img')
                 const botMessageStatement = document.createElement('p')
-                botImage.src = ""
-                botImage.alt = "image_bot"
+                botImage.src = "static/images/monmon.png"
+                botImage.alt = "monmon"
                 botMessageStatement.textContent = botMessage
 
                 const userImage = document.createElement('img')
                 const userMessageStatement = document.createElement('p')
-                userImage.src = sessionStorage.getItem("image")
+                userImage.src = await decrypt(sessionStorage.getItem("image")) // ADDED: Fixed to use await decrypt
                 userImage.alt = "image_user"
                 userMessageStatement.textContent = message
 
@@ -1454,6 +1465,9 @@ async function conversationStructure(){
                 userMessageContainer.append(userMessageStatement, userImage)
 
                 conversationMessagesContainer.append(userMessageContainer, botMessageContainer)
+                
+                // ADDED: Scroll to bottom after sending message
+                scrollToBottom();
 
                 const newConversation = {
                     userMessage: message,
