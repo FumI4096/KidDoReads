@@ -277,6 +277,31 @@ async function showContent(contentTypeNum) {
     }
 }
 
+async function showAssessment(contentTypeNum) {
+    const url = `/students/assessments/${contentTypeNum}`;
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
+        if (response.ok && result.status) {
+            result.data.forEach(data => {
+                addAssessment(
+                    data.assessment_id,
+                    data.assessment_title,
+                    data.assessment_json,
+                    data.tts_json,
+                    data.assessment_type,
+                    "Activity"
+                );
+            });
+        } else {
+            notification.notify("Contents can't be retrieved at the moment. Please try again.", "error");
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        notification.notify("Network error. Please check your connection and try again.", "error");
+    }
+}
+
 function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, content_hidden, category_type) {
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
@@ -313,6 +338,185 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         sessionStorage.setItem("currentActivityTitle", content_title);
         sessionStorage.setItem("currentContentId", await encrypt(content_id));
         sessionStorage.setItem("questions", JSON.stringify(content_details));
+        sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
+
+        const formData = new FormData()
+        
+        formData.append("student_id", id)
+        formData.append("content_id", await decrypt(sessionStorage.getItem("currentContentId")))
+        
+        const response = await fetch('/attempt', {
+            method: "POST",
+            body: formData
+        })
+        
+        const result = await response.json()
+
+        try{
+            if (response.ok && result.status){
+                if(result.hasUnfinished){   
+                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type)
+
+                }
+                else{
+                    sessionStorage.setItem("userAnswers", JSON.stringify({}))
+                    sessionStorage.setItem("currentAttemptId", await encrypt(result.attemptId))
+                    answerPageTo(content_type);
+                }
+            }
+            else{
+                console.log(result.message)
+            }
+        }
+        catch (error){
+            console.log(error)
+        }
+    });
+
+    checkProgressButton.addEventListener('click', async () => {
+        const url = `/attempts/activities/students/${id}/${content_id}/filter/0`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        const attemptScoreContainer = document.createElement('div') //background
+        const attemptScoreWrapper = document.createElement('div')
+        attemptScoreWrapper.setAttribute('id', 'attempt-score-wrapper')
+        const attemptScoreTable = document.createElement('table') //container itself
+        const closeButton = document.createElement('img')
+        closeButton.src = '../../static/images/close-outline.svg'
+        closeButton.alt = "close-button"
+
+        closeButton.addEventListener('click', () => {
+            attemptScoreContainer.remove()
+        })
+
+        attemptScoreWrapper.appendChild(closeButton)
+        const attemptScoreTableHeader = document.createElement('thead')
+        const attemptScoreTableBody = document.createElement('tbody')
+
+        const attemptScoreTableHeaderRow = document.createElement('tr')
+
+        const attemptScoreTableHeaderAttemptNo = document.createElement('th')
+        const attemptScoreTableHeaderScore = document.createElement('th')
+        const attemptScoreTableHeaderStatus = document.createElement('th')
+        const attemptScoreTableHeaderDate = document.createElement('th')
+        attemptScoreTableHeaderAttemptNo.textContent = "Attempt No."
+        attemptScoreTableHeaderScore.textContent = "Score"
+        attemptScoreTableHeaderStatus.textContent = "Status"
+        attemptScoreTableHeaderDate.textContent = "Finished At"
+        
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderAttemptNo)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderScore)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderStatus)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderDate)
+
+        attemptScoreTableHeader.appendChild(attemptScoreTableHeaderRow)
+
+        attemptScoreContainer.setAttribute('id', 'attempt-score-container')
+        attemptScoreTable.setAttribute('id', 'attempt-score-table')
+
+        attemptScoreTable.appendChild(attemptScoreTableHeader)
+
+        
+        if (response.ok && result.status){
+            result.attemptScores.forEach(attempt => {
+                attemptScoreTableBody.appendChild(displayAttemptScores(attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date)));
+            });
+            attemptScoreTable.appendChild(attemptScoreTableBody)
+            attemptScoreWrapper.appendChild(attemptScoreTable)
+            attemptScoreContainer.appendChild(attemptScoreWrapper)
+
+            document.body.appendChild(attemptScoreContainer)
+        }
+
+
+    })
+    displayContents.appendChild(newContent);
+
+    function hasUnfinishedAttemptContainer(answer, attempt_id, type){
+        const unfinishedAttemptContainer = document.createElement('div')
+        const unfinishedAttemptWrapper = document.createElement('div')
+        const statement = document.createElement('p')
+        const buttonContainer = document.createElement('div')
+        const resumeButton = document.createElement('button')
+        const closeButton = document.createElement('button')
+
+        unfinishedAttemptContainer.setAttribute('id', 'unfinished-attempt-container')
+        unfinishedAttemptWrapper.setAttribute('id', 'unfinished-attempt-wrapper')
+
+        statement.textContent = "Uh Oh! An unfinished and saved activity detected! Please finish it!"
+
+        resumeButton.textContent = "Resume Activity"
+        closeButton.textContent = "Resume Later"
+
+        buttonContainer.append(resumeButton, closeButton)
+
+        unfinishedAttemptWrapper.appendChild(statement)
+        unfinishedAttemptWrapper.appendChild(buttonContainer)
+
+        unfinishedAttemptContainer.appendChild(unfinishedAttemptWrapper)
+
+        resumeButton.addEventListener('click', async () => {
+            const formData = new FormData();
+            formData.append("attempt_id", attempt_id);
+            
+            const response = await fetch('/resume_attempt', {
+                method: "PATCH",
+                body: formData
+            });
+
+            const result = await response.json()
+
+            if (response.ok && result.status){
+
+                sessionStorage.setItem("userAnswers", JSON.stringify(answer))
+                sessionStorage.setItem("currentAttemptId", await encrypt(attempt_id))
+                answerPageTo(type)
+            }
+            else{
+                console.log(result.message)
+            }
+        })
+
+        closeButton.addEventListener('click', () => {
+            unfinishedAttemptContainer.remove()
+        })
+
+        document.body.appendChild(unfinishedAttemptContainer)
+    }
+
+}
+function addAssessment(assessment_id, assessment_title, assessment_details, tts_json, assessment_type, category_type) {
+    const newContent = document.createElement("div");
+    const assessmentName = document.createElement("p");
+    const assessmentType = document.createElement("p")
+    const categoryType = document.createElement("p");
+    newContent.classList.add("content");
+    assessmentName.classList.add("activity-name");
+    assessmentType.classList.add("category-type")
+    categoryType.classList.add("category-type");
+    assessmentName.innerHTML = assessment_title;
+    assessmentType.innerHTML = getContentName(assessment_type)
+    categoryType.innerHTML = category_type;
+    newContent.append(assessmentName, categoryType, assessmentType);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add("button-container");
+    const playActivityButton = document.createElement('button');
+    const checkProgressButton = document.createElement('button');
+
+    playActivityButton.classList.add('play-activity-button');
+    playActivityButton.innerHTML = "Play Activity";
+    checkProgressButton.classList.add('check-progress-button');
+    checkProgressButton.innerHTML = "Check Progress";
+
+    buttonContainer.append(playActivityButton, checkProgressButton);
+    newContent.append(buttonContainer);
+
+    playActivityButton.addEventListener('click', async () => {
+        sessionStorage.setItem("currentActivityTitle", assessment_title);
+        sessionStorage.setItem("currentContentId", await encrypt(assessment_id));
+        sessionStorage.setItem("questions", JSON.stringify(assessment_details));
         sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
 
         const formData = new FormData()
@@ -633,7 +837,7 @@ moveStudentInfo();
             const clickedName = item.textContent.trim();
 
             displayContents.innerHTML = ''
-            //add showAssessments() to be created
+            showAssessment(parseInt(item.dataset.action))
 
             // Update the label dynamically
             sectionLabel.textContent = parseInt(item.dataset.action) !== 0 ? `${navType} – ${clickedName}` : "Select an Activity or Assessment";

@@ -84,6 +84,36 @@ def get_contents_for_students(type):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
+@contents_bp.route('/students/assessments/<int:type>', methods=["GET"])
+def get_assessments_for_students(type):
+    try:
+        db = get_db()
+        status, results = db.get_assessments_by_type(type)
+        rows = results
+        
+        print(rows)
+        
+        assessments = []
+        for row in rows:
+            quiz_contents_str = row[2] or "{}"
+            quiz_contents_json = json.loads(quiz_contents_str)
+            quiz_tts_str = row[3] or "{}"
+            quiz_tts_json = json.loads(quiz_tts_str)
+            assessments.append({
+                "assessment_id": row[0],
+                "assessment_title": row[1],
+                "assessment_json": quiz_contents_json,
+                "tts_json": quiz_tts_json,
+                "assessment_type": row[4]
+            })
+            
+        if status:
+            return jsonify({"status": True, "data": assessments})
+        else:
+            return jsonify({"status": False, "message": results})
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+    
 # def get_all_content_titles(teacher_id):
 #     try:
 #         status, results = db.get_all_content_titles(teacher_id)
@@ -234,3 +264,35 @@ def unhide_content(teacher_id, content_id, hide):
         return jsonify({"status": True, "message": message})
     else:
         return jsonify({"status": False, "message": message}) 
+    
+@contents_bp.route('/assessments', methods=['GET'])
+@login_required
+def get_assessments():
+    try:
+        db = get_db()
+        status, results = db.get_assessments()
+        rows = results
+        
+        print(rows)
+        
+        assessments = []
+        for row in rows:
+            assessments_str = row[2] or "{}"
+            assessments_json = json.loads(assessments_str)
+            quiz_tts_str = row[3] or "{}"
+            quiz_tts_json = json.loads(quiz_tts_str)
+            assessments.append({
+                "assessment_id": row[0],
+                "assessment_title": row[1],
+                "assessment_json": assessments_json,
+                "tts_json": quiz_tts_json,
+                "assessment_type": row[4],
+                "assessment_type_name": row[5]
+            })
+            
+        if status:
+            return jsonify({"status": True, "data": assessments})
+        else:
+            return jsonify({"status": False, "message": results})
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})

@@ -32,7 +32,7 @@ window.addEventListener('resize', moveStudentInfo);
 
 
 activityNavButton.addEventListener('click', async () => {
-    await showContents()
+    await displayAssessmentsOrActivities(1)
     activityNavButton.disabled = true
     activityNavButton.style.pointerEvents = 'none'
     activityNavButton.classList.add('toggle-user')
@@ -43,7 +43,7 @@ activityNavButton.addEventListener('click', async () => {
 })
 
 assessmentNavButton.addEventListener('click', async () => {
-    await showContents()
+    await displayAssessmentsOrActivities(2)
     assessmentNavButton.disabled = true
     assessmentNavButton.style.pointerEvents = 'none'
     assessmentNavButton.classList.add('toggle-user')
@@ -222,7 +222,16 @@ document.addEventListener("DOMContentLoaded", async function() {
     await showContents()
 });
 
-//parameters to be whether if it is an assessment or activities(contents)
+// 1 = contents(activities), 2 = assessment
+async function displayAssessmentsOrActivities(category){
+    if(category === 1){
+        await showContents()
+    }
+    else if(category === 2){
+        await showAssessments()
+    }
+}
+
 async function showContents() {
     mainSection.innerHTML = ''
     mainSection.appendChild(categoryTypeStructure())
@@ -296,6 +305,62 @@ async function showContents() {
     }
 }
 
+async function showAssessments() {
+    mainSection.innerHTML = ''
+    mainSection.appendChild(categoryTypeStructure())
+    mainSection.appendChild(contentStructure())
+    const url = `/assessments`;
+    const response = await fetch(url);
+    const result = await response.json();
+
+    try{
+        if (response.ok && result.status){
+            if (result.data && result.data.length > 0) {
+                result.data.forEach(data => {
+                    addAssessment(contentStructure(), data.assessment_id, data.assessment_title, data.assessment_json, data.tts_json, data.assessment_type, data.assessment_type_name)
+                })
+            }
+        }
+        else{
+            console.log(result.message)
+            notification.notify("Activities can't be retrieved at the moment. Please try again.", "error");
+        }
+
+    }
+    catch(error){
+        console.error("Network Error:", error);
+        notification.notify("Network error. Please check your connection and try again.", "error");
+    }
+
+    function contentStructure(){
+        const contentContainer = document.getElementById('content-container')
+
+        if (!contentContainer){
+            const div = document.createElement("div");
+            div.setAttribute('id', "content-container");
+
+            return div
+        }
+
+        return contentContainer
+    }
+
+    function categoryTypeStructure(){
+        const categoryType = document.getElementById('category-type')
+        
+        if(!categoryType){
+            const p = document.createElement("p")
+            p.setAttribute('id', "category-type")
+            p.textContent = "Assessments"
+
+            return p;
+        }
+
+        return categoryType
+    }
+}
+
+
 async function showUserInfo(){
     const url = `/user/${id}`;
     const response = await fetch(url);
@@ -330,6 +395,41 @@ async function showUserInfo(){
     }
 }
 
+async function addAssessment(assessment_container, assessment_id, assessment_title, assessment_details, tts_json, assessment_type, assessment_type_name){
+    const newContent = document.createElement("div");
+    const activityName = document.createElement("p");
+    const activityType = document.createElement("p");
+    newContent.classList.add("content");
+    activityName.classList.add("activity-name");
+    activityType.classList.add("activity-type");
+    activityName.innerHTML = assessment_title;
+    activityType.innerHTML = assessment_type_name;
+    newContent.appendChild(activityName);
+    newContent.appendChild(activityType);
+
+    const previewButton = document.createElement("button");
+
+    const hideFromStudentLabel = document.createElement("label")
+    hideFromStudentLabel.textContent = "Hidden from Students"
+    
+    const buttonActionContainer = document.createElement("div");
+    buttonActionContainer.classList.add("content-button-action-container");
+    buttonActionContainer.appendChild(previewButton);
+
+    previewButton.addEventListener('click', async () => {
+        sessionStorage.setItem("questions", JSON.stringify(assessment_details))
+        sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
+        sessionStorage.setItem("currentActivityTitle", assessment_title)
+        previewGamePageTo(assessment_type)
+        
+
+    })
+
+    newContent.appendChild(buttonActionContainer);
+    assessment_container.appendChild(newContent);
+    assessment_container.appendChild(addContentButton);
+
+}
 async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
     const encryptedContentId = await encrypt(content_id)
     const newContent = document.createElement("div");
