@@ -17,7 +17,7 @@ body{
     flex-direction: column;
     padding: 3rem 14rem;
     gap: 1.5rem;
-    background-color: #f5f5f5;
+    background-color: var(--background);
 }
 
 #category-display{
@@ -34,7 +34,7 @@ header{
 
 .header-left {
     font-size: 0.95rem;
-    color: #374151;
+    color: var(--black-text);
 }
 
 #image-display{
@@ -48,13 +48,13 @@ header{
 .header-center {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #000;
+    color: var(--black-text);
 }
 
 .header-right button {
     background: white;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    color: var(--black-text);
+    border: 1px solid #ccc;
     padding: 0.6rem 1.5rem;
     font-size: 0.9rem;
     font-weight: 500;
@@ -64,7 +64,7 @@ header{
 }
 
 .header-right button:hover {
-    background: #f9fafb;
+    background: rgb(212, 212, 212);
 }
 
 /* Choices Container */
@@ -88,7 +88,7 @@ header{
     gap: 0.8rem;
     align-items: center;
     justify-content: flex-start;
-    background: #b8bec9;
+    background: var(--accent-color-wood);
     border-radius: 100px;
     border: none;
     transition: all 0.3s ease;
@@ -97,18 +97,18 @@ header{
 }
 
 .choice-box:hover{
-    background: #9ca3af;
+    filter: var(--filter-saturate-hover);
 }
 
 .choice-box.selected,
 .choice-box:active,
 .choice-box:focus {
-    background: #6b7280;
+    background: var(--primary-color);
 }
 
 /* If using input radio checked state */
 .choice-box:has(input[type="radio"]:checked) {
-    background: #6b7280;
+    background: var(--primary-color);
 }
 
 .choice-label{
@@ -118,7 +118,7 @@ header{
     justify-content: flex-start;
     cursor: pointer;
     font-size: 1.05rem;
-    color: white;
+    color: var(--white-text);
     width: 100%;
     padding: 1.5rem 2.5rem;
 }
@@ -150,8 +150,8 @@ header{
 }
 
 .nav-button {
-    background: #d1d5db;
-    color: #374151;
+    background: rgb(214, 214, 214);
+    color: var(--button-disabled-text);
     border: none;
     padding: 0.8rem 2.5rem;
     font-size: 1rem;
@@ -162,16 +162,16 @@ header{
 }
 
 .nav-button:hover {
-    background: #b8bec9;
+    filter: var(--filter-saturate-hover);
 }
 
 .nav-button.primary {
-    background: #6b7280;
-    color: white;
+    background: var(--secondary-color);
+    color: var(--white-text);
 }
 
 .nav-button.primary:hover {
-    background: #4b5563;
+    filter: var(--filter-saturate-hover);
 }
 
 /* TTS Speaker Button Styling */
@@ -180,18 +180,18 @@ header{
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1.2rem;
-    background: #e5e7eb;
+    background: rgb(212, 212, 212);
     border: none;
     border-radius: 25px;
     cursor: pointer;
     font-size: 0.95rem;
-    color: #374151;
+    color: var(--black-text);
     transition: all 0.3s ease;
     font-weight: 500;
 }
 
 #tts-speaker-button:hover {
-    background: #d1d5db;
+    filter: var(--filter-saturate-hover);
 }
 
 #tts-speaker-button img {
@@ -210,8 +210,8 @@ header{
     background: white;
     border-radius: 0.5rem;
     padding: 4rem 3rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e5e5;
+    box-shadow: var(--box-shadow-1);
+    border: 1px solid #ccc;
     margin-bottom: 2rem;
     min-height: 250px;
 }
@@ -219,7 +219,7 @@ header{
 .question-container .question {
     font-size: 1.3rem;
     font-weight: 500;
-    color: #000;
+    color: var(--black-text);
     text-align: center;
 }
 
@@ -229,15 +229,15 @@ body {
     flex-direction: column;
     padding: 3rem 14rem;
     gap: 1.5rem;
-    background-color: #f5f5f5;
+    background-color: var(--background);
     min-height: 100vh;
 }
 
 /* Header button styling - Exit Preview/Exit Activity */
 .header-right button,
 #to-dashboard-page-button {
-    background: #6b7280;
-    color: white;
+    background: var(--secondary-color);
+    color: var(--white-text);
     border: none;
     padding: 0.6rem 1.5rem;
     font-size: 0.9rem;
@@ -249,15 +249,15 @@ body {
 
 .header-right button:hover,
 #to-dashboard-page-button:hover {
-    background: #4b5563;
+    filter: var(--filter-saturate-hover);
 }
 
 /* Update button styling to match your design */
 #previous-button,
 #next-button,
 #submit-button {
-    background: #6b7280;
-    color: white;
+    background: var(--secondary-color);
+    color: var(--white-text);
     border: none;
     padding: 0.6rem 2rem;
     font-size: 0.95rem;
@@ -270,5 +270,450 @@ body {
 #previous-button:hover,
 #next-button:hover,
 #submit-button:hover {
-    background: #4b5563;
+    filter: var(--filter-saturate-hover);
+}
+
+/* Answer Container Styling - Modern Design */
+#answer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+    padding: 3rem 4rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 1200px;
+    width: 90%;
+    margin: 2rem auto;
+}
+
+#answer-container > h3 {
+    font-size: 1.5rem;
+    color: var(--accent-color-orange);
+    font-family: 'Bold-Poppins';
+    margin-bottom: 0;
+}
+
+/* Answer Table Styling - Modern */
+#answer-container table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.8rem;
+}
+
+#answer-container table thead {
+    background: var(--accent-color-orange);
+    color: white;
+}
+
+#answer-container table th {
+    padding: 1rem 1.5rem;
+    text-align: center;
+    font-family: 'Bold-Poppins';
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#answer-container table th:first-child {
+    border-radius: 12px 0 0 12px;
+    text-align: center;
+}
+
+#answer-container table th:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+#answer-container table td {
+    padding: 1.2rem 1.5rem;
+    background: white;
+    color: var(--black-text);
+    font-size: 1rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+#answer-container table tbody tr {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#answer-container table tbody tr td:first-child {
+    border-radius: 12px 0 0 12px;
+    font-family: 'Bold-Poppins';
+    font-size: 1.1rem;
+}
+
+#answer-container table tbody tr td:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+/* Result Status Styling - Modern */
+#answer-container .result-correct {
+    color: #4CAF50;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+#answer-container .result-correct::before {
+    content: "✓";
+    font-size: 1.3rem;
+    background: #4CAF50;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#answer-container .result-incorrect {
+    color: #f44336;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+#answer-container .result-incorrect::before {
+    content: "✗";
+    font-size: 1.3rem;
+    background: #f44336;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Score Display */
+#answer-container .score-display {
+    font-size: 2rem;
+    font-family: 'Bold-Poppins';
+    color: var(--accent-color-orange);
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* Finish Button Styling */
+#finish-button {
+    background: var(--accent-color-orange);
+    color: white;
+    border: none;
+    padding: 0.8rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'Bold-Poppins';
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+    margin-top: 1rem;
+    align-self: center;
+}
+
+#finish-button:hover {
+    filter: var(--filter-saturate-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.5);
+}
+
+#finish-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(255, 140, 0, 0.3);
+}
+
+/* Responsive Design - All Screen Sizes */
+
+/* Large Desktops (1920px and above) */
+@media (min-width: 1920px) {
+    #answer-container {
+        max-width: 1400px;
+        padding: 3.5rem 5rem;
+    }
+    
+    #answer-container > h3 {
+        font-size: 1.8rem;
+    }
+    
+    #answer-container table th {
+        font-size: 1.1rem;
+        padding: 1.2rem 2rem;
+    }
+    
+    #answer-container table td {
+        font-size: 1.1rem;
+        padding: 1.4rem 2rem;
+    }
+}
+
+/* Standard Desktops (1200px to 1919px) */
+@media (min-width: 1200px) and (max-width: 1919px) {
+    #answer-container {
+        max-width: 1200px;
+        padding: 3rem 4rem;
+    }
+}
+
+/* Small Desktops/Laptops (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+    #answer-container {
+        max-width: 95%;
+        padding: 2.5rem 3rem;
+        gap: 1.5rem;
+    }
+    
+    #answer-container > h3 {
+        font-size: 1.4rem;
+    }
+    
+    #answer-container table th {
+        font-size: 0.95rem;
+        padding: 0.9rem 1.2rem;
+    }
+    
+    #answer-container table td {
+        font-size: 0.95rem;
+        padding: 1rem 1.2rem;
+    }
+    
+    #finish-button {
+        padding: 0.7rem 2.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Tablets (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    body {
+        padding: 2rem 5rem;
+    }
+    
+    #answer-container {
+        max-width: 95%;
+        padding: 2rem 2.5rem;
+        gap: 1.5rem;
+    }
+    
+    #answer-container > h3 {
+        font-size: 1.3rem;
+    }
+    
+    #answer-container table {
+        border-spacing: 0 0.6rem;
+    }
+    
+    #answer-container table th {
+        font-size: 0.9rem;
+        padding: 0.8rem 1rem;
+        letter-spacing: 0.3px;
+    }
+    
+    #answer-container table td {
+        font-size: 0.9rem;
+        padding: 1rem 1rem;
+    }
+    
+    #answer-container table tbody tr td:first-child {
+        font-size: 1rem;
+    }
+    
+    #answer-container .result-correct::before,
+    #answer-container .result-incorrect::before {
+        width: 22px;
+        height: 22px;
+        font-size: 1.2rem;
+    }
+    
+    #answer-container .score-display {
+        font-size: 1.7rem;
+    }
+    
+    #finish-button {
+        padding: 0.7rem 2.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Large Phones/Small Tablets (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+    body {
+        padding: 1.5rem 3rem;
+    }
+    
+    #answer-container {
+        width: 95%;
+        padding: 1.5rem 2rem;
+        gap: 1.2rem;
+        border-radius: 15px;
+    }
+    
+    #answer-container > h3 {
+        font-size: 1.2rem;
+    }
+    
+    #answer-container table {
+        border-spacing: 0 0.5rem;
+    }
+    
+    #answer-container table th {
+        font-size: 0.75rem;
+        padding: 0.7rem 0.8rem;
+        letter-spacing: 0.2px;
+    }
+    
+    #answer-container table td {
+        font-size: 0.85rem;
+        padding: 0.9rem 0.8rem;
+    }
+    
+    #answer-container table tbody tr td:first-child {
+        font-size: 0.95rem;
+    }
+    
+    #answer-container .result-correct,
+    #answer-container .result-incorrect {
+        font-size: 0.9rem;
+        gap: 0.3rem;
+    }
+    
+    #answer-container .result-correct::before,
+    #answer-container .result-incorrect::before {
+        width: 20px;
+        height: 20px;
+        font-size: 1.1rem;
+    }
+    
+    #answer-container .score-display {
+        font-size: 1.5rem;
+    }
+    
+    #finish-button {
+        padding: 0.7rem 2rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Mobile Phones (up to 575px) */
+@media (max-width: 575px) {
+    body {
+        padding: 1rem 1.5rem;
+    }
+    
+    #answer-container {
+        width: 100%;
+        padding: 1.5rem 1rem;
+        gap: 1rem;
+        border-radius: 12px;
+        margin: 1rem auto;
+    }
+    
+    #answer-container > h3 {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    
+    #answer-container table {
+        border-spacing: 0 0.4rem;
+    }
+    
+    #answer-container table th {
+        font-size: 0.65rem;
+        padding: 0.6rem 0.5rem;
+        letter-spacing: 0.1px;
+    }
+    
+    #answer-container table td {
+        font-size: 0.75rem;
+        padding: 0.8rem 0.5rem;
+    }
+    
+    #answer-container table tbody tr td:first-child {
+        font-size: 0.85rem;
+    }
+    
+    #answer-container table tbody tr {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    #answer-container .result-correct,
+    #answer-container .result-incorrect {
+        font-size: 0.75rem;
+        gap: 0.25rem;
+        flex-direction: column;
+    }
+    
+    #answer-container .result-correct::before,
+    #answer-container .result-incorrect::before {
+        width: 18px;
+        height: 18px;
+        font-size: 1rem;
+    }
+    
+    #answer-container .score-display {
+        font-size: 1.3rem;
+        margin-top: 0.5rem;
+    }
+    
+    #finish-button {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* Extra Small Phones (up to 375px) */
+@media (max-width: 375px) {
+    body {
+        padding: 1rem;
+    }
+    
+    #answer-container {
+        padding: 1rem 0.8rem;
+        gap: 0.8rem;
+    }
+    
+    #answer-container > h3 {
+        font-size: 1rem;
+    }
+    
+    #answer-container table th {
+        font-size: 0.6rem;
+        padding: 0.5rem 0.3rem;
+    }
+    
+    #answer-container table td {
+        font-size: 0.7rem;
+        padding: 0.7rem 0.3rem;
+    }
+    
+    #answer-container table tbody tr td:first-child {
+        font-size: 0.8rem;
+    }
+    
+    #answer-container .result-correct::before,
+    #answer-container .result-incorrect::before {
+        width: 16px;
+        height: 16px;
+        font-size: 0.9rem;
+    }
+    
+    #answer-container .score-display {
+        font-size: 1.2rem;
+    }
+    
+    #finish-button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+    }
 }
