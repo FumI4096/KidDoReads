@@ -300,7 +300,7 @@ async function showFinalScore() {
                     sessionStorage.removeItem('currentAttemptId')
                     sessionStorage.removeItem('ttsObjects')
                     sessionStorage.removeItem("userAnswers")
-                    // window.location.href = '/student_dashboard';
+                    window.location.href = '/student_dashboard';
                 }
                 else{
                     console.log(result.message)
