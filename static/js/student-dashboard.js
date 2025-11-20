@@ -305,7 +305,7 @@ async function showAssessment(contentTypeNum) {
                     data.assessment_json,
                     data.tts_json,
                     data.assessment_type,
-                    "Activity"
+                    "Assessment",
                 );
             });
         } else {
@@ -360,7 +360,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         formData.append("student_id", id)
         formData.append("content_id", await decrypt(sessionStorage.getItem("currentContentId")))
         
-        const response = await fetch('/attempt', {
+        const response = await fetch('/attempt/activity', {
             method: "POST",
             body: formData
         })
@@ -370,10 +370,11 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         try{
             if (response.ok && result.status){
                 if(result.hasUnfinished){   
-                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type)
+                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type, 1)
 
                 }
                 else{
+                    sessionStorage.setItem("categoryTypeNum", 1)
                     sessionStorage.setItem("userAnswers", JSON.stringify({}))
                     sessionStorage.setItem("currentAttemptId", await encrypt(result.attemptId))
                     answerPageTo(content_type);
@@ -475,7 +476,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
             const formData = new FormData();
             formData.append("attempt_id", attempt_id);
             
-            const response = await fetch('/resume_attempt', {
+            const response = await fetch('/resume_attempt/activity', {
                 method: "PATCH",
                 body: formData
             });
@@ -483,7 +484,6 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
             const result = await response.json()
 
             if (response.ok && result.status){
-
                 sessionStorage.setItem("userAnswers", JSON.stringify(answer))
                 sessionStorage.setItem("currentAttemptId", await encrypt(attempt_id))
                 answerPageTo(type)
@@ -539,7 +539,7 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
         formData.append("student_id", id)
         formData.append("content_id", await decrypt(sessionStorage.getItem("currentContentId")))
         
-        const response = await fetch('/attempt', {
+        const response = await fetch('/attempt/assessment', {
             method: "POST",
             body: formData
         })
@@ -549,13 +549,14 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
         try{
             if (response.ok && result.status){
                 if(result.hasUnfinished){   
-                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type)
+                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, assessment_type, 2)
 
                 }
                 else{
                     sessionStorage.setItem("userAnswers", JSON.stringify({}))
                     sessionStorage.setItem("currentAttemptId", await encrypt(result.attemptId))
-                    answerPageTo(content_type);
+                    sessionStorage.setItem("categoryTypeNum", 2)
+                    answerPageTo(assessment_type);
                 }
             }
             else{
@@ -568,7 +569,7 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
     });
 
     checkProgressButton.addEventListener('click', async () => {
-        const url = `/attempts/activities/students/${id}/${content_id}/filter/0`;
+        const url = `/attempts/assessments/students/${id}/${content_id}/filter/0`;
         const response = await fetch(url);
         const result = await response.json();
 
@@ -627,7 +628,7 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
     })
     displayContents.appendChild(newContent);
 
-    function hasUnfinishedAttemptContainer(answer, attempt_id, type){
+    function hasUnfinishedAttemptContainer(answer, attempt_id, type, categoryTypeNum){
         const unfinishedAttemptContainer = document.createElement('div')
         const unfinishedAttemptWrapper = document.createElement('div')
         const statement = document.createElement('p')
@@ -654,7 +655,7 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
             const formData = new FormData();
             formData.append("attempt_id", attempt_id);
             
-            const response = await fetch('/resume_attempt', {
+            const response = await fetch('/resume_attempt/assessment', {
                 method: "PATCH",
                 body: formData
             });
@@ -662,7 +663,7 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
             const result = await response.json()
 
             if (response.ok && result.status){
-
+                sessionStorage.setItem("categoryTypeNum", categoryTypeNum)
                 sessionStorage.setItem("userAnswers", JSON.stringify(answer))
                 sessionStorage.setItem("currentAttemptId", await encrypt(attempt_id))
                 answerPageTo(type)
