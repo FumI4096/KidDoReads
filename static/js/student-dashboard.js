@@ -569,7 +569,7 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
     });
 
     checkProgressButton.addEventListener('click', async () => {
-        const url = `/attempts/assessments/students/${id}/${content_id}/filter/0`;
+        const url = `/attempts/assessments/students/${id}/${assessment_id}/filter/0`;
         const response = await fetch(url);
         const result = await response.json();
 
