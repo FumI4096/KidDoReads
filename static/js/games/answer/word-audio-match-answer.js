@@ -41,12 +41,13 @@ if(await decrypt(sessionStorage.getItem("role")) === "student"){
     displayActivityTitle.textContent = `Title: ${currentTitle}`;
     toDashboardPageButton.addEventListener('click', async () => {
         const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
+        const url = (sessionStorage.getItem("currentAttemptId") === 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
 
         const formData = new FormData()
         formData.append("attempt_id", attemptId)
         formData.append("answer", JSON.stringify(userAnswers))
         
-        const response = await fetch('/save_attempt', {
+        const response = await fetch(url, {
             method: 'PATCH',
             body: formData
         });
