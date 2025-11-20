@@ -17,7 +17,7 @@ body{
     flex-direction: column;
     padding: 3rem 14rem;
     gap: 1.5rem;
-    background-color: #f5f5f5;
+    background-color: var(--background);
 }
 
 #category-display{
@@ -34,7 +34,7 @@ header{
 
 .header-left {
     font-size: 0.95rem;
-    color: #374151;
+    color: var(--black-text);
 }
 
 #image-display{
@@ -48,13 +48,13 @@ header{
 .header-center {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #000;
+    color: var(--black-text);
 }
 
 .header-right button {
     background: white;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    color: var(--black-text);
+    border: 1px solid #ccc;
     padding: 0.6rem 1.5rem;
     font-size: 0.9rem;
     font-weight: 500;
@@ -64,7 +64,7 @@ header{
 }
 
 .header-right button:hover {
-    background: #f9fafb;
+    background: rgb(212, 212, 212);
 }
 
 /* Choices Container */
@@ -88,7 +88,7 @@ header{
     gap: 0.8rem;
     align-items: center;
     justify-content: flex-start;
-    background: #b8bec9;
+    background: var(--accent-color-wood);
     border-radius: 100px;
     border: none;
     transition: all 0.3s ease;
@@ -97,18 +97,18 @@ header{
 }
 
 .choice-box:hover{
-    background: #9ca3af;
+    filter: var(--filter-saturate-hover);
 }
 
 .choice-box.selected,
 .choice-box:active,
 .choice-box:focus {
-    background: #6b7280;
+    background: var(--primary-color);
 }
 
 /* If using input radio checked state */
 .choice-box:has(input[type="radio"]:checked) {
-    background: #6b7280;
+    background: var(--primary-color);
 }
 
 .choice-label{
@@ -118,7 +118,7 @@ header{
     justify-content: flex-start;
     cursor: pointer;
     font-size: 1.05rem;
-    color: white;
+    color: var(--white-text);
     width: 100%;
     padding: 1.5rem 2.5rem;
 }
@@ -150,8 +150,8 @@ header{
 }
 
 .nav-button {
-    background: #d1d5db;
-    color: #374151;
+    background: rgb(214, 214, 214);
+    color: var(--button-disabled-text);
     border: none;
     padding: 0.8rem 2.5rem;
     font-size: 1rem;
@@ -162,16 +162,16 @@ header{
 }
 
 .nav-button:hover {
-    background: #b8bec9;
+    filter: var(--filter-saturate-hover);
 }
 
 .nav-button.primary {
-    background: #6b7280;
-    color: white;
+    background: var(--secondary-color);
+    color: var(--white-text);
 }
 
 .nav-button.primary:hover {
-    background: #4b5563;
+    filter: var(--filter-saturate-hover);
 }
 
 /* TTS Speaker Button Styling */
@@ -180,18 +180,18 @@ header{
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1.2rem;
-    background: #e5e7eb;
+    background: rgb(212, 212, 212);
     border: none;
     border-radius: 25px;
     cursor: pointer;
     font-size: 0.95rem;
-    color: #374151;
+    color: var(--black-text);
     transition: all 0.3s ease;
     font-weight: 500;
 }
 
 #tts-speaker-button:hover {
-    background: #d1d5db;
+    filter: var(--filter-saturate-hover);
 }
 
 #tts-speaker-button img {
@@ -210,8 +210,8 @@ header{
     background: white;
     border-radius: 0.5rem;
     padding: 4rem 3rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e5e5;
+    box-shadow: var(--box-shadow-1);
+    border: 1px solid #ccc;
     margin-bottom: 2rem;
     min-height: 250px;
 }
@@ -219,7 +219,7 @@ header{
 .question-container .question {
     font-size: 1.3rem;
     font-weight: 500;
-    color: #000;
+    color: var(--black-text);
     text-align: center;
 }
 
@@ -229,15 +229,15 @@ body {
     flex-direction: column;
     padding: 3rem 14rem;
     gap: 1.5rem;
-    background-color: #f5f5f5;
+    background-color: var(--background);
     min-height: 100vh;
 }
 
 /* Header button styling - Exit Preview/Exit Activity */
 .header-right button,
 #to-dashboard-page-button {
-    background: #6b7280;
-    color: white;
+    background: var(--secondary-color);
+    color: var(--white-text);
     border: none;
     padding: 0.6rem 1.5rem;
     font-size: 0.9rem;
@@ -249,15 +249,15 @@ body {
 
 .header-right button:hover,
 #to-dashboard-page-button:hover {
-    background: #4b5563;
+    filter: var(--filter-saturate-hover);
 }
 
 /* Update button styling to match your design */
 #previous-button,
 #next-button,
 #submit-button {
-    background: #6b7280;
-    color: white;
+    background: var(--secondary-color);
+    color: var(--white-text);
     border: none;
     padding: 0.6rem 2rem;
     font-size: 0.95rem;
@@ -270,5 +270,5 @@ body {
 #previous-button:hover,
 #next-button:hover,
 #submit-button:hover {
-    background: #4b5563;
+    filter: var(--filter-saturate-hover);
 }
