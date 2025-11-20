@@ -91,8 +91,6 @@ def get_assessments_for_students(type):
         status, results = db.get_assessments_by_type(type)
         rows = results
         
-        print(rows)
-        
         assessments = []
         for row in rows:
             quiz_contents_str = row[2] or "{}"
