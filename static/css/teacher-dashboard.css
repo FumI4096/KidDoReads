@@ -20,6 +20,8 @@ main > section{
     height: auto;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    max-height: 100%;
+    overflow-y: auto;
 }
 
 #content-container > * {
@@ -578,5 +580,254 @@ main > section{
     }
     100% {
         transform: translateX(0);
+    }
+}
+
+@media (max-width: 1644px) {
+    #content-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+@media (max-width: 1226px){
+    #content-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    /* .content{
+        & > .content-button-action-container{
+            display: flex;
+            flex-direction: column;
+        }
+
+    } */
+}
+
+@media (max-width: 936px) {
+    html, body {
+        height: 100%;
+    }
+
+    main > section{
+        margin-bottom: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    
+    /* Content grid - 2 columns on tablets */
+    #content-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+
+    #content-container > * {
+        height: auto;
+        min-height: 180px;
+    }
+
+    /* Modal dialog adjustments */
+    #create-content {
+        width: 90%;
+        max-width: 450px;
+        padding: 1.2rem;
+    }
+
+    #content_type {
+        width: 100%;
+    }
+
+    /* Table adjustments */
+    #progress-table td {
+        padding: 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    #progress-table-container {
+        padding: 0.8rem;
+    }
+
+    /* Chatbot adjustments */
+    #conversation-container {
+        height: 480px;
+        width: 350px;
+        right: 1%;
+        bottom: 70px;
+    }
+
+    #chatbot-button {
+        right: 1%;
+        bottom: 1%;
+        padding: 0.8rem;
+    }
+
+    main > section > p {
+        font-size: 1.3rem;
+    }
+}
+
+/* Mobile devices (480px and below) */
+@media (max-width: 480px) {
+    
+    /* Content grid - single column on mobile */
+    #content-container {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+
+    #content-container > * {
+        height: auto;
+        min-height: 160px;
+    }
+
+    /* Modal becomes full screen on mobile */
+    #create-content {
+        width: 95%;
+        max-width: 100%;
+        padding: 1rem;
+        border-radius: 0;
+        margin: 0;
+    }
+
+    #close-content-button {
+        font-size: 1.5rem;
+    }
+
+    #content-header-statement {
+        font-size: 1rem;
+    }
+
+    #content-title {
+        padding: 0.5rem;
+        font-size: 1rem;
+    }
+
+    #content_type {
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+    }
+
+    #submit-content {
+        height: 2.5rem;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .content {
+        padding: 0.6rem 0.8rem;
+    }
+
+    .content > .activity-name {
+        font-size: 1.1rem;
+    }
+
+    .content > .activity-type {
+        font-size: 0.75rem;
+    }
+
+    /* Button sizing on mobile */
+    .content > .content-button-action-container > button {
+        height: 28px;
+        font-size: 0.85rem;
+    }
+
+    /* Table becomes scrollable on mobile */
+    #progress-table {
+        font-size: 0.8rem;
+    }
+
+    #progress-table td {
+        padding: 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    #progress-table-container {
+        padding: 0.5rem;
+        border-radius: 8px;
+    }
+
+    /* Dropdowns on mobile */
+    #select-category, #select-content {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Chatbot becomes full screen on mobile */
+    #conversation-container {
+        height: 100vh;
+        width: 100%;
+        max-width: 100%;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        border-radius: 0;
+        inset: 0;
+        animation: slideInFull 0.3s ease forwards;
+    }
+
+    #conversation-container.closing {
+        animation: slideOutFull 0.3s ease forwards;
+    }
+
+    @keyframes slideInFull {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideOutFull {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+    }
+
+    #chatbot-button {
+        right: 1rem;
+        bottom: 1rem;
+        padding: 0.7rem;
+    }
+
+    main > section {
+        gap: 0.5rem;
+    }
+
+    main > section > p {
+        font-size: 1.1rem;
+    }
+
+    /* Message sizing on mobile */
+    #conversation-messages-container .user-message-container > p,
+    #conversation-messages-container .bot-message-container > p {
+        max-width: 85%;
+        font-size: 0.85rem;
+    }
+}
+
+/* Large screens (1200px and above) - optional tweaks */
+@media (min-width: 1200px) {
+    #content-container > * {
+        height: 220px;
+    }
+
+    #conversation-container {
+        height: 600px;
+        width: 420px;
+    }
+
+    main > section > p {
+        font-size: 1.6rem;
     }
 }
