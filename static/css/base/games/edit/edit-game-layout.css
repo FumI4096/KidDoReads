@@ -204,6 +204,7 @@ textarea { /* passage input - multilines */
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-right: auto
 }
 
 .input-content label{
