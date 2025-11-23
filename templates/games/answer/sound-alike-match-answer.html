@@ -13,11 +13,26 @@
         <button id="to-dashboard-page-button"></button>
     </header>
     <section class="question-container">
-        <p class="question" id="keyword-text"></p> <!-- revert from keyword -> question -->
-        <p class="question" id="sentence-text"></p>
-        <button id="tts-keyword-button">Keyword Speaker</button>
-        <button id="tts-sentence-button">Sentence Speaker</button>
+        <div class="instruction-wrapper">
+            <div class="instruction-text">
+                <p><strong>Keyword:</strong> <span id="keyword-text"></span></p>
+                <p>The <strong id="keyword-in-sentence">word</strong> is used to make this sentence.</p>
+                <button id="tts-sentence-button">
+                    <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+                    Play me!
+                </button>
+            </div>
+            <div class="mascot-wrapper">
+                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+                <div class="speech-bubble">Click the button to hear the sentence!</div>
+            </div>
+        </div>
+        <p class="question" id="sentence-text" style="display: none;"></p>
+        <button id="tts-keyword-button" style="display: none;">Keyword Speaker</button>
     </section>
+    
+    <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word, and choose the correct meaning based on the sentence.</p>
+    
     <section class="choices-container">
         <div class="choice-box">
             <label class="choice-label"> 
@@ -38,7 +53,7 @@
             <label class="choice-label">
                 <input type="radio" name="answer" value="c" id="answer-c">
                 <p class="choice-letter">C.</p>
-                <span class="choice-text" id="choice-c">Choice B Text</span>
+                <span class="choice-text" id="choice-c">Choice C Text</span>
             </label>
         </div>
 
@@ -56,7 +71,7 @@
             </thead>
             <tbody>
                 
-            </tbdody>
+            </tbody>
         </table>
     </div>
 
