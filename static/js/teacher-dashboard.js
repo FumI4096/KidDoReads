@@ -480,8 +480,6 @@ async function addAssessment(assessment_container, assessment_id, assessment_tit
 
     newContent.appendChild(buttonActionContainer);
     assessment_container.appendChild(newContent);
-    assessment_container.appendChild(addContentButton);
-
 }
 async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
     const encryptedContentId = await encrypt(content_id)
