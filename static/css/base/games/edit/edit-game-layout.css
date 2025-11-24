@@ -255,8 +255,7 @@ textarea { /* passage input - multilines */
                 gap: 0.5rem;
                 justify-content: start;
                 align-items: center;
-                background-color: var(--background);
-                border: 2px solid black;
+                background-color: var(--white-text);
                 height: auto;
                 padding: 1rem 1rem 1rem 4rem;
                 border-radius: 20px;
@@ -264,7 +263,7 @@ textarea { /* passage input - multilines */
         
                 & > *{
                     font-size: 1.2rem;
-                    color: var(--grey-text);
+                    color: var(--primary-color-700);
                 }
         
                 & > .choice{
