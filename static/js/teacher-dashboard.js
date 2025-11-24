@@ -234,6 +234,9 @@ async function displayAssessmentsOrActivities(category){
 
 async function showContents() {
     mainSection.innerHTML = ''
+    if (window.innerWidth <= 936){
+        mainSection.appendChild(await teacherInfoStructure())
+    }
     mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
     const url = `/contents/${id}`;
@@ -275,6 +278,29 @@ async function showContents() {
         return contentContainer
     }
 
+    async function teacherInfoStructure(){
+        const teacherInfoContainer = document.getElementById('teacher-info')
+
+        if (!teacherInfoContainer){
+            const sectionTeacherInfo = document.createElement("div");
+            sectionTeacherInfo.setAttribute('id', "teacher-info");
+
+            const teacherPicture = document.createElement('img')
+            teacherPicture.setAttribute('id', 'teacher_picture')
+            const teacherName = document.createElement('span')
+            teacherName.setAttribute('id', 'teacher_name')
+            sectionTeacherInfo.appendChild(teacherPicture)
+            sectionTeacherInfo.appendChild(teacherName)
+
+            teacherName.textContent = await decrypt(sessionStorage.getItem("fullName"))
+            teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
+
+            return sectionTeacherInfo
+        }
+
+        return teacherInfoContainer
+    }
+
     function addContainerButtonStructure(){
         const button = document.createElement("button")
         const span = document.createElement("span")
@@ -307,6 +333,9 @@ async function showContents() {
 
 async function showAssessments() {
     mainSection.innerHTML = ''
+    if (window.innerWidth <= 936){
+        mainSection.appendChild(await teacherInfoStructure())
+    }
     mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
     const url = '/assessments';
@@ -343,6 +372,29 @@ async function showAssessments() {
         }
 
         return contentContainer
+    }
+
+    async function teacherInfoStructure(){
+        const teacherInfoContainer = document.getElementById('teacher-info')
+
+        if (!teacherInfoContainer){
+            const sectionTeacherInfo = document.createElement("div");
+            sectionTeacherInfo.setAttribute('id', "teacher-info");
+
+            const teacherPicture = document.createElement('img')
+            teacherPicture.setAttribute('id', 'teacher_picture')
+            const teacherName = document.createElement('span')
+            teacherName.setAttribute('id', 'teacher_name')
+            sectionTeacherInfo.appendChild(teacherPicture)
+            sectionTeacherInfo.appendChild(teacherName)
+
+            teacherName.textContent = await decrypt(sessionStorage.getItem("fullName"))
+            teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
+
+            return sectionTeacherInfo
+        }
+
+        return teacherInfoContainer
     }
 
     function categoryTypeStructure(){
@@ -428,8 +480,6 @@ async function addAssessment(assessment_container, assessment_id, assessment_tit
 
     newContent.appendChild(buttonActionContainer);
     assessment_container.appendChild(newContent);
-    assessment_container.appendChild(addContentButton);
-
 }
 async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
     const encryptedContentId = await encrypt(content_id)
@@ -508,33 +558,64 @@ async function addContent(content_container, content_id, content_title, content_
     })
 
     deleteButton.addEventListener('click', async () => {
-        const url = `content/${id}/${content_id}`
+        const deleteActivityContainer = document.createElement('div');
+        const deleteActivityWrapper = document.createElement('div');
+        const yesButton = document.createElement('button');
+        const noButton = document.createElement('button');
+        const buttonContainer = document.createElement('aside');
+        const statement = document.createElement('p');
+        
+        deleteActivityContainer.setAttribute('id', 'delete-activity-container');
+        deleteActivityWrapper.setAttribute('id', 'delete-activity-wrapper');
 
-        try{
-            const response = await fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json' 
-    
-                },
-            });
-    
-            const result = await response.json()
-    
-            if (response.ok && result.status){
-                notification.notify(result.message, "success")
-                newContent.remove();
+        statement.textContent = `Are you sure you want to delete the activity "${content_title}"? This action cannot be undone.`;
+
+        yesButton.textContent = 'Yes';
+        noButton.textContent = 'No';
+        buttonContainer.classList.add('delete-activity-button-container');
+        buttonContainer.appendChild(yesButton);
+        buttonContainer.appendChild(noButton);
+
+        deleteActivityWrapper.appendChild(statement);
+        deleteActivityWrapper.appendChild(buttonContainer);
+        deleteActivityContainer.appendChild(deleteActivityWrapper);
+        content_container.appendChild(deleteActivityContainer);
+        yesButton.addEventListener('click', async () => {
+            const url = `content/${id}/${content_id}`
+
+            try{
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json' 
+        
+                    },
+                });
+        
+                const result = await response.json()
+        
+                if (response.ok && result.status){
+                    notification.notify(result.message, "success")
+                    newContent.remove();
+                    deleteActivityContainer.remove();
+                }
+                else{
+                    const message = result.message || "Failed to delete content. Please try again.";
+                    notification.notify(message, "error");
+                    console.error("Server Error:", result);
+                }
             }
-            else{
-                const message = result.message || "Failed to delete content. Please try again.";
-                notification.notify(message, "error");
-                console.error("Server Error:", result);
+            catch(error){
+                console.error("Fetch Error:", error);
+                notification.notify("An unexpected error occurred. Please check your connection and try again.", "error");
             }
-        }
-        catch(error){
-            console.error("Fetch Error:", error);
-            notification.notify("An unexpected error occurred. Please check your connection and try again.", "error");
-        }
+        })
+
+        noButton.addEventListener('click', () => {
+            deleteActivityContainer.remove();
+        })
+
+        document.body.appendChild(deleteActivityContainer);
     })
 
     editButton.addEventListener('click', async () => {
@@ -1123,6 +1204,10 @@ async function getStudentProgressByContentType(teacherId, contentType) {
     NavigationManager.clearStack();
     mainSection.innerHTML = '';
 
+    // Create table wrapper for horizontal scrolling
+    const tableWrapper = document.createElement('div');
+    tableWrapper.classList.add('table-wrapper');
+
     const progressTable = document.createElement('table');
     progressTable.setAttribute('id', 'progress-table');
     const progressTableHeader = document.createElement('thead');
@@ -1131,7 +1216,10 @@ async function getStudentProgressByContentType(teacherId, contentType) {
     progressTableHeader.appendChild(getProgressHeaderRow());
     progressTable.appendChild(progressTableHeader);
     progressTable.appendChild(progressTableBody);
-    mainSection.appendChild(progressTable);
+    
+    // Append table to wrapper, then wrapper to mainSection
+    tableWrapper.appendChild(progressTable);
+    mainSection.appendChild(tableWrapper);
 
     try {
         // Determine category and URL
@@ -1177,7 +1265,7 @@ async function getStudentProgressByContentType(teacherId, contentType) {
                     normalizedData.is_hidden_from_students, 
                     teacherId, 
                     contentType,
-                    category // Pass the category
+                    category
                 );
             });
         } else {

@@ -18,7 +18,23 @@
         <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
         Play Me
     </button>
+        <div class="instruction-wrapper">
+            <div class="instruction-text">
+                <p>Click the <strong>button</strong> to hear the mystery word!</p>
+                <button id="tts-speaker-button">
+                    <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+                    Play Me
+                </button>
+            </div>
+            <div class="mascot-wrapper">
+                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+            </div>
+        </div>
+        <p class="question" id="question-text" style="display: none;"></p> <!-- Hidden -->
     </section>
+    
+    <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word and choose the <strong>correct spelling</strong> among the choices!</p>
+    
     <section class="choices-container">
         <div class="choice-box">
             <label class="choice-label"> 
@@ -57,7 +73,7 @@
             </thead>
             <tbody>
                 
-            </tbdody>
+            </tbody>
         </table>
     </div>
 

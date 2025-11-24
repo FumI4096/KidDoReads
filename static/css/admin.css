@@ -220,6 +220,7 @@ main > section{
 }
 
 #table-container{
+    width: 100%;
     flex-grow: 1;
     overflow: auto;
 }
@@ -549,7 +550,7 @@ td > p{
     }
     #table-container table {
         min-width: 650px; 
-        width: 100%;
+        width: auto; /* Changed from 100% to auto */
     }
 
     #delete-form{
