@@ -290,7 +290,7 @@ ttsConvertButton1.addEventListener("click", async () => {
             }
         }
         
-        await keyWordTtsObj.generateSpeech(keyWordInput.value, ttsId.toString());
+        await keyWordTtsObj.generateSpeech(keyWordInput.value, ttsId.toString(), 3);
         originalKeyWordText = keyWordInput.value.trim();
 
         console.log("Generated Speech for Keyword: " + keyWordTtsObj.getAudioFile())
@@ -357,7 +357,7 @@ ttsConvertButton2.addEventListener("click", async () => {
             }
         }
         
-        await sentenceTtsObj.generateSpeech(sentenceInput.value, ttsId.toString());
+        await sentenceTtsObj.generateSpeech(sentenceInput.value, ttsId.toString(), 3);
         originalSentenceText = sentenceInput.value.trim();
 
         console.log("Generated Speech for Sentence: " + sentenceTtsObj.getAudioFile())

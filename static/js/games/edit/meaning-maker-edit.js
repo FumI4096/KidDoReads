@@ -18,6 +18,8 @@ let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 let ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
 let currentQuestion = 0
 let originalQuestionText = "" // Track the original question text that was converted
+let originalPrefixSuffix = "" // Track the original prefix/suffix text that was converted
+let originalPrefixSuffixMeaning = "" // Track the original prefix/suffix meaning that was converted
 
 const teacherId = await decrypt(sessionStorage.getItem("id"))
 const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
@@ -81,6 +83,32 @@ function hasQuestionTextChanged() {
     return currentText !== originalQuestionText;
 }
 
+function hasPrefixSuffixChanged() {
+    const currentText = prefixSuffixInput.value.trim();
+    const audioExists = getAudioForQuestion(currentQuestion) !== null;
+    
+    if (!audioExists) {
+        return false;
+    }
+    
+    return currentText !== originalPrefixSuffix;
+}
+
+function hasPrefixSuffixMeaningChanged() {
+    const currentText = prefixSuffixMeaningInput.value.trim();
+    const audioExists = getAudioForQuestion(currentQuestion) !== null;
+    
+    if (!audioExists) {
+        return false;
+    }
+    
+    return currentText !== originalPrefixSuffixMeaning;
+}
+
+function hasAnyTtsInputChanged() {
+    return hasQuestionTextChanged() || hasPrefixSuffixChanged() || hasPrefixSuffixMeaningChanged();
+}
+
 function getAudioForQuestion(index) {
     const currentAudioFile = keyWordTtsObj.getAudioFile();
     
@@ -100,20 +128,22 @@ function updateTtsButtonStates(isEditMode = false) {
     const audioUrl = getAudioForQuestion(currentQuestion);
     const hasAudio = audioUrl !== null;
     const hasQuestionText = questionInput.value.trim() !== '';
-    const questionChanged = hasQuestionTextChanged();
+    const hasPrefixSuffixText = prefixSuffixInput.value.trim() !== '';
+    const hasPrefixSuffixMeaningText = prefixSuffixMeaningInput.value.trim() !== '';
+    const ttsInputChanged = hasAnyTtsInputChanged();
     
     if (isEditMode) {
-        if (hasAudio && !questionChanged) {
+        if (hasAudio && !ttsInputChanged) {
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = false;
             changeTtsConvertButtonText("Reconvert Text-To-Speech");
         } 
-        else if (hasAudio && questionChanged) {
+        else if (hasAudio && ttsInputChanged) {
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = false;
             changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
         } 
-        else if (hasQuestionText) {
+        else if (hasQuestionText && hasPrefixSuffixText && hasPrefixSuffixMeaningText) {
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = true;
             changeTtsConvertButtonText("Convert Text-To-Speech");
@@ -136,7 +166,7 @@ function updateTtsButtonStates(isEditMode = false) {
         }
     }
     
-    console.log(`TTS Buttons Updated - Question ${currentQuestion + 1}, Audio: ${hasAudio ? 'Yes' : 'No'}, Changed: ${questionChanged}, Edit Mode: ${isEditMode}`);
+    console.log(`TTS Buttons Updated - Question ${currentQuestion + 1}, Audio: ${hasAudio ? 'Yes' : 'No'}, Changed: ${ttsInputChanged}, Edit Mode: ${isEditMode}`);
 }
 
 function checkInputState() {
@@ -148,9 +178,9 @@ function checkInputState() {
     const getChoices = Array.from(choicesContainer.querySelectorAll(".choice-box .choice"));
     const hasEmptyChoice = getChoices.some(choice => choice.value.trim() === "");
     const hasAudio = getAudioForQuestion(currentQuestion) !== null;
-    const questionChanged = hasQuestionTextChanged();
+    const ttsInputChanged = hasAnyTtsInputChanged();
 
-    const needsReconvert = hasAudio && questionChanged;
+    const needsReconvert = hasAudio && ttsInputChanged;
     const isComplete = getPrefixSuffix && getPrefixSuffixMeaning && getQuestion && getAnswer && hasAudio && !hasEmptyChoice && !needsReconvert;
 
     saveButton.disabled = !isComplete;
@@ -209,10 +239,11 @@ ttsConvertButton.addEventListener("click", async () => {
             }
         }
         
-        await keyWordTtsObj.generateSpeech(questionInput.value, ttsId.toString());
+        await keyWordTtsObj.generateSpeech(`\(${prefixSuffixInput.value.trim()}\), \(${questionInput.value}\), \(${prefixSuffixMeaningInput.value.trim()}\)`, ttsId.toString(), 4);
 
         originalQuestionText = questionInput.value.trim();
-
+        originalPrefixSuffix = prefixSuffixInput.value.trim();
+        originalPrefixSuffixMeaning = prefixSuffixMeaningInput.value.trim();
 
         updateTtsButtonStates(true);
         checkInputState();
@@ -243,18 +274,64 @@ ttsPlayButton.addEventListener("click", () => {
     }
 });
 
+prefixSuffixInput.addEventListener("input", () => {
+    const isEditMode = editButton.style.display === "none";
+    if (isEditMode) {
+        const hasAudio = getAudioForQuestion(currentQuestion) !== null;
+        const hasPrefixSuffixText = prefixSuffixInput.value.trim() !== '';
+        const hasQuestionText = questionInput.value.trim() !== '';
+        const hasPrefixSuffixMeaningText = prefixSuffixMeaningInput.value.trim() !== '';
+        const ttsInputChanged = hasAnyTtsInputChanged();
+        
+        if (hasAudio && ttsInputChanged && hasPrefixSuffixText && hasQuestionText && hasPrefixSuffixMeaningText) {
+            changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
+        } else if (hasAudio && !ttsInputChanged) {
+            changeTtsConvertButtonText("Reconvert Text-To-Speech");
+        } else if (!hasAudio && hasPrefixSuffixText && hasQuestionText && hasPrefixSuffixMeaningText) {
+            changeTtsConvertButtonText("Convert Text-To-Speech");
+        }
+        
+        updateTtsButtonStates(true);
+    }
+    checkInputState();
+});
+
+prefixSuffixMeaningInput.addEventListener("input", () => {
+    const isEditMode = editButton.style.display === "none";
+    if (isEditMode) {
+        const hasAudio = getAudioForQuestion(currentQuestion) !== null;
+        const hasPrefixSuffixMeaningText = prefixSuffixMeaningInput.value.trim() !== '';
+        const hasQuestionText = questionInput.value.trim() !== '';
+        const hasPrefixSuffixText = prefixSuffixInput.value.trim() !== '';
+        const ttsInputChanged = hasAnyTtsInputChanged();
+        
+        if (hasAudio && ttsInputChanged && hasPrefixSuffixMeaningText && hasQuestionText && hasPrefixSuffixText) {
+            changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
+        } else if (hasAudio && !ttsInputChanged) {
+            changeTtsConvertButtonText("Reconvert Text-To-Speech");
+        } else if (!hasAudio && hasPrefixSuffixMeaningText && hasQuestionText && hasPrefixSuffixText) {
+            changeTtsConvertButtonText("Convert Text-To-Speech");
+        }
+        
+        updateTtsButtonStates(true);
+    }
+    checkInputState();
+});
+
 questionInput.addEventListener("input", () => {
     const isEditMode = editButton.style.display === "none";
     if (isEditMode) {
         const hasAudio = getAudioForQuestion(currentQuestion) !== null;
         const hasText = questionInput.value.trim() !== '';
-        const questionChanged = hasQuestionTextChanged();
+        const hasPrefixSuffixText = prefixSuffixInput.value.trim() !== '';
+        const hasPrefixSuffixMeaningText = prefixSuffixMeaningInput.value.trim() !== '';
+        const ttsInputChanged = hasAnyTtsInputChanged();
         
-        if (hasAudio && questionChanged && hasText) {
+        if (hasAudio && ttsInputChanged && hasText && hasPrefixSuffixText && hasPrefixSuffixMeaningText) {
             changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
-        } else if (hasAudio && !questionChanged) {
+        } else if (hasAudio && !ttsInputChanged) {
             changeTtsConvertButtonText("Reconvert Text-To-Speech");
-        } else if (!hasAudio && hasText) {
+        } else if (!hasAudio && hasText && hasPrefixSuffixText && hasPrefixSuffixMeaningText) {
             changeTtsConvertButtonText("Convert Text-To-Speech");
         }
         
@@ -287,6 +364,8 @@ function setFormToEditMode() {
     console.log("Edit Mode - Question", currentQuestion + 1);
     
     originalQuestionText = questionInput.value.trim();
+    originalPrefixSuffix = prefixSuffixInput.value.trim();
+    originalPrefixSuffixMeaning = prefixSuffixMeaningInput.value.trim();
     
     updateTtsButtonStates(true);
     
@@ -371,6 +450,8 @@ async function saveCurrentQuestion(e) {
         keyWordTtsObj.clearAudioFile();
         
         originalQuestionText = getQuestion;
+        originalPrefixSuffix = getPrefixSuffix;
+        originalPrefixSuffixMeaning = getPrefixSuffixMeaning;
     }
 
     const newQuestion = {
@@ -500,6 +581,8 @@ async function saveCurrentQuestion(e) {
 function clearForm() {
     keyWordTtsObj.clearAudioFile();
     originalQuestionText = "";
+    originalPrefixSuffix = "";
+    originalPrefixSuffixMeaning = "";
     updateTtsButtonStates(true);
     
     prefixSuffixInput.value = "";
@@ -563,6 +646,8 @@ function loadQuestion(index) {
     questionInput.value = questionData.question || "";
     
     originalQuestionText = questionData.question || "";
+    originalPrefixSuffix = questionData.prefixSuffix || "";
+    originalPrefixSuffixMeaning = questionData.prefixSuffixMeaning || "";
 
     const ttsData = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
     if (ttsData[index]) {

@@ -32,7 +32,7 @@ app.config['UPLOAD_AUDIO'] = UPLOAD_AUDIO
 app.config["PROPAGATE_EXCEPTIONS"] = False
 app.config['db'] = db
 
-login_manager.login_view = 'home'
+login_manager.login_view = 'auth_bp.login'
 login_manager.init_app(app)
 app.register_blueprint(errors)   
 app.register_blueprint(edit_games_bp)

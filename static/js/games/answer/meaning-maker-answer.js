@@ -40,12 +40,13 @@ if(await decrypt(sessionStorage.getItem("role")) === "student"){
     displayActivityTitle.textContent = `Title: ${currentTitle}`;
     toDashboardPageButton.addEventListener('click', async () => {
         const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
+        const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
 
         const formData = new FormData()
         formData.append("attempt_id", attemptId)
         formData.append("answer", JSON.stringify(userAnswers))
         
-        const response = await fetch('/save_attempt', {
+        const response = await fetch(url, {
             method: 'PATCH',
             body: formData
         });
@@ -271,12 +272,12 @@ async function showFinalScore() {
         
         finishButton.addEventListener("click" , async () => {
             const formData = new FormData()
-            
+            const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/finish_attempt/activity' : '/finish_attempt/assessment'
             formData.append("answer", JSON.stringify(userAnswers))
             formData.append("attempt_id", await decrypt(sessionStorage.getItem("currentAttemptId")))
             formData.append("score", finalScore)
             
-            const response = await fetch('/finish_attempt', {
+            const response = await fetch(url, {
                 method: "PATCH",
                 body: formData
             })
@@ -286,9 +287,14 @@ async function showFinalScore() {
             try{
                 if (response.ok && result.status){
                     await checkAttemptsByStudentID(studentId)
-                    await checkActivityAttemptsByStudentID(studentId)
-                    await checkAssessmentAttemptsByStudentID(studentId)
+                    if(sessionStorage.getItem('categoryTypeNum') == 1){
+                        await checkActivityAttemptsByStudentID(studentId)
+                    }
+                    else if(sessionStorage.getItem('categoryTypeNum') == 2){
+                        await checkAssessmentAttemptsByStudentID(studentId)
+                    }
                     await checkPerfectScoresByStudentID(studentId)
+                    sessionStorage.removeItem('categoryTypeNum')
                     sessionStorage.removeItem('questions')
                     sessionStorage.removeItem('currentContentId')
                     sessionStorage.removeItem('currentActivityTitle')

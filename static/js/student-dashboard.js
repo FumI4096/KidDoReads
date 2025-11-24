@@ -53,6 +53,11 @@ logOutButton.addEventListener('click', () => {
                 dropdownAssessment?.classList.remove('active');
                 arrowAssessment?.classList.remove('rotate');
                 assessmentItem?.classList.remove('active-nav');
+                activityItem?.style.setProperty('z-index', '1000');              // ADD THIS LINE
+                assessmentItem?.style.setProperty('pointer-events', 'none');    // ADD THIS LINE
+            } else {
+                activityItem?.style.removeProperty('z-index');                  // ADD THIS LINE
+                assessmentItem?.style.removeProperty('pointer-events');         // ADD THIS LINE
             }
             return;
         }
@@ -69,6 +74,11 @@ logOutButton.addEventListener('click', () => {
                 dropdownActivity?.classList.remove('active');
                 arrowActivity?.classList.remove('rotate');
                 activityItem?.classList.remove('active-nav');
+                assessmentItem?.style.setProperty('z-index', '1000');           // ADD THIS LINE
+                activityItem?.style.setProperty('pointer-events', 'none');      // ADD THIS LINE
+            } else {
+                assessmentItem?.style.removeProperty('z-index');                // ADD THIS LINE
+                activityItem?.style.removeProperty('pointer-events');           // ADD THIS LINE
             }
             return;
         }
@@ -82,6 +92,11 @@ logOutButton.addEventListener('click', () => {
             dropdownAssessment?.classList.remove('active');
             arrowAssessment?.classList.remove('rotate');
             assessmentItem?.classList.remove('active-nav');
+            
+            activityItem?.style.removeProperty('z-index');                      // ADD THIS LINE
+            assessmentItem?.style.removeProperty('z-index');                    // ADD THIS LINE
+            activityItem?.style.removeProperty('pointer-events');               // ADD THIS LINE
+            assessmentItem?.style.removeProperty('pointer-events');             // ADD THIS LINE
         }
     });
 })();
@@ -146,15 +161,15 @@ async function studentProfile() {
 
 
     const achievements = [
-        {id: 1, title: "First Step Hero", description: "Finished your first activity!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 2, title: "Brain Starter!", description: "Finished your first assessment!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 3, title: "Starter Star", description: "Finished 3 assessments and activities!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 4, title: "Learning Explorer", description: "Completed 5 assessments and activities!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 5, title: "Super Scholar!", description: "Completed 10 assessments and activities! Keep it up, Super Scholar!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 1, title: "First Step Hero", description: "Finished your first activity!", image: '../../../static/images/achievement-icons/1-first-step-hero.PNG', isAchieved: false},
+        {id: 2, title: "Brain Starter!", description: "Finished your first assessment!", image: '../../../static/images/achievement-icons/2-brain-starter.PNG', isAchieved: false},
+        {id: 3, title: "Starter Star", description: "Finished 3 assessments and activities!", image: '../../../static/images/achievement-icons/3-starter-star.PNG', isAchieved: false},
+        {id: 4, title: "Learning Explorer", description: "Completed 5 assessments and activities!", image: '../../../static/images/achievement-icons/4-learning-explorer.PNG', isAchieved: false},
+        {id: 5, title: "Super Scholar!", description: "Completed 10 assessments and activities! Keep it up, Super Scholar!", image: '../../../static/images/achievement-icons/5-super-scholar.PNG', isAchieved: false},
         {id: 6, title: "Learning Legend!", description: "Completed 20 assessments and activities! You're now a true Learning Legend!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 7, title: "Sound & Spell Star!", description: "Completed the Word Audio Match Assessment!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 8, title: "Phonics Pro!", description: "Completed the Listen and Choose Assessment!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 9, title: "Wizard Knowledge!", description: "Completed the Meaning Maker Assessment!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 7, title: "Sound & Spell Star!", description: "Completed the Word Audio Match Assessment!", image: '../../../static/images/achievement-icons/7-sound-and-spell-star.PNG', isAchieved: false},
+        {id: 8, title: "Phonics Pro!", description: "Completed the Listen and Choose Assessment!", image: '../../../static/images/achievement-icons/8-phonics-pro.PNG', isAchieved: false},
+        {id: 9, title: "Wizard Knowledge!", description: "Completed the Meaning Maker Assessment!", image: '../../../static/images/achievement-icons/9-wizard-knowledge.PNG', isAchieved: false},
         {id: 10, title: "The Detective!", description: "Completed the Sound-Alike Match Assessment!", image: '../../../static/images/check.png', isAchieved: false},
         {id: 11, title: "Story Predictor!", description: "Completed the What Happens Next? Assessment!", image: '../../../static/images/check.png', isAchieved: false},
         {id: 12, title: "Clue Finder!", description: "Completed the Picture + Clues Assessment!", image: '../../../static/images/check.png', isAchieved: false},
@@ -277,6 +292,31 @@ async function showContent(contentTypeNum) {
     }
 }
 
+async function showAssessment(contentTypeNum) {
+    const url = `/students/assessments/${contentTypeNum}`;
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
+        if (response.ok && result.status) {
+            result.data.forEach(data => {
+                addAssessment(
+                    data.assessment_id,
+                    data.assessment_title,
+                    data.assessment_json,
+                    data.tts_json,
+                    data.assessment_type,
+                    "Assessment",
+                );
+            });
+        } else {
+            notification.notify("Contents can't be retrieved at the moment. Please try again.", "error");
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        notification.notify("Network error. Please check your connection and try again.", "error");
+    }
+}
+
 function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, content_hidden, category_type) {
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
@@ -320,7 +360,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         formData.append("student_id", id)
         formData.append("content_id", await decrypt(sessionStorage.getItem("currentContentId")))
         
-        const response = await fetch('/attempt', {
+        const response = await fetch('/attempt/activity', {
             method: "POST",
             body: formData
         })
@@ -330,10 +370,11 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         try{
             if (response.ok && result.status){
                 if(result.hasUnfinished){   
-                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type)
+                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, content_type, 1)
 
                 }
                 else{
+                    sessionStorage.setItem("categoryTypeNum", 1)
                     sessionStorage.setItem("userAnswers", JSON.stringify({}))
                     sessionStorage.setItem("currentAttemptId", await encrypt(result.attemptId))
                     answerPageTo(content_type);
@@ -435,7 +476,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
             const formData = new FormData();
             formData.append("attempt_id", attempt_id);
             
-            const response = await fetch('/resume_attempt', {
+            const response = await fetch('/resume_attempt/activity', {
                 method: "PATCH",
                 body: formData
             });
@@ -443,7 +484,186 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
             const result = await response.json()
 
             if (response.ok && result.status){
+                sessionStorage.setItem("userAnswers", JSON.stringify(answer))
+                sessionStorage.setItem("currentAttemptId", await encrypt(attempt_id))
+                answerPageTo(type)
+            }
+            else{
+                console.log(result.message)
+            }
+        })
 
+        closeButton.addEventListener('click', () => {
+            unfinishedAttemptContainer.remove()
+        })
+
+        document.body.appendChild(unfinishedAttemptContainer)
+    }
+
+}
+function addAssessment(assessment_id, assessment_title, assessment_details, tts_json, assessment_type, category_type) {
+    const newContent = document.createElement("div");
+    const assessmentName = document.createElement("p");
+    const assessmentType = document.createElement("p")
+    const categoryType = document.createElement("p");
+    newContent.classList.add("content");
+    assessmentName.classList.add("activity-name");
+    assessmentType.classList.add("category-type")
+    categoryType.classList.add("category-type");
+    assessmentName.innerHTML = assessment_title;
+    assessmentType.innerHTML = getContentName(assessment_type)
+    categoryType.innerHTML = category_type;
+    newContent.append(assessmentName, categoryType, assessmentType);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add("button-container");
+    const playActivityButton = document.createElement('button');
+    const checkProgressButton = document.createElement('button');
+
+    playActivityButton.classList.add('play-activity-button');
+    playActivityButton.innerHTML = "Play Activity";
+    checkProgressButton.classList.add('check-progress-button');
+    checkProgressButton.innerHTML = "Check Progress";
+
+    buttonContainer.append(playActivityButton, checkProgressButton);
+    newContent.append(buttonContainer);
+
+    playActivityButton.addEventListener('click', async () => {
+        sessionStorage.setItem("currentActivityTitle", assessment_title);
+        sessionStorage.setItem("currentContentId", await encrypt(assessment_id));
+        sessionStorage.setItem("questions", JSON.stringify(assessment_details));
+        sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
+
+        const formData = new FormData()
+        
+        formData.append("student_id", id)
+        formData.append("content_id", await decrypt(sessionStorage.getItem("currentContentId")))
+        
+        const response = await fetch('/attempt/assessment', {
+            method: "POST",
+            body: formData
+        })
+        
+        const result = await response.json()
+
+        try{
+            if (response.ok && result.status){
+                if(result.hasUnfinished){   
+                    hasUnfinishedAttemptContainer(result.studentAnswer, result.attemptId, assessment_type, 2)
+
+                }
+                else{
+                    sessionStorage.setItem("userAnswers", JSON.stringify({}))
+                    sessionStorage.setItem("currentAttemptId", await encrypt(result.attemptId))
+                    sessionStorage.setItem("categoryTypeNum", 2)
+                    answerPageTo(assessment_type);
+                }
+            }
+            else{
+                console.log(result.message)
+            }
+        }
+        catch (error){
+            console.log(error)
+        }
+    });
+
+    checkProgressButton.addEventListener('click', async () => {
+        const url = `/attempts/assessments/students/${id}/${assessment_id}/filter/0`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        const attemptScoreContainer = document.createElement('div') //background
+        const attemptScoreWrapper = document.createElement('div')
+        attemptScoreWrapper.setAttribute('id', 'attempt-score-wrapper')
+        const attemptScoreTable = document.createElement('table') //container itself
+        const closeButton = document.createElement('img')
+        closeButton.src = '../../static/images/close-outline.svg'
+        closeButton.alt = "close-button"
+
+        closeButton.addEventListener('click', () => {
+            attemptScoreContainer.remove()
+        })
+
+        attemptScoreWrapper.appendChild(closeButton)
+        const attemptScoreTableHeader = document.createElement('thead')
+        const attemptScoreTableBody = document.createElement('tbody')
+
+        const attemptScoreTableHeaderRow = document.createElement('tr')
+
+        const attemptScoreTableHeaderAttemptNo = document.createElement('th')
+        const attemptScoreTableHeaderScore = document.createElement('th')
+        const attemptScoreTableHeaderStatus = document.createElement('th')
+        const attemptScoreTableHeaderDate = document.createElement('th')
+        attemptScoreTableHeaderAttemptNo.textContent = "Attempt No."
+        attemptScoreTableHeaderScore.textContent = "Score"
+        attemptScoreTableHeaderStatus.textContent = "Status"
+        attemptScoreTableHeaderDate.textContent = "Finished At"
+        
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderAttemptNo)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderScore)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderStatus)
+        attemptScoreTableHeaderRow.appendChild(attemptScoreTableHeaderDate)
+
+        attemptScoreTableHeader.appendChild(attemptScoreTableHeaderRow)
+
+        attemptScoreContainer.setAttribute('id', 'attempt-score-container')
+        attemptScoreTable.setAttribute('id', 'attempt-score-table')
+
+        attemptScoreTable.appendChild(attemptScoreTableHeader)
+
+        
+        if (response.ok && result.status){
+            result.attemptScores.forEach(attempt => {
+                attemptScoreTableBody.appendChild(displayAttemptScores(attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date)));
+            });
+            attemptScoreTable.appendChild(attemptScoreTableBody)
+            attemptScoreWrapper.appendChild(attemptScoreTable)
+            attemptScoreContainer.appendChild(attemptScoreWrapper)
+
+            document.body.appendChild(attemptScoreContainer)
+        }
+
+
+    })
+    displayContents.appendChild(newContent);
+
+    function hasUnfinishedAttemptContainer(answer, attempt_id, type, categoryTypeNum){
+        const unfinishedAttemptContainer = document.createElement('div')
+        const unfinishedAttemptWrapper = document.createElement('div')
+        const statement = document.createElement('p')
+        const buttonContainer = document.createElement('div')
+        const resumeButton = document.createElement('button')
+        const closeButton = document.createElement('button')
+
+        unfinishedAttemptContainer.setAttribute('id', 'unfinished-attempt-container')
+        unfinishedAttemptWrapper.setAttribute('id', 'unfinished-attempt-wrapper')
+
+        statement.textContent = "Uh Oh! An unfinished and saved activity detected! Please finish it!"
+
+        resumeButton.textContent = "Resume Activity"
+        closeButton.textContent = "Resume Later"
+
+        buttonContainer.append(resumeButton, closeButton)
+
+        unfinishedAttemptWrapper.appendChild(statement)
+        unfinishedAttemptWrapper.appendChild(buttonContainer)
+
+        unfinishedAttemptContainer.appendChild(unfinishedAttemptWrapper)
+
+        resumeButton.addEventListener('click', async () => {
+            const formData = new FormData();
+            formData.append("attempt_id", attempt_id);
+            
+            const response = await fetch('/resume_attempt/assessment', {
+                method: "PATCH",
+                body: formData
+            });
+
+            const result = await response.json()
+
+            if (response.ok && result.status){
+                sessionStorage.setItem("categoryTypeNum", categoryTypeNum)
                 sessionStorage.setItem("userAnswers", JSON.stringify(answer))
                 sessionStorage.setItem("currentAttemptId", await encrypt(attempt_id))
                 answerPageTo(type)
@@ -633,7 +853,7 @@ moveStudentInfo();
             const clickedName = item.textContent.trim();
 
             displayContents.innerHTML = ''
-            //add showAssessments() to be created
+            showAssessment(parseInt(item.dataset.action))
 
             // Update the label dynamically
             sectionLabel.textContent = parseInt(item.dataset.action) !== 0 ? `${navType} – ${clickedName}` : "Select an Activity or Assessment";

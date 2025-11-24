@@ -200,10 +200,11 @@ textarea { /* passage input - multilines */
 }
 
 .input-content{
-    flex: 1;
+    flex: 0.4;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-right: auto
 }
 
 .input-content label{
@@ -339,4 +340,58 @@ textarea { /* passage input - multilines */
 #button-container{
     display: flex;
     justify-content: space-between;
+}
+
+/* Style for the meaning field */
+.meaning-field {
+    flex: 0.4;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.meaning-field label{
+    font-size: 1.3rem;
+    color: var(--secondary-color);
+    font-family: 'Bold-Poppins';
+}
+
+.meaning-field input{
+    font-size: 1.2rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.5rem 0;
+    color: var(--white-text);
+}
+
+.meaning-field input::placeholder{
+    color: #ccc;
+}
+
+/* Style for input-content-full (the Question section) */
+.input-content-full {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-content-full label{
+    font-size: 1.3rem;
+    color: var(--secondary-color);
+    font-family: 'Bold-Poppins';
+}
+
+.input-content-full input{
+    font-size: 1.2rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.5rem 0;
+    color: var(--white-text);
+}
+
+.input-content-full input::placeholder{
+    color: #ccc;
 }

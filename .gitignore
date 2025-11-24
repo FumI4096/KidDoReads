@@ -4,5 +4,6 @@ database/
 static/uploads
 static/upload_audio
 static/upload_picture_clues
+static/assessment_audios
 
 .env

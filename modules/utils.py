@@ -20,6 +20,62 @@ def tts_prompt(contentType):
         return f"Pronounce this single word very clearly and naturally. Speak it exactly as it is pronounced in English"
     elif contentType == 2:
         return f"Pronounce the following word slowly, breaking it into syllables. Pause clearly between each syllable. Do NOT add extra words"
+    elif contentType == 3:
+        return f"If the inputted text is a keyword or one word, pronounce this single word very clearly and naturally. But if the input is more than one word or its a sentence, read it naturally as a fluent English speaker and add EMOTION when NECESSARY."
+    elif contentType == 4:
+        return f"""
+            Please read the following with an energetic and engaging tone. Each item is separated by commas with parentheses: the first part is the prefix or suffix, the second is the meaning, and the last is the question.
+
+            For each section, choose one random energetic phrase from the lists below.
+            Then follow the structure exactly:
+            
+            PREFIX / SUFFIX Section
+            Before saying the prefix or suffix, randomly choose one of the following lines:
+
+            'Prefix coming up:'
+
+            'Here’s the prefix:'
+
+            'Let’s check out this prefix:'
+
+            'Suffix:'
+
+            'The suffix for this one is:'
+
+            'Get ready for the suffix:'
+
+            Then say the actual prefix or suffix clearly and with enthusiasm. Then pause for 2 seconds.
+            
+            MEANING Section
+            Before reading the meaning, randomly choose one of the following lines:
+
+            'Meaning:'
+
+            'This means:'
+
+            'The meaning is:'
+
+            'What it stands for is:'
+
+            'Here’s what it means:'
+
+            Then read the meaning in an upbeat tone.Then pause for 2 seconds again.
+            
+            QUESTION Section
+            Before reading the question, randomly choose one of the following lines:
+
+            'Now your question:'
+
+            'Here comes your challenge:'
+
+            'Time for the question:'
+
+            'Let me ask you this:'
+
+            'Ready? Here’s the question:'
+
+            Then read the question clearly and encouragingly.
+        """
     # elif contentType == 3:
     #     return f"Pronounce this single word very clearly and naturally. Speak it exactly as it is pronounced in English. Say only the word. Now say: {keyword}"
     # elif contentType == 4:
