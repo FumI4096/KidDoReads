@@ -194,6 +194,7 @@ main > section{
     -moz-appearance: none; 
     appearance: none; 
     background-color: white;
+    cursor: pointer;
     background-image: url('../images/cusztomize-dropdown-select-2.svg');
     background-size: 24px;
     background-repeat: no-repeat;
@@ -313,12 +314,12 @@ td > p{
 
 }
 
-#submit-user-button:hover, .edit-buttons:hover {
+.edit-buttons:hover {
     background-color: var(--edit-hover-color);
     color: var(--white-text)
 }
 
-#submit-user-button:hover, .edit-buttons:active {
+.edit-buttons:active {
     background-color: var(--active-state-color);
 }
 
