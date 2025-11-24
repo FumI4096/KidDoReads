@@ -119,9 +119,7 @@ main > aside{
 
     }
 
-    li:hover{
-        transform: scale(1.05);
-    }
+v
 }
 
 #admin-info, #student-info, #teacher-info{
@@ -239,10 +237,12 @@ main > aside > img{
 
                 & > span{
                     font-size: 12px;
+                    color: var(--primary-color-300)
                 }
 
                 & > img{
                     inline-size: 17px;
+                    filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2.7%) hue-rotate(230deg) brightness(95%) contrast(101%);
                 }
             }
 

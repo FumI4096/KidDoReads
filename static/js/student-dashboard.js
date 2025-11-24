@@ -505,15 +505,12 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
     const newContent = document.createElement("div");
     const assessmentName = document.createElement("p");
     const assessmentType = document.createElement("p")
-    const categoryType = document.createElement("p");
     newContent.classList.add("content");
     assessmentName.classList.add("activity-name");
     assessmentType.classList.add("category-type")
-    categoryType.classList.add("category-type");
     assessmentName.innerHTML = assessment_title;
     assessmentType.innerHTML = getContentName(assessment_type)
-    categoryType.innerHTML = category_type;
-    newContent.append(assessmentName, categoryType, assessmentType);
+    newContent.append(assessmentName, assessmentType);
 
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add("button-container");
@@ -843,6 +840,8 @@ moveStudentInfo();
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
             item.classList.add('active');
+            dropdown.classList.toggle('active', false)
+            
         });
     });
 
@@ -861,6 +860,8 @@ moveStudentInfo();
             // Optional: highlight selected item
             document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
             item.classList.add('active');
+            const dropdown = parentNav.querySelector('.dropdown');
+            dropdown.classList.toggle('active', false)
         });
     });
 })();
