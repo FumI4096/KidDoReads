@@ -19,6 +19,7 @@ main > section{
     gap: 1rem;
     height: auto;
     display: grid;
+    padding: 10px;
     grid-template-columns: repeat(4, 1fr);
     max-height: 100%;
     overflow-y: auto;
@@ -28,13 +29,6 @@ main > section{
     border-radius: 20px;
     height: 200px;
 }
-
-/* #for-the-kiddos {
-    font-family: 'Bold-Poppins';
-    font-size: 1.2rem;
-    color: transparent;
-    -webkit-text-stroke: 2px black;
-} */
 
 .content {
     background-color: var(--primary-color-200);
@@ -69,10 +63,10 @@ main > section{
             font-family: 'Regular-Poppins';
             font-size: 0.9rem;
             color: var(--primary-color-700);
-            transition: var(--hover-scale);
+            transition: var(--transition-ease);
         }
 
-        & > .delete-button{
+        & > .delete-button {
             grid-row-start: 2; 
             grid-column: 1 / 3;
             background: var(--danger-color);
@@ -101,7 +95,8 @@ main > section{
     }
 
     .delete-button:hover{
-        transform: scale(var(--hover-scale));
+        background-color: var(--danger-hover-color);
+        transform: none !important;
     }
     
     }
@@ -249,25 +244,21 @@ main > section{
 
 #select-category, #select-content {
     font-family: 'Regular-Poppins';
-    background-color: var(--accent-color-wood);
-    color: var(--white-text);
+    background-color: var(--white-text);
+    border: none;
+    color: var(--black-text);
     position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
-    border-radius: 8px;
     cursor: pointer;
+    box-shadow: var(--box-shadow-1);
     transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 #select-category option, #select-content option {
     background-color: var(--white-text);
-}
-
-#select-category:hover, #select-content:hover {
-    background-color: var(--accent-color-almond);
-    color: var(--black-text);
 }
 
 #progress-table{
@@ -546,46 +537,7 @@ main > section{
     }
 }
 
-/* Slide in animation when opening */
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
 
-/* Slide out animation when closing */
-#conversation-container.closing {
-    animation: slideOutDown 0.3s ease forwards;
-}
-
-@keyframes slideOutDown {
-    from {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(20px) scale(0.9);
-    }
-}
-
-/* Arrow pulse animation */
-@keyframes arrowPulse {
-    0% {
-        transform: translateX(0);
-    }
-    50% {
-        transform: translateX(4px);
-    }
-    100% {
-        transform: translateX(0);
-    }
-}
 
 @media (max-width: 1644px) {
     #content-container {
