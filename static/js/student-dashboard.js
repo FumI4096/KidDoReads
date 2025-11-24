@@ -3,7 +3,7 @@ import { encrypt, decrypt } from './modules/SessionHandling.js'
 
 import { loginSuccess, notifyStudentAchievement } from './modules/RedirectNotification.js'
 
-const profileButton = document.getElementById("profile-button");
+const profileButton = document.getElementById("student-profile-button");
 const logOutButton = document.getElementById('log-out-button');
 const mainAside = document.querySelector('main > aside');
 const mainSection = document.querySelector('main > section');
@@ -22,13 +22,13 @@ logOutButton.addEventListener('click', () => {
 });
 
 (() => {
-    const activityNav = document.getElementById('activities-record-button');
-    const assessmentNav = document.getElementById('assessments-record-button');
+    const activityNav = document.getElementById('student-activities-button');
+    const assessmentNav = document.getElementById('student-assessments-button');
 
     if (!activityNav || !assessmentNav) return;
 
-    const activityItem = activityNav.closest('.nav-item');
-    const assessmentItem = assessmentNav.closest('.nav-item');
+    const activityItem = activityNav.closest('.student-nav-item');
+    const assessmentItem = assessmentNav.closest('.student-nav-item');
 
     const dropdownActivity = activityItem?.querySelector('.dropdown');
     const dropdownAssessment = assessmentItem?.querySelector('.dropdown');
@@ -120,7 +120,7 @@ async function studentProfile() {
 
     profileBackground.id = 'profile-background';
     profileContainer.id = 'profile-container';
-    profileHeader.id = 'profile-button-container';
+    profileHeader.id = 'student-profile-button-container';
     informationContainer.id = 'information-container';
     userContainer.id = 'user-container';
     badgesContainer.id = 'badges-container';
@@ -166,16 +166,16 @@ async function studentProfile() {
         {id: 3, title: "Starter Star", description: "Finished 3 assessments and activities!", image: '../../../static/images/achievement-icons/3-starter-star.PNG', isAchieved: false},
         {id: 4, title: "Learning Explorer", description: "Completed 5 assessments and activities!", image: '../../../static/images/achievement-icons/4-learning-explorer.PNG', isAchieved: false},
         {id: 5, title: "Super Scholar!", description: "Completed 10 assessments and activities! Keep it up, Super Scholar!", image: '../../../static/images/achievement-icons/5-super-scholar.PNG', isAchieved: false},
-        {id: 6, title: "Learning Legend!", description: "Completed 20 assessments and activities! You're now a true Learning Legend!", image: '../../../static/images/check.png', isAchieved: false},
+        {id: 6, title: "Learning Legend!", description: "Completed 20 assessments and activities! You're now a true Learning Legend!", image: '../../../static/images/achievement-icons/6-learning-legend.png', isAchieved: false},
         {id: 7, title: "Sound & Spell Star!", description: "Completed the Word Audio Match Assessment!", image: '../../../static/images/achievement-icons/7-sound-and-spell-star.PNG', isAchieved: false},
         {id: 8, title: "Phonics Pro!", description: "Completed the Listen and Choose Assessment!", image: '../../../static/images/achievement-icons/8-phonics-pro.PNG', isAchieved: false},
         {id: 9, title: "Wizard Knowledge!", description: "Completed the Meaning Maker Assessment!", image: '../../../static/images/achievement-icons/9-wizard-knowledge.PNG', isAchieved: false},
-        {id: 10, title: "The Detective!", description: "Completed the Sound-Alike Match Assessment!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 11, title: "Story Predictor!", description: "Completed the What Happens Next? Assessment!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 12, title: "Clue Finder!", description: "Completed the Picture + Clues Assessment!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 13, title: "Perfect Start!", description: "Achieved your 1st perfect score!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 14, title: "Perfect Streak!", description: "Achieved your 5th perfect score! — You're becoming a real master of learning — keep that streak going!", image: '../../../static/images/check.png', isAchieved: false},
-        {id: 15, title: "Perfect Pro!", description: "Achieved your 10th perfect score! You're a true learning champion", image: '../../../static/images/check.png', isAchieved: false}
+        {id: 10, title: "The Detective!", description: "Completed the Sound-Alike Match Assessment!", image: '../../../static/images/achievement-icons/10-the-detective.png', isAchieved: false},
+        {id: 11, title: "Story Predictor!", description: "Completed the What Happens Next? Assessment!", image: '../../../static/images/achievement-icons/11-story-predictor.png', isAchieved: false},
+        {id: 12, title: "Clue Finder!", description: "Completed the Picture + Clues Assessment!", image: '../../../static/images/achievement-icons/12-clue-finder.png', isAchieved: false},
+        {id: 13, title: "Perfect Start!", description: "Achieved your 1st perfect score!", image: '../../../static/images/achievement-icons/13-perfect-start.png', isAchieved: false},
+        {id: 14, title: "Perfect Streak!", description: "Achieved your 5th perfect score! — You're becoming a real master of learning — keep that streak going!", image: '../../../static/images/achievement-icons/14-perfect-streak.png', isAchieved: false},
+        {id: 15, title: "Perfect Pro!", description: "Achieved your 10th perfect score! You're a true learning champion", image: '../../../static/images/achievement-icons/15-perfect-pro.png', isAchieved: false}
     ]
 
     const achievementUrl = `/achievements/${await decrypt(sessionStorage.getItem('id'))}`
@@ -825,9 +825,9 @@ moveStudentInfo();
     }
     
     // Add click listeners to all dropdown items
-    document.querySelectorAll('#activities-record-button .dropdown li').forEach(item => {
+    document.querySelectorAll('#student-activities-button .dropdown li').forEach(item => {
         item.addEventListener('click', async () => {
-            const parentNav = item.closest('.nav-item');
+            const parentNav = item.closest('.student-nav-item');
             const navType = parentNav.querySelector('span').textContent.trim(); // e.g. "Activities" or "Assessments"
             const clickedName = item.textContent.trim();
 
@@ -838,16 +838,16 @@ moveStudentInfo();
             sectionLabel.textContent = parseInt(item.dataset.action) !== 0 ? `${navType} – ${clickedName}` : 'Select an Activity or Assessment';
 
             // Optional: highlight selected item
-            document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
+            document.querySelectorAll('.student-nav-item .dropdown li').forEach(li => li.classList.remove('active'));
             item.classList.add('active');
             dropdown.classList.toggle('active', false)
             
         });
     });
 
-    document.querySelectorAll('#assessments-record-button .dropdown li').forEach(item => {
+    document.querySelectorAll('#student-assessments-button .dropdown li').forEach(item => {
         item.addEventListener('click', async () => {
-            const parentNav = item.closest('.nav-item');
+            const parentNav = item.closest('.student-nav-item');
             const navType = parentNav.querySelector('span').textContent.trim(); // e.g. "Activities" or "Assessments"
             const clickedName = item.textContent.trim();
 
@@ -858,7 +858,7 @@ moveStudentInfo();
             sectionLabel.textContent = parseInt(item.dataset.action) !== 0 ? `${navType} – ${clickedName}` : "Select an Activity or Assessment";
 
             // Optional: highlight selected item
-            document.querySelectorAll('.nav-item .dropdown li').forEach(li => li.classList.remove('active'));
+            document.querySelectorAll('.student-nav-item .dropdown li').forEach(li => li.classList.remove('active'));
             item.classList.add('active');
             const dropdown = parentNav.querySelector('.dropdown');
             dropdown.classList.toggle('active', false)

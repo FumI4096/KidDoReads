@@ -22,7 +22,7 @@
     --success-color: #FDAD16;
     --success-color-hover: #33df8f;
     --danger-color: #ff4828;
-    --danger-hover-color: #d3361a;
+    --danger-hover-color: #f02400;
     --edit-color: #40534D;
     --edit-hover-color: #1A3637;
     --active-state-color: #FDAD16;
@@ -39,8 +39,8 @@
     --layout-padding: 0.7rem 5rem;
 
     /* Hover Effect - Scale */
-    --hover-scale: 1.05;
     --transition-ease: transform 0.3s ease;
+    --hover-scale: 1.05;
 
     /* Hover Effect - Filter Brightness */
     --transition-filter: filter 0.3s ease;
@@ -54,6 +54,47 @@
   25% { transform: translateY(-10px); }
   50% { transform: translateY(0); }
   75% { transform: translateY(-5px); }
+}
+
+/* Slide in animation when opening */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Slide out animation when closing */
+#conversation-container.closing {
+    animation: slideOutDown 0.3s ease forwards;
+}
+
+@keyframes slideOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+    }
+}
+
+/* Arrow pulse animation */
+@keyframes arrowPulse {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(4px);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 /* Fonts */

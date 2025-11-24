@@ -20,6 +20,7 @@ main > section{
     gap: 1rem;
     height: auto;
     display: grid;
+    padding: 10px;
     grid-template-columns: repeat(4, 1fr);
     max-height: 100%;
     min-height: 0;
@@ -46,13 +47,6 @@ main > section{
     border-radius: 20px;
     height: 200px;
 }
-
-/* #for-the-kiddos {
-    font-family: 'Bold-Poppins';
-    font-size: 1.2rem;
-    color: transparent;
-    -webkit-text-stroke: 2px black;
-} */
 
 .content {
     background-color: var(--primary-color-200);
@@ -87,6 +81,7 @@ main > section{
             font-family: 'Regular-Poppins';
             font-size: 0.9rem;
             color: var(--primary-color-700);
+            transition: var(--transition-ease);
             transition: var(--hover-scale);
             cursor: pointer;
             &:hover {
@@ -96,7 +91,7 @@ main > section{
             }
         }
 
-        & > .delete-button{
+        & > .delete-button {
             grid-row-start: 2; 
             grid-column: 1 / 3;
             background: var(--danger-color);
@@ -120,6 +115,14 @@ main > section{
             }
 
         }
+    button:hover {
+        transform: scale(var(--hover-scale));
+    }
+
+    .delete-button:hover{
+        background-color: var(--danger-hover-color);
+        transform: none !important;
+    }
     
     }
 }
@@ -258,17 +261,24 @@ main > section{
 
 /* Student Progress */
 
+.progress-header{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
 #select-category, #select-content {
     font-family: 'Regular-Poppins';
-    background-color: var(--accent-color-wood);
-    color: var(--white-text);
+    background-color: var(--white-text);
+    border: none;
+    color: var(--black-text);
     position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
-    border-radius: 8px;
     cursor: pointer;
+    box-shadow: var(--box-shadow-1);
     transition: background-color 0.18s ease, color 0.18s ease;
 }
 
@@ -317,18 +327,16 @@ main > section{
     border-collapse: collapse;
     border-radius: 10px;
     overflow: hidden;
-    font-family: 'Regular-Poppins';
+    font-family: 'Light-Poppins';
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     max-height: 100%;
 
     & > thead{
-        background: var(--primary-accent-color-1);
+        background: var(--primary-gradient-1);
         color: var(--white-text);
-        font-family: 'Regular-Poppins';
         text-align: center;
 
         & > tr > th{
-
             padding: 1rem;
             font-size: 0.95rem;
         }
@@ -687,18 +695,6 @@ main > section{
     }
 }
 
-/* Arrow pulse animation */
-@keyframes arrowPulse {
-    0% {
-        transform: translateX(0);
-    }
-    50% {
-        transform: translateX(4px);
-    }
-    100% {
-        transform: translateX(0);
-    }
-}
 
 @media (max-width: 1644px) {
     #content-container {

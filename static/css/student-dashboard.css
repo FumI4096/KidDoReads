@@ -31,6 +31,11 @@ main > section {
   max-width: 95%;
   gap: 1.5rem;
   height: 500px;
+  background-color: #ffffff;
+  font-family: 'Regular-Poppins';;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 20px;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -40,7 +45,7 @@ main > section {
   border: 1px solid rgba(255, 177, 92, 0.2);
 }
 
-#profile-button-container {
+#student-profile-button-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -49,6 +54,15 @@ main > section {
   border-bottom: 2px solid #ffb15c;
 }
 
+#student-profile-button-container p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--white-text);
+}
+
+#student-profile-button-container img {
+  width: 26px;
+  height: 26px;
 #profile-button-container p {
   font-size: 1.4rem;
   font-weight: 700;
@@ -280,14 +294,8 @@ main > section {
   padding-bottom: 0.3rem;
 }
 
-#activity-container p {
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.5;
-}
-
 /* === DROPDOWN MENU STYLING === */
-.nav-item {
+.student-nav-item {
   position: relative;
   display: flex;
   align-items: center;
@@ -295,23 +303,13 @@ main > section {
   padding: 10px 12px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
+  transition: var(--transition-ease);
 }
 
 /* HOVER EFFECT FOR ACTIVITY & ASSESSMENTS */
-.nav-item:hover {
-  background-color: #ffb15c;
-  color: #fff;
-}
 
-.nav-item img,
-.nav-item span,
-.nav-item ion-icon {
-  transition: filter 0.18s ease, color 0.18s ease;
-}
-
-.nav-item:hover img {
-  filter: brightness(0) invert(1);
+.student-nav-item img, .student-nav-item span, .student-nav-item ion-icon {
+  transition: var(--transition-ease);
 }
 
 .nav-item .dropdown > li:hover {
@@ -322,8 +320,8 @@ main > section {
 .dropdown-arrow {
   margin-left: auto;
   font-size: 1.05rem;
-  transition: transform 0.28s ease;
-  color: inherit;
+  transition: var(--transition-ease);
+  color: var(--accent-color-almond);
 }
 
 .dropdown-arrow.rotate {
@@ -331,7 +329,7 @@ main > section {
 }
 
 /* DROPDOWN MENU BASE */
-.nav-item .dropdown {
+.student-nav-item .dropdown {
   position: absolute;
   left: 0;
   top: calc(100% + 6px);
@@ -349,7 +347,7 @@ main > section {
   transition: max-height 0.28s ease, opacity 0.22s ease, transform 0.22s ease;
 }
 
-.nav-item .dropdown.active {
+.student-nav-item .dropdown.active {
   max-height: 480px;
   opacity: 1;
   transform: translateY(0);
@@ -385,23 +383,17 @@ main > section {
   object-fit: cover;
 }
 
-#profile-button {
+#student-profile-button {
   padding-left: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
   border-radius: 8px;
-  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
-#profile-button:hover {
-  background-color: #ffb15c;
-  color: #fff;
-}
-
-#profile-button:hover ion-icon {
-  color: #fff;
+#student-profile-button:hover, #student-activities-button:hover, #student-assessments-button:hover {
+  transition: var(--transition-ease);
 }
 
 /* === RESPONSIVE === */
@@ -522,6 +514,8 @@ main > section {
 .content {
   height: 200px;
   background-color: var(--primary-color-200);
+  font-family: 'Light-Poppins';
+  color: var(--white-text);
   border: none;
   border-radius: 20px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
@@ -535,13 +529,6 @@ main > section {
 .content:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
-
-.content .activity-type {
-  font-family: 'Light-Poppins';
-  font-size: 0.8rem;
-  color: var(--white-text);
-  margin-bottom: auto;
 }
 
 .content .activity-name {
@@ -580,7 +567,6 @@ main > section {
 
 .content .button-container button:hover {
   transform: scale(1.05);
-  background-color: #ff9233;
 }
 
 /* === SECTION LABEL === */

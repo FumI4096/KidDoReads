@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KidDoReads</title>
+    <title>Kid Do Reads | Student Dashboard</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/student-dashboard.css') }}">
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/kdr-logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg') }}">
 </head>
 <body>
     <!-- Ionicons -->
@@ -28,13 +28,13 @@
 
             <ul>
                 <!-- Profile -->
-                <li id="profile-button">
+                <li id="student-profile-button">
                     <img src="{{ url_for('static', filename='images/sidebar-icons/person.svg') }}" alt="Profile Icon">
                     <span>Profile</span>
                 </li>
 
                 <!-- Activities -->
-                <li class="nav-item" id="activities-record-button">
+                <li class="student-nav-item" id="student-activities-button">
                     <img src="{{ url_for('static', filename='images/sidebar-icons/paper-test.svg') }}" alt="Activities Icon">
                     <span>Activities</span>
                     <ion-icon name="chevron-down-outline" class="dropdown-arrow"></ion-icon>
@@ -50,7 +50,7 @@
                 </li>
 
                 <!-- Assessments -->
-                <li class="nav-item" id="assessments-record-button">
+                <li class="student-nav-item" id="student-assessments-button">
                     <img src="{{ url_for('static', filename='images/sidebar-icons/progress-circle.svg') }}" alt="Assessments Icon">
                     <span>Assessments</span>
                     <ion-icon name="chevron-down-outline" class="dropdown-arrow"></ion-icon>
