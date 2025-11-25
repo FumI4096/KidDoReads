@@ -63,6 +63,7 @@ main > section {
 #student-profile-button-container img {
   width: 26px;
   height: 26px;
+}
 #profile-button-container p {
   font-size: 1.4rem;
   font-weight: 700;
@@ -843,11 +844,11 @@ main > section {
         display: none;
     }
 
-    .nav-item{
+    .student-nav-item{
       position: static;
     }
 
-    .nav-item .dropdown {
+    .student-nav-item .dropdown {
         position: fixed;
         width: 85%;
         max-width: 450px;
@@ -857,20 +858,21 @@ main > section {
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         border-radius: 16px;
         overflow: hidden;
-        max-height: 500px;
+        max-height: 0px;
         opacity: 0;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         transition: opacity 0.3s ease, transform 0.3s ease;
         pointer-events: none;
     }
 
-    .nav-item .dropdown.active {
+    .student-nav-item .dropdown.active {
+        max-height: 800px;
         opacity: 1;
         transform: translateX(-50%) translateY(-50%) scale(1);
         pointer-events: all;
     }
 
-    .nav-item .dropdown > li {
+    .student-nav-item .dropdown > li {
         padding: 1rem 1.5rem;
         display: flex;
         align-items: center;
@@ -884,7 +886,7 @@ main > section {
         height: 100%;
     }
 
-    .nav-item .dropdown > li:last-child {
+    .student-nav-item .dropdown > li:last-child {
         border-bottom: none;
     }
 
@@ -1016,6 +1018,3 @@ main > section {
         transform: translateY(0) scale(1);
     }
 }
-
-
-
