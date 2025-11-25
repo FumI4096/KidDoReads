@@ -13,7 +13,7 @@ html, body{
 
 body{
     padding: 2.4rem;
-    background-image: url('../../images/light-olive-circle.svg'), url('../../images/dark-green-circle.svg');
+    background-image: url('../../images/background/light-olive-circle.svg'), url('../../images/background/dark-green-circle.svg'), url('../../images/background/leaves.PNG');
     background-position: -3% 100%, 100% 0%;
     background-repeat: no-repeat, no-repeat;
     background-color: var(--background);
@@ -29,9 +29,9 @@ header{
     align-items: center;
     gap: 0.5rem;
     & > span {
-        font-family: 'Medium-Poppins';
-        font-weight: bold;
-        font-size: 1.5rem;
+        font-family: 'Amore-Christmas';
+        font-size: 2rem;
+        letter-spacing: 1px;
         color: var(--accent-color-orange);
         background-clip: text;
     }
@@ -157,9 +157,10 @@ main > aside{
 }
 
 #category-type {
-    font-family: Medium-Poppins;
+    font-family: 'Amore-Christmas';
+    letter-spacing: 2px;
     color: var(--primary-color-300);
-    font-size: 3rem;
+    font-size: 4rem;
     
 }
 
