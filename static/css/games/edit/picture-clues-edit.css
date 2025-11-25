@@ -1,22 +1,10 @@
 @import "../../variables.css";
 
-*{
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-    font-family: 'Regular-Poppins';
-}
-
-html{
-    height: 100%;
-    width: 100%;
-}
-
 body{
-    display: flex;
-    flex-direction: column;
-    padding: 3rem 14rem;
-    gap: 1.5rem;
+    height: auto;
+    background-image: url('../../../images/dark-green-circle.svg');
+    background-position: 100% 0%;
+    background-repeat: no-repeat;
 }
 
 #category-display{
@@ -66,11 +54,9 @@ header{
             display: none;
         }
 
-
-    }
-
-    & > label:hover{
-        background-color: #c9c9c9;
+        &:hover{
+            background-color: #d0d0d0;
+        }
     }
 
 
@@ -82,30 +68,6 @@ header{
     }
 }
 
-/* Input Sections */
-.input-section{
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    background: white;
-    padding: 1rem 2rem;
-    border-radius: 1rem;
-    box-shadow: var(--box-shadow-1);
-
-    & > .input-content-full{
-        display: flex;
-        flex-direction: column;
-    }
-}
-
-.number-badge{
-    font-size: 6rem;
-    font-weight: 300;
-    color: #d3d3d3;
-    line-height: 1;
-    min-width: 80px;
-    text-align: center;
-}
 
 .input-content{
     flex: 1;
@@ -119,41 +81,10 @@ header{
     font-family: 'Bold-Poppins';
 }
 
-.input-content input{
-    font-size: 1.2rem;
-    border: none;
-    border-bottom: 2px solid #000;
-    outline: none;
-    background: transparent;
-    padding: 0.5rem 0;
-    color: #999;
-}
-
 .input-content input::placeholder{
     color: #ccc;
 }
 
-/* TTS Buttons */
-.tts-buttons{
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    min-width: 280px;
-}
-
-.tts-button{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.8rem 1.5rem;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
 
 .tts-button img{
     width: 18px;
@@ -188,7 +119,7 @@ header{
     border-radius: 25px;
     cursor: pointer;
     transition: all 0.3s ease;
-}
+}   
 
 .icon-button img{
     width: 20px;
@@ -217,56 +148,6 @@ header{
 
 #content-display{
     font-family: "Bold-Poppins";
-}
-
-#main-sheet-container{
-    padding: 1rem 10;
-    display: flex;
-    margin-bottom: auto;
-    gap: 1rem;
-
-    & > #choices-container{
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        gap: 1rem;
-        & > p{
-            font-size: 1.2rem;
-        }
-        & > #choice-box-container{
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            & > .choice-box{
-                display: flex;
-                width: 100%;
-                gap: 0.5rem;
-                justify-content: start;
-                align-items: center;
-                background-color: rgb(182, 182, 182);
-                height: auto;
-                padding: 1rem 1rem 1rem 4rem;
-                border-radius: 100px;
-        
-                & > *{
-                    font-size: 1.4rem;
-                    color: white
-                }
-        
-                & > .choice{
-                    height: auto;
-                    outline: none;
-                    border: none;
-                    background: transparent;
-        
-                    &::placeholder{
-                        color: rgb(233, 233, 233);
-                    }
-                }
-        
-            }
-        }
-    }
 }
 
 

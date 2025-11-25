@@ -167,9 +167,9 @@ header{
 /* Input Sections */
 
 textarea { /* passage input - multilines */
-    resize: vertical;
+    resize: none;
     min-height: 100px;
-    max-width: 60rem;
+    width: 100%;
     font-size: 1.2rem;
     border: none;
     outline: none;
