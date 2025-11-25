@@ -266,6 +266,11 @@ main > section {
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
+/* Slide out animation when closing */
+#conversation-container.closing {
+    animation: slideOutDown 0.3s ease forwards;
+}
+
 /* === ACTIVITY SECTION (MEDIUM RECTANGLE) === */
 #activity-container {
   width: 100%;
@@ -313,8 +318,8 @@ main > section {
   transition: var(--transition-ease);
 }
 
-.nav-item .dropdown > li:hover {
-  transform: scale(1);
+.student-nav-item:hover, .dropdown:hover, li:hover {
+  transform: scale(var(--hover-scale));
 }
 
 /* DROPDOWN ARROW */
@@ -901,14 +906,14 @@ main > section {
 
     }
 
-    .nav-item{
+    .student-nav-item{
         padding: 0;
         gap: 0;
         &:hover{
             background-color: transparent !important;
         }
     }
-    .nav-item:hover img {
+    .student-nav-item:hover img {
       filter: none;
     }
     main > aside{
@@ -979,7 +984,7 @@ main > section {
     #attempt-score-container {
         padding: 0.5rem;
     }
-    .nav-item .dropdown {
+    .student-nav-item .dropdown {
         height: 1200px;
         width: 90%;
     }
