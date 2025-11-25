@@ -82,7 +82,6 @@ main > section{
             font-size: 0.9rem;
             color: var(--primary-color-700);
             transition: var(--transition-ease);
-            transition: var(--hover-scale);
             cursor: pointer;
             &:hover {
                 transform: scale(var(--hover-scale));
