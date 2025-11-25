@@ -97,15 +97,27 @@ def tts_prompt(contentType):
         'Now it's your move… what happens next?'
 
         Pause briefly before saying the chosen phrase."""
-    # elif contentType == 6:
-    #     return f"Pronounce the following word slowly, breaking it into syllables. Pause clearly between each syllable. Do NOT add extra words. Now say: {keyword}"
+    elif contentType == 6:
+        return f"""Please read the following passage with appropriate emotions that match the tone of the story.
+        Use natural pacing, emphasize important words, and include slight pauses for dramatic effect when needed.
+
+        After finishing the passage, choose one random phrase from the list below and read it clearly with a curious, engaging tone:
+
+        'What do you think is happening?'
+
+        'Can you guess what's going on here?'
+        
+        'Hmm… what could be happening?'
+        
+        Pause briefly before saying the chosen phrase.
+        """
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def generate_unique_filename(original_filename):
     ext = original_filename.rsplit('.', 1)[1].lower()
-    return f"{uuid.uuid4().hex}.{ext}"
+    return f"{uuid.uuid4().hex}.{text}"
 
 def get_db():
     return current_app.config['db']
