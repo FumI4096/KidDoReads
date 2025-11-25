@@ -78,7 +78,7 @@ main > aside{
         gap: 1.5rem;
         font-family: 'Light-Poppins';
         cursor: pointer;
-        transition: transform 0.2s ease;
+        transition: var(--transition-ease);
 
         & > span {
             font-size: 1rem;
@@ -89,6 +89,10 @@ main > aside{
         & > img{
             inline-size: 20px;
         }
+    }
+    
+    & li:hover {
+        transform: scale(var(--hover-scale));
     }
 
     & > ul > li:nth-last-child(2){
@@ -226,7 +230,7 @@ main > aside > img{
             align-items: center;
             gap: 0;
 
-            & > li{
+            & > li {
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
@@ -234,6 +238,7 @@ main > aside > img{
                 gap: 0.10rem;
                 padding: 0.5rem 0;
                 padding: 0.5rem 0.5rem 0 0.5rem;
+                transition: var(--transition-ease);
 
                 & > span{
                     font-size: 12px;
@@ -247,8 +252,9 @@ main > aside > img{
             }
 
             & > li:hover{
-                transform: none;
+                transform: scale(var(--hover-scale));
             }
+
             & > li:nth-last-child(2){
                 margin: 0;
             }
