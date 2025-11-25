@@ -68,11 +68,6 @@
     }
 }
 
-/* Slide out animation when closing */
-#conversation-container.closing {
-    animation: slideOutDown 0.3s ease forwards;
-}
-
 @keyframes slideOutDown {
     from {
         opacity: 1;
