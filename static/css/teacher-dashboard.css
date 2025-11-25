@@ -49,10 +49,12 @@ main > section{
 }
 
 .content {
-    background-color: var(--primary-color-200);
     display: flex;
     flex-direction: column;
     padding: 0.7rem 1rem;
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--box-shadow-1);
 
     & > .activity-type{
         font-family: 'Light-Poppins';
@@ -82,7 +84,6 @@ main > section{
             font-size: 0.9rem;
             color: var(--primary-color-700);
             transition: var(--transition-ease);
-            transition: var(--hover-scale);
             cursor: pointer;
             &:hover {
                 transform: scale(var(--hover-scale));
@@ -128,6 +129,11 @@ main > section{
 }
 
 
+
+.content > * {
+    position: relative;
+    z-index: 1;        /* text/buttons stay visible on top */
+}
 
 #add-content-button {
     background-color: var(--accent-color-orange);

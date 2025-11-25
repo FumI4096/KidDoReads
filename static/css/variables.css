@@ -68,11 +68,6 @@
     }
 }
 
-/* Slide out animation when closing */
-#conversation-container.closing {
-    animation: slideOutDown 0.3s ease forwards;
-}
-
 @keyframes slideOutDown {
     from {
         opacity: 1;
@@ -127,4 +122,9 @@
 @font-face{
     font-family: 'Italic-Poppins';
     src: url('../fonts/Poppins-Italic.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Amore-Christmas';
+    src: url('../fonts/Amore-Christmas.otf') format('opentype');
 }

@@ -487,6 +487,9 @@ async function addContent(content_container, content_id, content_title, content_
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
     newContent.classList.add("content");
+    newContent.style.backgroundImage = `url('/static/images/activities-background-images/${content_type}.jpg')`; /* content background image */
+    newContent.style.backgroundSize = "cover";
+    newContent.style.backgroundPosition = "center";
     activityName.classList.add("activity-name");
     activityType.classList.add("activity-type");
     activityName.innerHTML = content_title;
