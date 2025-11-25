@@ -44,7 +44,7 @@ def tts_prompt(contentType):
 
             'Get ready for the suffix:'
 
-            Then say the actual prefix or suffix clearly and with enthusiasm. Then pause for 2 seconds.
+            Then say the actual prefix or suffix clearly and with enthusiasm. Then just pause for 2 seconds.
             
             MEANING Section
             Before reading the meaning, randomly choose one of the following lines:
@@ -59,7 +59,7 @@ def tts_prompt(contentType):
 
             'Here’s what it means:'
 
-            Then read the meaning in an upbeat tone.Then pause for 2 seconds again.
+            Then read the meaning in an upbeat tone. Then pause for 2 seconds again.
             
             QUESTION Section
             Before reading the question, randomly choose one of the following lines:
@@ -76,12 +76,27 @@ def tts_prompt(contentType):
 
             Then read the question clearly and encouragingly.
         """
-    # elif contentType == 3:
-    #     return f"Pronounce this single word very clearly and naturally. Speak it exactly as it is pronounced in English. Say only the word. Now say: {keyword}"
-    # elif contentType == 4:
-    #     return f"Pronounce the following word slowly, breaking it into syllables. Pause clearly between each syllable. Do NOT add extra words. Now say: {keyword}"
-    # elif contentType == 5:
-    #     return f"Pronounce this single word very clearly and naturally. Speak it exactly as it is pronounced in English. Say only the word. Now say: {keyword}"
+    elif contentType == 5:
+        return f"""Please read the following passage with appropriate emotions that match the tone of the story.
+        Use natural pacing, emphasize important words, and include slight pauses for dramatic effect when needed.
+
+        After finishing the passage, choose one random phrase from the list below and read it clearly with a curious, engaging tone:
+
+        'So… what happens next?'
+
+        'What do you think will happen after this?'
+
+        'Can you guess what comes next?'
+
+        'Hmm… what could possibly happen next?'
+
+        'Alright, your turn—what happens next?'
+
+        'Let's see if you can predict what comes after this.'
+
+        'Now it's your move… what happens next?'
+
+        Pause briefly before saying the chosen phrase."""
     # elif contentType == 6:
     #     return f"Pronounce the following word slowly, breaking it into syllables. Pause clearly between each syllable. Do NOT add extra words. Now say: {keyword}"
 
