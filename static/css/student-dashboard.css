@@ -402,21 +402,6 @@ main > section {
   transition: var(--transition-ease);
 }
 
-/* === RESPONSIVE === */
-@media screen and (max-width: 936px) {
-  #profile-container {
-    width: 95%;
-    padding: 1rem;
-  }
-
-  #information-container {
-    flex-direction: column;
-  }
-
-  #activity-container {
-    width: 95%;
-  }
-}
 
 /* === ANIMATIONS === */
 @keyframes fadeInUp {
@@ -815,6 +800,8 @@ main > section {
 @media (max-width: 936px) {
     #profile-container{
         height: 750px;
+        width: 95%;
+        padding: 1rem;
     }
     #profile-button-container{
         flex-direction: column-reverse;
@@ -838,9 +825,7 @@ main > section {
     html,body{
         height: 100%;
     }
-    body{
-      position: relative;
-    }
+
     main > section{
         margin-bottom: auto;
     }
@@ -855,11 +840,6 @@ main > section {
 
     .student-nav-item .dropdown {
         position: fixed;
-        width: 85%;
-        max-width: 450px;
-        top: 50%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-50%);
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         border-radius: 16px;
         overflow: hidden;
@@ -872,8 +852,12 @@ main > section {
 
     .student-nav-item .dropdown.active {
         max-height: 800px;
+        width: 85%;
+        max-width: 450px;
         opacity: 1;
-        transform: translateX(-50%) translateY(-50%) scale(1);
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
         pointer-events: all;
     }
 
@@ -911,8 +895,14 @@ main > section {
         gap: 0;
         &:hover{
             background-color: transparent !important;
+            transform: none;
         }
     }
+
+    li:hover{
+      transform: none;
+    }
+    
     .student-nav-item:hover img {
       filter: none;
     }
@@ -924,6 +914,34 @@ main > section {
 
       }
     }
+
+  #information-container {
+    flex-direction: column;
+  }
+
+  #activity-container {
+    width: 95%;
+  }
+  
+  #unfinished-attempt-container{
+      padding: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+  #unfinished-attempt-wrapper{
+      width: 80%;
+
+      & > div{
+        flex-direction: column;
+        gap: 1rem;
+
+        & > button{
+          width: 100%;
+        }
+      }
+  }
+
 }
 
 /* Tablet (768px and below) */
