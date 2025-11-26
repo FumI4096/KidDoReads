@@ -455,7 +455,6 @@ async function saveCurrentQuestion(e) {
         }
 
         try {
-            sessionStorage.setItem("questions", JSON.stringify(questionObject));
             const formData = new FormData();
             formData.append('content', sessionStorage.getItem("questions"));
             formData.append('id', teacherId);
@@ -471,6 +470,7 @@ async function saveCurrentQuestion(e) {
             
             if(response.ok && result.status) {
                 console.log(result.message);
+                sessionStorage.setItem("questions", JSON.stringify(questionObject));
                 notifObject.notify('Question saved successfully!', 'success');
             } 
             else {
