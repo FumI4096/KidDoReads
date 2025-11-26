@@ -36,7 +36,6 @@ distro==1.9.0
 dnspython==2.3.0
 docopt==0.6.2
 dotenv==0.9.9
-emoji==2.8.0
 exceptiongroup==1.2.2
 fastapi==0.115.8
 ffmpy==0.5.0
