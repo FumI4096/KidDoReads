@@ -1,6 +1,6 @@
 __pycache__/
 venv/
-database/
+database/db.py
 static/uploads
 static/upload_audio
 static/upload_picture_clues
