@@ -118,7 +118,7 @@ def allowed_file(filename):
 
 def generate_unique_filename(original_filename):
     ext = original_filename.rsplit('.', 1)[1].lower()
-    return f"{uuid.uuid4().hex}.{text}"
+    return f"{uuid.uuid4().hex}.{ext}"
 
 def get_db():
     return current_app.config['db']
