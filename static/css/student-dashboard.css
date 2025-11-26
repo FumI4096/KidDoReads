@@ -318,7 +318,7 @@ main > section {
   transition: var(--transition-ease);
 }
 
-.student-nav-item:hover, .dropdown:hover, li:hover {
+.student-nav-item:hover, li:hover {
   transform: scale(var(--hover-scale));
 }
 
@@ -345,7 +345,7 @@ main > section {
   display: flex;
   flex-direction: column;
   width: 100%;
-  z-index: 200;
+  z-index: 1000;
   overflow: hidden;
   max-height: 0;
   opacity: 0;
