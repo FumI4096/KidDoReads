@@ -17,8 +17,8 @@ html, body{
 body{
     display: flex;
     flex-direction: column;
-    padding: 3rem 14rem;
-    gap: 1.5rem;
+    padding: 2rem 10rem;
+    gap: 1rem;
     background-color: var(--background) !important;
     background-image: 
         url('../../../../images/background/light-olive-circle.svg'), 
@@ -27,8 +27,8 @@ body{
     background-repeat: no-repeat, no-repeat, no-repeat !important;
     background-attachment: fixed !important;
     background-size: auto, auto, cover !important;
-    min-height: 100vh;
-    overflow-x: hidden;
+    height: 100vh;
+    overflow: hidden;
 }
 
 body::after {
@@ -52,7 +52,8 @@ header{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
 }
 
 .header-left {
@@ -98,11 +99,13 @@ header{
     align-items: center;
     background: white;
     border-radius: 0.5rem;
-    padding: 4rem 3rem;
+    padding: 2rem 2rem;
     box-shadow: var(--box-shadow-1);
     border: 1px solid #ccc;
-    margin-bottom: 1rem;
-    min-height: 250px;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+    min-height: 280px;
+    max-height: 280px;
 }
 
 .question-container .question {
@@ -127,7 +130,8 @@ header{
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 3rem;
+    gap: 2rem;
+    flex-shrink: 0;
 }
 
 .instruction-text {
@@ -135,13 +139,14 @@ header{
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .instruction-text p {
     font-size: 1.5rem;
     color: var(--black-text);
     text-align: center;
+    margin: 0;
 }
 
 /* Instruction Detail */
@@ -149,7 +154,12 @@ header{
     font-size: 1.3rem;
     color: var(--black-text);
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Hide instruction when showing answers */
+body:has(#answer-container:not(:empty)) .instruction-detail {
+    display: none;
 }
 
 /* ==================== MASCOT ==================== */
@@ -273,10 +283,11 @@ header{
 .choices-container{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin: 0 auto 3rem;
-    max-width: 1200px;
-    padding: 0 2rem;
+    gap: 1rem;
+    margin: 0 auto 1rem;
+    max-width: 1000px;
+    padding: 0 1rem;
+    flex-shrink: 0;
 }
 
 .choice-box:nth-child(3) {
@@ -345,6 +356,8 @@ header{
     display: flex;
     justify-content: space-between;
     margin-top: auto;
+    padding: 1rem 0;
+    flex-shrink: 0;
 }
 
 .nav-button {
@@ -394,17 +407,25 @@ header{
 
 /* ==================== ANSWER CONTAINER ==================== */
 #answer-container {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
     background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
-    padding: 3rem 4rem;
+    padding: 2rem 3rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    max-width: 1200px;
+    max-width: 1000px;
     width: 90%;
-    margin: 2rem auto;
+    margin: 0 auto;
+    flex-shrink: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 350px);
+}
+
+/* Show answer container when it has content */
+#answer-container:not(:empty) {
+    display: flex;
 }
 
 #answer-container > h3 {
@@ -412,22 +433,26 @@ header{
     color: var(--accent-color-orange);
     font-family: 'Bold-Poppins';
     margin-bottom: 0;
+    flex-shrink: 0;
 }
 
 /* Answer Table */
 #answer-container table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 0.8rem;
+    border-spacing: 0 0.5rem;
 }
 
 #answer-container table thead {
     background: var(--accent-color-orange);
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 #answer-container table th {
-    padding: 1rem 1.5rem;
+    padding: 0.8rem 1rem;
     text-align: center;
     font-family: 'Bold-Poppins';
     font-size: 1rem;
@@ -444,7 +469,7 @@ header{
 }
 
 #answer-container table td {
-    padding: 1.2rem 1.5rem;
+    padding: 0.9rem 1rem;
     background: white;
     color: var(--black-text);
     font-size: 1rem;
@@ -519,8 +544,9 @@ header{
     font-size: 2rem;
     font-family: 'Bold-Poppins';
     color: var(--accent-color-orange);
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     text-align: center;
+    flex-shrink: 0;
 }
 
 /* Finish Button */
@@ -536,8 +562,9 @@ header{
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     align-self: center;
+    flex-shrink: 0;
 }
 
 #finish-button:hover {
@@ -607,6 +634,7 @@ header{
 @media (min-width: 768px) and (max-width: 991px) {
     body {
         padding: 2rem 5rem;
+        overflow-y: auto;
     }
     
     .instruction-wrapper {
@@ -677,6 +705,7 @@ header{
 @media (min-width: 576px) and (max-width: 767px) {
     body {
         padding: 1.5rem 3rem;
+        overflow-y: auto;
     }
     
     .instruction-wrapper {
@@ -748,6 +777,7 @@ header{
 @media (max-width: 575px) {
     body {
         padding: 1rem 1.5rem;
+        overflow-y: auto;
     }
     
     .instruction-wrapper {
@@ -829,6 +859,7 @@ header{
 @media (max-width: 375px) {
     body {
         padding: 1rem;
+        overflow-y: auto;
     }
     
     #mascot-image {
@@ -878,3 +909,10 @@ header{
         font-size: 0.85rem;
     }
 }
+
+#passage {
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
