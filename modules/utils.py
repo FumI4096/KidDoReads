@@ -77,10 +77,10 @@ def tts_prompt(contentType):
             Then read the question clearly and encouragingly.
         """
     elif contentType == 5:
-        return f"""Please read the following passage with appropriate emotions that match the tone of the story.
-        Use natural pacing, emphasize important words, and include slight pauses for dramatic effect when needed.
+        return f"""Given the message, the first phrase is the title. The second phrase after the comma is the passage/story. Please read the following title passage with appropriate emotions that match the tone of the story.
+        Use natural pacing, emphasize important words, and include slight pauses for dramatic effect when needed. Say the title first then pause for 2 seconds then read the passage.
 
-        After finishing the passage, choose one random phrase from the list below and read it clearly with a curious, engaging tone:
+        After finishing the passage, pause for 2 seconds then choose one random phrase from the list below and read it clearly with a curious, engaging tone:
 
         'So… what happens next?'
 
