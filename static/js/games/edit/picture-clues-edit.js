@@ -530,10 +530,10 @@ async function saveCurrentQuestion(e) {
             
             if(response.ok && result.status) {
                 console.log(result.message);
-                sessionStorage.setItem("questions", JSON.stringify(questionObject));
                 if (result.image_path) {
                     questionObject[currentQuestion].picture = result.image_path;
                     currentImage = result.image_path; // Store path string
+                    sessionStorage.setItem("questions", JSON.stringify(questionObject));
                     console.log("Image path updated:", result.image_path);
                 }
 
