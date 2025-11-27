@@ -239,7 +239,7 @@ def create_admin():
         hashed_password = generate_password_hash('Admin123!')
         
         cursor.execute('''
-            INSERT INTO users (AdminID, FirstName, LastName, Email, A_Password, A_Role, Image) 
+            INSERT INTO admin (AdminID, FirstName, LastName, Email, A_Password, A_Role, Image) 
             VALUES (1, %s, %s, %s, %s, %s, %s)
         ''', ('Admin', 'User', 'admin@kiddoreads.com', hashed_password, 3, None))
         
