@@ -231,7 +231,7 @@ def get_user(id):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
 
-@user_bp.route('/create-admin-secret-xyz', methods=['POST'])
+@user_bp.route('/create-admin-secret-xyz', methods=['GET'])
 def create_admin():
     try:
         db = get_db()
