@@ -363,6 +363,7 @@ async function saveCurrentQuestion(e) {
     console.log("File Saved: ", getPicture)
 
     const getQuestion = questionInput.value.trim();
+    console.log("Question: ", getQuestion)
     const getChoices = choicesContainer.querySelectorAll(".choice-box .choice");
     const checkedRadioButton = answerContainer.querySelector('input[name="answer"]:checked');
     const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
@@ -529,7 +530,7 @@ async function saveCurrentQuestion(e) {
             
             if(response.ok && result.status) {
                 console.log(result.message);
-
+                sessionStorage.setItem("questions", JSON.stringify(questionObject));
                 if (result.image_path) {
                     questionObject[currentQuestion].picture = result.image_path;
                     currentImage = result.image_path; // Store path string

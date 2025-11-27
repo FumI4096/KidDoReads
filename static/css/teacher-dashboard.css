@@ -571,34 +571,34 @@ main > section{
             }
         }
         
-       & > button {
-    background-color: var(--primary-color-200);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 0.5rem 1.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    flex-shrink: 0;
-    font-family: 'Regular-Poppins';
-    font-size: 0.85rem;
-    font-weight: 500;
-    
-    &:hover {
-        background-color: var(--primary-color-300);
-        transform: translateY(-1px);
-    }
+        & > button {
+            background-color: var(--primary-color-200);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            flex-shrink: 0;
+            font-family: 'Regular-Poppins';
+            font-size: 0.85rem;
+            font-weight: 500;
+            
+            &:hover {
+                background-color: var(--primary-color-300);
+                transform: translateY(-1px);
+            }
 
-    &:active {
-        transform: translateY(0);
-    }
+            &:active {
+                transform: translateY(0);
+            }
 
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        background-color: #ccc;
-    }
-}
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                background-color: #ccc;
+            }
+        }
     }
 }
 
@@ -650,7 +650,7 @@ main > section{
         align-items: center;
 
         & > button:nth-child(1){
-            background-color: transparent;
+            background-color: var(--primary-color);
             color: var(--white-text);
             width: auto;
             padding: 0.7rem 1rem;
@@ -660,6 +660,10 @@ main > section{
             box-shadow: var(--box-shadow-1);
             font-family: 'Regular-Poppins';
             cursor: pointer;
+
+            &:hover{
+                background-color: var(--primary-color-200);
+            }
         }
 
         & > button:nth-child(2){
@@ -745,6 +749,16 @@ main > section{
     }
     main > section{
         margin-bottom: auto;
+    }
+
+    #delete-activity-container{
+        padding: 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #delete-activity-wrapper{
+        width: 80%;
     }
 }
 

@@ -72,7 +72,7 @@ def tts_prompt(contentType):
 
             'Let me ask you this:'
 
-            'Ready? Here’s the question:'
+            'Ready? Here's the question:'
 
             Then read the question clearly and encouragingly.
         """
@@ -97,6 +97,7 @@ def tts_prompt(contentType):
         'Now it's your move… what happens next?'
 
         Pause briefly before saying the chosen phrase."""
+        
     elif contentType == 6:
         return f"""Please read the following passage with appropriate emotions that match the tone of the story.
         Use natural pacing, emphasize important words, and include slight pauses for dramatic effect when needed.
@@ -117,7 +118,7 @@ def allowed_file(filename):
 
 def generate_unique_filename(original_filename):
     ext = original_filename.rsplit('.', 1)[1].lower()
-    return f"{uuid.uuid4().hex}.{text}"
+    return f"{uuid.uuid4().hex}.{ext}"
 
 def get_db():
     return current_app.config['db']
