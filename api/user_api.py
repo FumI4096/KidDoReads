@@ -244,6 +244,6 @@ def create_admin():
         ''', ('Admin', 'User', 'admin@kiddoreads.com', hashed_password, 3, None))
         
         db.connection.commit()
-        return "Admin user created!"
+        print ("Admin user created!")
     except Exception as e:
-        return f"Error: {e}"
+        print (f"Error: {e}")
