@@ -18,6 +18,7 @@ let questionObject = JSON.parse(sessionStorage.getItem("questions") || "[]");
 let ttsObject = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
 let currentQuestion = 0
 let originalQuestionText = "" // Track the original question text that was converted
+let originalPassageTitle = "" // Track the original passage title that was converted
 
 const teacherId = await decrypt(sessionStorage.getItem("id"))
 const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
@@ -71,7 +72,7 @@ if (firstQuestionExist(questionObject.length)) {
 }
 
 /**
- * Check if the current question text differs from what was originally converted
+ * Check if the passage text differs from what was originally converted
  */
 function hasQuestionTextChanged() {
     const currentText = passage.value.trim();
@@ -83,6 +84,28 @@ function hasQuestionTextChanged() {
     }
     
     return currentText !== originalQuestionText;
+}
+
+/**
+ * Check if the passage title differs from what was originally converted
+ */
+function hasPassageTitleChanged() {
+    const currentText = passageTitle.value.trim();
+    const audioExists = getAudioForQuestion(currentQuestion) !== null;
+    
+    // If no audio exists, passage title hasn't been converted yet
+    if (!audioExists) {
+        return false;
+    }
+    
+    return currentText !== originalPassageTitle;
+}
+
+/**
+ * Check if any TTS input has changed
+ */
+function hasAnyTtsInputChanged() {
+    return hasQuestionTextChanged() || hasPassageTitleChanged();
 }
 
 function getAudioForQuestion(index) {
@@ -110,23 +133,24 @@ function updateTtsButtonStates(isEditMode = false) {
     const audioUrl = getAudioForQuestion(currentQuestion);
     const hasAudio = audioUrl !== null;
     const hasQuestionText = passage.value.trim() !== '';
-    const questionChanged = hasQuestionTextChanged();
+    const hasPassageTitleText = passageTitle.value.trim() !== '';
+    const ttsInputChanged = hasAnyTtsInputChanged();
     
     if (isEditMode) {
         // In edit mode
-        if (hasAudio && !questionChanged) {
+        if (hasAudio && !ttsInputChanged) {
             // Audio exists and text hasn't changed - show "Reconvert" (optional), enable play
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = false;
             changeTtsConvertButtonText("Reconvert Text-To-Speech");
         } 
-        else if (hasAudio && questionChanged) {
+        else if (hasAudio && ttsInputChanged) {
             // Audio exists but text HAS changed - MUST reconvert (required)
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = false; // Can still play old audio
             changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
         } 
-        else if (hasQuestionText) {
+        else if (hasQuestionText && hasPassageTitleText) {
             // No audio but has text - show "Convert"
             ttsConvertButton.disabled = false;
             ttsPlayButton.disabled = true;
@@ -152,7 +176,7 @@ function updateTtsButtonStates(isEditMode = false) {
         }
     }
     
-    console.log(`TTS Buttons Updated - Question ${currentQuestion + 1}, Audio: ${hasAudio ? 'Yes' : 'No'}, Changed: ${questionChanged}, Edit Mode: ${isEditMode}`);
+    console.log(`TTS Buttons Updated - Question ${currentQuestion + 1}, Audio: ${hasAudio ? 'Yes' : 'No'}, Changed: ${ttsInputChanged}, Edit Mode: ${isEditMode}`);
 }
 
 function checkInputState() {
@@ -163,10 +187,10 @@ function checkInputState() {
     const getChoices = Array.from(choicesContainer.querySelectorAll(".choice-box .choice"));
     const hasEmptyChoice = getChoices.some(choice => choice.value.trim() === "");
     const hasAudio = getAudioForQuestion(currentQuestion) !== null;
-    const questionChanged = hasQuestionTextChanged();
+    const ttsInputChanged = hasAnyTtsInputChanged();
 
     // Can't save if question text changed but hasn't been reconverted
-    const needsReconvert = hasAudio && questionChanged;
+    const needsReconvert = hasAudio && ttsInputChanged;
     const isComplete = getPassageTitle && getPassage && getAnswer && hasAudio && !hasEmptyChoice && !needsReconvert;
 
     saveButton.disabled = !isComplete;
@@ -201,7 +225,8 @@ ttsConvertButton.addEventListener("click", async () => {
     const isReconvert = audioUrl !== null; //check if audio exist to consider as RECONVERTING
 
     if(hasDuplicateQuestion()){
-        notifObject.notify("Duplicated keyword detected in this question. Please provide another text", "error")
+        notifObject.notify("Duplicated keyword detected in this question. Please provide another text", "error");
+        return;
     }
     
     ttsConvertButton.disabled = true;
@@ -227,9 +252,10 @@ ttsConvertButton.addEventListener("click", async () => {
         }
         
         // Generate new speech
-        await keyWordTtsObj.generateSpeech(passage.value, ttsId.toString(), 5);
+        await keyWordTtsObj.generateSpeech(`\(${passageTitle.value.trim()}\), \(${passage.value.trim()}\)`, ttsId.toString(), 5);
 
         originalQuestionText = passage.value.trim();
+        originalPassageTitle = passageTitle.value.trim();
 
         updateTtsButtonStates(true); // true = edit mode
         checkInputState();
@@ -260,18 +286,40 @@ ttsPlayButton.addEventListener("click", () => {
     }
 });
 
+passageTitle.addEventListener("input", () => {
+    const isEditMode = editButton.style.display === "none";
+    if (isEditMode) {
+        const hasAudio = getAudioForQuestion(currentQuestion) !== null;
+        const hasPassageTitleText = passageTitle.value.trim() !== '';
+        const hasQuestionText = passage.value.trim() !== '';
+        const ttsInputChanged = hasAnyTtsInputChanged();
+        
+        if (hasAudio && ttsInputChanged && hasPassageTitleText && hasQuestionText) {
+            changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
+        } else if (hasAudio && !ttsInputChanged) {
+            changeTtsConvertButtonText("Reconvert Text-To-Speech");
+        } else if (!hasAudio && hasPassageTitleText && hasQuestionText) {
+            changeTtsConvertButtonText("Convert Text-To-Speech");
+        }
+        
+        updateTtsButtonStates(true);
+    }
+    checkInputState();
+});
+
 passage.addEventListener("input", () => {
     const isEditMode = editButton.style.display === "none";
     if (isEditMode) {
         const hasAudio = getAudioForQuestion(currentQuestion) !== null;
         const hasText = passage.value.trim() !== '';
-        const questionChanged = hasQuestionTextChanged();
+        const hasPassageTitleText = passageTitle.value.trim() !== '';
+        const ttsInputChanged = hasAnyTtsInputChanged();
         
-        if (hasAudio && questionChanged && hasText) {
+        if (hasAudio && ttsInputChanged && hasText && hasPassageTitleText) {
             changeTtsConvertButtonText("Reconvert Text-To-Speech (Required)");
-        } else if (hasAudio && !questionChanged) {
+        } else if (hasAudio && !ttsInputChanged) {
             changeTtsConvertButtonText("Reconvert Text-To-Speech");
-        } else if (!hasAudio && hasText) {
+        } else if (!hasAudio && hasText && hasPassageTitleText) {
             changeTtsConvertButtonText("Convert Text-To-Speech");
         }
         
@@ -303,6 +351,7 @@ function setFormToEditMode() {
     console.log("Edit Mode - Question", currentQuestion + 1);
     
     originalQuestionText = passage.value.trim();
+    originalPassageTitle = passageTitle.value.trim();
     
     updateTtsButtonStates(true); // true = edit mode
     
@@ -380,6 +429,7 @@ async function saveCurrentQuestion(e) {
         keyWordTtsObj.clearAudioFile();
         
         originalQuestionText = getQuestion;
+        originalPassageTitle = getPassageTitle;
     }
 
     const newQuestion = {
@@ -467,6 +517,7 @@ async function saveCurrentQuestion(e) {
         }
 
         try {
+            sessionStorage.setItem("questions", JSON.stringify(questionObject));
             const formData = new FormData();
             formData.append('content', sessionStorage.getItem("questions"));
             formData.append('id', teacherId);
@@ -482,7 +533,6 @@ async function saveCurrentQuestion(e) {
             
             if(response.ok && result.status) {
                 console.log(result.message);
-                sessionStorage.setItem("questions", JSON.stringify(questionObject));
                 notifObject.notify('Question saved successfully!', 'success');
             } 
             else {
@@ -502,6 +552,7 @@ async function saveCurrentQuestion(e) {
 function clearForm() {
     keyWordTtsObj.clearAudioFile();
     originalQuestionText = ""; 
+    originalPassageTitle = "";
     updateTtsButtonStates(true); // true = edit mode
     
     passageTitle.value = "";
@@ -566,6 +617,7 @@ function loadQuestion(index) {
     
     // Store the original question text when loading
     originalQuestionText = questionData.question || "";
+    originalPassageTitle = questionData.passageTitle || "";
 
     const ttsData = JSON.parse(sessionStorage.getItem("ttsInputs") || "[]");
     if (ttsData[index]) {
