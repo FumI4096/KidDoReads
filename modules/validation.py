@@ -16,6 +16,8 @@ def loginValidation(id, password) -> list:
         
     data = db.get_password_by_id(id)
     
+    print(data[0])
+    
     if data is None:
         errors.append("Invalid School ID. Please try again.")
         return errors
