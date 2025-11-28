@@ -811,6 +811,7 @@ main > section{
                 display: flex;
                 gap: 0.4rem;
                 flex-direction: column;
+                margin-top: -1rem;
                 & > .hide-from-student-container{
                     justify-content: center;
                 }
@@ -845,6 +846,12 @@ main > section{
     #content-container {
         grid-template-columns: 1fr;
         gap: 0.6rem;
+    }
+
+    /* FIX: Make cards taller and content visible */
+    #content-container > * {
+        height: auto;
+        min-height: 200px; /* Ensure minimum height */
     }
 
     /* Modal becomes full screen on mobile */
@@ -882,21 +889,22 @@ main > section{
     }
 
     .content {
-        padding: 0.6rem 0.8rem;
+        padding: 1rem 1rem; /* Increased padding */
     }
 
     .content > .activity-name {
-        font-size: 1.1rem;
+        font-size: 1.2rem; /* Slightly larger */
     }
 
     .content > .activity-type {
-        font-size: 0.75rem;
+        font-size: 0.8rem; /* Slightly larger */
     }
 
-    /* Button sizing on mobile */
+    /* Button sizing on mobile - make them more visible */
     .content > .content-button-action-container > button {
-        height: 28px;
-        font-size: 0.85rem;
+        height: 35px; /* Increased from 28px */
+        font-size: 0.9rem; /* Increased from 0.85rem */
+        padding: 0.3rem 0.5rem;
     }
 
     /* Table becomes scrollable on mobile */
