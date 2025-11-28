@@ -35,7 +35,6 @@ main > section {
   font-family: 'Regular-Poppins';;
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  padding: 1.5rem 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 20px;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -390,7 +389,6 @@ main > section {
 }
 
 #student-profile-button {
-  padding-left: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -503,7 +501,7 @@ main > section {
 
 /* === ACTIVITY BOX DESIGN (TEACHER STYLE) === */
 .content {
-  height: 200px;
+  height: 220px;
   background-color: var(--primary-color-200);
   font-family: 'Light-Poppins';
   color: var(--white-text);
@@ -826,6 +824,12 @@ main > section {
         height: 100%;
     }
 
+    main > aside {
+        & > ul > li{
+          padding: 0;
+        }
+    }
+
     main > section{
         margin-bottom: auto;
     }
@@ -892,7 +896,6 @@ main > section {
 
     .student-nav-item{
         padding: 0;
-        gap: 0;
         &:hover{
             background-color: transparent !important;
             transform: none;
@@ -972,7 +975,7 @@ main > section {
     }
     .content {
         height: auto;
-        min-height: 200px;
+        min-height: 260px;
     }
 
     .content .activity-name {

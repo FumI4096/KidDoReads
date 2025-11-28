@@ -736,7 +736,6 @@ main > section{
         height: 480px;
         width: 350px;
         right: 3%;
-        bottom: 12%;
         bottom: 70px;
     }
 
@@ -775,7 +774,7 @@ main > section{
     }
 
     #content-container > * {
-        height: auto;
+        min-height: 300px;
     }
 
     /* Modal dialog adjustments */
@@ -811,7 +810,6 @@ main > section{
                 display: flex;
                 gap: 0.4rem;
                 flex-direction: column;
-                margin-top: -1rem;
                 & > .hide-from-student-container{
                     justify-content: center;
                 }
@@ -823,14 +821,15 @@ main > section{
             & > .activity-name{
                 font-size: 1.5rem;
             }
-            & > .activity-type{
-                margin-bottom: 1.5rem;
-            }
-            
-
-
-
         }
+    }
+}
+
+@media (max-width: 512px){
+    /* Content grid - single column on mobile */
+    #content-container {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
     }
 }
 
@@ -841,11 +840,6 @@ main > section{
     }
     #add-content-button {
         min-height: 200px;
-    }
-    /* Content grid - single column on mobile */
-    #content-container {
-        grid-template-columns: 1fr;
-        gap: 0.6rem;
     }
 
     /* FIX: Make cards taller and content visible */

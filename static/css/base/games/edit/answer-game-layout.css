@@ -21,14 +21,9 @@ body{
     gap: 1rem;
     background-color: var(--background) !important;
     background-image: 
-        url('../../../../images/background/light-olive-circle.svg'), 
         url('../../../../images/background/dark-green-circle.svg');
-    background-position: -3% 100%, 100% 0%, center center !important;
-    background-repeat: no-repeat, no-repeat, no-repeat !important;
-    background-attachment: fixed !important;
-    background-size: auto, auto, cover !important;
-    height: 100vh;
-    overflow: hidden;
+    background-position: 100% 0%;
+    background-repeat: no-repeat;
 }
 
 body::after {
@@ -317,10 +312,8 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    margin: 0 auto 1rem;
-    max-width: 1000px;
-    padding: 0 1rem;
-    flex-shrink: 0;
+    padding: 0 5rem;
+    width: 100%;
 }
 
 .choice-box:nth-child(3) {
@@ -715,19 +708,8 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
     }
     
     /* Stack choices on phones only */
-    .choices-container {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
-        max-width: 100%;
-    }
-
-    .choice-box:nth-child(3) {
-        grid-column: 1;
-        max-width: 100%;
-    }
-
-    .choice-box {
-        min-width: unset;
+    .choices-container{
+        padding: 0;
         width: 100%;
     }
 

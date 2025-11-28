@@ -13,8 +13,8 @@ html, body{
 
 body{
     padding: 2.4rem;
-    background-image: url('../../images/background/background.svg');
-    background-position: -3% 100%, 100% 0%;
+    background-image: url('../../images/background/light-olive-circle.svg'), url('../../images/background/dark-green-circle.svg');
+    background-position: -20% 130%, 120% -80%;
     background-repeat: no-repeat, no-repeat;
     background-color: var(--background);
     display: flex;
@@ -198,12 +198,6 @@ main > aside > img{
 @media screen and (max-width: 936px){
     html, body{
         height: auto;
-    }
-    body{
-        background-image: url('../../images/light-olive-circle.svg');
-        background-position: -3% 100%;
-        background-repeat: no-repeat;
-        background-color: var(--background);
     }
     main{
         overflow: visible;
