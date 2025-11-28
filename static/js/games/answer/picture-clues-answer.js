@@ -209,7 +209,7 @@ function loadQuestion(index) {
     setupRadioListeners();
 }
 
-function showFinalScore() {
+async function showFinalScore() {
     const showAnswer = document.querySelector('tbody');
 
     questionContainer.style.display = 'none';
@@ -269,7 +269,7 @@ function showFinalScore() {
     buttonContainer.appendChild(finishButton)
     buttonContainer.style.justifyContent = 'flex-end'
 
-    if(sessionStorage.getItem("role") === "student"){
+    if(await decrypt(sessionStorage.getItem("role")) === "student"){
         
         finishButton.addEventListener("click" , async () => {
             const formData = new FormData()
@@ -315,7 +315,7 @@ function showFinalScore() {
 
 
     }
-    else if(sessionStorage.getItem("role") === "teacher"){
+    else if(await decrypt(sessionStorage.getItem("role")) === "teacher"){
         sessionStorage.removeItem('questions')
         sessionStorage.removeItem('ttsObjects')
         sessionStorage.removeItem('currentActivityTitle')
