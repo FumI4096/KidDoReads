@@ -3,14 +3,16 @@ class Notification{
     #notificationColor = 'rgb(255, 255, 255)'
     #successfulBorder = 'solid 2px rgba(59, 197, 66, 1)'
     #errorBorder = 'solid 2px rgb(207, 0, 44)'
+    #loadingBorder = 'solid 2px rgba(59, 130, 246, 1)'
     #borderRadius = '12px'
     #width = '350px'
     #height = '80px'
     #padding = '10px 20px 10px 20px'
     #displayTime = 2500;
     #notificationTimeouts = new WeakMap();
+    #loadingNotifications = new Map(); // Track loading notifications by ID
 
-    notify(statement, type, title = null, image = null){
+    notify(statement, type, title = null, image = null, loadingId = null){
         if (typeof(statement) == "string"){
             const existingNotifications = this.#container ? this.#container.querySelectorAll(".notification-box") : [];
             for (const notification of existingNotifications) {
@@ -33,19 +35,36 @@ class Notification{
             else if (type === "achievement"){
                 notificationBox = this.achievement(title, statement, image)
             }
+            else if (type === "loading"){
+                notificationBox = this.loading(statement)
+                if (loadingId) {
+                    this.#loadingNotifications.set(loadingId, notificationBox);
+                }
+            }
 
             this.#container.append(notificationBox);
 
-            const allNotifications  = this.#container.querySelectorAll(".notification-box")
+            // Don't auto-remove loading notifications
+            if (type !== "loading") {
+                const allNotifications  = this.#container.querySelectorAll(".notification-box")
+                const displayTime = type === "achievement" ? 5000 : this.#displayTime;
+                const delay = allNotifications.length * displayTime
 
-            const displayTime = type === "achievement" ? 5000 : this.#displayTime;
-            const delay = allNotifications.length * displayTime
+                const timeoutId = setTimeout(() => {
+                    notificationBox.remove();
+                }, delay);
 
-            const timeoutId = setTimeout(() => {
-                notificationBox.remove();
-            }, delay);
+                this.#notificationTimeouts.set(notificationBox, timeoutId);
+            }
+        }
+    }
 
-            this.#notificationTimeouts.set(notificationBox, timeoutId);
+    // Method to dismiss a loading notification
+    dismissLoading(loadingId){
+        const notificationBox = this.#loadingNotifications.get(loadingId);
+        if (notificationBox) {
+            notificationBox.remove();
+            this.#loadingNotifications.delete(loadingId);
         }
     }
 
@@ -102,7 +121,7 @@ class Notification{
         const successImageElement = document.createElement('img')
         const successImage = "static/images/check.png"
 
-        successImageElement.alt = "Error Image";
+        successImageElement.alt = "Success Image";
         successImageElement.src = successImage;
         successImageElement.style.height = "90%";
 
@@ -110,6 +129,36 @@ class Notification{
 
         return successBox
 
+    }
+
+    loading(statement){
+        const loadingBox = this.notificationStructure()
+        loadingBox.style.border = this.#loadingBorder
+        
+        // Create spinner element
+        const spinner = document.createElement('div')
+        spinner.style.width = '40px'
+        spinner.style.height = '40px'
+        spinner.style.border = '4px solid rgba(59, 130, 246, 0.2)'
+        spinner.style.borderTop = '4px solid rgba(59, 130, 246, 1)'
+        spinner.style.borderRadius = '50%'
+        spinner.style.animation = 'spin 1s linear infinite'
+        
+        // Add keyframes for spinner animation if not already added
+        if (!document.getElementById('spinner-keyframes')) {
+            const style = document.createElement('style')
+            style.id = 'spinner-keyframes'
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `
+            document.head.appendChild(style)
+        }
+
+        loadingBox.append(spinner, statement)
+        return loadingBox
     }
 
     achievement(title, statement, image){

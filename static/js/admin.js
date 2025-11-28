@@ -184,15 +184,20 @@ document.getElementById("filter").addEventListener("change", async (e) => {
 })
 
 async function showRecords(apiRoute){
+    const loadingId = `loading-${Date.now()}`;
+    notifyObj.notify("Loading records...", "loading", null, null, loadingId);
     try{
+        
+        // Dismiss loading notification
         const response = await fetch(apiRoute)
         const result = await response.json();
+        notifyObj.dismissLoading(loadingId);
         tableBody.innerHTML = ""
         if (response.ok && result.status){  
             result.data.forEach(data => {
                 addRow(data.id, data.fname, data.lname, data.email, data.image, data.role);
             })
-    
+            notifyObj.notify("Records loaded successfully", "success");
         }
         else{
             notifyObj.notify(result.message, "error");
