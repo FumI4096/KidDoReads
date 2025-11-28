@@ -68,7 +68,7 @@ class Database:
     
     def get_student_records(self, filter = "default"):
         allowed_filters = {
-            "default": "createdAt DESC",
+            "default": "student.createdAt DESC",
             "id": "StudentID DESC"
         }
         filter_order = allowed_filters.get(filter, "createdAt DESC")
@@ -90,7 +90,7 @@ class Database:
     
     def get_teacher_records(self, filter = "default"):
         allowed_filters = {
-            "default": "createdAt DESC",
+            "default": "teacher.createdAt DESC",
             "id": "TeacherID DESC"
         }
         filter_order = allowed_filters.get(filter, "createdAt DESC")
@@ -107,16 +107,20 @@ class Database:
         
     def get_admin_records(self, filter = "default"):
         allowed_filters = {
-            "default": "createdAt DESC",
+            "default": "admin.createdAt DESC",
             "id": "AdminID DESC"
         }
         filter_order = allowed_filters.get(filter, "createdAt DESC")
         
-        query = f"SELECT AdminID, FirstName, LastName, Email, Image, R_Name FROM admin LEFT JOIN roles on A_Role = Roles.R_ID ORDER BY {filter_order}"
+        query = f"""
+        SELECT AdminID, FirstName, LastName, Email, Image, R_Name FROM admin LEFT JOIN roles on A_Role = Roles.R_ID ORDER BY {filter_order}"
+        """
         
         try:
-            self.cursor.execute(query)
-            return True, self.cursor.fetchall()
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                return True, cursor.fetchall()
+
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)
