@@ -14,11 +14,26 @@
         <button id="to-dashboard-page-button"></button>
     </header>
     <section class="question-container">
-        <p class="question" id="prefix-suffix-text"></p> 
-        <p class="question" id="meaning-text"></p> 
-        <p class="question" id="question-text"></p> 
-        <button id="tts-speaker-button">TTS SPEAKER</button>
+        <div class="instruction-wrapper">
+            <div class="instruction-text">
+                <p style="display: none;"><strong>Prefix/Suffix:</strong> <span id="prefix-suffix-text"></span></p>
+                <p style="display: none;"><strong>Meaning:</strong> <span id="meaning-text"></span></p>
+                <p>The <strong id="prefix-suffix-in-question">prefix/suffix</strong> is used in this word.</p>
+                <button id="tts-speaker-button">
+                    <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+                    Play me!
+                </button>
+            </div>
+            <div class="mascot-wrapper">
+                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+                <div class="speech-bubble">Click the button to hear the word!</div>
+            </div>
+        </div>
+        <p class="question" id="question-text" style="display: none;"></p>
     </section>
+    
+    <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word, and choose the correct answer based on the prefix/suffix meaning.</p>
+    
     <section class="choices-container">
         <div class="choice-box">
             <label class="choice-label"> 
@@ -39,7 +54,7 @@
             <label class="choice-label">
                 <input type="radio" name="answer" value="c" id="answer-c">
                 <p class="choice-letter">C.</p>
-                <span class="choice-text" id="choice-c">Choice B Text</span>
+                <span class="choice-text" id="choice-c">Choice C Text</span>
             </label>
         </div>
 
@@ -57,7 +72,7 @@
             </thead>
             <tbody>
                 
-            </tbdody>
+            </tbody>
         </table>
     </div>
 

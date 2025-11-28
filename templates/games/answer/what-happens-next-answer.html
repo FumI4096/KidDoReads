@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Audio Matching</title>
+    <title>What Happens Next</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}"> 
 </head>
@@ -14,10 +14,21 @@
         <button id="to-dashboard-page-button"></button>
     </header>
     <section class="question-container">
-        <p class="question" id="title"></p> <!-- revert from keyword -> question -->
-        <p class="question" id="passage"></p> <!-- revert from keyword -> question -->
-        <button id="tts-speaker-button">TTS SPEAKER</button>
+        <div class="instruction-wrapper">
+            <div class="instruction-text">
+                <p class="title-wrapper"><strong>Title: </strong><span id="title"></span></p>
+                <p id="passage"></p>
+                <button id="tts-speaker-button">
+                    <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+                    Play Me
+                </button>
+            </div>
+            <div class="mascot-wrapper">
+                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+            </div>
+        </div>
     </section>
+    
     <section class="choices-container">
         <div class="choice-box">
             <label class="choice-label"> 
@@ -38,7 +49,7 @@
             <label class="choice-label">
                 <input type="radio" name="answer" value="c" id="answer-c">
                 <p class="choice-letter">C.</p>
-                <span class="choice-text" id="choice-c">Choice B Text</span>
+                <span class="choice-text" id="choice-c">Choice C Text</span>
             </label>
         </div>
 
@@ -56,7 +67,7 @@
             </thead>
             <tbody>
                 
-            </tbdody>
+            </tbody>
         </table>
     </div>
 
