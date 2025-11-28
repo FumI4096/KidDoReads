@@ -15,12 +15,6 @@ def get_student_record():
         print(db)
         status, results = db.get_student_records()
         
-            # DEBUG: Log what we're getting
-        print(f"Status: {status}")
-        print(f"Number of rows: {len(results) if results else 0}")
-        if results and len(results) > 0:
-            print(f"First row: {results[0]}")
-            print(f"Columns in first row: {len(results[0])}")
         rows = results
         students = []
 
@@ -55,12 +49,6 @@ def get_teacher_record():
         db = get_db() 
         status, results = db.get_teacher_records()
         
-                # DEBUG: Log what we're getting
-        print(f"Status: {status}")
-        print(f"Number of rows: {len(results) if results else 0}")
-        if results and len(results) > 0:
-            print(f"First row: {results[0]}")
-            print(f"Columns in first row: {len(results[0])}")
         rows = results
         
         teachers = []

@@ -71,7 +71,7 @@ class Database:
             "default": "students.createdAt DESC",
             "id": "StudentID DESC"
         }
-        filter_order = allowed_filters.get(filter, "createdAt DESC")
+        filter_order = allowed_filters.get(filter, "students.createdAt DESC")
         
         query = f"""
             SELECT StudentID, FirstName, LastName, Email, Image, R_Name FROM students 
@@ -84,16 +84,8 @@ class Database:
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(query)
-                if cursor.description:
-                    columns = [desc[0] for desc in cursor.description]
-                    print(f"Columns returned: {columns}")
                 
-                results = cursor.fetchall()
-                if results:
-                    print(f"First row data: {results[0]}")
-                    print(f"Number of columns: {len(results[0])}")
-                
-                return True, results
+                return True, cursor.fetchall()
         except Exception as e:
             self.connection.rollback()
             return False, str(e)
@@ -103,9 +95,9 @@ class Database:
             "default": "teachers.createdAt DESC",
             "id": "TeacherID DESC"
         }
-        filter_order = allowed_filters.get(filter, "createdAt DESC")
+        filter_order = allowed_filters.get(filter, "teacherscreatedAt DESC")
         
-        query = f"SELECT TeacherID, FirstName, LastName, Email, Image, R_Name FROM teachers LEFT JOIN roles on T_Role = roles.R_ID ORDER BY {filter_order}"
+        query = f"""SELECT TeacherID, FirstName, LastName, Email, Image, R_Name FROM teachers LEFT JOIN roles on T_Role = roles.R_ID ORDER BY {filter_order}"""
         
         try:
             with self.connection.cursor() as cursor:
@@ -120,10 +112,10 @@ class Database:
             "default": "admin.createdAt DESC",
             "id": "AdminID DESC"
         }
-        filter_order = allowed_filters.get(filter, "createdAt DESC")
+        filter_order = allowed_filters.get(filter, "admin.createdAt DESC")
         
         query = f"""
-        SELECT AdminID, FirstName, LastName, Email, Image, R_Name FROM admin LEFT JOIN roles on A_Role = roles.R_ID ORDER BY {filter_order}"
+        SELECT AdminID, FirstName, LastName, Email, Image, R_Name FROM admin LEFT JOIN roles on A_Role = roles.R_ID ORDER BY {filter_order}
         """
         
         try:
