@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Audio Matching</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/games/answer/picture-clues-answer.css')}}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}"> 
 </head>
 <body>
@@ -14,11 +15,19 @@
         <button id="to-dashboard-page-button"></button>
     </header>
     <section class="question-container">
-        <div id="image-display"></div>
-        <p class="question" id="question-text"></p> <!-- revert from keyword -> question -->
-        <button id="tts-speaker-button">
-        <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
-        Play Me
+        <div class="instruction-wrapper">
+            <div class="instruction-text">
+                <div id="image-display"></div>
+                <p class="question" id="question-text">Click the <strong>button</strong> to hear the sentence</p>
+                <button id="tts-speaker-button">
+                    <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+                    Play Me
+                </button>
+            </div>
+            <div class="mascot-wrapper">
+                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+            </div>
+        </div>
     </section>
     <section class="choices-container">
         <div class="choice-box">
@@ -58,7 +67,7 @@
             </thead>
             <tbody>
                 
-            </tbdody>
+            </tbody>
         </table>
     </div>
 

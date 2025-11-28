@@ -1,0 +1,18 @@
+.question-container{
+    height: auto;
+    min-height: unset;
+    width: 100%;
+    flex-direction: row;
+}
+
+.instruction-wrapper{
+    height: auto;
+    justify-content: space-between;
+    flex-basis: 90%;
+}
+
+#image-display{
+    height: 400px;
+    border: 2px solid black;
+    border-radius: 10px;
+}
