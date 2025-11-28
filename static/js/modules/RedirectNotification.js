@@ -13,21 +13,21 @@ export function loginSuccess(){
 export function notifyStudentAchievement(achievementId){
     console.log(achievementId)
     const achievements = [
-        {id: 1, title: "First Step Hero", description: "Finished your first activity!", image: '../../../static/images/achievement-icons/1-first-step-hero.PNG'},
-        {id: 2, title: "Brain Starter!", description: "Finished your first assessment!", image: '../../../static/images/achievement-icons/2-brain-starter.PNG'},
-        {id: 3, title: "Starter Star", description: "Finished 3 assessments and activities!", image: '../../../static/images/achievement-icons/3-starter-star.PNG'},
-        {id: 4, title: "Learning Explorer", description: "Completed 5 assessments and activities!", image: '../../../static/images/achievement-icons/4-learning-explorer.PNG'},
-        {id: 5, title: "Super Scholar!", description: "Completed 10 assessments and activities! Keep it up, Super Scholar!", image: '../../../static/images/achievement-icons/5-super-scholar.PNG'},
-        {id: 6, title: "Learning Legend!", description: "Completed 20 assessments and activities! You're now a true Learning Legend!", image: '../../../static/images/check.png'},
-        {id: 7, title: "Sound & Spell Star!", description: "Completed the Word Audio Match Assessment!", image: '../../../static/images/achievement-icons/7-sound-and-spell-star.PNG'},
-        {id: 8, title: "Phonics Pro!", description: "Completed the Listen and Choose Assessment!", image: '../../../static/images/achievement-icons/8-phonics-pro.PNG'},
-        {id: 9, title: "Wizard Knowledge!", description: "Completed the Meaning Maker Assessment!", image: '../../../static/images/achievement-icons/9-wizard-knowledge.PNG'},
-        {id: 10, title: "The Detective!", description: "Completed the Sound-Alike Match Assessment!", image: '../../../static/images/check.png'},
-        {id: 11, title: "Story Predictor!", description: "Completed the What Happens Next? Assessment!", image: '../../../static/images/check.png'},
-        {id: 12, title: "Clue Finder!", description: "Completed the Picture + Clues Assessment!", image: '../../../static/images/check.png'},
-        {id: 13, title: "Perfect Start!", description: "Achieved your 1st perfect score!", image: '../../../static/images/check.png'},
-        {id: 14, title: "Perfect Streak!", description: "Achieved your 5th perfect score! — You're becoming a real master of learning — keep that streak going!", image: '../../../static/images/check.png'},
-        {id: 15, title: "Perfect Pro!", description: "Achieved your 10th perfect score! You're a true learning champion", image: '../../../static/images/check.png'}
+        {id: 1, title: "First Step Hero", description: "Finished your first activity!", image: '../../../static/images/achievement-icons/1-first-step-hero.png'},
+        {id: 2, title: "Brain Starter!", description: "Finished your first assessment!", image: '../../../static/images/achievement-icons/2-brain-starter.png'},
+        {id: 3, title: "Starter Star", description: "Finished 3 assessments and activities!", image: '../../../static/images/achievement-icons/3-starter-star.png'},
+        {id: 4, title: "Learning Explorer", description: "Completed 5 assessments and activities!", image: '../../../static/images/achievement-icons/4-learning-explorer.png'},
+        {id: 5, title: "Super Scholar!", description: "Completed 10 assessments and activities! Keep it up, Super Scholar!", image: '../../../static/images/achievement-icons/5-super-scholar.png'},
+        {id: 6, title: "Learning Legend!", description: "Completed 20 assessments and activities! You're now a true Learning Legend!", image: '../../../static/images/achievement-icons/6-learning-legend.png'},
+        {id: 7, title: "Sound & Spell Star!", description: "Completed the Word Audio Match Assessment!", image: '../../../static/images/achievement-icons/7-sound-and-spell-star.png'},
+        {id: 8, title: "Phonics Pro!", description: "Completed the Listen and Choose Assessment!", image: '../../../static/images/achievement-icons/8-phonics-pro.png'},
+        {id: 9, title: "Wizard Knowledge!", description: "Completed the Meaning Maker Assessment!", image: '../../../static/images/achievement-icons/9-wizard-knowledge.png'},
+        {id: 10, title: "The Detective!", description: "Completed the Sound-Alike Match Assessment!", image: '../../../static/images/achievement-icons/10-the-detective.png'},
+        {id: 11, title: "Story Predictor!", description: "Completed the What Happens Next? Assessment!", image: '../../../static/images/achievement-icons/11-story-predictor.png'},
+        {id: 12, title: "Clue Finder!", description: "Completed the Picture + Clues Assessment!", image: '../../../static/images/achievement-icons/12-clue-finder.png'},
+        {id: 13, title: "Perfect Start!", description: "Achieved your 1st perfect score!", image: '../../../static/images/achievement-icons/13-perfect-start.png'},
+        {id: 14, title: "Perfect Streak!", description: "Achieved your 5th perfect score! — You're becoming a real master of learning — keep that streak going!", image: '../../../static/images/achievement-icons/14-perfect-streak.png'},
+        {id: 15, title: "Perfect Pro!", description: "Achieved your 10th perfect score! You're a true learning champion", image: '../../../static/images/achievement-icons/15-perfect-pro.png'}
     ]
 
     const achievement = achievements.find(a => a.id === parseInt(achievementId)
