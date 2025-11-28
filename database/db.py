@@ -81,6 +81,7 @@ class Database:
         
         try:
             with self.connection.cursor() as cursor:
+                cursor.execute(query)
                 if cursor.description:
                     columns = [desc[0] for desc in cursor.description]
                     print(f"Columns returned: {columns}")
