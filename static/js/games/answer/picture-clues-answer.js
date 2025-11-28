@@ -174,9 +174,6 @@ function loadQuestion(index) {
 
     currentAudio = ttsData.audioUrl
 
-    const questionElement = document.getElementById("question-text");
-    questionElement.textContent = questionData.question;
-
     const backgroundImageElement = document.getElementById("image-display")
 
     console.log("Picture:", questionData.picture);

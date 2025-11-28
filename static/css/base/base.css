@@ -13,7 +13,7 @@ html, body{
 
 body{
     padding: 2.4rem;
-    background-image: url('../../images/background/light-olive-circle.svg'), url('../../images/background/dark-green-circle.svg'), url('../../images/background/leaves.PNG');
+    background-image: url('../../images/background/background.svg');
     background-position: -3% 100%, 100% 0%;
     background-repeat: no-repeat, no-repeat;
     background-color: var(--background);

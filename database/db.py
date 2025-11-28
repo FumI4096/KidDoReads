@@ -24,7 +24,7 @@ class Database:
         try:
             hashed_password = generate_password_hash(password)
             query = """
-                INSERT INTO Students (StudentID, FirstName, LastName, Email, S_Password, Image)
+                INSERT INTO students (StudentID, FirstName, LastName, Email, S_Password, Image)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """
             with self.connection.cursor() as cursor:
@@ -39,7 +39,7 @@ class Database:
         try:
             hashed_password = generate_password_hash(password)
             query = """
-                INSERT INTO Teachers (TeacherID, FirstName, LastName, Email, T_Password, Image)
+                INSERT INTO teachers (TeacherID, FirstName, LastName, Email, T_Password, Image)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """
             with self.connection.cursor() as cursor:
@@ -55,7 +55,7 @@ class Database:
         try:
             hashed_password = generate_password_hash(password)
             query = """
-                INSERT INTO Admin (AdminID, FirstName, LastName, Email, A_Password, Image)
+                INSERT INTO admin (AdminID, FirstName, LastName, Email, A_Password, Image)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """
             with self.connection.cursor() as cursor:
@@ -74,8 +74,8 @@ class Database:
         filter_order = allowed_filters.get(filter, "createdAt DESC")
         
         query = f"""
-            SELECT StudentID, FirstName, LastName, Email, Image, R_Name FROM Students 
-            LEFT JOIN Roles on S_Role = Roles.R_ID 
+            SELECT StudentID, FirstName, LastName, Email, Image, R_Name FROM students 
+            LEFT JOIN roles on S_Role = Roles.R_ID 
             ORDER BY {filter_order}
         """
         
@@ -95,7 +95,7 @@ class Database:
         }
         filter_order = allowed_filters.get(filter, "createdAt DESC")
         
-        query = f"SELECT TeacherID, FirstName, LastName, Email, Image, R_Name FROM Teachers LEFT JOIN Roles on T_Role = Roles.R_ID ORDER BY {filter_order}"
+        query = f"SELECT TeacherID, FirstName, LastName, Email, Image, R_Name FROM teachers LEFT JOIN roles on T_Role = Roles.R_ID ORDER BY {filter_order}"
         
         try:
             with self.connection.cursor() as cursor:
@@ -112,7 +112,7 @@ class Database:
         }
         filter_order = allowed_filters.get(filter, "createdAt DESC")
         
-        query = f"SELECT AdminID, FirstName, LastName, Email, Image, R_Name FROM Admin LEFT JOIN Roles on A_Role = Roles.R_ID ORDER BY {filter_order}"
+        query = f"SELECT AdminID, FirstName, LastName, Email, Image, R_Name FROM admin LEFT JOIN roles on A_Role = Roles.R_ID ORDER BY {filter_order}"
         
         try:
             self.cursor.execute(query)
@@ -123,15 +123,15 @@ class Database:
     
     def modify_user_record(self, original_school_id: int, school_id: int, fname: str, lname: str, email: str, password: str, image: bytes, role: str):
         if role == "student":
-            table = "Students"
+            table = "students"
             idColumn = "StudentID"
             passwordColumn = "S_Password"
         elif role == "teacher":
-            table = "Teachers"
+            table = "teachers"
             idColumn = "TeacherID"
             passwordColumn = "T_Password"
         elif role == "admin":
-            table = "Admin"
+            table = "admin"
             idColumn = "AdminID"
             passwordColumn = "A_Password"
             
@@ -173,13 +173,13 @@ class Database:
         
     def delete_user_record(self, id: int, role: str):
         if role == "student":
-            table = "Students"
+            table = "students"
             idColumn = "StudentID"
         elif role == "teacher":
-            table = "Teachers"
+            table = "teachers"
             idColumn = "TeacherID"
         elif role == "admin":
-            table = "Admin"
+            table = "admin"
             idColumn = "AdminID"
         query = f"DELETE FROM {table} WHERE {idColumn} = %s"
 
@@ -200,11 +200,11 @@ class Database:
         try:
             with self.connection.cursor() as cursor:
                 query = """
-                    SELECT S_Password AS Password FROM Students WHERE StudentID = %s
+                    SELECT S_Password AS Password FROM students WHERE StudentID = %s
                     UNION ALL
-                    SELECT T_Password FROM Teachers WHERE TeacherID = %s
+                    SELECT T_Password FROM teachers WHERE TeacherID = %s
                     UNION ALL
-                    SELECT A_Password FROM Admin WHERE AdminID = %s
+                    SELECT A_Password FROM admin WHERE AdminID = %s
                 """
                 cursor.execute(query, (id, id, id))
                 record = cursor.fetchone()
@@ -217,16 +217,16 @@ class Database:
     def get_role_by_id(self, id):
         try:
             query = """
-                SELECT T1.R_Name FROM Students
-                LEFT JOIN Roles T1 ON Students.S_Role = T1.R_ID
+                SELECT T1.R_Name FROM students
+                LEFT JOIN roles T1 ON students.S_Role = T1.R_ID
                 WHERE StudentID = %s
                 UNION
-                SELECT T2.R_Name FROM Teachers
-                LEFT JOIN Roles T2 ON Teachers.T_Role = T2.R_ID
+                SELECT T2.R_Name FROM teachers
+                LEFT JOIN roles T2 ON teachers.T_Role = T2.R_ID
                 WHERE TeacherID = %s
                 UNION
-                SELECT T3.R_Name FROM Admin
-                LEFT JOIN Roles T3 ON Admin.A_Role = T3.R_ID
+                SELECT T3.R_Name FROM admin
+                LEFT JOIN roles T3 ON admin.A_Role = T3.R_ID
                 WHERE AdminID = %s
             """
             self.cursor.execute(query, (id, id, id))
@@ -244,15 +244,15 @@ class Database:
             query = """
                 SELECT ID, FullName, Email, Image FROM (
                     SELECT StudentID AS ID, CONCAT(FirstName, ' ', LastName) AS FullName, Email, Image
-                    FROM Students
+                    FROM students
                     WHERE StudentID = %s
                     UNION ALL
                     SELECT TeacherID AS ID, CONCAT(FirstName, ' ', LastName) AS FullName, Email, Image
-                    FROM Teachers
+                    FROM teachers
                     WHERE TeacherID = %s
                     UNION ALL
                     SELECT AdminID AS ID, CONCAT(FirstName, ' ', LastName) AS FullName, Email, Image
-                    FROM Admin
+                    FROM admin
                     WHERE AdminID = %s
                 ) AS combined
             """
@@ -271,11 +271,11 @@ class Database:
     def id_exist(self, id):
         try:
             query = """
-                SELECT StudentID AS ID FROM Students WHERE StudentID = %s
+                SELECT StudentID AS ID FROM students WHERE StudentID = %s
                 UNION
-                SELECT TeacherID FROM Teachers WHERE TeacherID = %s
+                SELECT TeacherID FROM teachers WHERE TeacherID = %s
                 UNION
-                SELECT AdminID FROM Admin WHERE AdminID = %s
+                SELECT AdminID FROM admin WHERE AdminID = %s
             """
             
             self.cursor.execute(query, (id, id, id))
@@ -292,11 +292,11 @@ class Database:
     def email_exist(self, email):
         try:
             query = """
-                SELECT Email FROM Students WHERE Email = %s
+                SELECT Email FROM students WHERE Email = %s
                 UNION
-                SELECT Email FROM Teachers WHERE Email = %s
+                SELECT Email FROM teachers WHERE Email = %s
                 UNION
-                SELECT Email FROM Admin WHERE Email = %s
+                SELECT Email FROM admin WHERE Email = %s
             """
             self.cursor.execute(query, (email, email, email))
             record = self.cursor.fetchone()
@@ -326,7 +326,7 @@ class Database:
     def update_tts_id_in_content_after_creation(self, content_id, tts_id):
         print(content_id)
         print(tts_id)
-        query = """UPDATE Contents SET TTS_ID = %s WHERE ContentID = %s"""
+        query = """UPDATE contents SET TTS_ID = %s WHERE ContentID = %s"""
             
         try:
             self.cursor.execute(query, (content_id, tts_id))
@@ -340,7 +340,7 @@ class Database:
         
     def get_content_name(self, teacher_id: int, content_name):
         try:
-            query = "SELECT Content_Title FROM Contents WHERE TeacherID = %s AND Content_Title = %s"
+            query = "SELECT Content_Title FROM contents WHERE TeacherID = %s AND Content_Title = %s"
             self.cursor.execute(query, (teacher_id, content_name))
             record = self.cursor.fetchone()
             
@@ -367,9 +367,9 @@ class Database:
     def get_contents_by_teacher(self, teacher_id):
         query = """
             SELECT ContentID, Content_Title, Content_Details_JSON, TTS_JSON, ContentType, ContentTypeName, isHiddenFromStudents
-            FROM Contents
-            LEFT JOIN Content_Type ON Contents.ContentType = Content_Type.ContentTypeID
-            LEFT JOIN tts_content on Contents.tts_id = tts_content.tts_id
+            FROM contents
+            LEFT JOIN content_type ON contents.ContentType = content_type.ContentTypeID
+            LEFT JOIN tts_content on contents.tts_id = tts_content.tts_id
             WHERE TeacherID = %s
         """
         
@@ -388,8 +388,8 @@ class Database:
         
         if type != 0:
             query = """
-                SELECT ContentID, CONCAT(T.FirstName, " ", T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM Contents as C
-                LEFT JOIN Teachers as T on C.TeacherID = T.TeacherID
+                SELECT ContentID, CONCAT(T.FirstName, " ", T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM contents as C
+                LEFT JOIN teachers as T on C.TeacherID = T.TeacherID
                 LEFT JOIN tts_content on tts_content.tts_id = C.tts_id
                 WHERE ContentType = %s;
             """
@@ -400,8 +400,8 @@ class Database:
                 return False, f"Database error: {e}"
         else:
             query = """
-                SELECT ContentID, CONCAT(T.FirstName, " ", T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM Contents as C
-                LEFT JOIN Teachers as T on C.TeacherID = T.TeacherID
+                SELECT ContentID, CONCAT(T.FirstName, " ", T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM contents as C
+                LEFT JOIN teachers as T on C.TeacherID = T.TeacherID
                 LEFT JOIN tts_content on tts_content.tts_id = C.tts_id
             """
             try:
@@ -421,7 +421,7 @@ class Database:
                 Assessment_Details_JSON, 
                 TTS_JSON, 
                 AssessmentType 
-                FROM Assessments
+                FROM assessments
                 WHERE AssessmentType = %s;
             """
             try:
@@ -437,7 +437,7 @@ class Database:
                 Assessment_Details_JSON, 
                 TTS_JSON, 
                 AssessmentType
-                FROM Assessments
+                FROM assessments
             """
             try:
                 self.cursor.execute(query)
@@ -452,8 +452,8 @@ class Database:
             TTS_JSON, 
             AssessmentType, 
             ContentTypeName
-            FROM Assessments
-            LEFT JOIN Content_Type ON Assessments.AssessmentType = Content_Type.ContentTypeID
+            FROM assessments
+            LEFT JOIN content_type ON assessments.AssessmentType = content_type.ContentTypeID
         """
         
         try:
@@ -483,7 +483,7 @@ class Database:
             return False, f"Database error: {e}"
             
     def update_content_title(self, teacher_id: int, original_title, new_title):
-        query = "UPDATE Contents SET Content_Title = %s WHERE TeacherID = %s AND Content_Title = %s"
+        query = "UPDATE contents SET Content_Title = %s WHERE TeacherID = %s AND Content_Title = %s"
         
         self.cursor.execute(query, (new_title, teacher_id, original_title))
         
@@ -500,7 +500,7 @@ class Database:
         
     def update_content(self, teacher_id: int, content_id, content, total_questions: int):
         try:
-            query = "UPDATE Contents SET Content_Details_JSON = %s, TotalQuestions = %s WHERE TeacherID = %s AND ContentID = %s"
+            query = "UPDATE contents SET Content_Details_JSON = %s, TotalQuestions = %s WHERE TeacherID = %s AND ContentID = %s"
             
             self.cursor.execute(query, (content, total_questions, teacher_id, content_id))
             if self.cursor.rowcount > 0:
@@ -513,7 +513,7 @@ class Database:
     
     def hide_content(self, teacher_id: int, content_id: int, isHidden: bool):
         try:
-            query = f"""UPDATE Contents SET isHiddenFromStudents = %s WHERE TeacherID = %s AND ContentID = %s"""
+            query = f"""UPDATE contents SET isHiddenFromStudents = %s WHERE TeacherID = %s AND ContentID = %s"""
             
             self.cursor.execute(query, (isHidden, teacher_id, content_id))
             if self.cursor.rowcount > 0:
@@ -556,7 +556,7 @@ class Database:
         try:
             # Check for UNFINISHED attempt (status = 1)
             query_select = """
-                SELECT AttemptID, Content_Answer FROM Content_Log_Attempts
+                SELECT AttemptID, Content_Answer FROM content_log_attempts
                 WHERE ContentID = %s AND StudentID = %s AND status = 1
                 ORDER BY AttemptID DESC LIMIT 1
             """
@@ -589,7 +589,7 @@ class Database:
     def resume_attempt_activity(self, attempt_id):
         try:
             query = """
-                UPDATE Content_Log_Attempts 
+                UPDATE content_log_attempts 
                 SET status = 2 
                 WHERE AttemptID = %s
             """
@@ -613,7 +613,7 @@ class Database:
         """
         try:
             query = """
-                UPDATE Content_Log_Attempts 
+                UPDATE content_log_attempts 
                 SET Content_Answer = %s, status = 1 
                 WHERE AttemptID = %s
             """
@@ -635,7 +635,7 @@ class Database:
     def finish_attempt_activity(self, answer, score, attempt_id):
         try:
             query = """
-                UPDATE Content_Log_Attempts 
+                UPDATE content_log_attempts 
                 SET Content_Answer = %s, Score = %s, status = 3 
                 WHERE AttemptID = %s
             """
@@ -657,7 +657,7 @@ class Database:
         try:
             # Check for UNFINISHED attempt (status = 1)
             query_select = """
-                SELECT AttemptID, Assessment_Answer FROM Assessment_Log_Attempts
+                SELECT AttemptID, Assessment_Answer FROM assessment_log_attempts
                 WHERE AssessmentID = %s AND StudentID = %s AND status = 1
                 ORDER BY AttemptID DESC LIMIT 1
             """
@@ -675,7 +675,7 @@ class Database:
                 else:
                     # No unfinished attempt, create new one with status ANSWERING (2)
                     query_insert = """
-                        INSERT INTO Assessment_Log_Attempts(AssessmentID, StudentID, Score, status)
+                        INSERT INTO assessment_log_attempts(AssessmentID, StudentID, Score, status)
                         VALUES(%s, %s, 0, 2)
                     """
                     cursor.execute(query_insert, (assessment_id, student_id))
@@ -690,7 +690,7 @@ class Database:
     def resume_attempt_assessment(self, attempt_id):
         try:
             query = """
-                UPDATE Assessment_Log_Attempts 
+                UPDATE assessment_log_attempts 
                 SET status = 2 
                 WHERE AttemptID = %s
             """
@@ -714,7 +714,7 @@ class Database:
         """
         try:
             query = """
-                UPDATE Assessment_Log_Attempts 
+                UPDATE assessment_log_attempts 
                 SET Assessment_Answer = %s, status = 1 
                 WHERE AttemptID = %s
             """
@@ -736,7 +736,7 @@ class Database:
     def finish_attempt_assessment(self, answer, score, attempt_id):
         try:
             query = """
-                UPDATE Assessment_Log_Attempts 
+                UPDATE assessment_log_attempts 
                 SET Assessment_Answer = %s, Score = %s, status = 3 
                 WHERE AttemptID = %s
             """
@@ -989,7 +989,7 @@ class Database:
                 SELECT 
                     AchievementID,
                     earnedAt
-                FROM Achievement_Tracker
+                FROM achievement_tracker
                 WHERE StudentID = %s
             """
             
@@ -1011,7 +1011,7 @@ class Database:
                         StudentID,
                         ContentID,
                         MIN(AttemptID) as first_attempt
-                    FROM Content_Log_Attempts
+                    FROM content_log_attempts
                     WHERE status = 3
                     GROUP BY StudentID, ContentID
                     
@@ -1021,7 +1021,7 @@ class Database:
                         StudentID,
                         AssessmentID,
                         MIN(AttemptID) as first_attempt
-                    FROM Assessment_Log_Attempts
+                    FROM assessment_log_attempts
                     WHERE status = 3
                     GROUP BY StudentID, AssessmentID
                 ) AS first_attempts
@@ -1042,7 +1042,7 @@ class Database:
     def get_first_attempt_in_activity(self, student_id):
         try:
             query = """
-                SELECT AttemptID FROM Content_Log_Attempts
+                SELECT AttemptID FROM content_log_attempts
                 WHERE StudentID = %s
                 LIMIT 1;
             """
@@ -1062,7 +1062,7 @@ class Database:
     def get_first_attempt_in_assessment(self, student_id):
         try:
             query = """
-                SELECT * FROM Assessment_Log_Attempts
+                SELECT * FROM assessment_log_attempts
                 WHERE StudentID = %s
                 LIMIT 1;
             """
@@ -1084,15 +1084,15 @@ class Database:
             query = """
                 SELECT COUNT(*) AS perfect_score
                 FROM (
-                    SELECT cla.StudentID, cla.ContentID, cla.Score, c.TotalQuestions FROM Content_Log_Attempts as cla
-                    LEFT JOIN Contents as c ON cla.ContentID = c.ContentID
+                    SELECT cla.StudentID, cla.ContentID, cla.Score, c.TotalQuestions FROM content_log_attempts as cla
+                    LEFT JOIN contents as c ON cla.ContentID = c.ContentID
                     WHERE cla.Score = c.TotalQuestions AND cla.StudentID = %s
                     GROUP BY cla.StudentID, cla.ContentID
 
                     UNION ALL
 
-                    SELECT ala.StudentID, ala.AssessmentID, ala.Score, a.TotalQuestions FROM Assessment_Log_Attempts as ala
-                    LEFT JOIN Assessments as a ON ala.AssessmentID = a.AssessmentID
+                    SELECT ala.StudentID, ala.AssessmentID, ala.Score, a.TotalQuestions FROM assessment_log_attempts as ala
+                    LEFT JOIN assessments as a ON ala.AssessmentID = a.AssessmentID
                     WHERE ala.Score = a.TotalQuestions AND ala.StudentID = %s
                     GROUP BY ala.StudentID, ala.AssessmentID
                 ) AS perfect_scores
@@ -1114,7 +1114,7 @@ class Database:
     def insert_achievement_for_student(self, student_id, achievement_id):
         try:
             
-            query = """INSERT INTO Achievement_Tracker(StudentID, AchievementID) VALUES (%s, %s);"""
+            query = """INSERT INTO achievement_tracker(StudentID, AchievementID) VALUES (%s, %s);"""
             
             with self.connection.cursor() as cursor:
                 cursor.execute(query, (student_id, achievement_id))
@@ -1130,7 +1130,7 @@ class Database:
     def has_achievement(self, student_id, achievement_id):
         try:
             
-            query = """SELECT StudentID FROM Achievement_Tracker WHERE StudentID = %s and AchievementID = %s;"""
+            query = """SELECT StudentID FROM achievement_tracker WHERE StudentID = %s and AchievementID = %s;"""
             
             with self.connection.cursor() as cursor:
                 cursor.execute(query, (student_id, achievement_id))

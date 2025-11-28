@@ -102,15 +102,15 @@ def tts_prompt(contentType):
         return f"""Please read the following passage with appropriate emotions that match the tone of the story.
         Use natural pacing, emphasize important words, and include slight pauses for dramatic effect when needed.
 
-        After finishing the passage, choose one random phrase from the list below and read it clearly with a curious, engaging tone:
+        After finishing the passage, pause for 2 seconds then choose one random phrase from the list below and read it clearly with a curious, engaging tone:
 
-        'What do you think is happening?'
+        'What do you think is happening in the picture?'
 
-        'Can you guess what's going on here?'
+        'Can you tell what's going on in this picture?'
         
-        'Hmm… what could be happening?'
+        'Look closely… what do you see happening here?'
         
-        Pause briefly before saying the chosen phrase.
+        'What clues can you find in this picture?'
         """
 
 def allowed_file(filename):
