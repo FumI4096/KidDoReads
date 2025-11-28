@@ -117,14 +117,14 @@ main > section{
             }
 
         }
-    button:hover {
-        transform: scale(var(--hover-scale));
-    }
+        button:hover {
+            transform: scale(var(--hover-scale));
+        }
 
-    .delete-button:hover{
-        background-color: var(--danger-hover-color);
-        transform: none !important;
-    }
+        .delete-button:hover{
+            background-color: var(--danger-hover-color);
+            transform: none !important;
+        }
     
     }
 }
