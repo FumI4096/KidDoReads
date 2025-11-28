@@ -267,6 +267,7 @@ function moveStudentInfo() {
 // === CONTENT DISPLAY ===
 async function showContent(contentTypeNum) {
     const url = `/students/contents/${contentTypeNum}`;
+
     try {
         const response = await fetch(url);
         const result = await response.json();
@@ -324,6 +325,9 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
     const contentType = document.createElement("p")
     const categoryType = document.createElement("p");
     newContent.classList.add("content");
+    newContent.style.backgroundImage = `url('/static/images/activities-background-images/${content_type}.jpg')`; /* content background image */
+    newContent.style.backgroundSize = "cover";
+    newContent.style.backgroundPosition = "center";
     activityName.classList.add("activity-name");
     teacherName.classList.add("teacher-name");
     contentType.classList.add("category-type")

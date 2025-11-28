@@ -59,13 +59,13 @@ main > section{
     & > .activity-type{
         font-family: 'Light-Poppins';
         font-size: 0.8rem;
-        color: var(--white-text);
+        color: var(--black-text);
         margin-bottom: auto;
     }
     & > .activity-name{
         font-family: 'Bold-Poppins';
         font-size: 1.3rem;
-        color: var(--white-text);
+        color: var(--black-text);
     }
 
     & > .content-button-action-container{
@@ -79,12 +79,13 @@ main > section{
             border: none;
             height: 30px;
             border-radius: 100px;
-            background: var(--accent-color-almond);
+            background: var(--white-text);
             font-family: 'Regular-Poppins';
             font-size: 0.9rem;
-            color: var(--primary-color-700);
+            color: var(--black-text);
             transition: var(--transition-ease);
             cursor: pointer;
+            box-shadow: var(--box-shadow-1);
             &:hover {
                 transform: scale(var(--hover-scale));
 
