@@ -318,7 +318,7 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
 
 .choice-box:nth-child(3) {
     grid-column: 1 / -1;
-    max-width: 600px;
+    width: 50%;
     justify-self: center;
 }
 
@@ -610,6 +610,30 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
 /* ==================== RESPONSIVE DESIGN - MINIMAL CHANGES ==================== */
 
 /* Only adjust for tablets (below 900px) - Keep 2-column layout */
+
+@media (max-width: 1470px) {
+    body {
+        padding: 2.5rem 5rem;
+    }
+}
+
+@media (max-width: 1243px) {
+    .choices-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+
+    }
+
+    .choice-box:nth-child(3){
+        width: 70%;
+        justify-self: unset;
+    }
+    .choice-box{
+        width: 70%;
+    }
+}
 @media (max-width: 900px) {
     body {
         padding: 2rem 3rem;
@@ -627,12 +651,17 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
     }
     
     .choices-container {
-        max-width: 800px;
+        padding: 0 3rem;
         gap: 0.9rem;
     }
     
     .choice-box {
-        min-width: 280px;
+        width: 100%;
+
+        &:nth-child(3) {
+            width: 100%;
+        }
+    
     }
     
     .choice-label {
@@ -654,6 +683,14 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
     
     header {
         margin-bottom: 0.8rem;
+        flex-direction: column-reverse;
+        align-items: start;
+        margin: 0;
+        gap: 0.3rem;
+    }
+
+    #to-dashboard-page-button {
+        align-self: flex-end;
     }
     
     .header-left,
@@ -679,6 +716,10 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
     .instruction-wrapper {
         flex-direction: column;
         gap: 1rem;
+    }
+
+    .choice-box{
+        min-width: 0;
     }
     
     .instruction-text p {
