@@ -16,13 +16,12 @@ def loginValidation(id, password) -> list:
         
     data = db.get_password_by_id(id)
     
-    print(data[0])
-    
     if data is None:
         errors.append("Invalid School ID. Please try again.")
         return errors
     
     hashed_password = data[0]
+    print(f"Hash retrieved: {hashed_password[:50]}...")
     
     if not check_password_hash(hashed_password, password):
         errors.append("Invalid password. Please try again.")
