@@ -81,9 +81,16 @@ class Database:
         
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute(query)
+                if cursor.description:
+                    columns = [desc[0] for desc in cursor.description]
+                    print(f"Columns returned: {columns}")
                 
-                return True, cursor.fetchall()
+                results = cursor.fetchall()
+                if results:
+                    print(f"First row data: {results[0]}")
+                    print(f"Number of columns: {len(results[0])}")
+                
+                return True, results
         except Exception as e:
             self.connection.rollback()
             return False, str(e)
