@@ -68,7 +68,7 @@ class Database:
     
     def get_student_records(self, filter = "default"):
         allowed_filters = {
-            "default": "student.createdAt DESC",
+            "default": "students.createdAt DESC",
             "id": "StudentID DESC"
         }
         filter_order = allowed_filters.get(filter, "createdAt DESC")
@@ -100,7 +100,7 @@ class Database:
     
     def get_teacher_records(self, filter = "default"):
         allowed_filters = {
-            "default": "teacher.createdAt DESC",
+            "default": "teachers.createdAt DESC",
             "id": "TeacherID DESC"
         }
         filter_order = allowed_filters.get(filter, "createdAt DESC")
