@@ -844,6 +844,7 @@ moveStudentInfo();
             // Optional: highlight selected item
             document.querySelectorAll('.student-nav-item .dropdown li').forEach(li => li.classList.remove('active'));
             item.classList.add('active');
+            const dropdown = parentNav.querySelector('.dropdown');
             dropdown.classList.toggle('active', false)
             
         });
