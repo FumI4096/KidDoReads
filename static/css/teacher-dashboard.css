@@ -1,6 +1,20 @@
 @import "variables.css";
 
+/* Prevent horizontal scrolling */
+html, body {
+    overflow-x: hidden !important; /* Force hide page horizontal scroll */
+    max-width: 100vw;
+}
+
+main {
+    overflow-x: hidden !important;
+    max-width: 100%;
+    width: 100%;
+}
+
 main > section{
+    overflow-x: hidden !important; /* Prevent main from scrolling */
+    max-width: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -11,7 +25,7 @@ main > section{
         font-family: 'Light-Poppins';
         font-size: 1.5rem;
     }
-} 
+}
 
 /* START OF FEATURES (the bottom designs) */
 
@@ -326,12 +340,15 @@ main > section{
 
 .table-wrapper {
     width: 100%;
-    overflow-x: auto;
+    max-width: 100%; /* Critical - prevents extending beyond viewport */
+    overflow-x: auto !important;
     overflow-y: auto;
     max-height: calc(100vh - 200px);
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     flex-grow: 1;
+    position: relative;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
 }
 
 .table-wrapper::-webkit-scrollbar {
@@ -409,10 +426,13 @@ main > section{
 /* Optional — if you want rounded look like the design */
 #progress-table-container {
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     background: white;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     padding: 1rem;
+    max-width: 100%;
+    width: fit-content; /* Let it size based on table */
+    min-width: 100%; /* But at least fill wrapper */
 }
 /*Chatbot Styles */
 #chatbot-button{
