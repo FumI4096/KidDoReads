@@ -79,6 +79,8 @@ class Database:
             ORDER BY {filter_order}
         """
         
+        print(f"Executing query: {query}")  # DEBUG
+        
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(query)
