@@ -127,6 +127,31 @@ main > section{
         }
     
     }
+    & > .assessment-button-action-container{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & > button{
+            border: none;
+            height: 30px;
+            width: 100%;
+            border-radius: 100px;
+            background: var(--white-text);
+            font-family: 'Regular-Poppins';
+            font-size: 0.9rem;
+            color: var(--black-text);
+            transition: var(--transition-ease);
+            cursor: pointer;
+            box-shadow: var(--box-shadow-1);
+            &:hover {
+                transform: scale(var(--hover-scale));
+
+                
+            }
+        }
+    }
 }
 
 

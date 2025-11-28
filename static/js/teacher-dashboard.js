@@ -466,7 +466,7 @@ async function addAssessment(assessment_container, assessment_id, assessment_tit
     hideFromStudentLabel.textContent = "Hidden from Students"
     
     const buttonActionContainer = document.createElement("div");
-    buttonActionContainer.classList.add("content-button-action-container");
+    buttonActionContainer.classList.add("assessment-button-action-container");
     buttonActionContainer.appendChild(previewButton);
 
     previewButton.addEventListener('click', async () => {
