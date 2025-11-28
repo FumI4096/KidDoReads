@@ -209,3 +209,362 @@ header{
     display: flex;
     justify-content: space-between;
 }
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Tablets (900px and below) */
+@media (max-width: 900px) {
+    body {
+        padding: 2rem 4rem;
+    }
+    
+    .picture-container {
+        height: 500px;
+        padding: 0 4rem;
+    }
+    
+    .picture-container > label > span {
+        font-size: 1.1rem;
+    }
+    
+    .picture-container > div > label > img {
+        height: 80px;
+    }
+    
+    header #content-display {
+        font-size: 2rem;
+    }
+    
+    .number-badge {
+        font-size: 5rem;
+        min-width: 70px;
+    }
+    
+    .input-section {
+        padding: 1.5rem 2rem;
+        gap: 1.5rem;
+    }
+    
+    .input-content label,
+    .meaning-field label,
+    .input-content-full label {
+        font-size: 1.2rem;
+    }
+    
+    .input-content input,
+    .meaning-field input,
+    .input-content-full input,
+    textarea {
+        font-size: 1.1rem;
+    }
+    
+    #main-sheet-container > #choices-container > #choice-box-container > .choice-box {
+        width: 85%;
+        padding: 0.9rem 0.9rem 0.9rem 3rem;
+    }
+    
+    .tts-buttons > .tts-button {
+        padding: 0.7rem 4rem;
+    }
+    
+    /* Make answer options horizontal on tablets */
+    .answer-options {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+    
+    .answer-options label {
+        margin-right: 0;
+    }
+}
+
+/* Small tablets and large phones (640px and below) */
+@media (max-width: 640px) {
+    body {
+        padding: 1.5rem 2rem;
+        overflow-x: hidden;
+    }
+    
+    .picture-container {
+        height: 350px;
+        padding: 0 2rem;
+        gap: 0.8rem;
+    }
+    
+    .picture-container > label > span {
+        font-size: 1rem;
+    }
+    
+    .picture-container > div > label > img {
+        height: 60px;
+    }
+    
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    header button {
+        padding: 0.4rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    
+    header #content-display {
+        font-size: 1.5rem;
+    }
+    
+    .input-section {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem 1.5rem;
+        gap: 1rem;
+    }
+    
+    .number-badge {
+        font-size: 3rem;
+        min-width: auto;
+    }
+    
+    .input-content,
+    .meaning-field,
+    .input-content-full {
+        flex: 1;
+        width: 100%;
+    }
+    
+    .input-content label,
+    .meaning-field label,
+    .input-content-full label {
+        font-size: 1.1rem;
+    }
+    
+    .input-content input,
+    .meaning-field input,
+    .input-content-full input,
+    textarea {
+        font-size: 1rem;
+    }
+    
+    #main-sheet-container {
+        flex-direction: column;
+    }
+    
+    #main-sheet-container > #choices-container > p {
+        font-size: 1.1rem;
+    }
+    
+    #main-sheet-container > #choices-container > #choice-box-container > .choice-box {
+        width: 100%;
+        padding: 0.8rem 0.8rem 0.8rem 2rem;
+    }
+    
+    #main-sheet-container > #choices-container > #choice-box-container > .choice-box > * {
+        font-size: 1rem;
+    }
+    
+    .tts-buttons > .tts-button {
+        padding: 0.7rem 2rem;
+        font-size: 0.9rem;
+    }
+    
+    .tts-buttons > .tts-button > img {
+        inline-size: 20px;
+    }
+    
+    #previous-button, #save-button, #edit-button, #next-button {
+        width: auto;
+        padding: 0.4rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    
+    #button-container {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    /* Keep answer options horizontal on phones */
+    .answer-options {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+    }
+    
+    .answer-options label {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+        margin-right: 0;
+    }
+}
+
+/* Mobile phones (480px and below) */
+@media (max-width: 480px) {
+    body {
+        padding: 1rem 1rem;
+    }
+    
+    .picture-container {
+        height: 300px;
+        padding: 0 1rem;
+        gap: 0.6rem;
+    }
+    
+    .picture-container > label > span {
+        font-size: 0.9rem;
+    }
+    
+    .picture-container > div > label > img {
+        height: 50px;
+    }
+    
+    header #content-display {
+        font-size: 1.3rem;
+    }
+    
+    header button {
+        padding: 0.3rem 1rem;
+        font-size: 0.85rem;
+        gap: 0.5rem;
+    }
+    
+    .input-section {
+        padding: 1.2rem 1.2rem;
+        gap: 0.8rem;
+    }
+    
+    .number-badge {
+        font-size: 2.5rem;
+    }
+    
+    .input-content label,
+    .meaning-field label,
+    .input-content-full label {
+        font-size: 1rem;
+    }
+    
+    .input-content input,
+    .meaning-field input,
+    .input-content-full input,
+    textarea {
+        font-size: 0.95rem;
+    }
+    
+    textarea {
+        min-height: 80px;
+    }
+    
+    #main-sheet-container > #choices-container > p {
+        font-size: 1rem;
+    }
+    
+    #main-sheet-container > #choices-container > #choice-box-container > .choice-box {
+        padding: 0.7rem 0.7rem 0.7rem 1.5rem;
+    }
+    
+    #main-sheet-container > #choices-container > #choice-box-container > .choice-box > * {
+        font-size: 0.95rem;
+    }
+    
+    .tts-buttons > .tts-button {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .tts-buttons > .tts-button > img {
+        inline-size: 18px;
+    }
+    
+    #previous-button, #save-button, #edit-button, #next-button {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        min-width: 80px;
+    }
+    
+    /* Answer options horizontal and smaller */
+    .answer-options {
+        flex-direction: row;
+        gap: 0.6rem;
+    }
+    
+    .answer-options label {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        margin-right: 0;
+    }
+}
+
+/* Very small phones (360px and below) */
+@media (max-width: 360px) {
+    body {
+        padding: 0.8rem;
+    }
+    
+    .picture-container {
+        height: 250px;
+        padding: 0 0.8rem;
+        gap: 0.5rem;
+    }
+    
+    .picture-container > label > span {
+        font-size: 0.85rem;
+    }
+    
+    .picture-container > div > label > img {
+        height: 40px;
+    }
+    
+    header #content-display {
+        font-size: 1.1rem;
+    }
+    
+    .number-badge {
+        font-size: 2rem;
+    }
+    
+    .input-section {
+        padding: 1rem;
+    }
+    
+    .input-content label,
+    .meaning-field label,
+    .input-content-full label {
+        font-size: 0.9rem;
+    }
+    
+    .input-content input,
+    .meaning-field input,
+    .input-content-full input,
+    textarea {
+        font-size: 0.85rem;
+    }
+    
+    #main-sheet-container > #choices-container > #choice-box-container > .choice-box > * {
+        font-size: 0.85rem;
+    }
+    
+    .tts-buttons > .tts-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    #previous-button, #save-button, #edit-button, #next-button {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+        min-width: 70px;
+    }
+    
+    /* Answer options horizontal on very small screens */
+    .answer-options {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+    
+    .answer-options label {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+    }
+}
