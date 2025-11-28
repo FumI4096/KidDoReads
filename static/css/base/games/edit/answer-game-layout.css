@@ -1,5 +1,6 @@
 @import "../../../variables.css";
 
+/* ==================== GLOBAL RESET ==================== */
 *{
     box-sizing: border-box;
     padding: 0;
@@ -12,24 +13,47 @@ html, body{
     width: 100%;
 }
 
+/* ==================== BODY & BACKGROUND ==================== */
 body{
     display: flex;
     flex-direction: column;
-    padding: 3rem 14rem;
-    gap: 1.5rem;
-    background-color: var(--background);
+    padding: 2rem 10rem;
+    gap: 1rem;
+    background-color: var(--background) !important;
+    background-image: 
+        url('../../../../images/background/light-olive-circle.svg'), 
+        url('../../../../images/background/dark-green-circle.svg');
+    background-position: -3% 100%, 100% 0%, center center !important;
+    background-repeat: no-repeat, no-repeat, no-repeat !important;
+    background-attachment: fixed !important;
+    background-size: auto, auto, cover !important;
+    height: 100vh;
+    overflow: hidden;
 }
 
-#category-display{
-    font-family: "Italic-Poppins";
-    font-style: italic;
+body::after {
+    content: '';
+    position: fixed;
+    top: 80px;
+    left: 130px;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../../../images/background/leaves.PNG');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transform: rotate(180deg);
+    z-index: -1; 
+    pointer-events: none; 
 }
 
+/* ==================== HEADER ==================== */
 header{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
 }
 
 .header-left {
@@ -55,23 +79,31 @@ header{
     color: var(--black-text);
 }
 
-.header-right button {
-    background: white;
-    color: var(--black-text);
-    border: 1px solid #ccc;
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
+#category-display{
+    font-family: "Italic-Poppins";
+    font-style: italic;
+}
+
+/* Header Exit Button */
+.header-right button,
+#to-dashboard-page-button {
+    background: var(--secondary-color);
+    color: var(--white-text);
+    border: none;
+    padding: 0.6rem 2rem; /* Same as next button */
+    font-size: 0.95rem; /* Same as next button */
     font-weight: 500;
-    border-radius: 4px;
+    border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.header-right button:hover {
-    background: rgb(212, 212, 212);
+.header-right button:hover,
+#to-dashboard-page-button:hover {
+    filter: var(--filter-saturate-hover);
 }
 
-/* Question Container with Instruction and Mascot */
+/* ==================== QUESTION CONTAINER ==================== */
 .question-container {
     display: flex;
     flex-direction: column;
@@ -79,19 +111,39 @@ header{
     align-items: center;
     background: white;
     border-radius: 0.5rem;
-    padding: 4rem 3rem;
+    padding: 2.5rem 3rem;
     box-shadow: var(--box-shadow-1);
     border: 1px solid #ccc;
-    margin-bottom: 1rem;
-    min-height: 250px;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+    min-height: 320px; /* Minimum height */
+    /* REMOVED max-height - now it can grow vertically */
 }
 
+.question-container .question {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--black-text);
+    text-align: center;
+}
+
+/* Image Display */
+#image-display{
+    height: 100%;
+    width: 100%;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* ==================== INSTRUCTION WRAPPER ==================== */
 .instruction-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 3rem;
+    gap: 2rem;
+    flex-shrink: 0;
 }
 
 .instruction-text {
@@ -99,17 +151,43 @@ header{
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .instruction-text p {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     color: var(--black-text);
     text-align: center;
+    margin: 0;
 }
 
+/* Instruction Detail */
+.instruction-detail {
+    font-size: 1.3rem;
+    color: var(--black-text);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Hide instruction when showing answers */
+body:has(#answer-container:not(:empty)) .instruction-detail {
+    display: none;
+}
+
+/* ==================== MASCOT ==================== */
 .mascot-wrapper {
     flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mascot-wrapper img {
+    width: 250px;
+    height: auto;
+    object-fit: contain;
+    display: block;
 }
 
 #mascot-image {
@@ -118,16 +196,61 @@ header{
     object-fit: contain;
 }
 
-/* Instruction Detail - Between box and choices */
-.instruction-detail {
-    font-size: 1rem;
-    color: var(--black-text);
+/* Speech Bubble - Positioned to the right of mascot */
+.speech-bubble {
+    position: absolute;
+    top: -20px; /* Adjust vertical position */
+    right: -100px; /* Position to the right of mascot */
+    background: white;
+    border: 2px solid #333;
+    border-radius: 20px; /* More rectangular bubble */
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+    max-width: 200px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
-    margin-bottom: 1.5rem;
+    z-index: 10;
 }
 
-/* TTS Speaker Button Styling with Hover and Click Effects */
-#tts-speaker-button {
+/* Arrow pointing to the left (towards mascot) */
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 8px 8px 0;
+    border-color: transparent white transparent transparent;
+}
+
+/* Border for arrow */
+.speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #333 transparent transparent;
+    z-index: -1;
+}
+
+.sentence-display {
+    font-size: 1rem;
+    color: var(--black-text);
+    line-height: 1.6;
+    margin-top: 0.5rem;
+}
+
+/* ==================== TTS BUTTONS ==================== */
+#tts-speaker-button,
+#tts-sentence-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -144,18 +267,21 @@ header{
     overflow: hidden;
 }
 
-#tts-speaker-button:hover {
+#tts-speaker-button:hover,
+#tts-sentence-button:hover {
     background: rgb(190, 190, 190);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-#tts-speaker-button:active {
+#tts-speaker-button:active,
+#tts-sentence-button:active {
     transform: translateY(0);
 }
 
-/* Loading effect when button is clicked */
-#tts-speaker-button.playing::before {
+/* TTS Button Loading Effect */
+#tts-speaker-button.playing::before,
+#tts-sentence-button.playing::before {
     content: '';
     position: absolute;
     top: 0;
@@ -168,40 +294,33 @@ header{
 }
 
 @keyframes loadingBar {
-    0% {
-        width: 0%;
-    }
-    100% {
-        width: 100%;
-    }
+    0% { width: 0%; }
+    100% { width: 100%; }
 }
 
 #tts-speaker-button span,
-#tts-speaker-button img {
+#tts-speaker-button img,
+#tts-sentence-button span,
+#tts-sentence-button img {
     position: relative;
     z-index: 1;
 }
 
-#tts-speaker-button img {
+#tts-speaker-button img,
+#tts-sentence-button img {
     width: 18px;
     height: 18px;
 }
 
-.question-container .question {
-    font-size: 1.3rem;
-    font-weight: 500;
-    color: var(--black-text);
-    text-align: center;
-}
-
-/* Choices Container */
+/* ==================== CHOICES CONTAINER ==================== */
 .choices-container{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin: 0 auto 3rem;
-    max-width: 1200px;
-    padding: 0 2rem;
+    gap: 1rem;
+    margin: 0 auto 1rem;
+    max-width: 1000px;
+    padding: 0 1rem;
+    flex-shrink: 0;
 }
 
 .choice-box:nth-child(3) {
@@ -221,6 +340,7 @@ header{
     transition: all 0.3s ease;
     cursor: pointer;
     min-width: 450px;
+    /* Width adjusts automatically based on content */
 }
 
 .choice-box:hover{
@@ -229,11 +349,7 @@ header{
 
 .choice-box.selected,
 .choice-box:active,
-.choice-box:focus {
-    background: var(--primary-color);
-}
-
-/* If using input radio checked state */
+.choice-box:focus,
 .choice-box:has(input[type="radio"]:checked) {
     background: var(--primary-color);
 }
@@ -244,10 +360,11 @@ header{
     align-items: center;
     justify-content: flex-start;
     cursor: pointer;
-    font-size: 1.05rem;
+    font-size: 1.3rem;
     color: var(--white-text);
     width: 100%;
-    padding: 1.5rem 2.5rem;
+    padding: 2.2rem 2.5rem;
+    /* Height adjusts based on text content */
 }
 
 .choice-letter {
@@ -260,72 +377,23 @@ header{
 .choice-text {
     font-weight: 400;
     line-height: 1.5;
+    /* Text wraps naturally */
 }
 
-/* Hide all radio inputs completely */
+/* Hide Radio Inputs */
 .choice-box input[type="radio"],
 .choice-label input[type="radio"],
 .choices-container input[type="radio"] {
     display: none !important;
 }
 
-/* Button Container */
+/* ==================== NAVIGATION BUTTONS ==================== */
 #button-container{
     display: flex;
     justify-content: space-between;
     margin-top: auto;
-}
-
-/* #tts-speaker-button styles to #tts-sentence-button */
-
-#tts-sentence-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.2rem;
-    background: rgb(212, 212, 212);
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: var(--black-text);
-    transition: all 0.3s ease;
-    font-weight: 500;
-    position: relative;
-    overflow: hidden;
-}
-
-#tts-sentence-button:hover {
-    background: rgb(190, 190, 190);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-#tts-sentence-button:active {
-    transform: translateY(0);
-}
-
-#tts-sentence-button.playing::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(76, 175, 80, 0.3), rgba(76, 175, 80, 0.6));
-    animation: loadingBar 2s ease-in-out;
-    z-index: 0;
-}
-
-#tts-sentence-button span,
-#tts-sentence-button img {
-    position: relative;
-    z-index: 1;
-}
-
-#tts-sentence-button img {
-    width: 18px;
-    height: 18px;
+    padding: 1rem 0;
+    flex-shrink: 0;
 }
 
 .nav-button {
@@ -353,36 +421,6 @@ header{
     filter: var(--filter-saturate-hover);
 }
 
-/* Fix body layout to ensure buttons stay at bottom */
-body {
-    display: flex;
-    flex-direction: column;
-    padding: 3rem 14rem;
-    gap: 1.5rem;
-    background-color: var(--background);
-    min-height: 100vh;
-}
-
-/* Header button styling - Exit Preview/Exit Activity */
-.header-right button,
-#to-dashboard-page-button {
-    background: var(--secondary-color);
-    color: var(--white-text);
-    border: none;
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.header-right button:hover,
-#to-dashboard-page-button:hover {
-    filter: var(--filter-saturate-hover);
-}
-
-/* Update button styling to match your design */
 #previous-button,
 #next-button,
 #submit-button {
@@ -403,19 +441,27 @@ body {
     filter: var(--filter-saturate-hover);
 }
 
-/* Answer Container Styling - Modern Design */
+/* ==================== ANSWER CONTAINER ==================== */
 #answer-container {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
     background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
-    padding: 3rem 4rem;
+    padding: 2rem 3rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    max-width: 1200px;
+    max-width: 1000px;
     width: 90%;
-    margin: 2rem auto;
+    margin: 0 auto;
+    flex-shrink: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 350px);
+}
+
+/* Show answer container when it has content */
+#answer-container:not(:empty) {
+    display: flex;
 }
 
 #answer-container > h3 {
@@ -423,22 +469,26 @@ body {
     color: var(--accent-color-orange);
     font-family: 'Bold-Poppins';
     margin-bottom: 0;
+    flex-shrink: 0;
 }
 
-/* Answer Table Styling - Modern */
+/* Answer Table */
 #answer-container table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 0.8rem;
+    border-spacing: 0 0.5rem;
 }
 
 #answer-container table thead {
     background: var(--accent-color-orange);
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 #answer-container table th {
-    padding: 1rem 1.5rem;
+    padding: 0.8rem 1rem;
     text-align: center;
     font-family: 'Bold-Poppins';
     font-size: 1rem;
@@ -448,7 +498,6 @@ body {
 
 #answer-container table th:first-child {
     border-radius: 12px 0 0 12px;
-    text-align: center;
 }
 
 #answer-container table th:last-child {
@@ -456,7 +505,7 @@ body {
 }
 
 #answer-container table td {
-    padding: 1.2rem 1.5rem;
+    padding: 0.9rem 1rem;
     background: white;
     color: var(--black-text);
     font-size: 1rem;
@@ -478,7 +527,7 @@ body {
     border-radius: 0 12px 12px 0;
 }
 
-/* Result Status Styling - Modern */
+/* Result Status - Correct */
 #answer-container .result-correct {
     color: #4CAF50;
     font-weight: 700;
@@ -502,6 +551,7 @@ body {
     justify-content: center;
 }
 
+/* Result Status - Incorrect */
 #answer-container .result-incorrect {
     color: #f44336;
     font-weight: 700;
@@ -530,11 +580,12 @@ body {
     font-size: 2rem;
     font-family: 'Bold-Poppins';
     color: var(--accent-color-orange);
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     text-align: center;
+    flex-shrink: 0;
 }
 
-/* Finish Button Styling */
+/* Finish Button */
 #finish-button {
     background: var(--accent-color-orange);
     color: white;
@@ -547,8 +598,9 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     align-self: center;
+    flex-shrink: 0;
 }
 
 #finish-button:hover {
@@ -562,9 +614,175 @@ body {
     box-shadow: 0 2px 10px rgba(255, 140, 0, 0.3);
 }
 
-/* Responsive Design - All Screen Sizes */
+/* ==================== RESPONSIVE DESIGN - MINIMAL CHANGES ==================== */
 
-/* Large Desktops (1920px and above) */
+/* Only adjust for tablets (below 900px) - Keep 2-column layout */
+@media (max-width: 900px) {
+    body {
+        padding: 2rem 3rem;
+    }
+    
+    .header-right button,
+    #to-dashboard-page-button {
+        padding: 0.45rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .question-container {
+        min-height: 280px;
+        padding: 2rem 2.5rem;
+    }
+    
+    .choices-container {
+        max-width: 800px;
+        gap: 0.9rem;
+    }
+    
+    .choice-box {
+        min-width: 280px;
+    }
+    
+    .choice-label {
+        font-size: 1.1rem;
+        padding: 2rem 1.8rem;
+    }
+}
+
+/* Stack vertically ONLY on phones (below 640px) */
+@media (max-width: 640px) {
+    body {
+        padding: 1.5rem 1.5rem;
+        overflow-y: auto;
+    }
+    
+    body::after {
+        opacity: 0.7;
+    }
+    
+    header {
+        margin-bottom: 0.8rem;
+    }
+    
+    .header-left,
+    .header-center {
+        font-size: 0.85rem;
+    }
+    
+    .header-right button,
+    #to-dashboard-page-button {
+        padding: 0.4rem 0.9rem; /* Even smaller on phones */
+        font-size: 0.75rem; /* Smaller text on phones */
+    }
+    
+    .question-container {
+        min-height: 240px;
+        padding: 1.5rem 1.5rem;
+    }
+    
+    .question-container .question {
+        font-size: 1rem;
+    }
+    
+    .instruction-wrapper {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .instruction-text p {
+        font-size: 1.1rem;
+    }
+    
+    .instruction-detail {
+        font-size: 1rem;
+    }
+    
+    #mascot-image {
+        width: 130px;
+    }
+    
+    .mascot-wrapper img {
+        width: 170px;
+    }
+    
+    .speech-bubble {
+        position: static;
+        margin-top: 1rem;
+        max-width: 100%;
+    }
+    
+    .speech-bubble::after {
+        display: none;
+    }
+    
+    /* Stack choices on phones only */
+    .choices-container {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+        max-width: 100%;
+    }
+
+    .choice-box:nth-child(3) {
+        grid-column: 1;
+        max-width: 100%;
+    }
+
+    .choice-box {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .choice-label {
+        font-size: 1rem;
+        padding: 1.7rem 1.3rem;
+    }
+    
+    #button-container {
+        padding: 0.8rem 0;
+    }
+    
+    .nav-button,
+    #previous-button,
+    #next-button,
+    #submit-button {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Very small phones only */
+@media (max-width: 400px) {
+    body {
+        padding: 1rem;
+    }
+    
+    .header-right button,
+    #to-dashboard-page-button {
+        padding: 0.35rem 0.8rem; /* Extra small on tiny phones */
+        font-size: 0.7rem;
+    }
+    
+    .question-container {
+        min-height: 220px;
+        padding: 1.2rem;
+    }
+    
+    .question-container .question {
+        font-size: 0.9rem;
+    }
+    
+    .choice-label {
+        font-size: 0.95rem;
+        padding: 1.5rem 1.1rem;
+    }
+    
+    .choice-letter {
+        font-size: 0.95rem;
+    }
+}
+
+/* ==================== ANSWER CONTAINER RESPONSIVE ==================== */
+
+/* Large Desktops (1920px+) */
 @media (min-width: 1920px) {
     #answer-container {
         max-width: 1400px;
@@ -575,18 +793,14 @@ body {
         font-size: 1.8rem;
     }
     
-    #answer-container table th {
+    #answer-container table th,
+    #answer-container table td {
         font-size: 1.1rem;
         padding: 1.2rem 2rem;
     }
-    
-    #answer-container table td {
-        font-size: 1.1rem;
-        padding: 1.4rem 2rem;
-    }
 }
 
-/* Standard Desktops (1200px to 1919px) */
+/* Standard Desktops (1200px - 1919px) */
 @media (min-width: 1200px) and (max-width: 1919px) {
     #answer-container {
         max-width: 1200px;
@@ -594,7 +808,7 @@ body {
     }
 }
 
-/* Small Desktops/Laptops (992px to 1199px) */
+/* Small Desktops/Laptops (992px - 1199px) */
 @media (min-width: 992px) and (max-width: 1199px) {
     #answer-container {
         max-width: 95%;
@@ -606,14 +820,10 @@ body {
         font-size: 1.4rem;
     }
     
-    #answer-container table th {
-        font-size: 0.95rem;
-        padding: 0.9rem 1.2rem;
-    }
-    
+    #answer-container table th,
     #answer-container table td {
         font-size: 0.95rem;
-        padding: 1rem 1.2rem;
+        padding: 0.9rem 1.2rem;
     }
     
     #finish-button {
@@ -622,21 +832,8 @@ body {
     }
 }
 
-/* Tablets (768px to 991px) */
+/* Tablets (768px - 991px) */
 @media (min-width: 768px) and (max-width: 991px) {
-    body {
-        padding: 2rem 5rem;
-    }
-    
-    .instruction-wrapper {
-        flex-direction: column;
-        gap: 2rem;
-    }
-    
-    #mascot-image {
-        width: 150px;
-    }
-    
     #answer-container {
         max-width: 95%;
         padding: 2rem 2.5rem;
@@ -651,15 +848,10 @@ body {
         border-spacing: 0 0.6rem;
     }
     
-    #answer-container table th {
-        font-size: 0.9rem;
-        padding: 0.8rem 1rem;
-        letter-spacing: 0.3px;
-    }
-    
+    #answer-container table th,
     #answer-container table td {
         font-size: 0.9rem;
-        padding: 1rem 1rem;
+        padding: 0.8rem 1rem;
     }
     
     #answer-container table tbody tr td:first-child {
@@ -683,21 +875,8 @@ body {
     }
 }
 
-/* Large Phones/Small Tablets (576px to 767px) */
+/* Large Phones/Small Tablets (576px - 767px) */
 @media (min-width: 576px) and (max-width: 767px) {
-    body {
-        padding: 1.5rem 3rem;
-    }
-    
-    .instruction-wrapper {
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-    
-    #mascot-image {
-        width: 120px;
-    }
-    
     #answer-container {
         width: 95%;
         padding: 1.5rem 2rem;
@@ -716,7 +895,6 @@ body {
     #answer-container table th {
         font-size: 0.75rem;
         padding: 0.7rem 0.8rem;
-        letter-spacing: 0.2px;
     }
     
     #answer-container table td {
@@ -753,19 +931,6 @@ body {
 
 /* Mobile Phones (up to 575px) */
 @media (max-width: 575px) {
-    body {
-        padding: 1rem 1.5rem;
-    }
-    
-    .instruction-wrapper {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    #mascot-image {
-        width: 100px;
-    }
-    
     #answer-container {
         width: 100%;
         padding: 1.5rem 1rem;
@@ -786,7 +951,6 @@ body {
     #answer-container table th {
         font-size: 0.65rem;
         padding: 0.6rem 0.5rem;
-        letter-spacing: 0.1px;
     }
     
     #answer-container table td {
@@ -831,14 +995,6 @@ body {
 
 /* Extra Small Phones (up to 375px) */
 @media (max-width: 375px) {
-    body {
-        padding: 1rem;
-    }
-    
-    #mascot-image {
-        width: 80px;
-    }
-    
     #answer-container {
         padding: 1rem 0.8rem;
         gap: 0.8rem;
@@ -879,91 +1035,9 @@ body {
     }
 }
 
-
-
-
-/* Mascot */
-
-.mascot-wrapper {
-    flex-shrink: 0;
-    position: relative;
+#passage {
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
-.mascot-wrapper img {
-    width: 250px;
-    height: auto;
-    object-fit: contain;
-    display: block;
-}
-
-/* Responsive adjustments for mascot */
-@media (min-width: 768px) and (max-width: 991px) {
-    .mascot-wrapper img {
-        width: 200px;
-    }
-}
-
-@media (min-width: 576px) and (max-width: 767px) {
-    .mascot-wrapper img {
-        width: 160px;
-    }
-}
-
-@media (max-width: 575px) {
-    .mascot-wrapper img {
-        width: 130px;
-    }
-}
-
-@media (max-width: 375px) {
-    .mascot-wrapper img {
-        width: 110px;
-    }
-}
-
-/* Speech Bubble for Mascot */
-
-.sentence-display {
-    font-size: 1rem;
-    color: var(--black-text);
-    line-height: 1.6;
-    margin-top: 0.5rem;
-}
-
-.speech-bubble {
-    position: absolute;
-    top: 10px;
-    right: -110px;
-    background: white;
-    border: 2px solid #333;
-    border-radius: 50px; /* Changed from 20px to 50px for oblong shape */
-    padding: 1rem 1.5rem; /* Adjusted padding for better oblong shape */
-    font-size: 0.85rem;
-    max-width: 180px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.speech-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: 30px;
-    left: -8px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 8px 8px 8px 0;
-    border-color: transparent white transparent transparent;
-}
-
-@media (max-width: 991px) {
-    .speech-bubble {
-        position: static;
-        margin-top: 1rem;
-        max-width: 100%;
-    }
-    
-    .speech-bubble::after {
-        display: none;
-    }
-}
