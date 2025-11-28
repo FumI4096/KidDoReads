@@ -75,7 +75,7 @@ class Database:
         
         query = f"""
             SELECT StudentID, FirstName, LastName, Email, Image, R_Name FROM students 
-            LEFT JOIN roles on S_Role = Roles.R_ID 
+            LEFT JOIN roles on S_Role = roles.R_ID 
             ORDER BY {filter_order}
         """
         
@@ -95,7 +95,7 @@ class Database:
         }
         filter_order = allowed_filters.get(filter, "createdAt DESC")
         
-        query = f"SELECT TeacherID, FirstName, LastName, Email, Image, R_Name FROM teachers LEFT JOIN roles on T_Role = Roles.R_ID ORDER BY {filter_order}"
+        query = f"SELECT TeacherID, FirstName, LastName, Email, Image, R_Name FROM teachers LEFT JOIN roles on T_Role = roles.R_ID ORDER BY {filter_order}"
         
         try:
             with self.connection.cursor() as cursor:
@@ -113,7 +113,7 @@ class Database:
         filter_order = allowed_filters.get(filter, "createdAt DESC")
         
         query = f"""
-        SELECT AdminID, FirstName, LastName, Email, Image, R_Name FROM admin LEFT JOIN roles on A_Role = Roles.R_ID ORDER BY {filter_order}"
+        SELECT AdminID, FirstName, LastName, Email, Image, R_Name FROM admin LEFT JOIN roles on A_Role = roles.R_ID ORDER BY {filter_order}"
         """
         
         try:
