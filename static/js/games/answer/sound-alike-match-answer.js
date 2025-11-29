@@ -105,11 +105,10 @@ else if(await decrypt(sessionStorage.getItem("role")) === "teacher"){
 
 }
 
-ttsKeyWordButton.addEventListener('click', () => {
-    playKeywordAudio(currentKeywordAudio)
-})
-ttsSentenceButton.addEventListener('click', () => {
-    playSentenceAudio(currentSentenceAudio)
+ttsSentenceButton.addEventListener('click', async () => {
+    ttsKeywordPlay.play(currentKeywordAudio, () => {
+        ttsSentencePlay.play(currentSentenceAudio);
+    });
 })
 
 submitButton.addEventListener("click", () => {
@@ -162,14 +161,6 @@ function saveAndNavigate(direction) {
     }
 }
 
-function playKeywordAudio(audio){
-    ttsKeywordPlay.play(audio)
-}
-
-function playSentenceAudio(audio){
-    ttsSentencePlay.play(audio)
-}
-
 function updateNavigationButtons() {
 
     if (currentQuestion === questionObject.length - 1) {
@@ -201,8 +192,8 @@ function loadQuestion(index) {
     console.log(questionData)
     console.log(ttsData)
 
-    currentKeywordAudio = ttsData.keywordUrl
-    currentSentenceAudio = ttsData.sentenceAudio
+    currentKeywordAudio = ttsData.keyWord
+    currentSentenceAudio = ttsData.sentenceUrl
 
     const keywordElement = document.getElementById("keyword-text");
     keywordElement.textContent = questionData.keyWord;

@@ -2,11 +2,12 @@ class MascotPlaySpeech{
 
     #currentAudio = null
     #progressInterval = null
+    #onEndedCallback = null
     // #currentImageElement = null;
     // #defaultImage = null;
     // #afterButtonPressedImage = null;
 
-    play(audioFile) {
+    play(audioFile, onEndedCallback = null) {
         if (this.#currentAudio) {
             this.#stop();
         }
@@ -24,6 +25,10 @@ class MascotPlaySpeech{
         // Trigger reflow to restart animation
         // void imageElement.offsetWidth;
         // imageElement.style.animation = 'bounce 0.6s ease-in-out';
+
+
+        this.#onEndedCallback = onEndedCallback;
+
         
         this.#currentAudio = new Audio(audioFile);
         console.log(this.#currentAudio);
@@ -74,6 +79,12 @@ class MascotPlaySpeech{
         //     // Remove animation when stopped
         //     this.#currentImageElement.style.animation = 'none';
         // }
+        if (this.#onEndedCallback) {
+            setTimeout(() => {
+                this.#onEndedCallback();
+                this.#onEndedCallback = null; // Clear it after calling
+            }, 2000); // Clear it after calling
+        }
     }
 
 }
