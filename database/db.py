@@ -473,7 +473,7 @@ class Database:
             return False, str(e)        
         
     def delete_content(self, teacher_id: int, content_id: int):
-        query = "DELETE FROM Contents WHERE TeacherID = %s AND ContentID = %s"
+        query = "DELETE FROM contents WHERE TeacherID = %s AND ContentID = %s"
         
         self.cursor.execute(query, (teacher_id, content_id))
         
