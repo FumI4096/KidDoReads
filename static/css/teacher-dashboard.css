@@ -314,28 +314,108 @@ main > section{
     gap: 2rem;
 }
 
-#select-category, #select-content {
+/* Back Button for Attempt Progress Detail */
+#back-to-main-progress-button {
     font-family: 'Regular-Poppins';
-    background-color: var(--white-text);
+    background-color: white;
     border: none;
-    color: var(--black-text);
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+    color: #000;
+    padding: 10px 20px;
     cursor: pointer;
-    box-shadow: var(--box-shadow-1);
-    transition: background-color 0.18s ease, color 0.18s ease;
+    font-size: 1.05rem;
+    outline: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
-#select-category option, #select-content option {
-    background-color: var(--white-text);
+#back-to-main-progress-button:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
 }
 
-#select-category:hover, #select-content:hover {
-    background-color: var(--accent-color-almond);
-    color: var(--black-text);
+#back-to-main-progress-button:active {
+    background-color: #f0f0f0;
+    transform: translateY(0);
+}
+
+#back-to-main-progress-button:focus {
+    box-shadow: 0 0 0 3px rgba(255, 177, 92, 0.3);
+}
+
+/* Attempt Progress Dropdown & Main Progress Dropdowns */
+#select-attempt-progress-filter,
+#select-category, 
+#select-content {
+    font-family: 'Regular-Poppins';
+    background-color: white;
+    border: none;
+    color: #000;
+    padding: 10px 40px 10px 16px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    outline: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    
+    /* Remove default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    /* Custom dropdown arrow */
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333333" d="M1 1l5 5 5-5"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+}
+
+#select-attempt-progress-filter:hover,
+#select-category:hover, 
+#select-content:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+#select-attempt-progress-filter:focus,
+#select-category:focus, 
+#select-content:focus {
+    background-color: white;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 177, 92, 0.3);
+}
+
+/* Animated arrow when dropdown is open */
+#select-attempt-progress-filter:focus,
+#select-category:focus, 
+#select-content:focus {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333333" d="M11 7l-5-5-5 5"/></svg>');
+}
+
+#select-attempt-progress-filter option,
+#select-category option, 
+#select-content option {
+    background-color: white;
+    color: #000;
+    padding: 10px 12px;
+    font-family: 'Regular-Poppins';
+    font-size: 1rem;
+}
+
+/* Animation for dropdown opening */
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .table-wrapper {
@@ -846,6 +926,19 @@ main > section{
     main > section > p {
         font-size: 1.3rem;
     }
+
+    /* Back button and dropdowns responsive */
+    #back-to-main-progress-button {
+        padding: 6px 14px;
+        font-size: 0.9rem;
+    }
+
+    #select-attempt-progress-filter,
+    #select-category, 
+    #select-content {
+        padding: 8px 36px 8px 14px;
+        font-size: 1rem;
+    }
 }
 
 @media (max-width: 668px){
@@ -961,12 +1054,18 @@ main > section{
         border-radius: 8px;
     }
 
-    /* Dropdowns on mobile */
-    #select-category, #select-content {
+    /* Back button and dropdowns on mobile */
+    #back-to-main-progress-button {
+        padding: 8px 16px;
+        font-size: 0.95rem;
+    }
+
+    #select-attempt-progress-filter,
+    #select-category, 
+    #select-content {
         width: 100%;
-        padding: 0.8rem;
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
+        padding: 10px 36px 10px 14px;
+        font-size: 1.05rem;
     }
 
     /* Chatbot becomes full screen on mobile */
