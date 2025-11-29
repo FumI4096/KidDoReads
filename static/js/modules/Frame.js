@@ -33,7 +33,7 @@ fetch('../../static/animation/idle-owl.json')
 
             if (elapsed > interval) {
             img.src = framesPreloaded[frame].src; // use preloaded image
-            frame = (frame + 1) % totalFrames;    // seamless loop
+            frame = (frame + 2) % totalFrames;    // seamless loop
             lastTime = time;
             }
 
