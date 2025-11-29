@@ -125,6 +125,8 @@ function setupRadioListeners() {
             // Save answer immediately when radio is clicked
             userAnswers[currentQuestion] = radio.value;
             sessionStorage.setItem("userAnswers", JSON.stringify(userAnswers));
+
+            console.log(sessionStorage.getItem("userAnswers"));
             console.log(`Saved answer for question ${currentQuestion}:`, radio.value);
         });
     });
@@ -135,7 +137,7 @@ function playAudio(audio){
 }
 
 function saveAndNavigate(direction) {
-    const selectedRadio = document.querySelector('input[name="preview_answer"]:checked');
+    const selectedRadio = document.querySelector('input[name="answer"]:checked');
     if (selectedRadio) {
         userAnswers[currentQuestion] = selectedRadio.value;
     } else if (userAnswers[currentQuestion]) {

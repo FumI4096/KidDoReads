@@ -244,7 +244,7 @@ async function showContents() {
     
     mainSection.innerHTML = ''
     if (window.innerWidth <= 936){
-        mainSection.appendChild(await teacherInfoStructure())
+        if (!mainSection.contains(await teacherInfoStructure())) mainSection.appendChild(await teacherInfoStructure());
     }
     mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
@@ -349,7 +349,7 @@ async function showAssessments() {
     
     mainSection.innerHTML = ''
     if (window.innerWidth <= 936){
-        mainSection.appendChild(await teacherInfoStructure())
+        if (!mainSection.contains(await teacherInfoStructure())) mainSection.appendChild(await teacherInfoStructure());
     }
     mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
