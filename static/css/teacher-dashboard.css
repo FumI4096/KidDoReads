@@ -308,193 +308,208 @@ main > section{
 }
 
 
-    /* Student Progress */
+/* Student Progress */
 
-    .progress-header{
-        display: flex;
-        flex-direction: row;
-        gap: 1rem;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
+.progress-header{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+#attempt-progress-detail-container, #attempt-score-detail-container{
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Back Button for Attempt Progress Detail */
+#back-to-main-progress-button, #back-to-attempt-progress-button {
+    font-family: 'Regular-Poppins';
+    background-color: white;
+    border: none;
+    color: #000;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    outline: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: 42px; /* SAME AS DROPDOWN */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#back-to-main-progress-button:hover, #back-to-attempt-progress-button:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+#back-to-main-progress-button:active, #back-to-attempt-progress-button:active {
+    background-color: #f0f0f0;
+    transform: translateY(0);
+}
+
+#back-to-main-progress-button:focus, #back-to-attempt-progress-button:focus {
+    box-shadow: 0 0 0 3px rgba(255, 177, 92, 0.3);
+}
+
+/* Attempt Progress Dropdown & Main Progress Dropdowns */
+#select-attempt-progress-filter, #select-attempt-score-filter,
+#select-category, 
+#select-content {
+    font-family: 'Regular-Poppins';
+    background-color: white;
+    border: none;
+    color: #000;
+    padding: 10px 40px 10px 16px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    outline: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    height: 42px; /* SAME AS BACK BUTTON */
+    display: inline-block;
+    min-width: 200px;
+    
+    /* Remove default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    /* Custom dropdown arrow */
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333333" d="M1 1l5 5 5-5"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+}
+
+#select-attempt-progress-filter:hover,
+#select-attempt-score-filter:hover,
+#select-category:hover, 
+#select-content:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+#select-attempt-progress-filter:focus,
+#select-attempt-score-filter:focus,
+#select-category:focus, 
+#select-content:focus {
+    background-color: white;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 177, 92, 0.3);
+}
+
+/* Animated arrow when dropdown is open */
+#select-attempt-progress-filter:focus,
+#select-attempt-score-filter:focus,
+#select-category:focus, 
+#select-content:focus {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333333" d="M11 7l-5-5-5 5"/></svg>');
+}
+
+#select-attempt-progress-filter option,
+#select-attempt-score-filter option,
+#select-category option, 
+#select-content option {
+    background-color: white;
+    color: #000;
+    padding: 10px 12px;
+    font-family: 'Regular-Poppins';
+    font-size: 1rem;
+}
+
+/* RESPONSIVE - ALWAYS SAME HEIGHT! */
+@media (max-width: 768px) {
+    .progress-header {
+        gap: 0.8rem;
     }
 
-    /* Back Button for Attempt Progress Detail */
+    /* BOTH 40px height */
     #back-to-main-progress-button {
-        font-family: 'Regular-Poppins';
-        background-color: white;
-        border: none;
-        color: #000;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-size: 1.05rem;
-        outline: none;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        height: 42px; /* SAME AS DROPDOWN */
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 1rem;
+        padding: 10px 16px;
+        font-size: 1rem;
+        height: 40px; /* SAME */
+        margin-right: 0.5rem;
     }
 
-    #back-to-main-progress-button:hover {
-        background-color: #f8f8f8;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transform: translateY(-1px);
-    }
-
-    #back-to-main-progress-button:active {
-        background-color: #f0f0f0;
-        transform: translateY(0);
-    }
-
-    #back-to-main-progress-button:focus {
-        box-shadow: 0 0 0 3px rgba(255, 177, 92, 0.3);
-    }
-
-    /* Attempt Progress Dropdown & Main Progress Dropdowns */
     #select-attempt-progress-filter,
     #select-category, 
     #select-content {
-        font-family: 'Regular-Poppins';
-        background-color: white;
-        border: none;
-        color: #000;
-        padding: 10px 40px 10px 16px;
-        cursor: pointer;
-        font-size: 1.05rem;
-        outline: none;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        position: relative;
-        height: 42px; /* SAME AS BACK BUTTON */
-        display: inline-block;
-        min-width: 200px;
-        
-        /* Remove default dropdown arrow */
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        
-        /* Custom dropdown arrow */
-        background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333333" d="M1 1l5 5 5-5"/></svg>');
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        background-size: 12px;
-    }
-
-    #select-attempt-progress-filter:hover,
-    #select-category:hover, 
-    #select-content:hover {
-        background-color: #f8f8f8;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transform: translateY(-1px);
-    }
-
-    #select-attempt-progress-filter:focus,
-    #select-category:focus, 
-    #select-content:focus {
-        background-color: white;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(255, 177, 92, 0.3);
-    }
-
-    /* Animated arrow when dropdown is open */
-    #select-attempt-progress-filter:focus,
-    #select-category:focus, 
-    #select-content:focus {
-        background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333333" d="M11 7l-5-5-5 5"/></svg>');
-    }
-
-    #select-attempt-progress-filter option,
-    #select-category option, 
-    #select-content option {
-        background-color: white;
-        color: #000;
-        padding: 10px 12px;
-        font-family: 'Regular-Poppins';
+        padding: 10px 36px 10px 14px;
         font-size: 1rem;
+        height: 40px; /* SAME */
+        min-width: 160px;
+    }
+}
+
+/* Mobile L (425px) - ALWAYS SAME HEIGHT */
+@media (max-width: 425px) {
+    .progress-header {
+        flex-direction: row;
+        gap: 0.6rem;
+        align-items: center;
+        flex-wrap: wrap;
     }
 
-    /* RESPONSIVE - ALWAYS SAME HEIGHT! */
-    @media (max-width: 768px) {
-        .progress-header {
-            gap: 0.8rem;
-        }
-
-        /* BOTH 40px height */
-        #back-to-main-progress-button {
-            padding: 10px 16px;
-            font-size: 1rem;
-            height: 40px; /* SAME */
-            margin-right: 0.5rem;
-        }
-
-        #select-attempt-progress-filter,
-        #select-category, 
-        #select-content {
-            padding: 10px 36px 10px 14px;
-            font-size: 1rem;
-            height: 40px; /* SAME */
-            min-width: 160px;
-        }
+    /* BOTH 40px height */
+    #back-to-main-progress-button {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        height: 40px; /* SAME */
+        margin-right: 0.6rem;
+        flex-shrink: 0;
     }
 
-    /* Mobile L (425px) - ALWAYS SAME HEIGHT */
-    @media (max-width: 425px) {
-        .progress-header {
-            flex-direction: row;
-            gap: 0.6rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+    #select-attempt-progress-filter,
+    #select-category, 
+    #select-content {
+        padding: 10px 36px 10px 12px;
+        font-size: 0.95rem;
+        height: 40px; /* SAME */
+        min-width: auto;
+        flex: 1;
+        max-width: 220px;
+    }
+}
 
-        /* BOTH 40px height */
-        #back-to-main-progress-button {
-            padding: 10px 14px;
-            font-size: 0.95rem;
-            height: 40px; /* SAME */
-            margin-right: 0.6rem;
-            flex-shrink: 0;
-        }
-
-        #select-attempt-progress-filter,
-        #select-category, 
-        #select-content {
-            padding: 10px 36px 10px 12px;
-            font-size: 0.95rem;
-            height: 40px; /* SAME */
-            min-width: auto;
-            flex: 1;
-            max-width: 220px;
-        }
+/* Mobile S (320px) - ALWAYS SAME HEIGHT */
+@media (max-width: 320px) {
+    .progress-header {
+        gap: 0.5rem;
     }
 
-    /* Mobile S (320px) - ALWAYS SAME HEIGHT */
-    @media (max-width: 320px) {
-        .progress-header {
-            gap: 0.5rem;
-        }
-
-        /* BOTH 38px height */
-        #back-to-main-progress-button {
-            padding: 9px 12px;
-            font-size: 0.9rem;
-            height: 38px; /* SAME */
-            margin-right: 0.5rem;
-        }
-
-        #select-attempt-progress-filter,
-        #select-category, 
-        #select-content {
-            padding: 9px 32px 9px 10px;
-            font-size: 0.9rem;
-            height: 38px; /* SAME */
-        }
+    /* BOTH 38px height */
+    #back-to-main-progress-button {
+        padding: 9px 12px;
+        font-size: 0.9rem;
+        height: 38px; /* SAME */
+        margin-right: 0.5rem;
     }
+
+    #select-attempt-progress-filter,
+    #select-category, 
+    #select-content {
+        padding: 9px 32px 9px 10px;
+        font-size: 0.9rem;
+        height: 38px; /* SAME */
+    }
+}
+
+#content-name, #student-name{
+    font-family: 'Bold-Poppins';
+    font-size: 1.5rem;
+    color: var(--primary-color-200);
+}
 
 /* Animation for dropdown opening */
 @keyframes dropdownSlide {
