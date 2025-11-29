@@ -476,6 +476,9 @@ async function addAssessment(assessment_container, assessment_id, assessment_tit
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
     newContent.classList.add("content");
+    newContent.style.backgroundImage = `url('/static/images/activities-background-images/${assessment_type}.jpg')`; /* content background image */
+    newContent.style.backgroundSize = "cover";
+    newContent.style.backgroundPosition = "center";
     activityName.classList.add("activity-name");
     activityType.classList.add("activity-type");
     activityName.innerHTML = assessment_title;
