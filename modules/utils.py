@@ -44,7 +44,7 @@ def tts_prompt(contentType):
 
             'Get ready for the suffix:'
 
-            Then say the actual prefix or suffix clearly and with enthusiasm. Then just pause for 2 seconds.
+            Then say the actual prefix or suffix clearly and with enthusiasm. After that, pause for 2 seconds.
             
             MEANING Section
             Before reading the meaning, randomly choose one of the following lines:
@@ -59,7 +59,7 @@ def tts_prompt(contentType):
 
             'Here’s what it means:'
 
-            Then read the meaning in an upbeat tone. Then pause for 2 seconds again.
+            Then read the meaning in an upbeat tone. After that, pause for 2 seconds again.
             
             QUESTION Section
             Before reading the question, randomly choose one of the following lines:
