@@ -165,13 +165,15 @@ class Database:
         setClauses = ", ".join(setClauses)
         query = f"UPDATE {table} SET {setClauses} WHERE {idColumn} = %s"
         parameters.append(original_school_id)
+        
         try:
-            self.cursor.execute(query, tuple(parameters))
-            if self.cursor.rowcount > 0:
-                self.connection.commit()
-                return True, "User record updated successfully."
-            else:
-                return False, "User record not found or no changes were made."
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, tuple(parameters))
+                if cursor.rowcount > 0:
+                    self.connection.commit()
+                    return True, "User record updated successfully."
+                else:
+                    return False, "User record not found or no changes were made."
 
         except Exception as e:
             self.connection.rollback() 
@@ -190,13 +192,14 @@ class Database:
         query = f"DELETE FROM {table} WHERE {idColumn} = %s"
 
         try:
-            self.cursor.execute(query, (id,))
-            
-            if self.cursor.rowcount > 0:
-                self.connection.commit()
-                return True, "Record deleted successfully."
-            else:
-                return False, f"User with ID {id} not found."
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (id,))
+                
+                if cursor.rowcount > 0:
+                    self.connection.commit()
+                    return True, "Record deleted successfully."
+                else:
+                    return False, f"User with ID {id} not found."
             
         except Exception as e:
             self.connection.rollback() 
@@ -235,13 +238,14 @@ class Database:
                 LEFT JOIN roles T3 ON admin.A_Role = T3.R_ID
                 WHERE AdminID = %s
             """
-            self.cursor.execute(query, (id, id, id))
-            record = self.cursor.fetchone()
-            
-            if record:
-                return record  
-            else:
-                return None
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (id, id, id))
+                record = cursor.fetchone()
+                
+                if record:
+                    return record  
+                else:
+                    return None
         except Exception as e:
             return str(e)
         
@@ -284,13 +288,14 @@ class Database:
                 SELECT AdminID FROM admin WHERE AdminID = %s
             """
             
-            self.cursor.execute(query, (id, id, id))
-            record = self.cursor.fetchone()
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (id, id, id))
+                record = cursor.fetchone()
 
-            if record:
-                return True
-            else:
-                return False
+                if record:
+                    return True
+                else:
+                    return False
         except Exception as e:
             self.connection.rollback() 
             return f"Database error: {e}"
@@ -319,12 +324,13 @@ class Database:
         try:
             query = """INSERT INTO contents(TeacherID, Content_Title, ContentType) VALUES (%s, %s, %s)"""
             
-            self.cursor.execute(query, (teacher_id, content_name, content_type))
-            
-            content_id = self.cursor.lastrowid
-            
-            self.connection.commit()
-            return True, "Content created successfully!", content_id
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (teacher_id, content_name, content_type))
+                
+                content_id = cursor.lastrowid
+                
+                self.connection.commit()
+                return True, "Content created successfully!", content_id
         except Exception as e:
             self.connection.rollback() 
             return False, f"Database error: {e}", None
@@ -335,12 +341,13 @@ class Database:
         query = """UPDATE contents SET TTS_ID = %s WHERE ContentID = %s"""
             
         try:
-            self.cursor.execute(query, (content_id, tts_id))
-            if self.cursor.rowcount > 0:
-                self.connection.commit()
-                return True, "TTS ID in this content updated successfully!"
-            else:
-                return False, "Unsuccessful update"
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (content_id, tts_id))
+                if cursor.rowcount > 0:
+                    self.connection.commit()
+                    return True, "TTS ID in this content updated successfully!"
+                else:
+                    return False, "Unsuccessful update"
         except Exception as e:
             return False, str(e)
         
@@ -400,8 +407,9 @@ class Database:
                 WHERE ContentType = %s;
             """
             try:
-                self.cursor.execute(query, (type,))
-                return True, self.cursor.fetchall()
+                with self.connection.cursor() as cursor:
+                    cursor.execute(query, (type,))
+                    return True, cursor.fetchall()
             except Exception as e:
                 return False, f"Database error: {e}"
         else:
@@ -411,8 +419,9 @@ class Database:
                 LEFT JOIN tts_content on tts_content.tts_id = C.tts_id
             """
             try:
-                self.cursor.execute(query)
-                return True, self.cursor.fetchall()
+                with self.connection.cursor() as cursor:
+                    cursor.execute(query)
+                    return True, cursor.fetchall()
             except Exception as e:
                 return False, f"Database error: {e}"
     
@@ -431,8 +440,9 @@ class Database:
                 WHERE AssessmentType = %s;
             """
             try:
-                self.cursor.execute(query, (type,))
-                return True, self.cursor.fetchall()
+                with self.connection.cursor() as cursor:
+                    cursor.execute(query, (type,))
+                    return True, cursor.fetchall()
             except Exception as e:
                 return False, f"Database error: {e}"
         else:
@@ -446,8 +456,9 @@ class Database:
                 FROM assessments
             """
             try:
-                self.cursor.execute(query)
-                return True, self.cursor.fetchall()
+                with self.connection.cursor() as cursor:
+                    cursor.execute(query)
+                    return True, cursor.fetchall()
             except Exception as e:
                 return False, f"Database error: {e}"
             
@@ -475,18 +486,19 @@ class Database:
     def delete_content(self, teacher_id: int, content_id: int):
         query = "DELETE FROM contents WHERE TeacherID = %s AND ContentID = %s"
         
-        self.cursor.execute(query, (teacher_id, content_id))
-        
-        try:
-            if self.cursor.rowcount > 0:
-                self.connection.commit()
-                return True, f"Activity deleted successfully."
-            else:
-                return False, "Content not found."
+        with self.connection.cursor() as cursor:
+            cursor.execute(query, (teacher_id, content_id))
             
-        except Exception as e:
-            self.connection.rollback() 
-            return False, f"Database error: {e}"
+            try:
+                if cursor.rowcount > 0:
+                    self.connection.commit()
+                    return True, f"Activity deleted successfully."
+                else:
+                    return False, "Content not found."
+                
+            except Exception as e:
+                self.connection.rollback() 
+                return False, f"Database error: {e}"
             
     def update_content_title(self, teacher_id: int, original_title, new_title):
         query = "UPDATE contents SET Content_Title = %s WHERE TeacherID = %s AND Content_Title = %s"
@@ -508,12 +520,13 @@ class Database:
         try:
             query = "UPDATE contents SET Content_Details_JSON = %s, TotalQuestions = %s WHERE TeacherID = %s AND ContentID = %s"
             
-            self.cursor.execute(query, (content, total_questions, teacher_id, content_id))
-            if self.cursor.rowcount > 0:
-                self.connection.commit()
-                return True, "Content updated successfully!"
-            else:
-                return False, "Unsuccessful update"
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (content, total_questions, teacher_id, content_id))
+                if cursor.rowcount > 0:
+                    self.connection.commit()
+                    return True, "Content updated successfully!"
+                else:
+                    return False, "Unsuccessful update"
         except Exception as e:
             return False, f"Database error: {e}"
     
@@ -521,13 +534,14 @@ class Database:
         try:
             query = f"""UPDATE contents SET isHiddenFromStudents = %s WHERE TeacherID = %s AND ContentID = %s"""
             
-            self.cursor.execute(query, (isHidden, teacher_id, content_id))
-            if self.cursor.rowcount > 0:
-                self.connection.commit()
-                statement = "is hidden to students" if isHidden else "is now shown to students"
-                return True, f"Activity {statement}."
-            else:
-                print(f"No rows were updated for TeacherID: {teacher_id}. Check if the ID exists.")
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (isHidden, teacher_id, content_id))
+                if cursor.rowcount > 0:
+                    self.connection.commit()
+                    statement = "is hidden to students" if isHidden else "is now shown to students"
+                    return True, f"Activity {statement}."
+                else:
+                    print(f"No rows were updated for TeacherID: {teacher_id}. Check if the ID exists.")
         except Exception as e:
             return False, f"Database error: {e}"
             
