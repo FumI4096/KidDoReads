@@ -29,6 +29,9 @@ loginForm.addEventListener('submit', async (e) => {
 
     const formData = new FormData(e.target)
 
+    const loadingId = `loading-login-${Date.now()}`;
+    notifyObj.notify("Logging in...", "loading", null, null, loadingId);
+
     const response = await fetch('/login', {
         method: "POST",
         body: formData
@@ -37,6 +40,7 @@ loginForm.addEventListener('submit', async (e) => {
     const result = await response.json()
 
     try{
+        notifyObj.dismissLoading(loadingId);
 
         if (response.ok && result.status){
             const encryptedId = await encrypt(result.id)
@@ -59,9 +63,10 @@ loginForm.addEventListener('submit', async (e) => {
         }
     }
     catch (error){
+        notifyObj.dismissLoading(loadingId);
         console.log(error.message)
+        notifyObj.notify("An error occurred. Please try again.", "error");
     }
     
 
 })
-

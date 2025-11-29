@@ -43,15 +43,7 @@ contentDisplay.textContent = "Sound-Alike Match"
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`
 
-toTeacherPageButton.addEventListener('click', async () => {
-    sessionStorage.removeItem('originalActivityTitle');
-    sessionStorage.removeItem('questions');
-    sessionStorage.removeItem('currentActivityId');
-    sessionStorage.removeItem('currentActivityTitle');
-    sessionStorage.removeItem('ttsInputs');
-    sessionStorage.removeItem("contentType");
-    window.location.href = '/teacher_dashboard';
-});
+toTeacherPageButton.addEventListener('click', saveAndExit);
 
 saveButton.addEventListener("click", saveCurrentQuestion)
 editButton.addEventListener("click", setFormToEditMode)
@@ -265,7 +257,6 @@ ttsConvertButton1.addEventListener("click", async () => {
 
     if(sentenceInput.value === keyWordInput.value || hasDuplicateKeyword()){
         notifObject.notify("Duplicated word detected in keyword! Please provide a different text", 'error')
-
         return;
     }
     
@@ -332,7 +323,6 @@ ttsConvertButton2.addEventListener("click", async () => {
 
     if(sentenceInput.value === keyWordInput.value || hasDuplicateSentence()){
         notifObject.notify("Duplicated word detected in sentence! Please provide a different text", 'error')
-
         return;
     }
     
@@ -454,10 +444,13 @@ function checkInputState() {
     const isComplete = getKeyWord && getSentence && getAnswer && hasKeywordAudio && hasSentenceAudio && !hasEmptyChoice && !needsKeywordReconvert && !needsSentenceReconvert;
 
     saveButton.disabled = !isComplete;
+    toTeacherPageButton.disabled = !isComplete;
 }
 
 function setFormToViewMode() {
     console.log("View Mode - Question", currentQuestion + 1);
+    
+    notifObject.notify("Switched to view mode", "success");
     
     updateKeywordTtsButtonStates(false);
     updateSentenceTtsButtonStates(false);
@@ -465,6 +458,9 @@ function setFormToViewMode() {
     saveButton.style.display = "none";
     editButton.style.display = "inline";
     nextButton.disabled = false;
+    
+    // Enable save and exit button in view mode
+    toTeacherPageButton.disabled = false;
     
     answerRadioButtonsDisable(true);
     keyWordInput.readOnly = true;
@@ -478,6 +474,8 @@ function setFormToViewMode() {
 
 function setFormToEditMode() {
     console.log("Edit Mode - Question", currentQuestion + 1);
+    
+    notifObject.notify("Switched to edit mode", "success");
     
     originalKeyWordText = keyWordInput.value.trim();
     originalSentenceText = sentenceInput.value.trim();
@@ -606,6 +604,15 @@ async function saveCurrentQuestion(e) {
         console.log("No existing question at index", currentQuestion);
     }
 
+    if (questionUnchanged && !audioChanged) {
+        console.log("No changes detected - skipping save");
+        setFormToViewMode();
+        return;
+    }
+
+    const loadingId = `loading-save-${Date.now()}`;
+    notifObject.notify("Saving question...", "loading", null, null, loadingId);
+
     if (audioChanged) {
         try {
             const formDataTts = new FormData();
@@ -624,16 +631,17 @@ async function saveCurrentQuestion(e) {
             if (response.ok && result.status) {
                 console.log("Audios stored successfully");
                 sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
-                notifObject.notify('Audios updated succesfully for this question!', 'success')
             }
             else{
                 console.log(result.message)
+                notifObject.dismissLoading(loadingId);
                 notifObject.notify(result.message, "error")
-
+                return;
             }
         } 
         catch (error) {
             console.log(error);
+            notifObject.dismissLoading(loadingId);
             notifObject.notify("Cannot save audio files", "error");
             return;
         }
@@ -666,20 +674,258 @@ async function saveCurrentQuestion(e) {
     
             const result = await response.json();
             
+            notifObject.dismissLoading(loadingId);
+            
             if (response.ok && result.status) {
                 console.log(result.message);
                 notifObject.notify('Question saved successfully!', 'success');
             } else {
                 console.log("Error saving content:", result.message);
                 notifObject.notify('Failed to save question', 'error');
+                return;
             }
         } catch (error) {
+            notifObject.dismissLoading(loadingId);
             console.error(error);
             notifObject.notify('Error saving question', 'error');
+            return;
         }
+    } else {
+        notifObject.dismissLoading(loadingId);
     }
 
     setFormToViewMode();
+}
+
+// Save and Exit function
+async function saveAndExit(e) {
+    e.preventDefault();
+
+    // Check if in edit mode (has unsaved changes)
+    const isEditMode = editButton.style.display === "none";
+    
+    if (!isEditMode) {
+        // In view mode, just exit without saving
+        sessionStorage.removeItem('originalActivityTitle');
+        sessionStorage.removeItem('questions');
+        sessionStorage.removeItem('currentActivityId');
+        sessionStorage.removeItem('currentActivityTitle');
+        sessionStorage.removeItem('ttsInputs');
+        sessionStorage.removeItem("contentType");
+        window.location.href = '/teacher_dashboard';
+        return;
+    }
+
+    const getKeyWord = keyWordInput.value.trim();
+    const getSentence = sentenceInput.value.trim();
+    const getChoices = choicesContainer.querySelectorAll(".choice-box .choice");
+    const checkedRadioButton = answerContainer.querySelector('input[name="answer"]:checked');
+    const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
+
+    if (!getKeyWord) {
+        notifObject.notify("Please enter a keyword", "error");
+        return;
+    }
+
+    if (!getSentence) {
+        notifObject.notify("Please enter a sentence", "error");
+        return;
+    }
+
+    const currentChoices = [];
+    for (let i = 0; i < getChoices.length; i++) {
+        if (getChoices[i].value.trim() === "") {
+            notifObject.notify("Please fill all choices", "error");
+            return;
+        }
+        currentChoices.push(getChoices[i].value.trim());
+    }
+
+    if (!getAnswer) {
+        notifObject.notify("Please select an answer", "error");
+        return;
+    }
+
+    const keywordAudioUrl = getAudioForQuestion(currentQuestion, 'keyword');
+    const sentenceAudioUrl = getAudioForQuestion(currentQuestion, 'sentence');
+
+    if (!ttsObject[currentQuestion]) {
+        ttsObject[currentQuestion] = {};
+    }
+    
+    if (!keywordAudioUrl) {
+        notifObject.notify("Please generate speech for keyword", "error");
+        return;
+    }
+
+    if (!sentenceAudioUrl) {
+        notifObject.notify("Please generate speech for sentence", "error");
+        return;
+    }
+
+    // Save both audio URLs
+    const currentKeywordAudio = keyWordTtsObj.getAudioFile();
+    const currentSentenceAudio = sentenceTtsObj.getAudioFile();
+    const storedKeywordAudio = ttsObject[currentQuestion]?.keywordUrl;
+    const storedSentenceAudio = ttsObject[currentQuestion]?.sentenceAudio;
+    
+    let audioChanged = false;
+
+    if (currentKeywordAudio && currentKeywordAudio !== storedKeywordAudio) {
+        audioChanged = true;
+        console.log("Keyword audio changed:", storedKeywordAudio, "->", currentKeywordAudio);
+        ttsObject[currentQuestion].keywordUrl = currentKeywordAudio;
+        keyWordTtsObj.clearAudioFile();
+        originalKeyWordText = getKeyWord;
+    }
+    
+    if (currentSentenceAudio && currentSentenceAudio !== storedSentenceAudio) {
+        audioChanged = true;
+        console.log("Sentence audio changed:", storedSentenceAudio, "->", currentSentenceAudio);
+        ttsObject[currentQuestion].sentenceAudio = currentSentenceAudio;
+        sentenceTtsObj.clearAudioFile();
+        originalSentenceText = getSentence;
+    }
+
+    const newQuestion = {
+        keyWord: getKeyWord,
+        sentence: getSentence,
+        choices: currentChoices,
+        answer: getAnswer
+    };
+
+    const existingQuestion = questionObject[currentQuestion];
+    let questionUnchanged = false;
+
+    if (existingQuestion) {
+        console.log("Comparing questions:");
+        console.log("Existing:", existingQuestion);
+        console.log("New:", newQuestion);
+        
+        const questionKeyWordSame = existingQuestion.keyWord === newQuestion.keyWord;
+        const questionSentenceSame = existingQuestion.sentence === newQuestion.sentence;
+        const answerSame = existingQuestion.answer === newQuestion.answer;
+        
+        const choicesSame = existingQuestion.choices.length === newQuestion.choices.length && existingQuestion.choices.every((choice, index) => choice === newQuestion.choices[index]);
+        
+        questionUnchanged = questionKeyWordSame && questionSentenceSame && answerSame && choicesSame;
+        console.log("Question unchanged?", questionUnchanged);
+    } else {
+        console.log("No existing question at index", currentQuestion);
+    }
+
+    if (questionUnchanged && !audioChanged) {
+        console.log("No changes detected - redirecting to dashboard");
+        sessionStorage.removeItem('originalActivityTitle');
+        sessionStorage.removeItem('questions');
+        sessionStorage.removeItem('currentActivityId');
+        sessionStorage.removeItem('currentActivityTitle');
+        sessionStorage.removeItem('ttsInputs');
+        sessionStorage.removeItem("contentType");
+        window.location.href = '/teacher_dashboard';
+        return;
+    }
+
+    const loadingId = `loading-save-exit-${Date.now()}`;
+    notifObject.notify("Saving and exiting...", "loading", null, null, loadingId);
+
+    if (audioChanged) {
+        try {
+            const formDataTts = new FormData();
+            
+            formDataTts.append('ttsId', ttsId);
+            formDataTts.append('ttsAudios', JSON.stringify(ttsObject));
+            const speechUrl = '/update-speech';
+
+            const response = await fetch(speechUrl, {
+                method: 'POST',
+                body: formDataTts
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.status) {
+                console.log("Audios stored successfully");
+                sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
+            }
+            else{
+                console.log(result.message)
+                notifObject.dismissLoading(loadingId);
+                notifObject.notify(result.message, "error")
+                return;
+            }
+        } 
+        catch (error) {
+            console.log(error);
+            notifObject.dismissLoading(loadingId);
+            notifObject.notify("Cannot save audio files", "error");
+            return;
+        }
+    }
+
+    if (!questionUnchanged){
+        const questionExist = Boolean(questionObject[currentQuestion]);
+        if (questionExist) {
+            console.log("Updating existing question");
+            questionObject[currentQuestion] = newQuestion;
+        } else {
+            console.log("Adding new question");
+            questionObject.push(newQuestion);
+            currentQuestion = questionObject.length - 1;
+        }
+
+        try {
+            sessionStorage.setItem("questions", JSON.stringify(questionObject));
+            const formData = new FormData();
+            formData.append('content', sessionStorage.getItem("questions"));
+            formData.append('id', teacherId);
+            formData.append('content_id', contentId);
+            formData.append('total_questions', questionObject.length);
+    
+            const response = await fetch('/update_content', {
+                method: 'POST',
+                body: formData,
+            });
+    
+            const result = await response.json();
+            
+            notifObject.dismissLoading(loadingId);
+            
+            if (response.ok && result.status) {
+                console.log(result.message);
+                notifObject.notify('Question saved successfully! Redirecting...', 'success');
+                
+                // Redirect after brief delay
+                setTimeout(() => {
+                    sessionStorage.removeItem('originalActivityTitle');
+                    sessionStorage.removeItem('questions');
+                    sessionStorage.removeItem('currentActivityId');
+                    sessionStorage.removeItem('currentActivityTitle');
+                    sessionStorage.removeItem('ttsInputs');
+                    sessionStorage.removeItem("contentType");
+                    window.location.href = '/teacher_dashboard';
+                }, 1000);
+            } else {
+                console.log("Error saving content:", result.message);
+                notifObject.notify('Failed to save question', 'error');
+                return;
+            }
+        } catch (error) {
+            notifObject.dismissLoading(loadingId);
+            console.error(error);
+            notifObject.notify('Error saving question', 'error');
+            return;
+        }
+    } else {
+        notifObject.dismissLoading(loadingId);
+        sessionStorage.removeItem('originalActivityTitle');
+        sessionStorage.removeItem('questions');
+        sessionStorage.removeItem('currentActivityId');
+        sessionStorage.removeItem('currentActivityTitle');
+        sessionStorage.removeItem('ttsInputs');
+        sessionStorage.removeItem("contentType");
+        window.location.href = '/teacher_dashboard';
+    }
 }
 
 function clearForm() {

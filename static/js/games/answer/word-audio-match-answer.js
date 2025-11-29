@@ -1,6 +1,7 @@
 import { decrypt } from '../../modules/SessionHandling.js'
 import MascotPlaySpeech from '../../modules/MascotPlaySpeech.js'
 import { checkAttemptsByStudentID, checkActivityAttemptsByStudentID, checkAssessmentAttemptsByStudentID, checkPerfectScoresByStudentID } from '../../modules/Achievement.js';
+import Notification from '../../modules/Notification.js'
 
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
@@ -19,6 +20,7 @@ let ttsObject = JSON.parse(sessionStorage.getItem("ttsObjects") || "[]");
 let currentAudio = ""
 
 const ttsMascotPlay = new MascotPlaySpeech()
+const notifObject = new Notification()
 const studentId = await decrypt(sessionStorage.getItem("id"))
 
 let currentQuestion = 0;
@@ -40,37 +42,50 @@ if(await decrypt(sessionStorage.getItem("role")) === "student"){
     toDashboardPageButton.textContent = 'Save and Exit'
     displayActivityTitle.textContent = `Title: ${currentTitle}`;
     toDashboardPageButton.addEventListener('click', async () => {
-        const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
-        const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
+        const loadingId = `loading-save-exit-${Date.now()}`;
+        notifObject.notify("Saving and exiting...", "loading", null, null, loadingId);
 
-        const formData = new FormData()
-        formData.append("attempt_id", attemptId)
-        formData.append("answer", JSON.stringify(userAnswers))
-        
-        const response = await fetch(url, {
-            method: 'PATCH',
-            body: formData
-        });
+        try {
+            const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
+            const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
 
-        const result = await response.json()
+            const formData = new FormData()
+            formData.append("attempt_id", attemptId)
+            formData.append("answer", JSON.stringify(userAnswers))
+            
+            const response = await fetch(url, {
+                method: 'PATCH',
+                body: formData
+            });
 
-        console.log(result.status)
+            const result = await response.json()
 
-        if (response.ok && result.status){
+            console.log(result.status)
 
-            sessionStorage.removeItem('questions')
-            sessionStorage.removeItem('currentContentId')
-            sessionStorage.removeItem('currentActivityTitle')
-            sessionStorage.removeItem('ttsObjects')
-            sessionStorage.removeItem("userAnswers")
-            sessionStorage.removeItem('currentAttemptId');
-            window.location.href = '/student_dashboard';
+            notifObject.dismissLoading(loadingId);
+
+            if (response.ok && result.status){
+                notifObject.notify("Progress saved successfully! Redirecting...", "success");
+
+                setTimeout(() => {
+                    sessionStorage.removeItem('questions')
+                    sessionStorage.removeItem('currentContentId')
+                    sessionStorage.removeItem('currentActivityTitle')
+                    sessionStorage.removeItem('ttsObjects')
+                    sessionStorage.removeItem("userAnswers")
+                    sessionStorage.removeItem('currentAttemptId');
+                    window.location.href = '/student_dashboard';
+                }, 1000);
+            }
+            else{
+                console.log(result.message)
+                notifObject.notify(result.message || "Failed to save progress", "error");
+            }
+        } catch (error) {
+            notifObject.dismissLoading(loadingId);
+            console.error(error);
+            notifObject.notify("Error saving progress", "error");
         }
-        else{
-            console.log(result.message)
-        }
-        
-
     })
 }
 else if(await decrypt(sessionStorage.getItem("role")) === "teacher"){
@@ -270,19 +285,22 @@ async function showFinalScore() {
     if(await decrypt(sessionStorage.getItem("role")) === "student"){
         
         finishButton.addEventListener("click" , async () => {
-            const formData = new FormData()
-            const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/finish_attempt/activity' : '/finish_attempt/assessment'
-            formData.append("answer", JSON.stringify(userAnswers))
-            formData.append("attempt_id", await decrypt(sessionStorage.getItem("currentAttemptId")))
-            formData.append("score", finalScore)
-            const response = await fetch(url, {
-                method: "PATCH",
-                body: formData
-            })
-            
-            const result = await response.json()
-    
-            try{
+            const loadingId = `loading-finish-${Date.now()}`;
+            notifObject.notify("Submitting answers...", "loading", null, null, loadingId);
+
+            try {
+                const formData = new FormData()
+                const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/finish_attempt/activity' : '/finish_attempt/assessment'
+                formData.append("answer", JSON.stringify(userAnswers))
+                formData.append("attempt_id", await decrypt(sessionStorage.getItem("currentAttemptId")))
+                formData.append("score", finalScore)
+                const response = await fetch(url, {
+                    method: "PATCH",
+                    body: formData
+                })
+                
+                const result = await response.json()
+        
                 if (response.ok && result.status){
                     await checkAttemptsByStudentID(studentId)
                     if(sessionStorage.getItem('categoryTypeNum') == 1){
@@ -293,21 +311,31 @@ async function showFinalScore() {
                         await checkAssessmentAttemptsByStudentID(studentId)
                     }
                     await checkPerfectScoresByStudentID(studentId)
-                    sessionStorage.removeItem('categoryTypeNum')
-                    sessionStorage.removeItem('questions')
-                    sessionStorage.removeItem('currentContentId')
-                    sessionStorage.removeItem('currentActivityTitle')
-                    sessionStorage.removeItem('currentAttemptId')
-                    sessionStorage.removeItem('ttsObjects')
-                    sessionStorage.removeItem("userAnswers")
-                    window.location.href = '/student_dashboard';
+                    
+                    notifObject.dismissLoading(loadingId);
+                    notifObject.notify("Activity completed successfully! Redirecting...", "success");
+
+                    setTimeout(() => {
+                        sessionStorage.removeItem('categoryTypeNum')
+                        sessionStorage.removeItem('questions')
+                        sessionStorage.removeItem('currentContentId')
+                        sessionStorage.removeItem('currentActivityTitle')
+                        sessionStorage.removeItem('currentAttemptId')
+                        sessionStorage.removeItem('ttsObjects')
+                        sessionStorage.removeItem("userAnswers")
+                        window.location.href = '/student_dashboard';
+                    }, 1000);
                 }
                 else{
                     console.log(result.message)
+                    notifObject.dismissLoading(loadingId);
+                    notifObject.notify(result.message || "Failed to submit answers", "error");
                 }
             }
             catch (error){
                 console.log(error)
+                notifObject.dismissLoading(loadingId);
+                notifObject.notify("Error submitting answers", "error");
             }
         })
 

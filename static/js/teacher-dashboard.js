@@ -159,6 +159,9 @@ function createContent(){
 
         formData.append('teacher_id', id)
 
+        const loadingId = `loading-create-content-${Date.now()}`;
+        notification.notify("Creating activity...", "loading", null, null, loadingId);
+
         const response = await fetch(actionUrl, {
             method: "POST",
             body: formData
@@ -167,6 +170,8 @@ function createContent(){
         const result = await response.json()
 
         try{
+            notification.dismissLoading(loadingId);
+            
             if (response.ok && result.status){
                 sessionStorage.setItem("currentActivityTitle", contentTitle.value.trim())
                 sessionStorage.setItem("originalActivityTitle", contentTitle.value.trim())
@@ -181,6 +186,7 @@ function createContent(){
 
         }
         catch (error){
+            notification.dismissLoading(loadingId);
             console.error("Network Error:", error);
             notification.notify("Network error. Please check your connection and try again.", "error");
         }
@@ -233,6 +239,9 @@ async function displayAssessmentsOrActivities(category){
 }
 
 async function showContents() {
+    const loadingId = `loading-contents-${Date.now()}`;
+    notification.notify("Loading activities...", "loading", null, null, loadingId);
+    
     mainSection.innerHTML = ''
     if (window.innerWidth <= 936){
         mainSection.appendChild(await teacherInfoStructure())
@@ -244,6 +253,8 @@ async function showContents() {
     const result = await response.json();
 
     try{
+        notification.dismissLoading(loadingId);
+        
         if (response.ok && result.status){
             if (result.data && result.data.length > 0) {
                 result.data.forEach(data => {
@@ -261,6 +272,7 @@ async function showContents() {
 
     }
     catch(error){
+        notification.dismissLoading(loadingId);
         console.error("Network Error:", error);
         notification.notify("Network error. Please check your connection and try again.", "error");
     }
@@ -332,6 +344,9 @@ async function showContents() {
 }
 
 async function showAssessments() {
+    const loadingId = `loading-assessments-${Date.now()}`;
+    notification.notify("Loading assessments...", "loading", null, null, loadingId);
+    
     mainSection.innerHTML = ''
     if (window.innerWidth <= 936){
         mainSection.appendChild(await teacherInfoStructure())
@@ -343,6 +358,8 @@ async function showAssessments() {
     const result = await response.json();
 
     try{
+        notification.dismissLoading(loadingId);
+        
         if (response.ok && result.status){
             if (result.data && result.data.length > 0) {
                 result.data.forEach(data => {
@@ -357,6 +374,7 @@ async function showAssessments() {
 
     }
     catch(error){
+        notification.dismissLoading(loadingId);
         console.error("Network Error:", error);
         notification.notify("Network error. Please check your connection and try again.", "error");
     }
@@ -414,11 +432,16 @@ async function showAssessments() {
 
 
 async function showUserInfo(){
+    const loadingId = `loading-userinfo-${Date.now()}`;
+    notification.notify("Loading user information...", "loading", null, null, loadingId);
+    
     const url = `/user/${id}`;
     const response = await fetch(url);
     const result = await response.json();
 
     try{
+        notification.dismissLoading(loadingId);
+        
         if (response.ok && result.status){
             sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
 
@@ -442,6 +465,7 @@ async function showUserInfo(){
         }
     }
     catch (error){
+        notification.dismissLoading(loadingId);
         console.error("Network Error:", error);
         notification.notify("Network error. Please check your connection and try again.", "error");
     }
@@ -538,6 +562,9 @@ async function addContent(content_container, content_id, content_title, content_
         const isHidden = hideFromStudentCheckbox.checked ? 1 : 0
         const url = `content/${id}/${content_id}/${isHidden}`
 
+        const loadingId = `loading-hide-content-${Date.now()}`;
+        notification.notify("Updating visibility...", "loading", null, null, loadingId);
+
         try{
             const response = await fetch(url, {
                 method: 'PATCH',
@@ -547,6 +574,9 @@ async function addContent(content_container, content_id, content_title, content_
                 },
             });
             const result = await response.json()
+            
+            notification.dismissLoading(loadingId);
+            
             if (response.ok && result.status){
                 notification.notify(result.message, "success")
             }
@@ -555,6 +585,7 @@ async function addContent(content_container, content_id, content_title, content_
             }
         }
         catch(error){
+            notification.dismissLoading(loadingId);
             console.error("Network Error during deletion:", error);
             notification.notify("Network error. Please check your connection and try again.", "error");
         }
@@ -583,8 +614,12 @@ async function addContent(content_container, content_id, content_title, content_
         deleteActivityWrapper.appendChild(buttonContainer);
         deleteActivityContainer.appendChild(deleteActivityWrapper);
         content_container.appendChild(deleteActivityContainer);
+        
         yesButton.addEventListener('click', async () => {
             const url = `content/${id}/${content_id}`
+
+            const loadingId = `loading-delete-content-${Date.now()}`;
+            notification.notify("Deleting activity...", "loading", null, null, loadingId);
 
             try{
                 const response = await fetch(url, {
@@ -597,6 +632,8 @@ async function addContent(content_container, content_id, content_title, content_
         
                 const result = await response.json()
         
+                notification.dismissLoading(loadingId);
+                
                 if (response.ok && result.status){
                     notification.notify(result.message, "success")
                     newContent.remove();
@@ -609,6 +646,7 @@ async function addContent(content_container, content_id, content_title, content_
                 }
             }
             catch(error){
+                notification.dismissLoading(loadingId);
                 console.error("Fetch Error:", error);
                 notification.notify("An unexpected error occurred. Please check your connection and try again.", "error");
             }
@@ -871,8 +909,13 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
             selectContent.style.display = 'none';
         }
         
+        const loadingId = `loading-category-${Date.now()}`;
+        notification.notify("Loading data...", "loading", null, null, loadingId);
+        
         const response = await fetch(url);
         const result = await response.json();
+        
+        notification.dismissLoading(loadingId);
         
         if (response.ok && result.status) {
             table_body.innerHTML = '';
@@ -911,8 +954,14 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
     selectContent.addEventListener('change', async () => {
         if (selectCategory.value === 'activities') {
             const url = `/attempts/activities/${teacher_id}/${selectContent.value}`;
+            
+            const loadingId = `loading-content-type-${Date.now()}`;
+            notification.notify("Loading activities...", "loading", null, null, loadingId);
+            
             const response = await fetch(url);
             const result = await response.json();
+            
+            notification.dismissLoading(loadingId);
             
             if (response.ok && result.status) {
                 table_body.innerHTML = '';
@@ -1002,10 +1051,15 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
         const url = category === 'assessments'
             ? `/attempts/assessments/${content_id}/filter/${selectAttemptProgressFilter.value}`
             : `/attempts/activities/${content_id}/filter/${selectAttemptProgressFilter.value}`;
+        
+        const loadingId = `loading-filter-${Date.now()}`;
+        notification.notify("Filtering data...", "loading", null, null, loadingId);
             
         const response = await fetch(url);
         const result = await response.json();
         table_body.innerHTML = '';
+        
+        notification.dismissLoading(loadingId);
         
         if (response.ok && result.status) {
             result.scores.forEach(student => {
@@ -1091,10 +1145,15 @@ function attemptScoreHeader(headerContainer, student_name, student_id, content_i
         const url = category === 'assessments'
             ? `/attempts/assessments/students/${student_id}/${content_id}/filter/${selectAttemptScoreFilter.value}`
             : `/attempts/activities/students/${student_id}/${content_id}/filter/${selectAttemptScoreFilter.value}`;
+        
+        const loadingId = `loading-attempt-filter-${Date.now()}`;
+        notification.notify("Filtering attempts...", "loading", null, null, loadingId);
             
         const response = await fetch(url);
         const result = await response.json();
         table_body.innerHTML = '';
+        
+        notification.dismissLoading(loadingId);
         
         if (response.ok && result.status) {
             result.attemptScores.forEach(attempt => {
@@ -1165,9 +1224,14 @@ async function restorePreviousState(table_header, table_body) {
         const url = previousState.data.category === 'assessments'
             ? `/attempts/assessments/${previousState.data.content_id}/filter/0`
             : `/attempts/activities/${previousState.data.content_id}/filter/0`;
+        
+        const loadingId = `loading-restore-${Date.now()}`;
+        notification.notify("Loading data...", "loading", null, null, loadingId);
             
         const response = await fetch(url);
         const result = await response.json();
+
+        notification.dismissLoading(loadingId);
 
         if (response.ok && result.status) {
             result.scores.forEach(student => {
@@ -1204,6 +1268,9 @@ async function restorePreviousState(table_header, table_body) {
  */
 
 async function getStudentProgressByContentType(teacherId, contentType) {
+    const loadingId = `loading-progress-${Date.now()}`;
+    notification.notify("Loading student progress...", "loading", null, null, loadingId);
+    
     NavigationManager.clearStack();
     mainSection.innerHTML = '';
 
@@ -1233,6 +1300,8 @@ async function getStudentProgressByContentType(teacherId, contentType) {
             
         const response = await fetch(url);
         const result = await response.json();
+
+        notification.dismissLoading(loadingId);
 
         if (response.ok && result.status) {
             const headerContainer = studentProgressHeader(
@@ -1275,6 +1344,7 @@ async function getStudentProgressByContentType(teacherId, contentType) {
             console.log(result.message);
         }
     } catch (error) {
+        notification.dismissLoading(loadingId);
         console.log(error);
     }
 }
@@ -1335,9 +1405,14 @@ function displayAttemptProgress(table_header, table_body, content_id, content_ti
         const url = category === 'assessments'
             ? `/attempts/assessments/${content_id}/filter/0`
             : `/attempts/activities/${content_id}/filter/0`;
+        
+        const loadingId = `loading-content-details-${Date.now()}`;
+        notification.notify("Loading student scores...", "loading", null, null, loadingId);
             
         const response = await fetch(url);
         const result = await response.json();
+        
+        notification.dismissLoading(loadingId);
         
         // Remove current header
         const currentHeader = mainSection.querySelector('.progress-header');
@@ -1446,9 +1521,14 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
         const url = category === 'assessments'
             ? `/attempts/assessments/students/${student_id}/${content_id}/filter/0`
             : `/attempts/activities/students/${student_id}/${content_id}/filter/0`;
+        
+        const loadingId = `loading-student-attempts-${Date.now()}`;
+        notification.notify("Loading attempt details...", "loading", null, null, loadingId);
             
         const response = await fetch(url);
         const result = await response.json();
+
+        notification.dismissLoading(loadingId);
 
         // Remove current header
         const currentHeader = mainSection.querySelector('.score-header');
@@ -1601,15 +1681,20 @@ async function conversationStructure(){
 
     sendMessageContainer.append(inputMessage, sendButton)
     
-    // ADDED: Helper function to scroll to bottom
+    // Helper function to scroll to bottom
     function scrollToBottom() {
         conversationMessagesContainer.scrollTop = conversationMessagesContainer.scrollHeight;
     }
+    
+    const loadingId = `loading-chat-history-${Date.now()}`;
+    notification.notify("Loading chat history...", "loading", null, null, loadingId);
     
     try{
         const getHistory = `/chat-history/${id}`
         const response = await fetch(getHistory)
         const result = await response.json()
+
+        notification.dismissLoading(loadingId);
 
         if(response.ok){
             if(result.status){
@@ -1638,7 +1723,7 @@ async function conversationStructure(){
 
             conversationContainer.append(conversationMessagesContainer, sendMessageContainer)
             
-            // ADDED: Scroll to bottom after loading history
+            // Scroll to bottom after loading history
             setTimeout(scrollToBottom, 100);
 
         }
@@ -1650,6 +1735,7 @@ async function conversationStructure(){
         document.body.appendChild(conversationContainer)
     }
     catch (error){
+        notification.dismissLoading(loadingId);
         console.log("Error on displaying conversation: " + error)
         return;
     }
@@ -1666,7 +1752,7 @@ async function conversationStructure(){
         userMessageStatement.textContent = userMessage
         
         const botImage = document.createElement('img')
-        botImage.src = "static/images/monmon.png" // ADDED: Fixed bot image source
+        botImage.src = "static/images/monmon.png"
         botImage.alt = "bot_image"
         const botMessageStatement = document.createElement('p')
         botMessageStatement.textContent = botMessage
@@ -1685,6 +1771,9 @@ async function conversationStructure(){
         inputMessage.disabled = true;
         sendButton.disabled = true;
 
+        const loadingId = `loading-bot-response-${Date.now()}`;
+        notification.notify("Waiting for response...", "loading", null, null, loadingId);
+
         try{
             const response = await fetch(sendMessageUrl, {
                 method: 'POST',
@@ -1697,6 +1786,8 @@ async function conversationStructure(){
             })
 
             const reply = await response.json()
+
+            notification.dismissLoading(loadingId);
 
             if (response.ok && reply.status){
                 botMessage = reply.botResponse
@@ -1715,7 +1806,7 @@ async function conversationStructure(){
 
                 const userImage = document.createElement('img')
                 const userMessageStatement = document.createElement('p')
-                userImage.src = await decrypt(sessionStorage.getItem("image")) // ADDED: Fixed to use await decrypt
+                userImage.src = await decrypt(sessionStorage.getItem("image"))
                 userImage.alt = "image_user"
                 userMessageStatement.textContent = message
 
@@ -1724,7 +1815,7 @@ async function conversationStructure(){
 
                 conversationMessagesContainer.append(userMessageContainer, botMessageContainer)
                 
-                // ADDED: Scroll to bottom after sending message
+                // Scroll to bottom after sending message
                 scrollToBottom();
 
                 const newConversation = {
@@ -1737,10 +1828,13 @@ async function conversationStructure(){
             }
             else{
                 console.log(reply.status)
+                notification.notify("Failed to get response. Please try again.", "error");
             }
         }
         catch (error){
+            notification.dismissLoading(loadingId);
             console.log("Error on chatbot: " + error)
+            notification.notify("Network error. Please try again.", "error");
         }
         finally{
             inputMessage.value = "";
