@@ -24,7 +24,7 @@
                 </button>
             </div>
             <div class="mascot-wrapper">
-                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+                <img id="owl" src="{{url_for('static', filename='animation/frame/frame_00000.png')}}"alt="minmin"/>
             </div>
         </div>
         <p class="question" id="question-text" style="display: none;"></p> <!-- Hidden -->
@@ -80,5 +80,6 @@
     </div>
     
     <script type=module src=" {{url_for('static', filename='js/games/answer/word-audio-match-answer.js')}} "></script>
+    <script src=" {{url_for('static', filename='js/modules/Frame.js')}} "></script>
 </body>
 </html>
