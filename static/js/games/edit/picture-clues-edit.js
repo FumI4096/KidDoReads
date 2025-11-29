@@ -43,18 +43,9 @@ saveButton.addEventListener("click", saveCurrentQuestion);
 editButton.addEventListener("click", setFormToEditMode);
 nextButton.addEventListener("click", nextForm);
 previousButton.addEventListener("click", previousForm);
+toTeacherPageButton.addEventListener('click', saveAndExit);
 
 displayActivityTitle.textContent = `Title: ${currentTitle}`;
-
-toTeacherPageButton.addEventListener('click', async () => {
-    sessionStorage.removeItem('originalActivityTitle');
-    sessionStorage.removeItem('questions');
-    sessionStorage.removeItem('currentActivityId');
-    sessionStorage.removeItem('currentActivityTitle');
-    sessionStorage.removeItem('ttsInputs');
-    sessionStorage.removeItem("contentType");
-    window.location.href = '/teacher_dashboard';
-});
 
 document.addEventListener("input", () => {
     checkInputState();
@@ -199,6 +190,7 @@ function checkInputState() {
     const isComplete = getPicture && getQuestion && getAnswer && hasAudio && !hasEmptyChoice && !needsReconvert;
 
     saveButton.disabled = !isComplete;
+    toTeacherPageButton.disabled = !isComplete;
 }
 
 function changeTtsConvertButtonText(text) {
@@ -231,6 +223,7 @@ ttsConvertButton.addEventListener("click", async () => {
 
     if(hasDuplicateQuestion()){
         notifObject.notify("Duplicated keyword detected in this question. Please provide another text", "error")
+        return;
     }
     
     ttsConvertButton.disabled = true;
@@ -312,6 +305,8 @@ questionInput.addEventListener("input", () => {
 function setFormToViewMode() {
     console.log("View Mode - Question", currentQuestion + 1);
     
+    notifObject.notify("Switched to view mode", "success");
+    
     imageDisplay.style.cursor = 'not-allowed'
     imageInput.disabled = true;
     updateTtsButtonStates(false); 
@@ -320,6 +315,9 @@ function setFormToViewMode() {
     saveButton.style.display = "none";
     editButton.style.display = "inline";
     nextButton.disabled = false;
+    
+    // Enable save and exit button in view mode
+    toTeacherPageButton.disabled = false;
     
     answerRadioButtonsDisable(true);
     questionInput.readOnly = true;
@@ -332,6 +330,8 @@ function setFormToViewMode() {
 
 function setFormToEditMode() {
     console.log("Edit Mode - Question", currentQuestion + 1);
+    
+    notifObject.notify("Switched to edit mode", "success");
     
     imageDisplay.style.cursor = 'pointer'
     imageInput.disabled = false;
@@ -459,6 +459,9 @@ async function saveCurrentQuestion(e) {
         return;
     }
 
+    const loadingId = `loading-save-${Date.now()}`;
+    notifObject.notify("Saving question...", "loading", null, null, loadingId);
+
     if(audioChanged){
         try{
             const formDataTts = new FormData()
@@ -478,18 +481,19 @@ async function saveCurrentQuestion(e) {
             if (response.ok && result.status){
                 console.log("Audios stored succesfully")
                 sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
-                notifObject.notify(result.message, "success")
             }
             else{
                 console.log(result.message)
+                notifObject.dismissLoading(loadingId);
                 notifObject.notify(result.message, "error")
-    
+                return;
             }
         }
         catch (error){
             console.log(error)
+            notifObject.dismissLoading(loadingId);
             notifObject.notify("Cannot save Questions", "error")
-    
+            return;
         }
 
     }
@@ -528,6 +532,8 @@ async function saveCurrentQuestion(e) {
             
             const result = await response.json();
             
+            notifObject.dismissLoading(loadingId);
+            
             if(response.ok && result.status) {
                 console.log(result.message);
                 if (result.image_path) {
@@ -542,15 +548,253 @@ async function saveCurrentQuestion(e) {
             else {
                 console.log("Error saving content:", result.message);
                 notifObject.notify('Failed to save question', 'error');
+                return;
             }
         } 
         catch (error) {
+            notifObject.dismissLoading(loadingId);
             console.error(error);
             notifObject.notify('Error saving question', 'error');
+            return;
         }
+    } else {
+        notifObject.dismissLoading(loadingId);
     }
 
     setFormToViewMode();
+}
+
+// Save and Exit function
+async function saveAndExit(e) {
+    e.preventDefault();
+
+    // Check if in edit mode (has unsaved changes)
+    const isEditMode = editButton.style.display === "none";
+    
+    if (!isEditMode) {
+        // In view mode, just exit without saving
+        sessionStorage.removeItem('originalActivityTitle');
+        sessionStorage.removeItem('questions');
+        sessionStorage.removeItem('currentActivityId');
+        sessionStorage.removeItem('currentActivityTitle');
+        sessionStorage.removeItem('ttsInputs');
+        sessionStorage.removeItem("contentType");
+        window.location.href = '/teacher_dashboard';
+        return;
+    }
+
+    const getPicture = currentImage;
+    const getQuestion = questionInput.value.trim();
+    const getChoices = choicesContainer.querySelectorAll(".choice-box .choice");
+    const checkedRadioButton = answerContainer.querySelector('input[name="answer"]:checked');
+    const getAnswer = checkedRadioButton ? checkedRadioButton.value : "";
+
+    if (!getPicture) {
+        notifObject.notify("Please upload an image", "error");
+        return;
+    }
+
+    if (!getQuestion) {
+        notifObject.notify("Please enter a question", "error");
+        return;
+    }
+
+    const currentChoices = [];
+    for (let i = 0; i < getChoices.length; i++) {
+        if (getChoices[i].value.trim() === "") {
+            notifObject.notify("Please fill all choices", "error");
+            return;
+        }
+        currentChoices.push(getChoices[i].value.trim());
+    }
+
+    if (!getAnswer) {
+        notifObject.notify("Please select an answer", "error");
+        return;
+    }
+
+    const audioUrl = getAudioForQuestion(currentQuestion);
+
+    if (!ttsObject[currentQuestion]) {
+        ttsObject[currentQuestion] = {};
+    }
+
+    if (!audioUrl) {
+        notifObject.notify("Please generate speech for this question", "error");
+        return;
+    }
+
+    let audioChanged = false;
+    const currentAudioFile = keyWordTtsObj.getAudioFile();
+    const storedAudio = ttsObject[currentQuestion]?.audioUrl;
+
+    if (currentAudioFile && storedAudio !== currentAudioFile) {
+        audioChanged = true;
+        console.log("Audio changed:", storedAudio, "->", currentAudioFile);
+        ttsObject[currentQuestion].audioUrl = currentAudioFile 
+        sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
+        keyWordTtsObj.clearAudioFile();
+        
+        originalQuestionText = getQuestion;
+    }
+
+    const newQuestion = {
+        picture: (getPicture instanceof File) ? "PENDING_UPLOAD" : getPicture,
+        question: getQuestion,
+        choices: currentChoices,
+        answer: getAnswer
+    };
+
+    const existingQuestion = questionObject[currentQuestion];
+    let questionUnchanged = false;
+    let imageChanged = false;
+
+    if (existingQuestion) {
+        console.log("Comparing questions:");
+        console.log("Existing:", existingQuestion);
+        console.log("New:", newQuestion);
+        
+        const questionTextSame = existingQuestion.question === newQuestion.question;
+        const answerSame = existingQuestion.answer === newQuestion.answer;
+        
+        const choicesSame = existingQuestion.choices.length === newQuestion.choices.length && existingQuestion.choices.every((choice, index) => choice === newQuestion.choices[index]);
+
+        imageChanged = (getPicture instanceof File);
+        
+        questionUnchanged = questionTextSame && answerSame && choicesSame && !imageChanged;
+        console.log("Question unchanged?", questionUnchanged);
+    } else {
+        console.log("No existing question at index", currentQuestion);
+        imageChanged = true
+    }
+
+    if (questionUnchanged && !audioChanged) {
+        console.log("No changes detected - redirecting to dashboard");
+        sessionStorage.removeItem('originalActivityTitle');
+        sessionStorage.removeItem('questions');
+        sessionStorage.removeItem('currentActivityId');
+        sessionStorage.removeItem('currentActivityTitle');
+        sessionStorage.removeItem('ttsInputs');
+        sessionStorage.removeItem("contentType");
+        window.location.href = '/teacher_dashboard';
+        return;
+    }
+
+    const loadingId = `loading-save-exit-${Date.now()}`;
+    notifObject.notify("Saving and exiting...", "loading", null, null, loadingId);
+
+    if(audioChanged){
+        try{
+            const formDataTts = new FormData()
+            console.log(ttsObject)
+        
+            formDataTts.append('ttsId', ttsId)
+            formDataTts.append('ttsAudios', JSON.stringify(ttsObject))
+            const speechUrl = '/update-speech'
+    
+            const response = await fetch(speechUrl, {
+                method: 'POST',
+                body: formDataTts
+            })
+    
+            const result = await response.json()
+    
+            if (response.ok && result.status){
+                console.log("Audios stored succesfully")
+                sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
+            }
+            else{
+                console.log(result.message)
+                notifObject.dismissLoading(loadingId);
+                notifObject.notify(result.message, "error")
+                return;
+            }
+        }
+        catch (error){
+            console.log(error)
+            notifObject.dismissLoading(loadingId);
+            notifObject.notify("Cannot save Questions", "error")
+            return;
+        }
+    }
+
+    if(!questionUnchanged || imageChanged){
+        const questionExist = Boolean(questionObject[currentQuestion]);
+        if (questionExist) {
+            console.log("Updating existing question");
+            questionObject[currentQuestion] = newQuestion;
+        } 
+        else {
+            console.log("Adding new question");
+            questionObject.push(newQuestion);
+            currentQuestion = questionObject.length - 1;
+        }
+
+        try {
+            const formData = new FormData();
+            if (getPicture instanceof File) {
+                formData.append('image', getPicture);
+                console.log("Uploading image file:", getPicture.name);
+            }
+            formData.append('content', JSON.stringify(questionObject));
+            formData.append('id', teacherId);
+            formData.append('content_id', contentId);
+            formData.append('total_questions', questionObject.length);
+            formData.append('question_index', currentQuestion);
+
+            const response = await fetch('/update_content_picture_clues', {
+                method: 'POST',
+                body: formData,
+            });
+            
+            const result = await response.json();
+            
+            notifObject.dismissLoading(loadingId);
+            
+            if(response.ok && result.status) {
+                console.log(result.message);
+                if (result.image_path) {
+                    questionObject[currentQuestion].picture = result.image_path;
+                    currentImage = result.image_path;
+                    sessionStorage.setItem("questions", JSON.stringify(questionObject));
+                    console.log("Image path updated:", result.image_path);
+                }
+
+                notifObject.notify('Question saved successfully! Redirecting...', 'success');
+                
+                // Redirect after brief delay
+                setTimeout(() => {
+                    sessionStorage.removeItem('originalActivityTitle');
+                    sessionStorage.removeItem('questions');
+                    sessionStorage.removeItem('currentActivityId');
+                    sessionStorage.removeItem('currentActivityTitle');
+                    sessionStorage.removeItem('ttsInputs');
+                    sessionStorage.removeItem("contentType");
+                    window.location.href = '/teacher_dashboard';
+                }, 1000);
+            } 
+            else {
+                console.log("Error saving content:", result.message);
+                notifObject.notify('Failed to save question', 'error');
+                return;
+            }
+        } 
+        catch (error) {
+            notifObject.dismissLoading(loadingId);
+            console.error(error);
+            notifObject.notify('Error saving question', 'error');
+            return;
+        }
+    } else {
+        notifObject.dismissLoading(loadingId);
+        sessionStorage.removeItem('originalActivityTitle');
+        sessionStorage.removeItem('questions');
+        sessionStorage.removeItem('currentActivityId');
+        sessionStorage.removeItem('currentActivityTitle');
+        sessionStorage.removeItem('ttsInputs');
+        sessionStorage.removeItem("contentType");
+        window.location.href = '/teacher_dashboard';
+    }
 }
 
 function clearForm() {
