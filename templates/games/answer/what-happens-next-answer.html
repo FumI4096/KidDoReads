@@ -24,7 +24,14 @@
                 </button>
             </div>
             <div class="mascot-wrapper">
-                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+                <video id="talkingOwlVideo" class="owl-video" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/talking-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
+                <video id="idleOwlVideo" class="owl-video active" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/idle-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </div>
     </section>
