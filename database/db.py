@@ -573,7 +573,7 @@ class Database:
                 return True, "Unfinished attempt found", attempt_id, saved_answer, True
             else:
                 query_insert = """
-                    INSERT INTO Content_Log_Attempts(ContentID, StudentID, Score, status)
+                    INSERT INTO content_log_attempts(ContentID, StudentID, Score, status)
                     VALUES(%s, %s, 0, 2)
                 """
                 self.cursor.execute(query_insert, (content_id, student_id))
