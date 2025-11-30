@@ -485,8 +485,6 @@ header{
 #answer-container table thead {
     background: var(--accent-color-orange);
     color: white;
-    position: sticky;
-    top: 0;
     z-index: 10;
 }
 
