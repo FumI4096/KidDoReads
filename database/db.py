@@ -536,10 +536,9 @@ class Database:
                 INSERT INTO tts_content(tts_id) VALUES(%s)
             """
             
-            self.cursor.execute(query, (tts_id,))
-            new_id = self.cursor.lastrowid
+            self.cursor.execute(query, (tts_id, ))
             self.connection.commit()
-            return True, "Text-to-Speech added", new_id
+            return True, "Text-to-Speech added", tts_id
         except Exception as e:
             return False, f"Database error: {e}", None
     
