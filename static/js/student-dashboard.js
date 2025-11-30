@@ -301,6 +301,7 @@ async function showContent(contentTypeNum) {
                 );
             });
         } else {
+            console.log(result.message)
             notification.notify("Contents can't be retrieved at the moment. Please try again.", "error");
         }
     } catch (error) {
