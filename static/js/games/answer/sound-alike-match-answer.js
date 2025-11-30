@@ -207,8 +207,8 @@ function loadQuestion(index) {
     console.log(questionData)
     console.log(ttsData)
 
-    currentKeywordAudio = ttsData.keyWord
-    currentSentenceAudio = ttsData.sentenceUrl
+    currentKeywordAudio = ttsData.keywordUrl
+    currentSentenceAudio = ttsData.sentenceAudio
 
     const keywordElement = document.getElementById("keyword-text");
     keywordElement.textContent = questionData.keyWord;
