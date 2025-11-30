@@ -2,6 +2,7 @@ from functools import wraps
 from flask import abort, current_app
 from flask_login import current_user
 import uuid
+from database.db import Database 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
@@ -121,7 +122,7 @@ def generate_unique_filename(original_filename):
     return f"{uuid.uuid4().hex}.{ext}"
 
 def get_db():
-    from database.db import Database 
+
     return Database()
 
 def get_upload_folder():
