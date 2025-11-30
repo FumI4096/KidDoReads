@@ -409,7 +409,7 @@ class Database:
                 return False, f"Database error: {e}"
         else:
             query = """
-                SELECT ContentID, CONCAT(T.FirstName, " ", T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM contents as C
+                SELECT ContentID, CONCAT(T.FirstName, ' ', T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM contents as C
                 LEFT JOIN teachers as T on C.TeacherID = T.TeacherID
                 LEFT JOIN tts_content on tts_content.tts_id = C.tts_id
             """
