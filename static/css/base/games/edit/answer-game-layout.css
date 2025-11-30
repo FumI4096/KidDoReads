@@ -164,11 +164,6 @@ header{
     margin-bottom: 1rem;
 }
 
-/* Hide instruction when showing answers */
-body:has(#answer-container:not(:empty)) .instruction-detail {
-    display: none;
-}
-
 /* ==================== MASCOT ==================== */
 .mascot-wrapper {
     position: relative;
