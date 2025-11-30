@@ -1,8 +1,7 @@
 from flask_login import UserMixin, LoginManager
-from database.db import Database
+from modules.utils import get_db
 
 login_manager = LoginManager()
-db = Database()
 
 class User(UserMixin):
     def __init__(self, id, role):
@@ -14,7 +13,8 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    role = db.get_role_by_id(user_id)
-    if role:
-        return User(id=user_id, role=role[0].lower())
-    return None
+    with get_db() as db:
+        role = db.get_role_by_id(user_id)
+        if role:
+            return User(id=user_id, role=role[0].lower())
+        return None

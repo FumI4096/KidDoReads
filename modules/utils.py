@@ -121,7 +121,8 @@ def generate_unique_filename(original_filename):
     return f"{uuid.uuid4().hex}.{ext}"
 
 def get_db():
-    return current_app.config['db']
+    from database.db import Database 
+    return Database()
 
 def get_upload_folder():
     return current_app.config['UPLOAD_FOLDER']

@@ -34,15 +34,15 @@ def chatbot_message():
 @chatbot_bp.route('/chat-history/<int:teacher_id>', methods=["GET"])
 def chat_history(teacher_id):
     try:
-        db = get_db()
-        status, history = db.get_chat_history(teacher_id)
+        with get_db() as db:
+            status, history = db.get_chat_history(teacher_id)
         
-        if status:
-            history_json = json.loads(history) 
-        else:
-            history_json = history
-        
-        return jsonify({'status': status, 'history': history_json})
+            if status:
+                history_json = json.loads(history) 
+            else:
+                history_json = history
+            
+            return jsonify({'status': status, 'history': history_json})
         
     except Exception as e:
         return jsonify({'status': False, 'message': str(e)})
@@ -50,14 +50,14 @@ def chat_history(teacher_id):
 @chatbot_bp.route('/update-conversation', methods=["PATCH"])
 def update_conversation():
     try:
-        db = get_db()
-        id = request.form.get('teacher_id')
-        conversation = request.form.get('conversation')
-        status, message = db.chatbot_conversation_update(id, conversation)
+        with get_db() as db:
+            id = request.form.get('teacher_id')
+            conversation = request.form.get('conversation')
+            status, message = db.chatbot_conversation_update(id, conversation)
         
-        if status:
-            return jsonify({'status': True, 'message': message})
-        else:
-            return jsonify({'status': False,'message': message})
+            if status:
+                return jsonify({'status': True, 'message': message})
+            else:
+                return jsonify({'status': False,'message': message})
     except Exception as e:
         return jsonify({'status': False, 'message': str(e)})
