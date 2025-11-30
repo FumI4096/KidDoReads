@@ -314,7 +314,7 @@ async function showFinalScore() {
             notifObject.notify("Submitting answers...", "loading", null, null, loadingId);
             try{
                 const formData = new FormData()
-                const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/finish_attempt/activity' : '/finish_attempt/assessment'
+                const url = (sessionStorage.getItem("categoryTypeNum") == 1) ? '/finish_attempt/activity' : '/finish_attempt/assessment'
                 formData.append("answer", JSON.stringify(userAnswers))
                 formData.append("attempt_id", await decrypt(sessionStorage.getItem("currentAttemptId")))
                 formData.append("score", finalScore)
