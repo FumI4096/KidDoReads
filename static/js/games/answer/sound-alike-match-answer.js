@@ -132,6 +132,10 @@ submitButton.addEventListener("click", () => {
 
 nextButton.addEventListener("click", () => { saveAndNavigate(1); }); 
 
+function playAudio(audio){
+    ttsSentencePlay.play(audio)
+}
+
 previousButton.addEventListener("click", () => { saveAndNavigate(-1); });
 
 loadQuestion(0);
@@ -305,12 +309,15 @@ async function showFinalScore() {
 
     const displayScore = document.getElementById('question-number-display')
 
+    document.querySelector(".instruction-detail").style.display = 'none';
+
     nextButton.style.display = 'none';
     previousButton.style.display = 'none';
     submitButton.style.display = 'none'
     toDashboardPageButton.style.display = 'none'
 
     displayScore.textContent = `Total Score: ${finalScore} / ${totalQuestions}`
+    console.log(finishButton)
     buttonContainer.appendChild(finishButton)
     buttonContainer.style.justifyContent = 'flex-end'
 

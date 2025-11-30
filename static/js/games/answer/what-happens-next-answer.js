@@ -298,6 +298,8 @@ async function showFinalScore() {
 
     const displayScore = document.getElementById('question-number-display')
 
+    document.querySelector(".instruction-detail").style.display = 'none';
+
     nextButton.style.display = 'none';
     previousButton.style.display = 'none';
     submitButton.style.display = 'none'
