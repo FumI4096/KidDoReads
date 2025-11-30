@@ -8,7 +8,7 @@ load_dotenv()
 try:
     connection_pool = pooling.MySQLConnectionPool(
         pool_name="kiddoreads_pool",
-        pool_size=32,
+        pool_size=20,
         pool_reset_session=True,
         host=os.getenv('MYSQL_HOST'),
         user=os.getenv('MYSQL_USER'),
