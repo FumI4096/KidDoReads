@@ -866,7 +866,7 @@ class Database:
                     AnswerStatusType,
                     attemptAt
                 FROM content_log_attempts
-                LEFT JOIN AnswerStatus ON status = AnswerStatusID
+                LEFT JOIN answerstatus ON status = AnswerStatusID
                 WHERE StudentID = %s AND ContentID = %s
                 ORDER BY {filter};
             """
@@ -896,7 +896,7 @@ class Database:
                     AnswerStatusType,
                     attemptAt
                 FROM assessment_log_attempts
-                LEFT JOIN AnswerStatus ON status = AnswerStatusID
+                LEFT JOIN answerstatus ON status = AnswerStatusID
                 WHERE StudentID = %s AND AssessmentID = %s
                 ORDER BY {filter};
             """
