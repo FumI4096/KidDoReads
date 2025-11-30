@@ -579,6 +579,7 @@ class Database:
                 self.cursor.execute(query_insert, (content_id, student_id))
                 self.connection.commit()
                 attempt_id = self.cursor.lastrowid
+                print("Inserted Attempt ID:", attempt_id)
                 return True, "New attempt created", attempt_id, "{}", False
                     
         except Exception as e:
