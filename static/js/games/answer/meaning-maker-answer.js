@@ -2,6 +2,20 @@ import { decrypt } from '../../modules/SessionHandling.js'
 import MascotPlaySpeech from '../../modules/MascotPlaySpeech.js'
 import { checkAttemptsByStudentID, checkActivityAttemptsByStudentID, checkAssessmentAttemptsByStudentID, checkPerfectScoresByStudentID } from '../../modules/Achievement.js';
 import Notification from '../../modules/Notification.js'
+import ScoreEvaluator from '../../modules/ScoreEvaluation.js'  
+
+const scoreAudios = {
+    perfect: new Audio('/static/upload_score_voices/perfect_score_1764465112187.mp3'),
+    great: new Audio('/static/upload_score_voices/great_job_1764465111173.mp3'),
+    good: new Audio('/static/upload_score_voices/good_work_1764465111836.mp3'),
+    bad: new Audio('/static/upload_score_voices/keep_trying_1764465111887.mp3')
+};
+
+// Preload all
+Object.values(scoreAudios).forEach(audio => {
+    audio.preload = 'auto';
+    audio.load();
+});
 
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
@@ -272,6 +286,14 @@ async function showFinalScore() {
     finalScore = correctCount;
 
     const totalQuestions = questionObject.length;
+
+    const category = ScoreEvaluator.getCategory(finalScore, totalQuestions);
+    console.log("Category:", category);
+
+    if (scoreAudios[category]) {
+        // Pass the audio URL (the src property) to play
+        playAudio(scoreAudios[category].src);
+    }
 
     const displayScore = document.getElementById('question-number-display')
 
