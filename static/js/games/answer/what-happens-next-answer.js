@@ -61,7 +61,7 @@ if(await decrypt(sessionStorage.getItem("role")) === "student"){
         notifObject.notify("Saving and exiting...", "loading", null, null, loadingId);
         try{
             const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
-            const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
+            const url = (sessionStorage.getItem("categoryTypeNum") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
     
             const formData = new FormData()
             formData.append("attempt_id", attemptId)

@@ -62,7 +62,8 @@ if(await decrypt(sessionStorage.getItem("role")) === "student"){
 
         try {
             const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
-            const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
+            console.log(attemptId)
+            const url = (sessionStorage.getItem("categoryTypeNum") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
 
             const formData = new FormData()
             formData.append("attempt_id", attemptId)
