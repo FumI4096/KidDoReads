@@ -14,7 +14,8 @@ def create_text_to_speech():
             statusCreatedTtsId, messageCreatedTtsId, new_id = db.create_tts_record(content_id)
             if not statusCreatedTtsId:
                 return jsonify({"status": False, "message": f"Failed to create TTS record: {messageCreatedTtsId}"})
-        
+
+            print("New TTS ID:", new_id)
             statusContentUpdated, messageContentUpdated = db.update_tts_id_in_content_after_creation(content_id, new_id)
 
             if not statusContentUpdated:
