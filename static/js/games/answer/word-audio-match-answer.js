@@ -8,7 +8,8 @@ const scoreAudios = {
     perfect: new Audio('/static/upload_score_voices/perfect_score_1764465112187.mp3'),
     great: new Audio('/static/upload_score_voices/great_job_1764465111173.mp3'),
     good: new Audio('/static/upload_score_voices/good_work_1764465111836.mp3'),
-    bad: new Audio('/static/upload_score_voices/keep_trying_1764465111887.mp3')
+    bad: new Audio('/static/upload_score_voices/keep_trying_1764465111887.mp3'),
+    clap: new Audio('/static/upload_score_voices/clap.wav')
 };
 
 // Preload all
@@ -291,6 +292,10 @@ async function showFinalScore() {
     if (scoreAudios[category]) {
         // Pass the audio URL (the src property) to play
         playAudio(scoreAudios[category].src);
+        if(category !== 'bad'){
+            scoreAudios['clap'].currentTime = 0;
+            scoreAudios['clap'].play();
+        }
     }
 
     const displayScore = document.getElementById('question-number-display')
