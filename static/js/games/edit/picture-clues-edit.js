@@ -872,7 +872,7 @@ function loadQuestion(index) {
     if (questionData.picture && questionData.picture !== "PENDING_UPLOAD") {
         currentImage = questionData.picture; // Store the path
         
-        imageDisplay.style.backgroundImage = `url('/${questionData.picture}')`;
+        imageDisplay.style.backgroundImage = `url('${questionData.picture}')`;
         setUploadElementVisibility(false);
         console.log("Loaded image:", questionData.picture);
     } else {
