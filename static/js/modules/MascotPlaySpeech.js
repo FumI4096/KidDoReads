@@ -1,29 +1,19 @@
-class MascotPlaySpeech{
-
+class MascotPlaySpeech {
     #currentAudio = null
     #progressInterval = null
-    // #currentImageElement = null;
-    // #defaultImage = null;
-    // #afterButtonPressedImage = null;
+    #onEndedCallback = null
+    #idleVideoElement = "idleOwlVideo";
+    #talkingVideoElement = "talkingOwlVideo";
 
-    play(audioFile) {
+    play(audioFile, onEndedCallback = null) {
         if (this.#currentAudio) {
             this.#stop();
         }
         
-        // Store the image element and both images for this playback
-        // this.#currentImageElement = imageElement;
-        // this.#defaultImage = defaultImage;
-        // this.#afterButtonPressedImage = afterButtonPressedImage;
+        this.#onEndedCallback = onEndedCallback;
         
-        // Switch to playing image
-        // imageElement.src = this.#afterButtonPressedImage;
-        
-        // Add bounce animation
-        // imageElement.style.animation = 'none';
-        // Trigger reflow to restart animation
-        // void imageElement.offsetWidth;
-        // imageElement.style.animation = 'bounce 0.6s ease-in-out';
+        // Switch to talking video
+        this.#switchToTalking();
         
         this.#currentAudio = new Audio(audioFile);
         console.log(this.#currentAudio);
@@ -56,6 +46,22 @@ class MascotPlaySpeech{
         };
     }
 
+    #switchToTalking() {
+        const idleVideo = document.getElementById(this.#idleVideoElement);
+        const talkingVideo = document.getElementById(this.#talkingVideoElement);
+        
+        idleVideo.classList.remove('active');
+        talkingVideo.classList.add('active');
+    }
+
+    #switchToIdle() {
+        const idleVideo = document.getElementById(this.#idleVideoElement);
+        const talkingVideo = document.getElementById(this.#talkingVideoElement);
+        
+        talkingVideo.classList.remove('active');
+        idleVideo.classList.add('active');
+    }
+
     #stop() {
         if (this.#currentAudio) {
             this.#currentAudio.pause();
@@ -68,14 +74,16 @@ class MascotPlaySpeech{
             this.#progressInterval = null;
         }
         
-        // Revert to default image when stopped
-        // if (this.#currentImageElement && this.#defaultImage) {
-        //     this.#currentImageElement.src = this.#defaultImage;
-        //     // Remove animation when stopped
-        //     this.#currentImageElement.style.animation = 'none';
-        // }
+        // Switch back to idle video
+        this.#switchToIdle();
+        
+        if (this.#onEndedCallback) {
+            setTimeout(() => {
+                this.#onEndedCallback();
+                this.#onEndedCallback = null;
+            }, 2000);
+        }
     }
-
 }
 
 export default MascotPlaySpeech;

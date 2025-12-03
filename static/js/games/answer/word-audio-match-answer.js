@@ -2,6 +2,21 @@ import { decrypt } from '../../modules/SessionHandling.js'
 import MascotPlaySpeech from '../../modules/MascotPlaySpeech.js'
 import { checkAttemptsByStudentID, checkActivityAttemptsByStudentID, checkAssessmentAttemptsByStudentID, checkPerfectScoresByStudentID } from '../../modules/Achievement.js';
 import Notification from '../../modules/Notification.js'
+import ScoreEvaluator from '../../modules/ScoreEvaluation.js'  
+
+const scoreAudios = {
+    perfect: new Audio('/static/upload_score_voices/perfect_score_1764465112187.mp3'),
+    great: new Audio('/static/upload_score_voices/great_job_1764465111173.mp3'),
+    good: new Audio('/static/upload_score_voices/good_work_1764465111836.mp3'),
+    bad: new Audio('/static/upload_score_voices/keep_trying_1764465111887.mp3'),
+    clap: new Audio('/static/upload_score_voices/clap.wav')
+};
+
+// Preload all
+Object.values(scoreAudios).forEach(audio => {
+    audio.preload = 'auto';
+    audio.load();
+});
 
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
@@ -47,7 +62,8 @@ if(await decrypt(sessionStorage.getItem("role")) === "student"){
 
         try {
             const attemptId = await decrypt(sessionStorage.getItem('currentAttemptId'));
-            const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
+            console.log(attemptId)
+            const url = (sessionStorage.getItem("categoryTypeNum") == 1) ? '/save_attempt/activity' : '/save_attempt/assessment'
 
             const formData = new FormData()
             formData.append("attempt_id", attemptId)
@@ -271,7 +287,21 @@ async function showFinalScore() {
 
     const totalQuestions = questionObject.length;
 
+    const category = ScoreEvaluator.getCategory(finalScore, totalQuestions);
+    console.log("Category:", category);
+
+    if (scoreAudios[category]) {
+        // Pass the audio URL (the src property) to play
+        playAudio(scoreAudios[category].src);
+        if(category !== 'bad'){
+            scoreAudios['clap'].currentTime = 0;
+            scoreAudios['clap'].play();
+        }
+    }
+
     const displayScore = document.getElementById('question-number-display')
+
+    document.querySelector(".instruction-detail").style.display = 'none';
 
     nextButton.style.display = 'none';
     previousButton.style.display = 'none';
@@ -290,7 +320,7 @@ async function showFinalScore() {
 
             try {
                 const formData = new FormData()
-                const url = (sessionStorage.getItem("currentAttemptId") == 1) ? '/finish_attempt/activity' : '/finish_attempt/assessment'
+                const url = (sessionStorage.getItem("categoryTypeNum") == 1) ? '/finish_attempt/activity' : '/finish_attempt/assessment'
                 formData.append("answer", JSON.stringify(userAnswers))
                 formData.append("attempt_id", await decrypt(sessionStorage.getItem("currentAttemptId")))
                 formData.append("score", finalScore)

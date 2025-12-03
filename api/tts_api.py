@@ -9,23 +9,23 @@ tts_bp = Blueprint('tts_bp', __name__)
 @tts_bp.route('/create-tts', methods=["POST"])
 def create_text_to_speech():
     try:
-        db = get_db()
-        content_id = request.form.get('content_id')
-        
-        statusCreatedTtsId, messageCreatedTtsId, new_id = db.create_tts_record(content_id)
-        if not statusCreatedTtsId:
-            return jsonify({"status": False, "message": f"Failed to create TTS record: {messageCreatedTtsId}"})
+        with get_db() as db:
+            content_id = request.form.get('content_id')
+            statusCreatedTtsId, messageCreatedTtsId, new_id = db.create_tts_record(content_id)
+            if not statusCreatedTtsId:
+                return jsonify({"status": False, "message": f"Failed to create TTS record: {messageCreatedTtsId}"})
 
-        statusContentUpdated, messageContentUpdated = db.update_tts_id_in_content_after_creation(content_id, new_id)
+            print("New TTS ID:", new_id)
+            statusContentUpdated, messageContentUpdated = db.update_tts_id_in_content_after_creation(content_id, new_id)
 
-        if not statusContentUpdated:
-            return jsonify({"status": False, "message": f"TTS created but content update failed: {messageContentUpdated}"})
-
-        return jsonify({
-            "status": True, 
-            "message": "TTS record created and content updated successfully",
-            "ttsId": new_id
-        })         
+            if not statusContentUpdated:
+                return jsonify({"status": False, "message": f"TTS created but content update failed: {messageContentUpdated}"})
+            
+            return jsonify({
+                "status": True, 
+                "message": "TTS record created and content updated successfully",
+                "ttsId": new_id
+            })         
         
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
@@ -105,17 +105,17 @@ def delete_speech():
 @tts_bp.route('/update-speech', methods=["POST"])
 def update_speech():
     try:
-        db = get_db()
-        tts_id = request.form.get('ttsId')
-        ttsAudios = request.form.get('ttsAudios')
-        
-        status, message = db.update_tts_record(tts_id, ttsAudios)
-        
-        if status:
-            return jsonify({'status': True, 'message': message})
-        else:
-            return jsonify({'status': False, 'message': message})    
+        with get_db() as db:  
+            tts_id = request.form.get('ttsId')
+            ttsAudios = request.form.get('ttsAudios')
+            
+            print("Audios", ttsAudios)
+            
+            status, message = db.update_tts_record(tts_id, ttsAudios)
+            
+            if status:
+                return jsonify({'status': True, 'message': message})
+            else:
+                return jsonify({'status': False, 'message': message})    
     except Exception as e:
         return jsonify({'status': False, 'message': str(e)})
-    
-    

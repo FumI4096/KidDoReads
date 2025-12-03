@@ -301,6 +301,7 @@ async function showContent(contentTypeNum) {
                 );
             });
         } else {
+            console.log(result.message)
             notification.notify("Contents can't be retrieved at the moment. Please try again.", "error");
         }
     } catch (error) {
@@ -556,6 +557,9 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
     const assessmentName = document.createElement("p");
     const assessmentType = document.createElement("p")
     newContent.classList.add("content");
+    newContent.style.backgroundImage = `url('/static/images/activities-background-images/${assessment_type}.jpg')`;
+    newContent.style.backgroundSize = "cover";
+    newContent.style.backgroundPosition = "center";
     assessmentName.classList.add("activity-name");
     assessmentType.classList.add("category-type")
     assessmentName.innerHTML = assessment_title;

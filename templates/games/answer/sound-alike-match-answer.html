@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Audio Matching</title>
+    <title>Answering | Sound-Alike Match</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}"> 
 </head>
@@ -24,15 +24,21 @@
                 </button>
             </div>
             <div class="mascot-wrapper">
-                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
-                <div class="speech-bubble">Click the button to hear the sentence!</div>
+                <video id="talkingOwlVideo" class="owl-video" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/talking-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
+                <video id="idleOwlVideo" class="owl-video active" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/idle-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </div>
         <p class="question" id="sentence-text" style="display: none;"></p>
         <button id="tts-keyword-button" style="display: none;">Keyword Speaker</button>
     </section>
     
-    <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word, and choose the correct meaning based on the sentence.</p>
+    <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word, and choose the correct meaning based on the sentence!</p>
     
     <section class="choices-container">
         <div class="choice-box">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Audio Matching</title>
+    <title>Answering | Meaning Maker</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}"> 
 </head>
@@ -25,8 +25,14 @@
                 </button>
             </div>
             <div class="mascot-wrapper">
-                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
-                <div class="speech-bubble">Click the button to hear the word!</div>
+                <video id="talkingOwlVideo" class="owl-video" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/talking-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
+                <video id="idleOwlVideo" class="owl-video active" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/idle-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </div>
         <p class="question" id="question-text" style="display: none;"></p>

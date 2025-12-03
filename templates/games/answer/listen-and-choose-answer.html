@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Audio Matching</title>
+    <title>Answering | Listen and Choose</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}">   
 </head>
@@ -23,13 +23,20 @@
                 </button>
             </div>
             <div class="mascot-wrapper">
-                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+                <video id="talkingOwlVideo" class="owl-video" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/talking-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
+                <video id="idleOwlVideo" class="owl-video active" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/idle-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </div>
         <p class="question" id="question-text" style="display: none;"></p> <!-- Hidden - question text won't show -->
     </section>
     
-    <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word and choose the <strong>correct vowel sound</strong> among the choices!</p>
+    <p class="instruction-detail"><strong>Instruction:</strong> Choose the correct pronunciation from the choices you see!</p>
     
     <section class="choices-container">
         <div class="choice-box">
@@ -78,6 +85,6 @@
         <button id="next-button">Next</button>
     </div>
     
-    <script type=module src=" {{url_for('static', filename='js/games/answer/word-audio-match-answer.js')}} "></script>
+    <script type=module src=" {{url_for('static', filename='js/games/answer/listen-and-choose-answer.js')}} "></script>
 </body>
 </html>

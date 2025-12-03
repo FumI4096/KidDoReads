@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What Happens Next</title>
+    <title>Answering | What Happens Next</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}"> 
 </head>
@@ -24,11 +24,18 @@
                 </button>
             </div>
             <div class="mascot-wrapper">
-                <img src="{{url_for('static', filename='images/mascot/minmin.jpg')}}" alt="minmin"/>
+                <video id="talkingOwlVideo" class="owl-video" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/talking-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
+                <video id="idleOwlVideo" class="owl-video active" autoplay muted loop preload="auto">
+                    <source src="{{url_for('static', filename='animation/idle-owl.webm')}}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </div>
     </section>
-    
+    <p class="instruction-detail"><strong>Instruction:</strong> Read and listen and choose the correct answer!</p>
     <section class="choices-container">
         <div class="choice-box">
             <label class="choice-label"> 

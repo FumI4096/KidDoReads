@@ -1,7 +1,6 @@
 from flask import Flask
 from dotenv import load_dotenv
 import os
-from database.db import Database
 from modules.User import login_manager
 from api.auth_api import auth_bp
 from api.user_api import user_bp
@@ -21,7 +20,6 @@ UPLOAD_FOLDER = 'static/uploads'
 UPLOAD_IMAGE_PICTURE_CLUES = 'static/upload_picture_clues'
 UPLOAD_AUDIO = 'static/upload_audio'
 os.makedirs(UPLOAD_AUDIO, exist_ok=True)
-db = Database()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['TTS_KEY'] = os.getenv('TTS_API_KEY')
@@ -30,7 +28,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['UPLOAD_IMAGE_PICTURE_CLUES'] = UPLOAD_IMAGE_PICTURE_CLUES
 app.config['UPLOAD_AUDIO'] = UPLOAD_AUDIO
 app.config["PROPAGATE_EXCEPTIONS"] = False
-app.config['db'] = db
 
 login_manager.login_view = 'auth_bp.login'
 login_manager.init_app(app)

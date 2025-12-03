@@ -164,25 +164,35 @@ header{
     margin-bottom: 1rem;
 }
 
-/* Hide instruction when showing answers */
-body:has(#answer-container:not(:empty)) .instruction-detail {
-    display: none;
-}
-
 /* ==================== MASCOT ==================== */
 .mascot-wrapper {
-    flex-shrink: 0;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-basis: 20%;
+    height: 100%;
 }
 
-.mascot-wrapper img {
+.mascot-wrapper video {
     width: 250px;
     height: auto;
-    object-fit: contain;
-    display: block;
+}
+
+.owl-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    /* Adjust the width as needed */
+    width: 300px; /* or whatever size you want */
+    height: auto;
+}
+
+.owl-video.active {
+    opacity: 1;
 }
 
 #mascot-image {
@@ -475,8 +485,6 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
 #answer-container table thead {
     background: var(--accent-color-orange);
     color: white;
-    position: sticky;
-    top: 0;
     z-index: 10;
 }
 
@@ -668,6 +676,16 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
         font-size: 1.1rem;
         padding: 2rem 1.8rem;
     }
+    
+    .mascot-wrapper video{
+        width: 190px;
+    }
+}
+
+@media (max-width: 768px) {
+    #passage{
+        font-size: 1.2rem;
+    }
 }
 
 /* Stack vertically ONLY on phones (below 640px) */
@@ -730,14 +748,6 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
         font-size: 1rem;
     }
     
-    #mascot-image {
-        width: 130px;
-    }
-    
-    .mascot-wrapper img {
-        width: 170px;
-    }
-    
     .speech-bubble {
         position: static;
         margin-top: 1rem;
@@ -769,6 +779,19 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
     #submit-button {
         padding: 0.6rem 1.5rem;
         font-size: 0.85rem;
+    }
+
+    .mascot-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+    }
+    .mascot-wrapper video{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 }
 
@@ -1061,6 +1084,5 @@ body:has(#answer-container:not(:empty)) .instruction-detail {
 #passage {
     max-height: 150px;
     overflow-y: auto;
-    padding-right: 0.5rem;
 }
 
