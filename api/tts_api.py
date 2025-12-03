@@ -2,7 +2,9 @@ from flask import Blueprint, request, jsonify
 from openai import OpenAI
 import time
 import os
-from modules.utils import get_db, get_tts_key, get_upload_audio, tts_prompt
+from botocore.exceptions import ClientError
+from modules.utils import get_db, get_tts_key, tts_prompt, get_s3_client, get_spaces_url
+from io import BytesIO
 
 tts_bp = Blueprint('tts_bp', __name__)
 
@@ -34,7 +36,6 @@ def create_text_to_speech():
 def generate_speech():    
     try:
         client = OpenAI(api_key=get_tts_key())
-        folder = get_upload_audio()
         data = request.json
         text = data.get('text')
         ttsId = data.get('id')
@@ -49,27 +50,52 @@ def generate_speech():
             instructions=final_prompt
         )
         
-        # Add timestamp to make filename unique
-        timestamp = int(time.time() * 1000)  # milliseconds for more precision
+        # Generate unique filename
+        timestamp = int(time.time() * 1000)
         filename = f"speech_{hash(text+ttsId)}_{timestamp}.mp3"
-        filepath = os.path.join(folder, filename)
         
-        response.stream_to_file(filepath)
+        # Upload to DigitalOcean Spaces
+        s3_client = get_s3_client()
+        bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
         
-        audio_url = f'/static/upload_audio/{filename}'
+        # Convert response to bytes
+        audio_bytes = BytesIO(response.read())
+        audio_bytes.seek(0)
+        
+        # Upload to Spaces with public-read ACL
+        s3_client.upload_fileobj(
+            audio_bytes,
+            bucket_name,
+            f'audio/{filename}',
+            ExtraArgs={
+                'ACL': 'public-read',
+                'ContentType': 'audio/mpeg'
+            }
+        )
+        
+        # Generate public URL
+        audio_url = get_spaces_url(filename, 'audio')
         
         return jsonify({
             'status': True,
             'message': 'Speech generated successfully',
             'audio_url': audio_url
         })
+    except ClientError as e:
+        return jsonify({
+            'status': False, 
+            'message': f'Spaces upload error: {str(e)}'
+        }), 500
     except Exception as e:
-        return jsonify({'status': False, 'message': str(e)})
+        return jsonify({
+            'status': False, 
+            'message': str(e)
+        }), 500
+
     
 @tts_bp.route('/api/delete-speech', methods=['DELETE'])
 def delete_speech():
     try:
-        folder = get_upload_audio()
         data = request.json
         filename = data.get('filename')
         
@@ -78,29 +104,37 @@ def delete_speech():
                 'status': False, 'message': 'No filename provided'
             }), 400
         
+        # Validate filename
         if not filename.endswith('.mp3') or '/' in filename or '\\' in filename:
             return jsonify({
                 'status': False,
                 'message': 'Invalid filename'
             }), 400
         
-        filepath = os.path.join(folder, filename)
+        # Delete from Spaces
+        s3_client = get_s3_client()
+        bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
         
-        if os.path.exists(filepath):
-            os.remove(filepath)
-            return jsonify({
-                'status': True, 'message': 'Speech deleted successfully'
-            })
-        else:
-            return jsonify({
-                'status': False, 'message': 'File not found'
-            }), 404
+        s3_client.delete_object(
+            Bucket=bucket_name,
+            Key=f'audio/{filename}'
+        )
+        
+        return jsonify({
+            'status': True, 
+            'message': 'Speech deleted successfully'
+        })
             
+    except ClientError as e:
+        return jsonify({
+            'status': False,
+            'message': f'Spaces delete error: {str(e)}'
+        }), 500
     except Exception as e:
         return jsonify({
             'status': False,
             'message': f'Error deleting speech: {str(e)}'
-        })
+        }), 500
     
 @tts_bp.route('/update-speech', methods=["POST"])
 def update_speech():

@@ -2,9 +2,26 @@ from functools import wraps
 from flask import abort, current_app
 from flask_login import current_user
 import uuid
+import os
+import boto3
 from database.db import Database 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+def get_s3_client():
+    """Initialize and return S3 client for DigitalOcean Spaces"""
+    return boto3.client('s3',
+        region_name=os.getenv('SPACES_REGION', 'sfo3'),
+        endpoint_url=os.getenv('SPACES_ENDPOINT', 'https://sfo3.digitaloceanspaces.com'),
+        aws_access_key_id=os.getenv('SPACES_KEY'),
+        aws_secret_access_key=os.getenv('SPACES_SECRET')
+    )
+
+def get_spaces_url(filename, folder='uploads'):
+    """Generate the public URL for a file in Spaces"""
+    bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+    region = os.getenv('SPACES_REGION', 'sfo3')
+    return f"https://{bucket_name}.{region}.digitaloceanspaces.com/{folder}/{filename}"
 
 def role_required(*roles):
     def decorator(f):
@@ -35,9 +52,9 @@ def tts_prompt(contentType):
 
             'Prefix coming up:'
 
-            'Here’s the prefix:'
+            'Here's the prefix:'
 
-            'Let’s check out this prefix:'
+            'Let's check out this prefix:'
 
             'Suffix:'
 
@@ -58,7 +75,7 @@ def tts_prompt(contentType):
 
             'What it stands for is:'
 
-            'Here’s what it means:'
+            'Here's what it means:'
 
             Then read the meaning in an upbeat tone. After that, pause for 2 seconds again.
             

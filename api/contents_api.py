@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
 from modules.utils import get_db
 from flask_login import login_required
-from modules.utils import allowed_file, generate_unique_filename, get_upload_picture_clues
+from modules.utils import get_s3_client, get_spaces_url,allowed_file, generate_unique_filename, get_upload_picture_clues
 import json
 import os
+from botocore.exceptions import ClientError
 
 contents_bp = Blueprint('contents_bp', __name__)
 
@@ -197,26 +198,60 @@ def update_picture_clues_content():
                         if question_index is not None:
                             idx = int(question_index)
                             
-                            # Delete old image if it exists
+                            # Delete old image if it exists in Spaces
                             if idx < len(content_data):
                                 old_image = content_data[idx].get('picture', '')
                                 if old_image and old_image not in ['', 'PENDING_UPLOAD']:
-                                    old_filepath = os.path.join('static', old_image)
-                                    if os.path.exists(old_filepath):
+                                    # Check if it's a Spaces URL
+                                    if old_image.startswith('https://'):
                                         try:
-                                            os.remove(old_filepath)
-                                            print(f"Deleted old image: {old_filepath}")
+                                            # Extract filename from URL
+                                            # URL format: https://kiddoreads.sfo3.digitaloceanspaces.com/picture_clues/filename.jpg
+                                            old_filename = old_image.split('/')[-1]
+                                            
+                                            # Delete from Spaces
+                                            s3_client = get_s3_client()
+                                            bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+                                            s3_client.delete_object(
+                                                Bucket=bucket_name,
+                                                Key=f'picture_clues/{old_filename}'
+                                            )
+                                            print(f"Deleted old image from Spaces: {old_filename}")
                                         except Exception as e:
-                                            print(f"Error deleting old image: {e}")
+                                            print(f"Error deleting old image from Spaces: {e}")
+                                    else:
+                                        # Legacy: try to delete from local filesystem
+                                        old_filepath = os.path.join('static', old_image)
+                                        if os.path.exists(old_filepath):
+                                            try:
+                                                os.remove(old_filepath)
+                                                print(f"Deleted old local image: {old_filepath}")
+                                            except Exception as e:
+                                                print(f"Error deleting old local image: {e}")
                         
-                        # Save new image
+                        # Save new image to Spaces
                         filename = generate_unique_filename(file.filename)
-                        filepath = os.path.join(get_upload_picture_clues(), filename)
-                        file.save(filepath)
                         
-                        # Store relative path (without 'static/')
-                        image_path = f'static/upload_picture_clues/{filename}'
-                        print(f"Saved new image: {image_path}")
+                        # Upload to DigitalOcean Spaces
+                        s3_client = get_s3_client()
+                        bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+                        
+                        # Reset file pointer to beginning
+                        file.seek(0)
+                        
+                        s3_client.upload_fileobj(
+                            file,
+                            bucket_name,
+                            f'picture_clues/{filename}',
+                            ExtraArgs={
+                                'ACL': 'public-read',
+                                'ContentType': file.content_type or 'image/jpeg'
+                            }
+                        )
+                        
+                        # Generate the public URL
+                        image_path = get_spaces_url(filename, 'picture_clues')
+                        print(f"Saved new image to Spaces: {image_path}")
                         
                         # ✅ Update the picture field in the JSON
                         if question_index is not None:
@@ -238,9 +273,15 @@ def update_picture_clues_content():
                 return jsonify({"status": True,"message": message,"image_path": image_path}) # Return the path to JavaScript
             else:
                 return jsonify({"status": False,"message": message})
+                
+    except ClientError as e:
+        return jsonify({
+            "status": False, 
+            "message": f"Spaces upload error: {str(e)}"
+        }), 500
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
-
+    
 @contents_bp.route('/content/<string:teacher_id>/<int:content_id>', methods=['DELETE'])
 @login_required
 def delete_content(teacher_id, content_id):

@@ -4,8 +4,10 @@ from werkzeug.utils import secure_filename
 from modules.utils import get_db
 from modules.validation import loginValidation, regValidation
 from modules.User import User
-from modules.utils import allowed_file, get_upload_folder
+from modules.utils import allowed_file, get_upload_folder, get_s3_client, get_spaces_url
 import os
+import time
+from botocore.exceptions import ClientError
 
 auth_bp = Blueprint('auth_bp', __name__)
 
@@ -43,7 +45,6 @@ def login():
 def register():
     try:
         with get_db() as db:
-            upload_folder = get_upload_folder()
             id = request.form.get("id")
             fname = request.form.get("fname")
             lname = request.form.get("lname")
@@ -51,18 +52,37 @@ def register():
             password = request.form.get("password")
             role = request.form.get("role")
             
-            if 'image' not in request.files:
-                return jsonify({"status": False, "message": "no file uploaded"})
+            filename = None
             
-            image = request.files['image']
-            
-            if image.filename == '':
-                filename = None
-            
-            if image and allowed_file(image.filename):
-                filename = secure_filename(image.filename)
-                image.save(os.path.join(upload_folder, filename))
+            if 'image' in request.files:
+                image = request.files['image']
                 
+                if image.filename != '' and image and allowed_file(image.filename):
+                    # Secure the filename
+                    filename = secure_filename(image.filename)
+                    
+                    # Add timestamp to make filename unique
+                    timestamp = int(time.time() * 1000)
+                    name, ext = os.path.splitext(filename)
+                    filename = f"{name}_{timestamp}{ext}"
+                    
+                    # Upload to DigitalOcean Spaces
+                    s3_client = get_s3_client()
+                    bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+                    
+                    s3_client.upload_fileobj(
+                        image,
+                        bucket_name,
+                        f'uploads/{filename}',
+                        ExtraArgs={
+                            'ACL': 'public-read',
+                            'ContentType': image.content_type or 'image/jpeg'
+                        }
+                    )
+                    
+                    # Store the full URL in the database
+                    filename = get_spaces_url(filename, 'uploads')
+            
             errors = regValidation(id, fname, lname, email, password, role)
             
             if errors:
@@ -70,16 +90,23 @@ def register():
             
             if role == "student":
                 db.insert_student(int(id), fname, lname, email, password, filename)
-                
                 return jsonify({"status": True, "message": "Student Inserted Successfully"})
+                
             elif role == "teacher":
                 result, message = db.insert_teacher(int(id), fname, lname, email, password, filename)
-                
                 return jsonify({"status": result, "message": message})
+                
             elif role == "admin":
                 db.insert_admin(int(id), fname, lname, email, password, filename)
-                
                 return jsonify({"status": True, "message": "Admin Inserted Successfully"})
             
+    except ClientError as e:
+        return jsonify({
+            "status": False, 
+            "message": f"Spaces upload error: {str(e)}"
+        }), 500
     except Exception as e:
-        return jsonify({"message": str(e)})
+        return jsonify({
+            "status": False,
+            "message": str(e)
+        }), 500

@@ -1,9 +1,11 @@
-from flask import Blueprint, request, url_for, jsonify
+from flask import Blueprint, request, jsonify
 from flask_login import login_required
 from werkzeug.utils import secure_filename
-from modules.utils import allowed_file, get_db, get_upload_folder
+from modules.utils import allowed_file, get_db, get_s3_client, get_spaces_url
 from modules.validation import modifyValidation
 import os
+import time
+from botocore.exceptions import ClientError
 
 user_bp = Blueprint('user_bp', __name__)
 
@@ -19,11 +21,18 @@ def get_student_record():
             students = []
 
             for row in rows:
+                # Handle image URL - check if it's already a full URL or just a filename
                 if row[4] is not None:
                     filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
-                    image_url = url_for('static', filename=f'uploads/{filename}')
+                    # If it's already a full URL (starts with https://), use it as-is
+                    if filename.startswith('https://'):
+                        image_url = filename
+                    else:
+                        # Legacy: construct URL for old local files
+                        image_url = get_spaces_url(filename, 'uploads')
                 else:
                     image_url = None
+                    
                 students.append({
                     "id": row[0],
                     "fname": row[1],
@@ -53,11 +62,18 @@ def get_teacher_record():
             
             teachers = []
             for row in rows:
+                # Handle image URL - check if it's already a full URL or just a filename
                 if row[4] is not None:
                     filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
-                    image_url = url_for('static', filename=f'uploads/{filename}')
+                    # If it's already a full URL (starts with https://), use it as-is
+                    if filename.startswith('https://'):
+                        image_url = filename
+                    else:
+                        # Legacy: construct URL for old local files
+                        image_url = get_spaces_url(filename, 'uploads')
                 else:
                     image_url = None
+                    
                 teachers.append({
                     "id": row[0],
                     "fname": row[1],
@@ -91,11 +107,18 @@ def get_admin_record():
             
             admins = []
             for row in rows:
+                # Handle image URL - check if it's already a full URL or just a filename
                 if row[4] is not None:
                     filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
-                    image_url = url_for('static', filename=f'uploads/{filename}')
+                    # If it's already a full URL (starts with https://), use it as-is
+                    if filename.startswith('https://'):
+                        image_url = filename
+                    else:
+                        # Legacy: construct URL for old local files
+                        image_url = get_spaces_url(filename, 'uploads')
                 else:
                     image_url = None
+                    
                 admins.append({
                     "id": row[0],
                     "fname": row[1],
@@ -118,7 +141,6 @@ def get_admin_record():
 def modify_user():
     try:
         with get_db() as db:
-            upload_folder = get_upload_folder()
             original_id = request.form.get("original_id")
             original_email = request.form.get("original_email")
             id = request.form.get("id")
@@ -128,17 +150,36 @@ def modify_user():
             password = request.form.get("password")
             role = request.form.get("role")
             
-            if 'image' not in request.files:
-                return jsonify({"status": "error", "message": "no file uploaded"})
+            filename = None
+            
+            if 'image' in request.files:
+                image = request.files['image']
                 
-            image = request.files['image']
-                
-            if image.filename == '':
-                filename = None
-                
-            if image and allowed_file(image.filename):
-                filename = secure_filename(image.filename)
-                image.save(os.path.join(upload_folder, filename))
+                if image.filename != '' and image and allowed_file(image.filename):
+                    # Secure the filename
+                    filename = secure_filename(image.filename)
+                    
+                    # Add timestamp to make filename unique
+                    timestamp = int(time.time() * 1000)
+                    name, ext = os.path.splitext(filename)
+                    filename = f"{name}_{timestamp}{ext}"
+                    
+                    # Upload to DigitalOcean Spaces
+                    s3_client = get_s3_client()
+                    bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+                    
+                    s3_client.upload_fileobj(
+                        image,
+                        bucket_name,
+                        f'uploads/{filename}',
+                        ExtraArgs={
+                            'ACL': 'public-read',
+                            'ContentType': image.content_type or 'image/jpeg'
+                        }
+                    )
+                    
+                    # Store the full URL
+                    filename = get_spaces_url(filename, 'uploads')
                 
             errors = modifyValidation(id, original_id, fname, lname, email, original_email, password, role)
             if errors:
@@ -151,6 +192,11 @@ def modify_user():
             else:
                 return jsonify({"status": False, "message": message})
             
+    except ClientError as e:
+        return jsonify({
+            "status": False, 
+            "message": f"Spaces upload error: {str(e)}"
+        }), 500
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
@@ -188,11 +234,18 @@ def filter_record(role, filter):
             data = []
             
             for row in rows:
+                # Handle image URL - check if it's already a full URL or just a filename
                 if row[4] is not None:
                     filename = row[4].decode('utf-8') if isinstance(row[4], bytes) else row[4]
-                    image_url = url_for('static', filename=f'uploads/{filename}')
+                    # If it's already a full URL (starts with https://), use it as-is
+                    if filename.startswith('https://'):
+                        image_url = filename
+                    else:
+                        # Legacy: construct URL for old local files
+                        image_url = get_spaces_url(filename, 'uploads')
                 else:
                     image_url = None
+                    
                 data.append({
                     "id": row[0],
                     "fname": row[1],
@@ -219,11 +272,18 @@ def get_user(id):
 
             data = []
             
+            # Handle image URL - check if it's already a full URL or just a filename
             if result[3] is not None:
                 filename = result[3].decode('utf-8') if isinstance(result[3], bytes) else result[3]
-                image_url = url_for('static', filename=f'uploads/{filename}')
+                # If it's already a full URL (starts with https://), use it as-is
+                if filename.startswith('https://'):
+                    image_url = filename
+                else:
+                    # Legacy: construct URL for old local files
+                    image_url = get_spaces_url(filename, 'uploads')
             else:
                 image_url = None
+                
             data.append({
                 "id": result[0],
                 "fullName": result[1],
