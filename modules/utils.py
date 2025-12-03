@@ -21,7 +21,7 @@ def get_spaces_url(filename, folder='uploads'):
     """Generate the public URL for a file in Spaces"""
     bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
     region = os.getenv('SPACES_REGION', 'sfo3')
-    return f"https://{bucket_name}.{region}.digitaloceanspaces.com/{folder}/{filename}"
+    return f"https://{bucket_name}.{region}.cdn.digitaloceanspaces.com/{folder}/{filename}"
 
 def role_required(*roles):
     def decorator(f):
