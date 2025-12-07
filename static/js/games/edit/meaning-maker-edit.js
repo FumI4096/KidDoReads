@@ -231,7 +231,7 @@ ttsConvertButton.addEventListener("click", async () => {
             }
         }
         
-        await keyWordTtsObj.generateSpeech(`\(${prefixSuffixInput.value.trim()}\), \(${questionInput.value}\), \(${prefixSuffixMeaningInput.value.trim()}\)`, ttsId.toString(), 4);
+        await keyWordTtsObj.generateSpeech(`\(${prefixSuffixInput.value.trim()}\), \(${prefixSuffixMeaningInput.value.trim()}\), \(${questionInput.value}\)`, ttsId.toString(), 4);
 
         originalQuestionText = questionInput.value.trim();
         originalPrefixSuffix = prefixSuffixInput.value.trim();
