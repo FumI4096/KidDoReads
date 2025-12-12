@@ -120,8 +120,9 @@ class Database:
         
         try:
             self.cursor.execute(query)
-            cache.set(cache_key, (True, self.cursor.fetchall()), timeout=180)
-            return True, self.cursor.fetchall()
+            result = (True, self.cursor.fetchall())
+            cache.set(cache_key, result, timeout=180)  # ADD THIS LINE
+            return result
         except Exception as e:
             self.connection.rollback()
             return False, str(e)
@@ -164,8 +165,9 @@ class Database:
         
         try:
             self.cursor.execute(query)
-            cache.set(cache_key, (True, self.cursor.fetchall()), timeout=180)
-            return True, self.cursor.fetchall()
+            result = (True, self.cursor.fetchall())
+            cache.set(cache_key, result, timeout=180)  # ADD THIS LINE
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)
