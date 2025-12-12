@@ -1,6 +1,7 @@
 from flask import Flask
 from dotenv import load_dotenv
 import os
+from modules.cache import init_cache
 from modules.User import login_manager
 from api.auth_api import auth_bp
 from api.user_api import user_bp
@@ -21,6 +22,7 @@ UPLOAD_IMAGE_PICTURE_CLUES = 'static/upload_picture_clues'
 UPLOAD_AUDIO = 'static/upload_audio'
 os.makedirs(UPLOAD_AUDIO, exist_ok=True)
 app = Flask(__name__)
+init_cache(app)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['TTS_KEY'] = os.getenv('TTS_API_KEY')
 app.config['CHATBOT_KEY'] = os.getenv('CHATBOT_API_KEY')

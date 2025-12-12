@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 from werkzeug.security import generate_password_hash
 from mysql.connector import pooling
+from modules.cache import cache 
 
 load_dotenv()
 
@@ -101,6 +102,10 @@ class Database:
             return False, str(e)
     
     def get_student_records(self, filter = "default"):
+        cache_key = f'student_records_{filter}'
+        cached = cache.get(cache_key)
+        if cached: return cached
+        
         allowed_filters = {
             "default": "students.createdAt DESC",
             "id": "StudentID DESC"
@@ -115,12 +120,17 @@ class Database:
         
         try:
             self.cursor.execute(query)
+            cache.set(cache_key, (True, self.cursor.fetchall()), timeout=180)
             return True, self.cursor.fetchall()
         except Exception as e:
             self.connection.rollback()
             return False, str(e)
     
     def get_teacher_records(self, filter = "default"):
+        cache_key = f'teacher_records_{filter}'
+        cached = cache.get(cache_key)
+        if cached: return cached
+        
         allowed_filters = {
             "default": "teachers.createdAt DESC",
             "id": "TeacherID DESC"
@@ -131,12 +141,17 @@ class Database:
         
         try:
             self.cursor.execute(query)
-            return True, self.cursor.fetchall()
+            result = (True, self.cursor.fetchall())
+            cache.set(cache_key, result, timeout=180)  # ADD THIS LINE
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)
         
     def get_admin_records(self, filter = "default"):
+        cache_key = f'admin_records_{filter}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         allowed_filters = {
             "default": "admin.createdAt DESC",
             "id": "AdminID DESC"
@@ -149,6 +164,7 @@ class Database:
         
         try:
             self.cursor.execute(query)
+            cache.set(cache_key, (True, self.cursor.fetchall()), timeout=180)
             return True, self.cursor.fetchall()
         except Exception as e:
             self.connection.rollback() 
@@ -197,6 +213,11 @@ class Database:
             self.cursor.execute(query, tuple(parameters))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                cache.delete_many(f'student_records_*')
+                cache.delete_many(f'teacher_records_*')
+                cache.delete_many(f'admin_records_*')
+                cache.delete(f'user_info_{original_school_id}')
+                cache.delete(f'user_info_{school_id}')
                 return True, "User record updated successfully."
             else:
                 return False, "User record not found or no changes were made."
@@ -220,6 +241,10 @@ class Database:
             self.cursor.execute(query, (id,))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                cache.delete_many(f'student_records_*')
+                cache.delete_many(f'teacher_records_*')
+                cache.delete_many(f'admin_records_*')
+                cache.delete(f'user_info_{id}')
                 return True, "Record deleted successfully."
             else:
                 return False, f"User with ID {id} not found."
@@ -269,6 +294,11 @@ class Database:
             return str(e)
         
     def get_user_info_by_id(self, id):
+        cache_key = f'user_info_{id}'
+        cached = cache.get(cache_key)
+        
+        print("Cached User Info:", cached)
+        if cached: return cached
         try:
             query = """
                 SELECT ID, FullName, Email, Image FROM (
@@ -288,10 +318,11 @@ class Database:
             self.cursor.execute(query, (id, id, id))
             record = self.cursor.fetchone()
 
-            if record:
-                return True, record
-            else:
-                return True, None
+            result = (True, record) if record else (True, None)
+            cache.set(cache_key, result, timeout=600)  # ADD THIS LINE - cache 10 minutes
+            
+            print(result)
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)        
@@ -376,6 +407,9 @@ class Database:
             return False, str(e)
         
     def get_contents_by_teacher(self, teacher_id):
+        cache_key = f'contents_teacher_{teacher_id}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         query = """
             SELECT ContentID, Content_Title, Content_Details_JSON, TTS_JSON, ContentType, ContentTypeName, isHiddenFromStudents
             FROM contents
@@ -387,12 +421,17 @@ class Database:
         try:
             self.cursor.execute(query, (teacher_id,))
             results = self.cursor.fetchall()
-            return True, results
+            result = (True, results)
+            cache.set(cache_key, result, timeout=120) 
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)
         
     def get_contents_by_type(self, type):
+        cache_key = f'contents_type_{type}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         query = ""
         
         if type != 0:
@@ -404,7 +443,9 @@ class Database:
             """
             try:
                 self.cursor.execute(query, (type,))
-                return True, self.cursor.fetchall()
+                result = (True, self.cursor.fetchall())
+                cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+                return result
             except Exception as e:
                 return False, f"Database error: {e}"
         else:
@@ -415,11 +456,16 @@ class Database:
             """
             try:
                 self.cursor.execute(query)
-                return True, self.cursor.fetchall()
+                result = (True, self.cursor.fetchall())
+                cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+                return result
             except Exception as e:
                 return False, f"Database error: {e}"
     
     def get_assessments_by_type(self, type):
+        cache_key = f'assessments_type_{type}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         query = ""
         
         if type != 0:
@@ -435,7 +481,9 @@ class Database:
             """
             try:
                 self.cursor.execute(query, (type,))
-                return True, self.cursor.fetchall()
+                result = (True, self.cursor.fetchall())
+                cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+                return result
             except Exception as e:
                 return False, f"Database error: {e}"
         else:
@@ -450,11 +498,16 @@ class Database:
             """
             try:
                 self.cursor.execute(query)
-                return True, self.cursor.fetchall()
+                result = (True, self.cursor.fetchall())
+                cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+                return result
             except Exception as e:
                 return False, f"Database error: {e}"
             
     def get_assessments(self):
+        cache_key = 'all_assessments'
+        cached = cache.get(cache_key)
+        if cached: return cached
         query = """
             SELECT 
             AssessmentID, Assessment_Title, Assessment_Details_JSON, 
@@ -468,7 +521,9 @@ class Database:
         try:
             self.cursor.execute(query)
             results = self.cursor.fetchall()
-            return True, results
+            result = (True, results)
+            cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)        
@@ -510,6 +565,8 @@ class Database:
             self.cursor.execute(query, (content, total_questions, teacher_id, content_id))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                cache.delete(f'contents_teacher_{teacher_id}')
+                cache.delete_many('contents_type_*')
                 return True, "Content updated successfully!"
             else:
                 return False, "Unsuccessful update"
@@ -523,6 +580,8 @@ class Database:
             self.cursor.execute(query, (isHidden, teacher_id, content_id))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                cache.delete(f'contents_teacher_{teacher_id}')
+                cache.delete_many('contents_type_*')
                 statement = "is hidden to students" if isHidden else "is now shown to students"
                 return True, f"Activity {statement}."
             else:
@@ -942,6 +1001,9 @@ class Database:
             return False, f"Database error: {e}"
     
     def get_achievements_by_student(self, student_id):
+        cache_key = f'achievements_{student_id}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         try:
             query = """
                 SELECT 
@@ -1073,15 +1135,18 @@ class Database:
             return False, str(e)        
         
     def has_achievement(self, student_id, achievement_id):
+        cache_key = f'has_achievement_{student_id}_{achievement_id}'
+        cached = cache.get(cache_key)
+        if cached is not None: return cached 
         try:
             query = """SELECT StudentID FROM achievement_tracker WHERE StudentID = %s and AchievementID = %s;"""
             
             self.cursor.execute(query, (student_id, achievement_id))
             result = self.cursor.fetchone()
             
-            if result is not None:
-                return True
-            else:
-                return False
+            has_it = True if result is not None else False
+            cache.set(cache_key, has_it, timeout=600)  # ADD THIS LINE - cache 10 minutes
+            return has_it
+            
         except Exception as e:
             return False, str(e)
