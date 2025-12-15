@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from modules.cache import init_cache
@@ -22,6 +23,14 @@ UPLOAD_IMAGE_PICTURE_CLUES = 'static/upload_picture_clues'
 UPLOAD_AUDIO = 'static/upload_audio'
 os.makedirs(UPLOAD_AUDIO, exist_ok=True)
 app = Flask(__name__)
+CORS(app, resources={
+    r"/*": {
+        "origins": ["https://kiddoreads.app", "https://www.kiddoreads.app"],  # Include both with/without www
+        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True  # If you're using cookies/sessions
+    }
+})
 init_cache(app)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['TTS_KEY'] = os.getenv('TTS_API_KEY')
