@@ -105,7 +105,7 @@ logOutButton.addEventListener('click', () => {
 profileButton.addEventListener('click', studentProfile);
 window.addEventListener('resize', moveStudentInfo);
 
-document.addEventListener("DOMContentLoaded", async function() {
+window.addEventListener("load", async function() {
     await showContent(0);
     await showUserInfo();
 });
@@ -282,7 +282,10 @@ async function showContent(contentTypeNum) {
     const url = `/students/contents/${contentTypeNum}`;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            credentials: 'same-origin',
+            cache: 'no-cache'
+        });
         const result = await response.json();
         
         notification.dismissLoading(loadingId);
@@ -827,7 +830,10 @@ async function showUserInfo() {
     notification.notify("Loading user information...", "loading", null, null, loadingId);
 
     const url = `/user/${id}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        credentials: 'same-origin',
+        cache: 'no-cache'
+    });
     const result = await response.json();
     
     try {

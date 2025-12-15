@@ -189,7 +189,10 @@ async function showRecords(apiRoute){
     try{
         
         // Dismiss loading notification
-        const response = await fetch(apiRoute)
+        const response = await fetch(apiRoute, {
+            credentials: 'same-origin',
+            cache: 'no-cache'
+        })
         const result = await response.json();
         notifyObj.dismissLoading(loadingId);
         tableBody.innerHTML = ""
@@ -501,13 +504,16 @@ function moveAdminInfo(){
     
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
+window.addEventListener("load", async function() {
     const id = await decrypt(sessionStorage.getItem("id"))
 
     const url = `/user/${id}`;
 
     try{
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            credentials: 'same-origin',
+            cache: 'no-cache'
+        });
         const result = await response.json();
         if (response.ok && result.status){
             sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
@@ -538,7 +544,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         notifyObj.notify("Network error. Please check your connection and try again.", "error");
     }
 
+    await showRecords('/students')
 });
 
 moveAdminInfo();
-await showRecords('/students')
