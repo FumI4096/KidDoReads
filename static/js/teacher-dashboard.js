@@ -249,12 +249,7 @@ async function showContents() {
     mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
     const url = `/contents/${id}`;
-    const response = await fetch(url, {
-        credentials: 'same-origin',
-        cache: 'no-cache'  // Important for initial load in Safari
-    });
-    console.log('Response status:', response.status); // Debug log
-    console.log('Response ok:', response.ok); // Debug log
+    const response = await fetch(url);
     const result = await response.json();
 
     try{
@@ -441,13 +436,7 @@ async function showUserInfo(){
     notification.notify("Loading user information...", "loading", null, null, loadingId);
     
     const url = `/user/${id}`;
-    const response = await fetch(url, {
-        credentials: 'same-origin',
-        cache: 'no-cache'  // Important for initial load in Safari
-    });
-
-    console.log('Response status:', response.status); // Debug log
-    console.log('Response ok:', response.ok); // Debug log
+    const response = await fetch(url);
     const result = await response.json();
 
     try{
