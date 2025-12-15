@@ -27,7 +27,6 @@ CORS(app, resources={
     r"/*": {
         "origins": ["https://kiddoreads.app", "https://www.kiddoreads.app"],  # Include both with/without www
         "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
-        "expose_headers": ["Content-Type"],
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True  # If you're using cookies/sessions
     }
