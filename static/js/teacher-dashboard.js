@@ -250,7 +250,8 @@ async function showContents() {
     mainSection.appendChild(contentStructure())
     const url = `/contents/${id}`;
     const response = await fetch(url, {
-        credentials: 'same-origin'
+        credentials: 'same-origin',
+        cache: 'no-cache'  // Important for initial load in Safari
     });
     const result = await response.json();
 
