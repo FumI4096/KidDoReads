@@ -439,7 +439,10 @@ async function showUserInfo(){
     notification.notify("Loading user information...", "loading", null, null, loadingId);
     
     const url = `/user/${id}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        credentials: 'same-origin',
+        cache: 'no-cache'  // Important for initial load in Safari
+    });
     const result = await response.json();
 
     try{
