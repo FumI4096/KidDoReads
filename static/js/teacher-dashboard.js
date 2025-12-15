@@ -223,8 +223,7 @@ async function insertTtsId(id){
     }
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
-    await new Promise(resolve => setTimeout(resolve, 100));
+window.addEventListener("load", async function() {
     await showUserInfo()
     await showContents()
 });
