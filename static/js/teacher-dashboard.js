@@ -253,6 +253,8 @@ async function showContents() {
         credentials: 'same-origin',
         cache: 'no-cache'  // Important for initial load in Safari
     });
+    console.log('Response status:', response.status); // Debug log
+    console.log('Response ok:', response.ok); // Debug log
     const result = await response.json();
 
     try{
@@ -443,6 +445,9 @@ async function showUserInfo(){
         credentials: 'same-origin',
         cache: 'no-cache'  // Important for initial load in Safari
     });
+
+    console.log('Response status:', response.status); // Debug log
+    console.log('Response ok:', response.ok); // Debug log
     const result = await response.json();
 
     try{
