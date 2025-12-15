@@ -249,7 +249,9 @@ async function showContents() {
     mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
     const url = `/contents/${id}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        credentials: 'same-origin'
+    });
     const result = await response.json();
 
     try{
