@@ -225,7 +225,7 @@ async function insertTtsId(id){
 
 document.addEventListener("DOMContentLoaded", async function() {
     await showUserInfo()
-    await showContents()
+    // await showContents()
 });
 
 // 1 = contents(activities), 2 = assessment
