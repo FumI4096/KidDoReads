@@ -225,7 +225,7 @@ async function insertTtsId(id){
 
 document.addEventListener("DOMContentLoaded", async function() {
     await showUserInfo()
-    // await showContents()
+    await showContents()
 });
 
 // 1 = contents(activities), 2 = assessment
@@ -248,8 +248,10 @@ async function showContents() {
     }
     mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
-    const url = `/contents/${id}`;
-    const response = await fetch(url);
+    const url = `/contents/${123}`;
+    const response = await fetch(url, {
+        credentials: 'same-origin'
+    });
     const result = await response.json();
 
     try{
