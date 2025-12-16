@@ -1032,9 +1032,6 @@ class Database:
             return False, f"Database error: {e}"
     
     def get_achievements_by_student(self, student_id):
-        cache_key = f'achievements_{student_id}'
-        cached = cache.get(cache_key)
-        if cached: return cached
         try:
             query = """
                 SELECT 
@@ -1161,25 +1158,18 @@ class Database:
             self.connection.commit()
             
             if rows_affected > 0:
-                cache.delete(f'achievements_{student_id}')
-                cache.delete(f'has_achievement_{student_id}_{achievement_id}')
                 return True, "Goal achieved"
         except Exception as e:
             return False, str(e)        
         
     def has_achievement(self, student_id, achievement_id):
-        cache_key = f'has_achievement_{student_id}_{achievement_id}'
-        cached = cache.get(cache_key)
-        if cached is not None: return cached 
         try:
             query = """SELECT StudentID FROM achievement_tracker WHERE StudentID = %s and AchievementID = %s;"""
             
             self.cursor.execute(query, (student_id, achievement_id))
             result = self.cursor.fetchone()
             
-            has_it = True if result is not None else False
-            cache.set(cache_key, has_it, timeout=600)  # ADD THIS LINE - cache 10 minutes
-            return has_it
+            return True if result is not None else False
             
         except Exception as e:
             return False, str(e)
