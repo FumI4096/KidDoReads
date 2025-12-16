@@ -1607,23 +1607,18 @@ function displayAttemptScores(table_body, counted_attempts, score, status, date)
     table_body.appendChild(attemptScoreDataRow);
 }
 
-// helper/utility function to format date
 function formatDate(dateString) {
-    const date = new Date(dateString + '+08:00');
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const date = new Date(dateString + '+08:00'); // Parse as Singapore time
     
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
-    
-    let hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    
-    return `${month} ${day}, ${year} ${hours}:${minutes} ${ampm}`;
+    return date.toLocaleString('en-US', {
+        timeZone: 'Asia/Manila', 
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
 }
 
 function moveStudentInfo(){
