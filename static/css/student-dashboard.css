@@ -949,6 +949,10 @@ main > section {
 
 /* Tablet (768px and below) */
 @media (max-width: 768px) {
+    .student-nav-item .dropdown, #profile-container {
+        height: 90%;
+        width: 90%;
+    }
     #attempt-score-wrapper {
         max-width: 95%;
         
@@ -1005,10 +1009,7 @@ main > section {
     #attempt-score-container {
         padding: 0.5rem;
     }
-    .student-nav-item .dropdown {
-        height: 900px;
-        width: 90%;
-    }
+
     #attempt-score-wrapper {
         max-width: 100%;
         
