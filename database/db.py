@@ -215,9 +215,13 @@ class Database:
             self.cursor.execute(query, tuple(parameters))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
-                cache.delete_many(f'student_records_*')
-                cache.delete_many(f'teacher_records_*')
-                cache.delete_many(f'admin_records_*')
+                # FIXED: Clear all filter variations
+                for filter_type in ['default', 'id']:
+                    cache.delete(f'student_records_{filter_type}')
+                    cache.delete(f'teacher_records_{filter_type}')
+                    cache.delete(f'admin_records_{filter_type}')
+                
+                # Clear user info for both old and new IDs
                 cache.delete(f'user_info_{original_school_id}')
                 cache.delete(f'user_info_{school_id}')
                 return True, "User record updated successfully."
@@ -243,10 +247,21 @@ class Database:
             self.cursor.execute(query, (id,))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
-                cache.delete_many(f'student_records_*')
-                cache.delete_many(f'teacher_records_*')
-                cache.delete_many(f'admin_records_*')
+                # FIXED: Clear all filter variations
+                for filter_type in ['default', 'id']:
+                    cache.delete(f'student_records_{filter_type}')
+                    cache.delete(f'teacher_records_{filter_type}')
+                    cache.delete(f'admin_records_{filter_type}')
+                
+                # Clear user info
                 cache.delete(f'user_info_{id}')
+                
+                # ADDED: If teacher, clear their content cache too
+                if role == "teacher":
+                    cache.delete(f'contents_teacher_{id}')
+                    # Clear all content type caches since teacher's content affects them
+                    for type_id in range(0, 6):  # Adjust range based on your content types
+                        cache.delete(f'contents_type_{type_id}')
                 return True, "Record deleted successfully."
             else:
                 return False, f"User with ID {id} not found."
@@ -538,6 +553,10 @@ class Database:
         try:
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                cache.delete(f'contents_teacher_{teacher_id}')
+                # Clear all content type caches
+                for type_id in range(0, 10):  # Adjust range based on your content types
+                    cache.delete(f'contents_type_{type_id}')
                 return True, f"Activity deleted successfully."
             else:
                 return False, "Content not found."
@@ -568,7 +587,9 @@ class Database:
             if self.cursor.rowcount > 0:
                 self.connection.commit()
                 cache.delete(f'contents_teacher_{teacher_id}')
-                cache.delete_many('contents_type_*')
+                # FIXED: Clear all content type caches
+                for type_id in range(0, 6):
+                    cache.delete(f'contents_type_{type_id}')
                 return True, "Content updated successfully!"
             else:
                 return False, "Unsuccessful update"
@@ -583,7 +604,9 @@ class Database:
             if self.cursor.rowcount > 0:
                 self.connection.commit()
                 cache.delete(f'contents_teacher_{teacher_id}')
-                cache.delete_many('contents_type_*')
+                # FIXED: Clear all content type caches
+                for type_id in range(0, 6):
+                    cache.delete(f'contents_type_{type_id}')
                 statement = "is hidden to students" if isHidden else "is now shown to students"
                 return True, f"Activity {statement}."
             else:
@@ -1132,6 +1155,8 @@ class Database:
             self.connection.commit()
             
             if rows_affected > 0:
+                cache.delete(f'achievements_{student_id}')
+                cache.delete(f'has_achievement_{student_id}_{achievement_id}')
                 return True, "Goal achieved"
         except Exception as e:
             return False, str(e)        
