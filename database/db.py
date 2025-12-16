@@ -68,6 +68,8 @@ class Database:
             """
             self.cursor.execute(query, (school_id, fname, lname, email, hashed_password, image))
             self.connection.commit()
+            for filter_type in ['default', 'id']:
+                cache.delete(f'student_records_{filter_type}')
             return True, "Student inserted successfully."
         except Exception as e:
             self.connection.rollback()
@@ -82,6 +84,8 @@ class Database:
             """
             self.cursor.execute(query, (school_id, fname, lname, email, hashed_password, image))
             self.connection.commit()
+            for filter_type in ['default', 'id']:
+                cache.delete(f'teacher_records_{filter_type}')
             return True, "Teacher inserted successfully."
         except Exception as e:
             self.connection.rollback()
@@ -96,6 +100,8 @@ class Database:
             """
             self.cursor.execute(query, (school_id, fname, lname, email, hashed_password, image))
             self.connection.commit()
+            for filter_type in ['default', 'id']:
+                cache.delete(f'admin_records_{filter_type}')
             return True, "Admin inserted successfully."
         except Exception as e:
             self.connection.rollback()
