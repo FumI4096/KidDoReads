@@ -1006,7 +1006,7 @@ main > section {
         padding: 0.5rem;
     }
     .student-nav-item .dropdown {
-        height: 1200px;
+        height: 900px;
         width: 90%;
     }
     #attempt-score-wrapper {
