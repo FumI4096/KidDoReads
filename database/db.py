@@ -555,7 +555,7 @@ class Database:
                 self.connection.commit()
                 cache.delete(f'contents_teacher_{teacher_id}')
                 # Clear all content type caches
-                for type_id in range(0, 10):  # Adjust range based on your content types
+                for type_id in range(0, 6):  # Adjust range based on your content types
                     cache.delete(f'contents_type_{type_id}')
                 return True, f"Activity deleted successfully."
             else:
