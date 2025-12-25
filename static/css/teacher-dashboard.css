@@ -71,17 +71,25 @@ main > section{
     overflow: hidden;
     position: relative;
     box-shadow: var(--box-shadow-1);
-
+    background-color: rgba(211, 32, 32, 0.7);
+    
+    &::after{
+        content: '';
+        display: block;
+        inset: 0;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.38);
+    }
     & > .activity-type{
         font-family: 'Light-Poppins';
         font-size: 0.8rem;
-        color: var(--black-text);
         margin-bottom: auto;
     }
     & > .activity-name{
         font-family: 'Bold-Poppins';
         font-size: 1.3rem;
-        color: var(--black-text);
     }
 
     & > .content-button-action-container{
