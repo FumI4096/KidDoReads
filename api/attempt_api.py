@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from modules.utils import get_db
+from modules.utils import get_db, recalculate_scores_on_student_attempts
 import json
 
 attempt_bp = Blueprint('attempt_bp', __name__)
@@ -301,12 +301,20 @@ def student_activity_attempt_scores(student_id, content_id, filter):
             ]
             status, results = db.get_student_activity_attempt_scores(student_id, content_id, filters[filter])
             
+            new_scores = recalculate_scores_on_student_attempts(student_id, content_id)
+            
             rows = results
             attempt_scores = []
-            for row in rows:
+            for index, row in enumerate(rows):
+                current_score = row[1]
+                recalculated_score = new_scores[index]
+                
+                # Use recalculated score if different, otherwise use current score
+                final_score = recalculated_score if current_score != recalculated_score else current_score
+                
                 attempt_scores.append({
                     "attempt_count": row[0],
-                    "score": row[1],
+                    "score": final_score,
                     "status": row[2],
                     "date": row[3]
                 })

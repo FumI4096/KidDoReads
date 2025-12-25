@@ -997,6 +997,42 @@ class Database:
         except Exception as e:
             return False, f"Database error: {e}"
         
+    def get_student_activity_attempt_choices(self, student_id: int):
+        try:
+            query = f"""
+                SELECT 
+                    attemptid,
+                    score,
+                    content_answer
+                FROM content_log_attempts
+                WHERE studentid = %s
+                ORDER BY attemptAt DESC;
+            """
+            
+            self.cursor.execute(query, (student_id,))
+            results = self.cursor.fetchall()
+            return True, results
+        except Exception as e:
+            return False, f"Database error: {e}"
+        
+    def get_content_answer(self, content_id: int):
+        query = """
+            SELECT 
+                JSON_EXTRACT(content_details_json, '$[*].answer') as all_answers
+            FROM contents
+            WHERE contentid = %s
+        """
+        
+        try:
+            self.cursor.execute(query, (content_id,))
+            results = self.cursor.fetchall()
+            result = (True, results)
+            # cache.set(cache_key, result, timeout=120) 
+            return result
+        except Exception as e:
+            self.connection.rollback() 
+            return False, str(e)
+        
     def get_chat_history(self, teacher_id):
         try:
             get_convo = """SELECT CC_JSON FROM conversation WHERE CC_Teacher = %s"""
