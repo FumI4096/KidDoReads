@@ -53,28 +53,37 @@ def generate_speech():
         # Generate unique filename
         timestamp = int(time.time() * 1000)
         filename = f"speech_{hash(text+ttsId)}_{timestamp}.mp3"
-        
-        # Upload to DigitalOcean Spaces
-        s3_client = get_s3_client()
-        bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
-        
-        # Convert response to bytes
-        audio_bytes = BytesIO(response.read())
-        audio_bytes.seek(0)
-        
-        # Upload to Spaces with public-read ACL
-        s3_client.upload_fileobj(
-            audio_bytes,
-            bucket_name,
-            f'audio/{filename}',
-            ExtraArgs={
-                'ACL': 'public-read',
-                'ContentType': 'audio/mpeg'
-            }
-        )
-        
-        # Generate public URL
-        audio_url = get_spaces_url(filename, 'audio')
+        if os.getenv('FLASK_ENV') == 'development':
+            # Save locally for testing
+            local_path = os.path.join('static', 'upload_audio', filename)
+            os.makedirs(os.path.dirname(local_path), exist_ok=True)
+            
+            with open(local_path, 'wb') as f:
+                f.write(response.read())
+            
+            audio_url = f'/static/upload_audio/{filename}'
+        else:
+            # Upload to DigitalOcean Spaces
+            s3_client = get_s3_client()
+            bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+            
+            # Convert response to bytes
+            audio_bytes = BytesIO(response.read())
+            audio_bytes.seek(0)
+            
+            # Upload to Spaces with public-read ACL
+            s3_client.upload_fileobj(
+                audio_bytes,
+                bucket_name,
+                f'audio/{filename}',
+                ExtraArgs={
+                    'ACL': 'public-read',
+                    'ContentType': 'audio/mpeg'
+                }
+            )
+            
+            # Generate public URL
+            audio_url = get_spaces_url(filename, 'audio')
         
         return jsonify({
             'status': True,
@@ -92,7 +101,6 @@ def generate_speech():
             'message': str(e)
         }), 500
 
-    
 @tts_bp.route('/api/delete-speech', methods=['DELETE'])
 def delete_speech():
     try:

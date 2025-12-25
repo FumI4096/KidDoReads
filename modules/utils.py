@@ -11,6 +11,11 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 def get_s3_client():
     """Initialize and return S3 client for DigitalOcean Spaces"""
+    print("=== Spaces Config Debug ===")
+    print(f"Endpoint: {os.getenv('SPACES_ENDPOINT')}")
+    print(f"Region: {os.getenv('SPACES_REGION')}")
+    print(f"Key exists: {bool(os.getenv('SPACES_KEY'))}")
+    print(f"Secret exists: {bool(os.getenv('SPACES_SECRET'))}")
     return boto3.client('s3',
         region_name=os.getenv('SPACES_REGION', 'sfo3'),
         endpoint_url=os.getenv('SPACES_ENDPOINT', 'https://sfo3.digitaloceanspaces.com'),
