@@ -25,13 +25,16 @@ class SpeechManager{
 
             if (!response.ok){
                 console.log(response.status)
-                return
+                
             }
 
             const result = await response.json()
 
             if (result.status){
                 this.setAudioFile(result.audio_url)
+            }
+            else{
+                console.log("Error generating speech:", result.message)
             }
         }
         catch (error){
