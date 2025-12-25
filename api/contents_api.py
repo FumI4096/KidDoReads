@@ -113,44 +113,6 @@ def get_assessments_for_students(type):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-# def get_all_content_titles(teacher_id):
-#     try:
-#         status, results = db.get_all_content_titles(teacher_id)
-#         rows = results
-        
-#         content_title = []
-#         for row in rows:
-#             content_title.append({
-#                 "content_title": row[0]
-#             })
-            
-#         if status:
-#             return jsonify({"status": True, "data": content_title})
-#         else:
-#             return jsonify({"status": False, "message": results})
-#     except Exception as e:
-#         return jsonify({"status": False, "message": str(e)})
-
-# @app.route('/contents', methods=['PATCH'])
-# def update_content_title():
-#     try:
-#         teacher_id = request.args.get('teacher_id')
-#         original_title = request.args.get('original_title')
-#         new_title = request.args.get('new_title')
-        
-#         status, results = db.update_content_title(teacher_id, original_title, new_title)
-            
-#         if status and results:
-#             quiz_data_str = results[0] 
-#             quiz_data_obj = json.loads(quiz_data_str)
-#             return jsonify({"status": True, "data": quiz_data_obj})
-#         elif status: 
-#             return jsonify({"status": False, "message": "Content not found"})
-#         else:
-#             return jsonify({"status": False, "message": results})
-#     except Exception as e:
-#         return jsonify({"status": False, "message": str(e)})
-    
 
 #change to patch
 @contents_bp.route('/update_content', methods=['POST'])
