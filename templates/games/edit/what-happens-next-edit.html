@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}">   
 </head>
 <body>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <header>
         <div id="category-and-game-type">
             <span id="category-display"></span>
@@ -85,6 +87,7 @@
     <div id="button-container">
         <button id="previous-button">Previous</button>
         <section>
+            <button id="import-content-button">Import Content</button>
             <button id="save-button">Save</button>
             <button id="edit-button">Edit</button>
         </section>
