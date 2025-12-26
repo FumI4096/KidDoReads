@@ -9,6 +9,7 @@ class Notification{
     #height = '80px'
     #padding = '10px 20px 10px 20px'
     #displayTime = 2500;
+    #zIndex = 1000;
     #notificationTimeouts = new WeakMap();
     #loadingNotifications = new Map(); // Track loading notifications by ID
 
@@ -90,6 +91,7 @@ class Notification{
         notificationBox.style.padding = this.#padding;
         notificationBox.style.borderRadius = this.#borderRadius;
         notificationBox.style.backgroundColor = this.#notificationColor;
+        notificationBox.style.zIndex = this.#zIndex;
         notificationBox.style.display = "flex";
         notificationBox.style.alignItems = "center";
         notificationBox.style.gap = "1rem";
