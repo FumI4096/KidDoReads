@@ -172,7 +172,7 @@ def update_picture_clues_content():
                                 old_image = content_data[idx].get('picture', '')
                                 if old_image and old_image not in ['', 'PENDING_UPLOAD']:
                                     # Check if it's a Spaces URL
-                                    if old_image.startswith('https://'):
+                                    if os.getenv('FLASK_ENV') == 'production':
                                         try:
                                             # Extract filename from URL
                                             # URL format: https://kiddoreads.sfo3.digitaloceanspaces.com/picture_clues/filename.jpg
@@ -201,26 +201,45 @@ def update_picture_clues_content():
                         # Save new image to Spaces
                         filename = generate_unique_filename(file.filename)
                         
-                        # Upload to DigitalOcean Spaces
-                        s3_client = get_s3_client()
-                        bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
-                        
-                        # Reset file pointer to beginning
-                        file.seek(0)
-                        
-                        s3_client.upload_fileobj(
-                            file,
-                            bucket_name,
-                            f'picture_clues/{filename}',
-                            ExtraArgs={
-                                'ACL': 'public-read',
-                                'ContentType': file.content_type or 'image/jpeg'
-                            }
-                        )
-                        
-                        # Generate the public URL
-                        image_path = get_spaces_url(filename, 'picture_clues')
-                        print(f"Saved new image to Spaces: {image_path}")
+                        if os.getenv('FLASK_ENV') == 'production':
+                            # Save to cloud storage (DigitalOcean Spaces, S3, etc.)
+                            try:
+                                s3_client = get_s3_client()
+                                bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+                                
+                                # Reset file pointer
+                                file.seek(0)
+                                
+                                s3_client.upload_fileobj(
+                                    file,
+                                    bucket_name,
+                                    f'picture_clues/{filename}',
+                                    ExtraArgs={
+                                        'ACL': 'public-read',
+                                        'ContentType': file.content_type or 'image/jpeg'
+                                    }
+                                )
+                                
+                                # Generate cloud URL
+                                image_path = get_spaces_url(filename, 'picture_clues')
+                                print(f"Saved new image to cloud: {image_path}")
+                            except Exception as e:
+                                print(f"Error uploading to cloud: {e}")
+                                return jsonify({
+                                    "status": False,
+                                    "message": f"Failed to upload image to cloud: {str(e)}"
+                                }), 500
+                        else:
+                            # Save to local storage (development)
+                            upload_folder = os.path.join('static', 'upload_picture_clues')
+                            os.makedirs(upload_folder, exist_ok=True)
+                            
+                            filepath = os.path.join(upload_folder, filename)
+                            file.save(filepath)
+                            
+                            # Store relative path
+                            image_path = f'upload_picture_clues/{filename}'
+                            print(f"Saved new image locally: {filepath}")
                         
                         # ✅ Update the picture field in the JSON
                         if question_index is not None:
