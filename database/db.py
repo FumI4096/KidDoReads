@@ -485,6 +485,25 @@ class Database:
             except Exception as e:
                 return False, f"Database error: {e}"
     
+    def get_contents_by_type(self, content_type, teacher_id):
+        query = """
+            SELECT
+            contentid,
+            Content_Title,
+            tts_json,
+            content_details_json
+            FROM contents
+            LEFT JOIN tts_content ON contents.tts_id = tts_content.tts_id
+            WHERE contenttype = %s AND TeacherID = %s AND content_details_json is not NULL;
+        """
+        try:
+            self.cursor.execute(query, (content_type, teacher_id))
+            result = (True, self.cursor.fetchall())
+            #cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+            return result
+        except Exception as e:
+            return False, f"Database error: {e}"
+    
     def get_assessments_by_type(self, type):
         cache_key = f'assessments_type_{type}'
         cached = cache.get(cache_key)

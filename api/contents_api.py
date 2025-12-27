@@ -124,7 +124,14 @@ def update_content():
         content = request.form.get('content')
         totalQuestions = request.form.get('total_questions')
         
+        print("Teacher ID:", teacherId)
+        print("Content ID:", contentId)
+        print("Content to update:", content)
+        print("Total Questions:", totalQuestions)
+        
         result, message = db.update_content(teacherId, contentId, content, totalQuestions)
+        
+        print(result, message)
         
         if result is True:
             return jsonify({"status": True, "message": message})
@@ -293,6 +300,33 @@ def get_assessments():
                 
             if status:
                 return jsonify({"status": True, "data": assessments})
+            else:
+                return jsonify({"status": False, "message": results})
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+
+@contents_bp.route('/contents/<int:content_type>/<int:teacher_id>', methods=['GET'])
+def get_contents_by_type(content_type, teacher_id):
+    try:
+        with get_db() as db:
+            status, results = db.get_contents_by_type(content_type, teacher_id)
+            rows = results
+            
+            contents = []
+            for row in rows:
+                quiz_contents_str = row[3] or "{}"
+                quiz_contents_json = json.loads(quiz_contents_str)
+                quiz_tts_str = row[2] or "{}"
+                quiz_tts_json = json.loads(quiz_tts_str)
+                contents.append({
+                    "content_id": row[0],
+                    "content_title": row[1],
+                    "tts_json": quiz_tts_json,
+                    "content_json": quiz_contents_json,
+                })
+            
+            if status:
+                return jsonify({"status": True, "data": contents})
             else:
                 return jsonify({"status": False, "message": results})
     except Exception as e:
