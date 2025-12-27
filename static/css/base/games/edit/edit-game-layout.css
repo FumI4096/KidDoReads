@@ -70,7 +70,7 @@ header{
 #previous-button, #save-button, #edit-button, #next-button {
     padding: 0.4rem 1.5rem;
     width: 10rem;
-    border: 1 px solid black;
+    border: 1px solid black;
     border-radius: 25px;
     background-color: none;
     color: var(--black-text);
