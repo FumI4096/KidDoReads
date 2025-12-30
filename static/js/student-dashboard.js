@@ -346,7 +346,7 @@ async function showAssessment(contentTypeNum) {
     }
 }
 
-function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, content_hidden, category_type) {
+function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, category_type) {
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const teacherName = document.createElement("p");
@@ -378,8 +378,6 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 
     buttonContainer.append(playActivityButton, checkProgressButton);
     newContent.append(buttonContainer);
-
-    newContent.style.display = content_hidden ? 'none' : 'flex';
 
     playActivityButton.addEventListener('click', async () => {
         sessionStorage.setItem("currentActivityTitle", content_title);

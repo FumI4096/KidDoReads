@@ -191,8 +191,6 @@ function createContent(){
             notification.notify("Network error. Please check your connection and try again.", "error");
         }
     });
-
-
 }
 
 async function insertTtsId(id){
@@ -935,8 +933,7 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
                         content_title: data.assessment_title,
                         completed_students: data.completed_students,
                         total_students: data.total_students,
-                        progress: data.progress,
-                        is_hidden_from_students: false
+                        progress: data.progress
                       }
                     : data;
                 
@@ -947,8 +944,7 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
                     normalizedData.content_title, 
                     normalizedData.completed_students, 
                     normalizedData.total_students, 
-                    normalizedData.progress, 
-                    normalizedData.is_hidden_from_students, 
+                    normalizedData.progress,  
                     teacher_id, 
                     categoryValue === 'activities' ? selectContent.value : categoryValue,
                     categoryValue // Pass the category type
@@ -982,7 +978,6 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
                         data.completed_students, 
                         data.total_students, 
                         data.progress, 
-                        data.is_hidden_from_students, 
                         teacher_id, 
                         selectContent.value,
                         'activities' // Pass the category type
@@ -1397,7 +1392,6 @@ async function getStudentProgressByContentType(teacherId, contentType) {
                     normalizedData.completed_students, 
                     normalizedData.total_students, 
                     normalizedData.progress, 
-                    normalizedData.is_hidden_from_students, 
                     teacherId, 
                     contentType,
                     category
@@ -1428,16 +1422,12 @@ async function getStudentProgressByContentType(teacherId, contentType) {
  * 
  */
 
-function displayAttemptProgress(table_header, table_body, content_id, content_title, completed_students, total_students, progress, is_hidden, teacherId, contentType, category) {
+function displayAttemptProgress(table_header, table_body, content_id, content_title, completed_students, total_students, progress, teacherId, contentType, category) {
     const dataRow = document.createElement('tr');
     const contentTitleData = document.createElement('td');
     const completedStudentsData = document.createElement('td');
     const totalStudentsData = document.createElement('td');
     const progressData = document.createElement('td');
-
-    if(is_hidden){
-        dataRow.style.display = 'none';
-    }
 
     dataRow.classList.add('data-row');
     

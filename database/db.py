@@ -877,8 +877,7 @@ class Database:
                 CONCAT(
                     COUNT(DISTINCT cla.StudentID), '/',
                     (SELECT COUNT(*) FROM students)
-                ) AS progress,
-                isHiddenFromStudents
+                ) AS progress
                 FROM contents c
                 LEFT JOIN content_log_attempts cla ON cla.ContentID = c.ContentID
                 WHERE c.TeacherID = %s AND c.ContentType = %s

@@ -74,8 +74,7 @@ def get_contents_for_students(type):
                     "content_title": row[2],
                     "content_json": quiz_contents_json,
                     "tts_json": quiz_tts_json,
-                    "content_type": row[5],
-                    "isHidden": row[6]
+                    "content_type": row[5]
                 })
                 
             if status:
