@@ -154,9 +154,12 @@ async function studentProfile() {
     studentName.textContent = await decrypt(sessionStorage.getItem('fullName'));
 
     const studentId = document.createElement('p');
-    studentId.textContent = "Learner ID: " + await decrypt( (sessionStorage.getItem('id')) || "N/A");
+    studentId.textContent = "Learner ID: " + await decrypt( (sessionStorage.getItem('id')));
 
-    learnerDetails.append(studentName, studentId);
+    const studentSection = document.createElement('p');
+    studentSection.textContent = "Section: " + await decrypt(sessionStorage.getItem('sectionName'));
+
+    learnerDetails.append(studentName, studentId, studentSection);
     cardBody.append(studentImage, learnerDetails);
     card.append(cardBody);
 
@@ -848,6 +851,11 @@ async function showUserInfo() {
             } else {
                 sessionStorage.setItem("image", await encrypt(defaultProfilePicture));
                 studentPicture.src = await decrypt(sessionStorage.getItem("image"));
+            }
+            if (result.data[0].section) {
+                sessionStorage.setItem("sectionName", await encrypt(result.data[0].section));
+
+                console.log("Section Name:", await decrypt(sessionStorage.getItem("sectionName")));
             }
             
         } else {

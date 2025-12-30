@@ -143,7 +143,7 @@ function createContent(){
         const activityExists = Array.from(allContentNames).some(
             (name) => name.innerHTML.trim().toLowerCase() === titleInput
         );
-        if (titleInput === "" || selectContent.value === "") {
+        if (titleInput === "" || selectContent.value === "" || selectVoice.value === "") {
             notification.notify("Please fill out all fields.", "error");
             return;
         }
@@ -460,6 +460,9 @@ async function showUserInfo(){
                 sessionStorage.setItem("image", await encrypt(defaultProfilePicture))
                 teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
+
+            sessionStorage.setItem("assignedSections", await encrypt(result.data[0].section))
+            console.log(await decrypt(sessionStorage.getItem("assignedSections")))
 
         }
         else{
