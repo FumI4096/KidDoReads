@@ -228,6 +228,8 @@ def filter_record(role, filter):
                 status, result = db.get_student_records(filter, sectionId)
             elif role == "teacher":
                 status, result = db.get_teacher_records(filter)
+            elif role == "admin":
+                status, result = db.get_admin_records(filter)
             else:
                 return jsonify({"status": False, "message": "Records are only students and teachers"})
             
