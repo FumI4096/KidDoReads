@@ -1033,6 +1033,10 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
     const selectAttemptProgressFilter = document.createElement('select');
     selectAttemptProgressFilter.setAttribute('id', 'select-attempt-progress-filter');
     selectAttemptProgressFilter.name = 'select-attempt-progress-filter';
+
+    const selectSectionFilter = document.createElement('select');
+    selectSectionFilter.setAttribute('id', 'select-section-filter');
+    selectSectionFilter.name = 'select-section-filter';
     
     const filterOptions = [
         {value: 0, text: 'Student ID DESC'},
@@ -1043,6 +1047,18 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
         {value: 5, text: 'Least Attempts'}
     ];
 
+    const sectionOptions = JSON.parse(assignedSections)
+
+    console.log(sectionOptions)
+
+
+    sectionOptions.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.sectionid;
+        optionElement.textContent = option.sectionname;
+        selectSectionFilter.appendChild(optionElement);
+    });
+
     filterOptions.forEach(option => {
         const optionElement = document.createElement('option');
         optionElement.value = option.value;
@@ -1052,13 +1068,15 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
 
     detailsContainer.appendChild(backToMainProgressButton);
     detailsContainer.appendChild(selectAttemptProgressFilter);
+    detailsContainer.appendChild(selectSectionFilter);
     headerContainer.appendChild(detailsContainer);
 
     selectAttemptProgressFilter.addEventListener('change', async () => {
         // Use different endpoint based on category
+        const selectedSection = selectSectionFilter.value;
         const url = category === 'assessments'
-            ? `/attempts/assessments/${content_id}/filter/${selectAttemptProgressFilter.value}`
-            : `/attempts/activities/${content_id}/filter/${selectAttemptProgressFilter.value}`;
+            ? `/attempts/assessments/${content_id}/filter/${selectAttemptProgressFilter.value}/${selectedSection}`
+            : `/attempts/activities/${content_id}/filter/${selectAttemptProgressFilter.value}/${selectedSection}`;
         
         const loadingId = `loading-filter-${Date.now()}`;
         notification.notify("Filtering data...", "loading", null, null, loadingId);
@@ -1083,6 +1101,42 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
                     student.student_lowest_score, 
                     student.total_questions,
                     category // Pass category to next level
+                );
+            });
+        } else {
+            console.log(result.message);
+        }
+    });
+    selectSectionFilter.addEventListener('change', async () => {
+        const selectedSection = selectSectionFilter.value;
+        
+        const url = category === 'assessments'
+            ? `/attempts/assessments/${content_id}/filter/${selectAttemptProgressFilter.value}/${selectedSection}`
+            : `/attempts/activities/${content_id}/filter/${selectAttemptProgressFilter.value}/${selectedSection}`;
+        
+        const loadingId = `loading-section-${Date.now()}`;
+        notification.notify("Filtering by section...", "loading", null, null, loadingId);
+            
+        const response = await fetch(url);
+        const result = await response.json();
+        table_body.innerHTML = '';
+        
+        notification.dismissLoading(loadingId);
+        
+        if (response.ok && result.status) {
+            result.scores.forEach(student => {
+                displayStudentAttemptScores(
+                    table_header, 
+                    table_body, 
+                    content_id,
+                    content_name, 
+                    student.student_id, 
+                    student.student_name, 
+                    student.student_attempts, 
+                    student.student_highest_score, 
+                    student.student_lowest_score, 
+                    student.total_questions,
+                    category
                 );
             });
         } else {
@@ -1229,9 +1283,10 @@ async function restorePreviousState(table_header, table_body) {
         mainSection.insertBefore(headerContainer, mainSection.firstChild);
 
         // Re-fetch data with default filter using appropriate endpoint
+        const firstIndexSection = JSON.parse(assignedSections)[0]?.sectionid || 0;
         const url = previousState.data.category === 'assessments'
-            ? `/attempts/assessments/${previousState.data.content_id}/filter/0`
-            : `/attempts/activities/${previousState.data.content_id}/filter/0`;
+            ? `/attempts/assessments/${previousState.data.content_id}/filter/0/${firstIndexSection}`
+            : `/attempts/activities/${previousState.data.content_id}/filter/0/${firstIndexSection}`;
         
         const loadingId = `loading-restore-${Date.now()}`;
         notification.notify("Loading data...", "loading", null, null, loadingId);
@@ -1410,9 +1465,10 @@ function displayAttemptProgress(table_header, table_body, content_id, content_ti
         });
 
         // Use appropriate endpoint based on category
+        const firstIndexSection = JSON.parse(assignedSections)[0]?.sectionid || 0;
         const url = category === 'assessments'
-            ? `/attempts/assessments/${content_id}/filter/0`
-            : `/attempts/activities/${content_id}/filter/0`;
+            ? `/attempts/assessments/${content_id}/filter/0/${firstIndexSection}`
+            : `/attempts/activities/${content_id}/filter/0/${firstIndexSection}`;
         
         const loadingId = `loading-content-details-${Date.now()}`;
         notification.notify("Loading student scores...", "loading", null, null, loadingId);
@@ -1526,6 +1582,7 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
         });
 
         // Use appropriate endpoint based on category
+
         const url = category === 'assessments'
             ? `/attempts/assessments/students/${student_id}/${content_id}/filter/0`
             : `/attempts/activities/students/${student_id}/${content_id}/filter/0`;

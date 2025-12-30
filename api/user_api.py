@@ -221,10 +221,11 @@ def delete_user():
 @login_required
 def filter_record(role, filter):
     try:
+        sectionId = request.args.get('section_id', None)
         with get_db() as db:
             result = []
             if role == "student":
-                status, result = db.get_student_records(filter)
+                status, result = db.get_student_records(filter, sectionId)
             elif role == "teacher":
                 status, result = db.get_teacher_records(filter)
             else:
@@ -289,6 +290,7 @@ def get_user(id):
                 "fullName": result[1],
                 "email": result[2],
                 "image": image_url,
+                'section': result[4]
             })
             
             if status:

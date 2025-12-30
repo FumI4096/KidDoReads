@@ -370,6 +370,7 @@ main > section{
 /* Attempt Progress Dropdown & Main Progress Dropdowns */
 #select-attempt-progress-filter, #select-attempt-score-filter,
 #select-category, 
+#select-section-filter,
 #select-content {
     font-family: 'Regular-Poppins';
     background-color: white;

@@ -11,6 +11,7 @@ from api.attempt_api import attempt_bp
 from api.tts_api import tts_bp
 from api.chatbot_api import chatbot_bp
 from api.achievement_tracker_api import achievement_bp
+from api.section_api import section_bp
 from routes.status_error_routes import errors
 from routes.home_routes import home_bp
 from routes.edit_games_routes import edit_games_bp
@@ -53,6 +54,7 @@ app.register_blueprint(attempt_bp)
 app.register_blueprint(tts_bp)
 app.register_blueprint(chatbot_bp)
 app.register_blueprint(achievement_bp)
+app.register_blueprint(section_bp)
 
 
 if __name__ == '__main__':

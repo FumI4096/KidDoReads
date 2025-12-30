@@ -51,6 +51,7 @@ def register():
             email = request.form.get("email")
             password = request.form.get("password")
             role = request.form.get("role")
+            section = request.form.get("section") if role == "student" else None
             
             filename = None
             
@@ -83,13 +84,13 @@ def register():
                     # Store the full URL in the database
                     filename = get_spaces_url(filename, 'uploads')
             
-            errors = regValidation(id, fname, lname, email, password, role)
+            errors = regValidation(id, fname, lname, email, password, role, section)
             
             if errors:
                 return jsonify({"status": False, "errors": errors})
             
             if role == "student":
-                db.insert_student(int(id), fname, lname, email, password, filename)
+                db.insert_student(int(id), fname, lname, email, password, filename, section)
                 return jsonify({"status": True, "message": "Student Inserted Successfully"})
                 
             elif role == "teacher":
