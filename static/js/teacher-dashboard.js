@@ -18,6 +18,7 @@ const chatbotButton = document.getElementById('chatbot-button')
 const notification = new Notification();
 let isInMainSection = false;
 
+const assignedSections = await decrypt(sessionStorage.getItem("assignedSections"))
 
 const id = await decrypt(sessionStorage.getItem("id"))
 
