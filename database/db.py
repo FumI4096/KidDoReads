@@ -74,6 +74,33 @@ class Database:
         except Exception as e:
             self.connection.rollback()
             return False, str(e)
+        
+    def bulk_insert_students(self, students_data):
+        """
+        Bulk insert multiple students at once.
+        
+        Args:
+            students_data: List of tuples containing (StudentID, FirstName, LastName, Email, S_Password, Image, SectionID)
+        
+        Returns:
+            Tuple of (success: bool, message: str, count: int)
+        """
+        try:
+            query = """
+                INSERT INTO students (StudentID, FirstName, LastName, Email, S_Password, Image, SectionID)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            self.cursor.executemany(query, students_data)
+            self.connection.commit()
+            for filter_type in ['default', 'id']:
+                cache.delete(f'student_records_{filter_type}')
+            
+            return True, "Students inserted successfully.", len(students_data)
+            
+        except Exception as e:
+            # Rollback on error
+            self.connection.rollback()
+            return False, str(e), 0
 
     def insert_teacher(self, school_id, fname, lname, email, password, image):
         try:

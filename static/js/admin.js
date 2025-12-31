@@ -21,9 +21,9 @@ const studentImportButton = document.getElementById('import-student-button');
 const studentSectionFilter = document.getElementById('section-filter');
 const adminInfo = document.getElementById('admin-info');
 const defaultProfilePicture = "../static/images/default_profile_picture.png";
+const importStudentButton = document.getElementById('import-student-button');
 let currentTab = "student";
 let isInMainSection = false;
-
 studentDisplayButton.disabled = true;
 studentDisplayButton.style.pointerEvents = 'none';
 
@@ -126,6 +126,169 @@ sectionDisplayButton.addEventListener('click', async () => {
     teacherDisplayButton.classList.remove('toggle-user');
     adminDisplayButton.style.pointerEvents = 'auto';
     adminDisplayButton.classList.remove('toggle-user');
+})
+
+importStudentButton.addEventListener('click', async () => {
+    const importContainer = document.createElement('div')
+    importContainer.setAttribute('id', 'import-student-container')
+
+    const importWrapper = document.createElement('div')
+    importWrapper.setAttribute('id', 'import-student-wrapper')
+
+    const importNoteContainer = document.createElement('div')
+    importNoteContainer.setAttribute('id', 'import-note-container')
+    const importNoteHeader = document.createElement('h3')
+    importNoteHeader.textContent = 'Import Student Instructions'
+
+    const importNoteDetailsContainer = document.createElement('div')
+    importNoteDetailsContainer.setAttribute('id', 'import-note-details-container')
+
+    const importNoteList = document.createElement('ul')
+    const note1 = document.createElement('li')
+    note1.textContent = 'The file should be in .csv format.'
+    const note2 = document.createElement('li')
+    note2.textContent = 'The file must have the following columns accordingly: id, first name, last name, email. Its not case-sensitive, but the order should be maintained.'
+    const note3 = document.createElement('li')
+    note3.textContent = 'Ensure that there are no duplicate Student IDs or emails in the file.'
+    const note4 = document.createElement('li')
+    note4.textContent = "Importing the file will automatically generate the passwords for the students ('Letrankdr123')."
+    const note5 = document.createElement('li')
+    note5.textContent = 'Make sure there are no spaces before the data in each cell.'
+    const note6 = document.createElement('li')
+    note6.textContent = 'Make sure that the student emails follow a valid email format (e.g., example@letran-calamba.edu.ph).'
+    importNoteList.append(note1, note2, note3, note4, note5, note6)
+    const pictureExampleContainer = document.createElement('aside')
+    pictureExampleContainer.setAttribute('id', 'picture-example-container')
+    const importPictureExample = document.createElement('img')
+    importPictureExample.src = '../static/images/guideline_import.png'
+    pictureExampleContainer.appendChild(importPictureExample)
+
+    importNoteDetailsContainer.appendChild(importNoteList)
+    importNoteDetailsContainer.appendChild(pictureExampleContainer)
+
+    importNoteContainer.appendChild(importNoteHeader)
+    importNoteContainer.appendChild(importNoteDetailsContainer)
+
+    const importButtonContainer = document.createElement('div')
+    importButtonContainer.setAttribute('id', 'import-button-container')
+    const importButton = document.createElement('input')
+    importButton.textContent = 'Import Students'
+    importButton.type = 'file'
+    importButton.name = 'import_file'
+    importButton.id = 'import_file'
+    importButton.accept = '.csv'
+    importButtonContainer.appendChild(importButton)
+
+    // Add section dropdown
+    const sectionContainer = document.createElement('div')
+    sectionContainer.setAttribute('id', 'import-section-container')
+    const sectionLabel = document.createElement('label')
+    sectionLabel.textContent = 'Select Section: '
+    sectionLabel.setAttribute('for', 'import-section')
+    const sectionSelect = document.createElement('select')
+    sectionSelect.setAttribute('id', 'import-section')
+    sectionSelect.setAttribute('name', 'section')
+    sectionSelect.required = true
+    
+    const sectionResponse = await fetch('/sections', {
+        credentials: 'same-origin',
+        cache: 'no-cache'
+    });
+
+    const sectionResult = await sectionResponse.json();
+    sectionResult.data.forEach(section => {
+        const option = document.createElement('option')
+        option.value = section.id
+        option.textContent = `${section.name} (Grade ${section.grade})`
+        sectionSelect.appendChild(option)
+    })
+    
+    sectionContainer.appendChild(sectionLabel)
+    sectionContainer.appendChild(sectionSelect)
+
+    const actionButtonContainer = document.createElement('div')
+    actionButtonContainer.setAttribute('id', 'import-action-button-container')
+    const confirmImportButton = document.createElement('button')
+    confirmImportButton.textContent = 'Confirm'
+    const cancelImportButton = document.createElement('button')
+    cancelImportButton.textContent = 'Cancel'
+    actionButtonContainer.appendChild(cancelImportButton)
+    actionButtonContainer.appendChild(confirmImportButton)
+
+    // Handle file selection display
+    importButton.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            importFileText.textContent = e.target.files[0].name
+        } else {
+            importFileText.textContent = 'No file chosen'
+        }
+    })
+
+    // Handle cancel button
+    cancelImportButton.addEventListener('click', () => {
+        document.body.removeChild(importContainer)
+    })
+
+    // Handle confirm button - SUBMIT TO API
+    confirmImportButton.addEventListener('click', async () => {
+        const file = importButton.files[0]
+        const section = sectionSelect.value
+
+        // Validation
+        if (!file) {
+            alert('Please select a CSV file')
+            return
+        }
+
+        if (!section) {
+            alert('Please select a section')
+            return
+        }
+
+        // Create FormData
+        const formData = new FormData()
+        formData.append('import_file', file)
+        formData.append('section', section)
+
+        // Disable button during upload
+        confirmImportButton.disabled = true
+        confirmImportButton.textContent = 'Importing...'
+
+        try {
+            const response = await fetch('/import-students', {
+                method: 'POST',
+                body: formData
+            })
+
+            const data = await response.json()
+
+            if (data.status) {
+                notifyObj.notify(data.message, 'success')
+                location.reload() // Or call your function to refresh the student table
+            } else {
+                // Show errors
+                let errorMessage = data.message
+                if (data.errors && data.errors.length > 0) {
+                    errorMessage += '\n\nErrors:\n' + data.errors.join('\n')
+                }
+                alert(errorMessage)
+            }
+        } catch (error) {
+            alert('An error occurred while importing students: ' + error.message)
+        } finally {
+            confirmImportButton.disabled = false
+            confirmImportButton.textContent = 'Confirm'
+            document.body.removeChild(importContainer)
+        }
+    })
+
+    // Assemble the modal
+    importWrapper.appendChild(importNoteContainer)
+    importWrapper.appendChild(importButtonContainer)
+    importWrapper.appendChild(sectionContainer)
+    importWrapper.appendChild(actionButtonContainer)
+    importContainer.appendChild(importWrapper)
+    document.body.appendChild(importContainer)
 })
 
 imageInput.addEventListener('change', defaultImageChanger);
