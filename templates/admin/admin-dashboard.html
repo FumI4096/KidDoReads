@@ -39,6 +39,10 @@
                     <img src="{{url_for('static', filename='images/sidebar-icons/person.svg') }}" />
                     <span>Students</span>
                 </li>
+                <li id="section-record-button">
+                    <img src="{{url_for('static', filename='images/sidebar-icons/person.svg') }}" />
+                    <span>Sections</span>
+                </li>
                 <li id="log-out-button">
                     <ion-icon name="log-out"></ion-icon>
                     <span>Log Out</span>
@@ -46,7 +50,7 @@
             </ul>
         </aside>
     
-        <section>
+        <section id="user-record">
             <div>
                 <p> 
                     <img src="{{url_for('static', filename='images/orange-add-button.svg')}}"/>
@@ -86,6 +90,11 @@
                             <ion-icon name="eye-outline" id="showPasswordButton"></ion-icon>
                             <ion-icon name="eye-off-outline" id="unshowPasswordButton"></ion-icon>
                         </div>
+                        <div id="section-container">
+                            <select id="section" name="section">
+                                <option value="">Section</option>
+                            </select>
+                        </div>
                     </div>
                     <div id="submit-actions">
                         <input type="submit" id="submit-user-button" value="Submit"/>
@@ -98,6 +107,9 @@
                 <select id="filter" name="fiter">
                     <option value="default">Descending</option>
                     <option value="id">Ascending</option>
+                </select>
+                <button type="button" id="import-student-button">Import Student File</button>
+                <select id="section-filter" name="section-filter">
                 </select>
             </form>
             <section id="table-container">
@@ -118,6 +130,21 @@
                     </tbody>
                 </table>
             </section>
+        </section>
+
+        <section id="section-record">
+            <div>
+                <p> 
+                    <img src="{{url_for('static', filename='images/orange-add-button.svg')}}"/>
+                    <span>Add Section Record</span>
+                </p>
+            </div>
+            <div id="main-section-record">
+                <section id="section-table-container">
+                </section>
+                <section id="teacher-record-section">
+                </section>
+            </div>
         </section>
     </main>
 
