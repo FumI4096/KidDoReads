@@ -110,6 +110,11 @@ function createContent(){
     selectContent.id = "content_type";
     selectContent.name = "content_type";
 
+    const selectVoice = document.createElement("select");
+    selectVoice.setAttribute('id', "voice-type");
+    selectVoice.id = "voice_type";
+    selectVoice.name = "voice_type";
+
     const contentTypes = [
         {value: '', text: 'Activity Type'},
         {value: '1', text: 'Pronunciation: Word Audio Match'}, 
@@ -126,8 +131,24 @@ function createContent(){
 
         selectContent.appendChild(optionElement)
     });
+
+    const voiceTypes = [
+        {value: '', voice: 'Voice Type'},
+        {value: 1, voice: 'Onyx (Man - Lower Voice)'},
+        {value: 2, voice: 'Onyx (Man - Lower Voice)'},
+        {value: 3, voice: 'Onyx (Man - Lower Voice)'},
+    ]
+
+    voiceTypes.forEach(type => {
+        const optionElement = document.createElement('option');
+        optionElement.value = type.value;
+        optionElement.textContent = type.voice;
+
+        selectVoice.appendChild(optionElement)
+    });
     
     contentTypeContainer.appendChild(selectContent);
+    contentTypeContainer.appendChild(selectVoice);
     createContent.appendChild(contentTypeContainer);
     createContent.appendChild(submitContentButton);
     document.body.appendChild(contentContainer);

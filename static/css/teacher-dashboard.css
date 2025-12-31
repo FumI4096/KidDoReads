@@ -261,7 +261,13 @@ main > section{
     font-size: 1.2rem;
 }
 
-#content_type {
+#content-type-container{
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+#content_type, #voice_type {
     background-image: url('../images/cusztomize-dropdown-select-1.svg');
     background-repeat: no-repeat;
     background-size: 20px;
@@ -272,7 +278,7 @@ main > section{
     appearance: none; 
     height: auto;
     border: none;
-    padding: 0.5rem 3rem 0.5rem 0.6rem;
+    padding: 0.3rem 3rem 0.3rem 0.6rem;
     width: auto;
     border-radius: 2px;
     outline: none;
@@ -1023,7 +1029,7 @@ main > section{
         padding: 1.2rem;
     }
 
-    #content_type {
+    #content_type, #voice_type {
         width: 100%;
     }
 
@@ -1122,8 +1128,7 @@ main > section{
         font-size: 1rem;
     }
 
-    #content_type {
-        width: 100%;
+    #content_type, #voice_type {
         font-size: 1rem;
         padding: 0.5rem 2.5rem 0.5rem 0.5rem;
     }
