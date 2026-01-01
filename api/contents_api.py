@@ -55,11 +55,11 @@ def get_contents(teacher_id):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@contents_bp.route('/students/contents/<int:type>', methods=["GET"])
-def get_contents_for_students(type):
+@contents_bp.route('/students/contents/<int:type>/<int:student_id>', methods=["GET"])
+def get_contents_for_students(type, student_id):
     try:
         with get_db() as db:
-            status, results = db.get_contents_by_type(type)
+            status, results = db.get_student_contents_by_type(type, student_id)
             rows = results
             
             contents = []

@@ -493,54 +493,46 @@ class Database:
             self.connection.rollback() 
             return False, str(e)
         
-    def get_contents_by_type(self, type, student_id):
+    def get_student_contents_by_type(self, type, student_id):
         cache_key = f'contents_type_{type}_{student_id}'
         cached = cache.get(cache_key)
         if cached: return cached
-        query = ""
         
+        where_clause = "" if type == 0 else "WHERE C.ContentType = %s AND"
+        
+        query = f"""
+            SELECT
+                C.ContentID,
+                CONCAT(T.FirstName, ' ', T.LastName) AS Full_Name,
+                C.Content_Title,
+                C.Content_Details_JSON,
+                tts_content.tts_json,
+                C.ContentType
+            FROM contents AS C
+            LEFT JOIN teachers AS T
+                ON C.TeacherID = T.TeacherID
+            LEFT JOIN tts_content
+                ON tts_content.tts_id = C.tts_id
+            INNER JOIN students AS S
+                ON JSON_CONTAINS(
+                    T.assigned_sections,
+                    JSON_QUOTE(CAST(S.SectionID AS CHAR))
+                )
+            WHERE
+                S.StudentID = %s AND isHiddenFromStudents != 1
+        """
+        
+        params = [student_id]
         if type != 0:
-            query = """
-                SELECT
-                    C.ContentID,
-                    CONCAT(T.FirstName, ' ', T.LastName) AS Full_Name,
-                    C.Content_Title,
-                    C.Content_Details_JSON,
-                    tts_content.tts_json,
-                    C.ContentType
-                FROM contents AS C
-                LEFT JOIN teachers AS T
-                    ON C.TeacherID = T.TeacherID
-                LEFT JOIN tts_content
-                    ON tts_content.tts_id = C.tts_id
-                INNER JOIN students AS S
-                    ON JSON_CONTAINS(
-                        T.assigned_sections,
-                        JSON_QUOTE(CAST(S.SectionID AS CHAR))
-                    )
-                WHERE
-                    C.ContentType = %s AND S.StudentID = %s AND isHiddenFromStudents != 1;
-            """
-            try:
-                self.cursor.execute(query, (type, student_id))
-                result = (True, self.cursor.fetchall())
-                cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
-                return result
-            except Exception as e:
-                return False, f"Database error: {e}"
-        else:
-            query = """
-                SELECT ContentID, CONCAT(T.FirstName, ' ', T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM contents as C
-                LEFT JOIN teachers as T on C.TeacherID = T.TeacherID
-                LEFT JOIN tts_content on tts_content.tts_id = C.tts_id
-            """
-            try:
-                self.cursor.execute(query)
-                result = (True, self.cursor.fetchall())
-                cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
-                return result
-            except Exception as e:
-                return False, f"Database error: {e}"
+            query += " AND C.ContentType = %s"
+            params.append(type)
+        try:
+            self.cursor.execute(query, tuple(params))
+            result = (True, self.cursor.fetchall())
+            cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+            return result
+        except Exception as e:
+            return False, f"Database error: {e}"
     
     def get_contents_by_type(self, content_type, teacher_id):
         query = """

@@ -282,7 +282,7 @@ async function showContent(contentTypeNum) {
     const loadingId = `loading-content-${Date.now()}`;
     notification.notify("Loading activities...", "loading", null, null, loadingId);
 
-    const url = `/students/contents/${contentTypeNum}`;
+    const url = `/students/contents/${contentTypeNum}/${id}`;
 
     try {
         const response = await fetch(url, {
@@ -302,7 +302,6 @@ async function showContent(contentTypeNum) {
                     data.content_json,
                     data.tts_json,
                     data.content_type,
-                    data.isHidden,
                     "Activity"
                 );
             });
