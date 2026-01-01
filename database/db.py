@@ -433,11 +433,11 @@ class Database:
             self.connection.rollback() 
             return f"Database error: {e}"
         
-    def create_content(self, teacher_id: int, content_name, content_type: int):
+    def create_content(self, teacher_id: int, content_name, content_type: int, voice_type):
         try:
-            query = """INSERT INTO contents(TeacherID, Content_Title, ContentType) VALUES (%s, %s, %s)"""
+            query = """INSERT INTO contents(TeacherID, Content_Title, ContentType, Voice) VALUES (%s, %s, %s, %s)"""
             
-            self.cursor.execute(query, (teacher_id, content_name, content_type))
+            self.cursor.execute(query, (teacher_id, content_name, content_type, voice_type))
             content_id = self.cursor.lastrowid
             self.connection.commit()
             return True, "Content created successfully!", content_id
@@ -476,7 +476,7 @@ class Database:
         cached = cache.get(cache_key)
         if cached: return cached
         query = """
-            SELECT ContentID, Content_Title, Content_Details_JSON, TTS_JSON, ContentType, ContentTypeName, isHiddenFromStudents
+            SELECT ContentID, Content_Title, Content_Details_JSON, TTS_JSON, ContentType, ContentTypeName, Voice, isHiddenFromStudents
             FROM contents
             LEFT JOIN content_type ON contents.ContentType = content_type.ContentTypeID
             LEFT JOIN tts_content on contents.tts_id = tts_content.tts_id

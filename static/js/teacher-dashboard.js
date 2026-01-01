@@ -21,6 +21,7 @@ let isInMainSection = false;
 const assignedSections = await decrypt(sessionStorage.getItem("assignedSections"))
 
 const id = await decrypt(sessionStorage.getItem("id"))
+let currentPreviewAudio = null;
 
 
 logOutButton.addEventListener('click', () => {
@@ -110,11 +111,6 @@ function createContent(){
     selectContent.id = "content_type";
     selectContent.name = "content_type";
 
-    const selectVoice = document.createElement("select");
-    selectVoice.setAttribute('id', "voice-type");
-    selectVoice.id = "voice_type";
-    selectVoice.name = "voice_type";
-
     const contentTypes = [
         {value: '', text: 'Activity Type'},
         {value: '1', text: 'Pronunciation: Word Audio Match'}, 
@@ -132,23 +128,152 @@ function createContent(){
         selectContent.appendChild(optionElement)
     });
 
+    // Voice radio buttons container
+    const voiceTypeContainer = document.createElement("div");
+    voiceTypeContainer.setAttribute('id', "voice-type-container");
+    
+    const voiceTypeLabel = document.createElement("p");
+    voiceTypeLabel.textContent = "Voice Type";
+    voiceTypeLabel.setAttribute('id', 'voice-type-label');
+    voiceTypeContainer.appendChild(voiceTypeLabel);
+
     const voiceTypes = [
-        {value: '', voice: 'Voice Type'},
-        {value: 1, voice: 'Onyx (Man - Lower Voice)'},
-        {value: 2, voice: 'Onyx (Man - Lower Voice)'},
-        {value: 3, voice: 'Onyx (Man - Lower Voice)'},
-    ]
+        {
+            value: 'onyx', 
+            name: 'Onyx', 
+            description: 'Male voice, lower tone',
+            showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
+        },
+        {
+            value: 'nova', 
+            name: 'Nova', 
+            description: 'Teacher-like, engaging',
+            showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
+        },
+        {
+            value: 'ivy', 
+            name: 'Ivy', 
+            description: 'Young girl, cheerful',
+            showForActivities: ['1', '2', '5', '6'] // Only for specific activities
+        }
+    ];
 
-    voiceTypes.forEach(type => {
-        const optionElement = document.createElement('option');
-        optionElement.value = type.value;
-        optionElement.textContent = type.voice;
+    // Create radio buttons for each voice
+    voiceTypes.forEach(voice => {
+        const radioWrapper = document.createElement("div");
+        radioWrapper.classList.add("voice-radio-wrapper");
+        radioWrapper.setAttribute('data-voice', voice.value);
+        radioWrapper.style.display = 'block'; // Always visible
 
-        selectVoice.appendChild(optionElement)
+        const radioInput = document.createElement("input");
+        radioInput.type = "radio";
+        radioInput.name = "voice_type";
+        radioInput.value = voice.value;
+        radioInput.id = `voice-${voice.value}`;
+        radioInput.classList.add("voice-radio");
+        radioInput.disabled = true; // Disabled by default
+
+        const radioLabel = document.createElement("label");
+        radioLabel.setAttribute('for', `voice-${voice.value}`);
+        radioLabel.classList.add("voice-radio-label");
+
+        const voiceInfo = document.createElement("div");
+        voiceInfo.classList.add("voice-info");
+
+        const voiceName = document.createElement("span");
+        voiceName.classList.add("voice-name");
+        voiceName.textContent = voice.name;
+
+        const voiceDesc = document.createElement("span");
+        voiceDesc.classList.add("voice-description");
+        voiceDesc.textContent = `(${voice.description})`;
+
+        voiceInfo.appendChild(voiceName);
+        voiceInfo.appendChild(voiceDesc);
+
+        const speakerIcon = document.createElement("ion-icon");
+        speakerIcon.name = "volume-high-outline";
+        speakerIcon.classList.add("speaker-icon");
+        speakerIcon.setAttribute('data-voice', voice.value);
+
+        radioLabel.appendChild(radioInput);
+        radioLabel.appendChild(voiceInfo);
+        radioLabel.appendChild(speakerIcon);
+
+        radioWrapper.appendChild(radioLabel);
+        voiceTypeContainer.appendChild(radioWrapper);
+
+        // Speaker icon click handler to play voice sample
+        speakerIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            playVoiceSample(voice.value);
+        });
+    });
+
+    // Function to update voice options based on selected activity
+    function updateVoiceOptions(activityValue) {
+        const allRadioInputs = document.querySelectorAll('.voice-radio-wrapper > label > input');
+
+        allRadioInputs.forEach(input => {
+            input.disabled = false; // Enable all by default
+        });
+
+        if (activityValue === '') {
+            allRadioInputs.forEach(input => {
+                input.disabled = true; 
+            });
+
+            return
+        }
+
+        // Ivy is disabled if the activity is NOT allowed
+        const ivyInput = document.getElementById('voice-ivy');
+        const allowedActivitiesForIvy = ['1', '2', '5', '6'];
+        if (!allowedActivitiesForIvy.includes(activityValue)) {
+            ivyInput.disabled = true;
+            ivyInput.checked = false; 
+        }
+    }
+
+
+    // Function to play voice sample
+    function playVoiceSample(voiceType) {
+        const voiceSamples = {
+            onyx: '/static/voice_samples/onyx.mp3',
+            nova: '/static/voice_samples/nova.mp3',
+            ivy: '/static/voice_samples/ivy.mp3'
+        };
+
+        const sampleSrc = voiceSamples[voiceType];
+
+        if (!sampleSrc) {
+            notification.notify("Voice sample not available", "error");
+            return;
+        }
+
+        // Stop any currently playing sample
+        if (currentPreviewAudio) {
+            currentPreviewAudio.pause();
+            currentPreviewAudio.currentTime = 0;
+        }
+
+        currentPreviewAudio = new Audio(sampleSrc);
+        currentPreviewAudio.volume = 1.0;
+
+        currentPreviewAudio.play().catch(err => {
+            console.error("Audio play error:", err);
+            notification.notify("Unable to play voice sample", "error");
+        });
+    }
+
+    // Listen to activity selection changes
+    selectContent.addEventListener('change', (e) => {
+        updateVoiceOptions(e.target.value);
     });
     
     contentTypeContainer.appendChild(selectContent);
-    contentTypeContainer.appendChild(selectVoice);
+    contentTypeContainer.appendChild(voiceTypeContainer);
     createContent.appendChild(contentTypeContainer);
     createContent.appendChild(submitContentButton);
     document.body.appendChild(contentContainer);
@@ -165,7 +290,10 @@ function createContent(){
         const activityExists = Array.from(allContentNames).some(
             (name) => name.innerHTML.trim().toLowerCase() === titleInput
         );
-        if (titleInput === "" || selectContent.value === "" || selectVoice.value === "") {
+        
+        const selectedVoice = document.querySelector('input[name="voice_type"]:checked');
+        
+        if (titleInput === "" || selectContent.value === "" || !selectedVoice) {
             notification.notify("Please fill out all fields.", "error");
             return;
         }

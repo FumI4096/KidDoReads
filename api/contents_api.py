@@ -15,8 +15,9 @@ def create_content():
             teacher_id = request.form.get('teacher_id')
             content_title = request.form.get('content_title')
             content_type = request.form.get('content_type')
+            voice_type = request.form.get('voice_type')
             
-            status, message, content_id = db.create_content(int(teacher_id), content_title, content_type)
+            status, message, content_id = db.create_content(int(teacher_id), content_title, content_type, voice_type)
             
             if status:
                 return jsonify({"status": status, "message": message, "content_id": content_id})
@@ -45,6 +46,7 @@ def get_contents(teacher_id):
                     "tts_json": quiz_tts_json,
                     "content_type": row[4],
                     "content_type_name": row[5],
+                    "voice": row[6],
                     "isHidden": row[6]
                 })
                 
