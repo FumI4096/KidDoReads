@@ -18,8 +18,6 @@ const chatbotButton = document.getElementById('chatbot-button')
 const notification = new Notification();
 let isInMainSection = false;
 
-const assignedSections = await decrypt(sessionStorage.getItem("assignedSections"))
-
 const id = await decrypt(sessionStorage.getItem("id"))
 let currentPreviewAudio = null;
 
@@ -1165,7 +1163,7 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
  * 
  */
 
-function attemptProgressHeader(headerContainer, content_name, content_id, table_header, table_body, category) {
+async function attemptProgressHeader(headerContainer, content_name, content_id, table_header, table_body, category) {
     const backToMainProgressButton = document.createElement('button');
     backToMainProgressButton.textContent = 'Back';
     backToMainProgressButton.setAttribute('id', 'back-to-main-progress-button');
@@ -1195,7 +1193,7 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
         {value: 5, text: 'Least Attempts'}
     ];
 
-    const sectionOptions = JSON.parse(assignedSections)
+    const sectionOptions = JSON.parse(await decrypt(sessionStorage.getItem("assignedSections")));
 
     console.log(sectionOptions)
 
@@ -1419,7 +1417,7 @@ async function restorePreviousState(table_header, table_body) {
         // Going back to student scores view
         table_header.appendChild(getScoreHeaderRow());
         
-        const headerContainer = attemptProgressHeader(
+        const headerContainer = await attemptProgressHeader(
             getProgressEventsHeader(), 
             previousState.data.content_name, 
             previousState.data.content_id, 
@@ -1431,7 +1429,7 @@ async function restorePreviousState(table_header, table_body) {
         mainSection.insertBefore(headerContainer, mainSection.firstChild);
 
         // Re-fetch data with default filter using appropriate endpoint
-        const firstIndexSection = JSON.parse(assignedSections)[0]?.sectionid || 0;
+        const firstIndexSection = JSON.parse(await decrypt(sessionStorage.getItem("assignedSections")))[0]?.sectionid || 0;
         const url = previousState.data.category === 'assessments'
             ? `/attempts/assessments/${previousState.data.content_id}/filter/0/${firstIndexSection}`
             : `/attempts/activities/${previousState.data.content_id}/filter/0/${firstIndexSection}`;
@@ -1575,7 +1573,7 @@ async function getStudentProgressByContentType(teacherId, contentType) {
  * 
  */
 
-function displayAttemptProgress(table_header, table_body, content_id, content_title, completed_students, total_students, progress, teacherId, contentType, category) {
+async function displayAttemptProgress(table_header, table_body, content_id, content_title, completed_students, total_students, progress, teacherId, contentType, category) {
     const dataRow = document.createElement('tr');
     const contentTitleData = document.createElement('td');
     const completedStudentsData = document.createElement('td');
@@ -1608,7 +1606,7 @@ function displayAttemptProgress(table_header, table_body, content_id, content_ti
         });
 
         // Use appropriate endpoint based on category
-        const firstIndexSection = JSON.parse(assignedSections)[0]?.sectionid || 0;
+        const firstIndexSection = JSON.parse(await decrypt(sessionStorage.getItem("assignedSections")))[0]?.sectionid || 0;
         const url = category === 'assessments'
             ? `/attempts/assessments/${content_id}/filter/0/${firstIndexSection}`
             : `/attempts/activities/${content_id}/filter/0/${firstIndexSection}`;
@@ -1632,7 +1630,7 @@ function displayAttemptProgress(table_header, table_body, content_id, content_ti
         
         table_header.appendChild(getScoreHeaderRow());
         
-        const headerContainer = attemptProgressHeader(
+        const headerContainer = await attemptProgressHeader(
             getProgressEventsHeader(), 
             content_title, 
             content_id, 
