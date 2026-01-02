@@ -376,7 +376,39 @@ main > section{
     cursor: pointer;
 }
 
+#filter-form{
+    display: flex;
+    gap: 0.3rem;
+    justify-content: center;
+    align-items: center;
+
+    & > button {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        font-size: 0.87rem;
+        border: none;
+        border-radius: 3px;   
+        box-shadow: var(--box-shadow-1);
+        font-family: 'Regular-Poppins';
+        cursor: pointer;
+        margin-right: auto;
+
+        &:hover {
+            background-color: var(--primary-color-200);
+        }
+    }
+}
+
 #filter{
+    width: 150px;
+}
+
+#section-filter{
+    width: 310px;
+}
+
+#filter, #section-filter{
     -webkit-appearance: none;
     -moz-appearance: none; 
     appearance: none; 
@@ -388,7 +420,6 @@ main > section{
     background-position: right 10px center;
     height: 100%;
     outline: none;
-    width: 170px;
     padding: 0.7rem 0.7rem;
     color: black;
     box-shadow: var(--box-shadow-1);
@@ -870,8 +901,13 @@ td > p{
         width: 100%;
     }
     #table-container table {
-        min-width: 650px; 
-        width: auto; /* Changed from 100% to auto */
+        min-width: 800px; 
+    }
+    
+    #filter-form{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 
     #delete-form{
