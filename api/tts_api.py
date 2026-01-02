@@ -43,7 +43,8 @@ def generate_speech():
         content_type = data.get('content_type')
         voice_type = data.get('voice') 
         
-        voice = "onyx" if voice_type == 1 else "nova"
+        
+        voice = "onyx" if int(voice_type) == 1 else "nova"
         
         final_prompt = tts_prompt(content_type)
         
@@ -127,7 +128,7 @@ def generate_speech_kid():
         if content_type in [1, 2]:
             pitch = 1.0 
         else:
-            pitch = 1.2 
+            pitch = 1.1 
         
         print(get_speechgen_key())
         payload = {

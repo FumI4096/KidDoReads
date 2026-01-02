@@ -2080,5 +2080,11 @@ async function conversationStructure(){
 }
 
 loginSuccess()
-
 moveStudentInfo();
+
+sessionStorage.removeItem('originalActivityTitle');
+sessionStorage.removeItem('questions');
+sessionStorage.removeItem('currentActivityId');
+sessionStorage.removeItem('currentActivityTitle');
+sessionStorage.removeItem('ttsInputs');
+sessionStorage.removeItem("contentType");

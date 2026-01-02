@@ -28,7 +28,7 @@ class SpeechManager{
                     text: input,
                     id: id,
                     content_type: content_type,
-                    voice: voice != null ? voice : null
+                    voice: voice
                 })
             })
 
