@@ -163,6 +163,12 @@ def get_tts_key():
 def get_chatbot_key():
     return current_app.config['CHATBOT_KEY']
 
+def get_speechgen_key():
+    return current_app.config['SPEECHGEN_KEY']
+
+def get_speechgen_email():
+    return current_app.config['SPEECHGEN_EMAIL']
+
 def recalculate_scores_on_student_attempts(student_id, content_id):
     """Recalculate and update the scores for a given content item."""
     db = get_db()

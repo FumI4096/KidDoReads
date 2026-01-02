@@ -1,5 +1,6 @@
 class SpeechManager{
     #generateUrl = "/api/generate-speech"
+    #generateKidUrl = '/api/generate-speech-kid'
     #deleteUrl = "/api/delete-speech"
     #text = ""
     #id = ""
@@ -9,9 +10,16 @@ class SpeechManager{
     #progressInterval = null
     #currentButton = null
 
-    async generateSpeech(input, id, content_type){
+    async generateSpeech(input, id, content_type, voice){
         try{
-            const response = await fetch(this.#generateUrl, {
+            let url = ""
+            if(voice == 1 || voice == 2){
+                url = this.#generateUrl
+            }
+            else{
+                url = this.#generateKidUrl
+            }
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -19,7 +27,8 @@ class SpeechManager{
                 body: JSON.stringify({
                     text: input,
                     id: id,
-                    content_type: content_type
+                    content_type: content_type,
+                    voice: voice != null ? voice : null
                 })
             })
 

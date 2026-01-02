@@ -26,6 +26,7 @@ const teacherId = await decrypt(sessionStorage.getItem("id"))
 const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
 const ttsId = await decrypt(sessionStorage.getItem("currentTtsId"))
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
+const voiceId = sessionStorage.getItem("currentVoiceId")
 
 const categoryDisplay = document.getElementById("category-display")
 const contentDisplay = document.getElementById("content-display")
@@ -237,7 +238,7 @@ ttsConvertButton.addEventListener("click", async () => {
             }
         }
         
-        await keyWordTtsObj.generateSpeech(`\(${prefixSuffixInput.value.trim()}\), \(${prefixSuffixMeaningInput.value.trim()}\), \(${questionInput.value}\)`, ttsId.toString(), 4);
+        await keyWordTtsObj.generateSpeech(`\(${prefixSuffixInput.value.trim()}\), \(${prefixSuffixMeaningInput.value.trim()}\), \(${questionInput.value}\)`, ttsId.toString(), 4, voiceId);
 
         originalQuestionText = questionInput.value.trim();
         originalPrefixSuffix = prefixSuffixInput.value.trim();

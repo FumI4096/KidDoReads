@@ -36,6 +36,8 @@ init_cache(app)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['TTS_KEY'] = os.getenv('TTS_API_KEY')
 app.config['CHATBOT_KEY'] = os.getenv('CHATBOT_API_KEY')
+app.config['SPEECHGEN_KEY'] = os.getenv('SPEECHGEN_KEY')
+app.config['SPEECHGEN_EMAIL'] = os.getenv('SPEECHGEN_EMAIL')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['UPLOAD_IMAGE_PICTURE_CLUES'] = UPLOAD_IMAGE_PICTURE_CLUES
 app.config['UPLOAD_AUDIO'] = UPLOAD_AUDIO

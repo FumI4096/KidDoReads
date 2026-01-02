@@ -25,6 +25,7 @@ const teacherId = await decrypt(sessionStorage.getItem("id"))
 const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
 const ttsId = await decrypt(sessionStorage.getItem("currentTtsId"))
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
+const voiceId = sessionStorage.getItem("currentVoiceId")
 
 const categoryDisplay = document.getElementById("category-display")
 const contentDisplay = document.getElementById("content-display")
@@ -284,7 +285,7 @@ ttsConvertButton1.addEventListener("click", async () => {
             }
         }
         
-        await keyWordTtsObj.generateSpeech(keyWordInput.value, ttsId.toString(), 3);
+        await keyWordTtsObj.generateSpeech(keyWordInput.value, ttsId.toString(), 3, voiceId);
         originalKeyWordText = keyWordInput.value.trim();
 
         console.log("Generated Speech for Keyword: " + keyWordTtsObj.getAudioFile())
@@ -350,7 +351,7 @@ ttsConvertButton2.addEventListener("click", async () => {
             }
         }
         
-        await sentenceTtsObj.generateSpeech(sentenceInput.value, ttsId.toString(), 3);
+        await sentenceTtsObj.generateSpeech(sentenceInput.value, ttsId.toString(), 3, voiceId);
         originalSentenceText = sentenceInput.value.trim();
 
         console.log("Generated Speech for Sentence: " + sentenceTtsObj.getAudioFile())

@@ -25,6 +25,7 @@ const teacherId = await decrypt(sessionStorage.getItem("id"))
 const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
 const ttsId = await decrypt(sessionStorage.getItem("currentTtsId"))
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
+const voiceId = sessionStorage.getItem("currentVoiceId")
 
 const categoryDisplay = document.getElementById("category-display")
 const contentDisplay = document.getElementById("content-display")
@@ -250,7 +251,7 @@ ttsConvertButton.addEventListener("click", async () => {
         }
         
         // Generate new speech
-        await keyWordTtsObj.generateSpeech(`\(${passageTitle.value.trim()}\), \(${passage.value.trim()}\)`, ttsId.toString(), 5);
+        await keyWordTtsObj.generateSpeech(`\(${passageTitle.value.trim()}\), \(${passage.value.trim()}\)`, ttsId.toString(), 5, voiceId);
 
         originalQuestionText = passage.value.trim();
         originalPassageTitle = passageTitle.value.trim();
