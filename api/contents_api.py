@@ -47,7 +47,7 @@ def get_contents(teacher_id):
                     "content_type": row[4],
                     "content_type_name": row[5],
                     "voice": row[6],
-                    "isHidden": row[6]
+                    "isHidden": row[7]
                 })
                 
             if status:
