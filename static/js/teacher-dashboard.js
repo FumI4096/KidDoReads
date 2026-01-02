@@ -137,19 +137,22 @@ function createContent(){
 
     const voiceTypes = [
         {
-            value: 'onyx', 
+            id: 'onyx', 
+            value: 1,
             name: 'Onyx', 
             description: 'Male voice, lower tone',
             showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
         },
         {
-            value: 'nova', 
+            id: 'nova', 
+            value: 2,
             name: 'Nova', 
             description: 'Teacher-like, engaging',
             showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
         },
         {
-            value: 'ivy', 
+            id: 'ivy', 
+            value: 3,
             name: 'Ivy', 
             description: 'Young girl, cheerful',
             showForActivities: ['1', '2', '5', '6'] // Only for specific activities
@@ -160,19 +163,19 @@ function createContent(){
     voiceTypes.forEach(voice => {
         const radioWrapper = document.createElement("div");
         radioWrapper.classList.add("voice-radio-wrapper");
-        radioWrapper.setAttribute('data-voice', voice.value);
+        radioWrapper.setAttribute('data-voice', voice.id);
         radioWrapper.style.display = 'block'; // Always visible
 
         const radioInput = document.createElement("input");
         radioInput.type = "radio";
         radioInput.name = "voice_type";
         radioInput.value = voice.value;
-        radioInput.id = `voice-${voice.value}`;
+        radioInput.id = `voice-${voice.id}`;
         radioInput.classList.add("voice-radio");
         radioInput.disabled = true; // Disabled by default
 
         const radioLabel = document.createElement("label");
-        radioLabel.setAttribute('for', `voice-${voice.value}`);
+        radioLabel.setAttribute('for', `voice-${voice.id}`);
         radioLabel.classList.add("voice-radio-label");
 
         const voiceInfo = document.createElement("div");
@@ -192,7 +195,7 @@ function createContent(){
         const speakerIcon = document.createElement("ion-icon");
         speakerIcon.name = "volume-high-outline";
         speakerIcon.classList.add("speaker-icon");
-        speakerIcon.setAttribute('data-voice', voice.value);
+        speakerIcon.setAttribute('data-voice', voice.id);
 
         radioLabel.appendChild(radioInput);
         radioLabel.appendChild(voiceInfo);
@@ -326,6 +329,7 @@ function createContent(){
                 sessionStorage.setItem("currentActivityId", await encrypt(result.content_id))
                 await insertTtsId(await decrypt(sessionStorage.getItem("currentActivityId")))
                 editGamePageTo(parseInt(selectContent.value))
+                sessionStorage.setItem("currentVoiceId", selectedVoice.value)
             }
             else{
                 console.log(result.message)
@@ -406,7 +410,7 @@ async function showContents() {
         if (response.ok && result.status){
             if (result.data && result.data.length > 0) {
                 result.data.forEach(data => {
-                    addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.tts_json, data.content_type, data.content_type_name, data.isHidden)
+                    addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.tts_json, data.content_type, data.content_type_name, data.voice, data.isHidden)
                 })
             }
             else{
@@ -662,7 +666,7 @@ async function addAssessment(assessment_container, assessment_id, assessment_tit
     newContent.appendChild(buttonActionContainer);
     assessment_container.appendChild(newContent);
 }
-async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
+async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, voice_type, content_hidden){
     const encryptedContentId = await encrypt(content_id)
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
@@ -829,6 +833,7 @@ async function addContent(content_container, content_id, content_title, content_
         sessionStorage.setItem("currentTtsId", encryptedContentId)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
+        sessionStorage.setItem("currentVoiceId", voice_type)
         editGamePageTo(content_type)
     })
 
