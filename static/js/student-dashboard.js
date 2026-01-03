@@ -382,7 +382,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         starIcon.name = "star";
         starIcon.style.color = "var(--green-color)"
     }
-    activityName.appendChild(starIcon);
+    activityName.prepend(starIcon);
     teacherName.innerHTML = teacher_name;
     contentType.innerHTML = getContentName(content_type)
     categoryType.innerHTML = category_type;
@@ -577,6 +577,8 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 }
 
 function addAssessment(assessment_id, assessment_title, assessment_details, tts_json, assessment_type, status, category_type) {
+    console.log(assessment_title)
+    console.log(status)
     const starIcon = document.createElement('ion-icon');
     const newContent = document.createElement("div");
     const assessmentName = document.createElement("p");
@@ -606,7 +608,7 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
         starIcon.name = "star";
         starIcon.style.color = "var(--green-color)"
     }
-    assessmentName.appendChild(starIcon);
+    assessmentName.prepend(starIcon);
 
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add("button-container");
