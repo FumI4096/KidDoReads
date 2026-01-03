@@ -558,7 +558,7 @@ function displaySectionRecords(sections, teachers){
         const assignSectionButton = document.createElement('button');
         assignSectionButton.textContent = "Assign Section";
         const checkAssignedSectionButton = document.createElement('button');
-        checkAssignedSectionButton.textContent = "Check Assigned Sections";
+        checkAssignedSectionButton.textContent = "Check Section";
         const saveSectionsButton = document.createElement('button');
         const cancelSectionsButton = document.createElement('button');
 
