@@ -302,6 +302,7 @@ async function showContent(contentTypeNum) {
                     data.content_json,
                     data.tts_json,
                     data.content_type,
+                    data.status,
                     "Activity"
                 );
             });
@@ -320,7 +321,7 @@ async function showAssessment(contentTypeNum) {
     const loadingId = `loading-assessment-${Date.now()}`;
     notification.notify("Loading assessments...", "loading", null, null, loadingId);
 
-    const url = `/students/assessments/${contentTypeNum}`;
+    const url = `/students/assessments/${contentTypeNum}/${id}`;
     try {
         const response = await fetch(url);
         const result = await response.json();
@@ -335,7 +336,8 @@ async function showAssessment(contentTypeNum) {
                     data.assessment_json,
                     data.tts_json,
                     data.assessment_type,
-                    "Assessment",
+                    data.status,
+                    "Assessment"
                 );
             });
         } else {
@@ -348,7 +350,8 @@ async function showAssessment(contentTypeNum) {
     }
 }
 
-function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, category_type) {
+function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, status, category_type) {
+    const starIcon = document.createElement('ion-icon');
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const teacherName = document.createElement("p");
@@ -363,10 +366,28 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
     contentType.classList.add("category-type")
     categoryType.classList.add("category-type");
     activityName.innerHTML = content_title;
+
+    if (status == 0){
+        //Activity is new or not yet started
+        starIcon.name = "star";
+        starIcon.style.color = "var(--secondary-color)"
+    }
+    else if (status == 1){
+        //Activity is in progress or unfinished
+        starIcon.name = "star-half";
+        starIcon.style.color = "var(--secondary-color)"
+    }
+    else if (status == 3){
+        //Activity is completed
+        starIcon.name = "star";
+        starIcon.style.color = "var(--green-color)"
+    }
+    activityName.appendChild(starIcon);
     teacherName.innerHTML = teacher_name;
     contentType.innerHTML = getContentName(content_type)
     categoryType.innerHTML = category_type;
     newContent.append(activityName, teacherName, categoryType, contentType);
+    console.log(status)
 
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add("button-container");
@@ -555,7 +576,8 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 
 }
 
-function addAssessment(assessment_id, assessment_title, assessment_details, tts_json, assessment_type, category_type) {
+function addAssessment(assessment_id, assessment_title, assessment_details, tts_json, assessment_type, status, category_type) {
+    const starIcon = document.createElement('ion-icon');
     const newContent = document.createElement("div");
     const assessmentName = document.createElement("p");
     const assessmentType = document.createElement("p")
@@ -568,6 +590,23 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
     assessmentName.innerHTML = assessment_title;
     assessmentType.innerHTML = getContentName(assessment_type)
     newContent.append(assessmentName, assessmentType);
+
+    if (status == 0){
+        //Activity is new or not yet started
+        starIcon.name = "star";
+        starIcon.style.color = "var(--secondary-color)"
+    }
+    else if (status == 1){
+        //Activity is in progress or unfinished
+        starIcon.name = "star-half";
+        starIcon.style.color = "var(--secondary-color)"
+    }
+    else if (status == 3){
+        //Activity is completed
+        starIcon.name = "star";
+        starIcon.style.color = "var(--green-color)"
+    }
+    assessmentName.appendChild(starIcon);
 
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add("button-container");
@@ -896,6 +935,37 @@ moveStudentInfo();
 (() => {
     // label element 
     let sectionLabel = document.getElementById('section-label');
+    const legendStars = document.createElement('div');
+    legendStars.id = 'legend-stars';
+    const newStar = document.createElement('div')
+    const newStarIcon = document.createElement('ion-icon');
+    newStarIcon.name = "star";
+    newStarIcon.style.color = "var(--secondary-color)";
+    const newStarStatement = document.createElement('span');
+    newStarStatement.textContent = "New Content/Not Yet Started,";
+    newStar.appendChild(newStarIcon);
+    newStar.appendChild(newStarStatement);
+    legendStars.appendChild(newStar);
+    const inProgressStar = document.createElement('div')
+    const inProgressStarIcon = document.createElement('ion-icon');
+    inProgressStarIcon.name = "star-half";
+    inProgressStarIcon.style.color = "var(--secondary-color)";
+    const inProgressStarStatement = document.createElement('span');
+    inProgressStarStatement.textContent = "In Progress/Unfinished,";
+    inProgressStar.appendChild(inProgressStarIcon);
+    inProgressStar.appendChild(inProgressStarStatement);
+    legendStars.appendChild(inProgressStar);
+    
+    const completedStar = document.createElement('div')
+    const completedStarIcon = document.createElement('ion-icon');
+    completedStarIcon.name = "star";
+    completedStarIcon.style.color = "var(--green-color)";
+    const completedStarStatement = document.createElement('span');
+    completedStarStatement.textContent = "Completed";
+    completedStar.appendChild(completedStarIcon);
+    completedStar.appendChild(completedStarStatement);
+    legendStars.appendChild(completedStar);
+
     if (!sectionLabel) {
         sectionLabel = document.createElement('p');
         sectionLabel.id = 'section-label';
@@ -904,6 +974,7 @@ moveStudentInfo();
         // Insert label before the main display area
         const displayArea = document.getElementById('display-contents');
         displayArea.parentNode.insertBefore(sectionLabel, displayArea);
+        displayArea.parentNode.insertBefore(legendStars, sectionLabel);
     }
     
     // Add click listeners to all dropdown items

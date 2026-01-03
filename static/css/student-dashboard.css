@@ -531,6 +531,27 @@ main > section {
   }
 }
 
+#legend-stars {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+
+  & > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+
+    & > span {
+      color: black;
+      font-family: 'Regular-Poppins';
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  }
+}
+
 .content:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
@@ -540,6 +561,12 @@ main > section {
   font-family: 'Bold-Poppins';
   font-size: 1.3rem;
   color: var(--white-text);
+  display: flex;
+  align-items: center;
+
+  & > ion-icon {
+    margin-left: 4px;
+  }
 }
 
 .content .teacher-name {

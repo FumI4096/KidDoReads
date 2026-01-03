@@ -17,6 +17,8 @@
     --primary-accent-color-1: linear-gradient(var(--primary-color-200), var(--primary-color));
     --primary-gradient-1: linear-gradient(to right, var(--primary-color-300) 60%, var(--primary-color));
 
+    --green-color: #26d684;
+
     /* Semantic Colors */
 
     --success-color: #FDAD16;
