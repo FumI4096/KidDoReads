@@ -34,31 +34,18 @@ main > section{
     display:flex;
     flex-direction: column;
 
-    & > .content-header {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        padding: 3rem;
-        border-radius: 20px;
-        background-image: var(--light-gradient-1);
-        z-index: 1;
-        font-weight: 600;
-
-        & > .header-teacher-greeting {
-            font-family: 'Medium-Poppins';
-            margin-top: 5px;
-            color: var(--black-text);
-            font-size: 2rem;
-        }
-
-        & > .header-welcome-text {
-            font-family: 'Extra-Light-Poppins';
-            color: var(--black-text);
-            font-size: 1rem;
-            margin-top: 0.5rem;
-        }
+#content-container{
+    color: var(--white-text);
+    gap: 1rem;
+    padding: 1rem;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+        width: 4px;
     }
 
     & > #content-container{
@@ -90,6 +77,30 @@ main > section{
     box-shadow: var(--box-shadow-1);
     transition: var(--transition-ease);
     
+    & > .activity-type{
+        font-family: 'Light-Poppins';
+        font-size: 0.8rem;
+        margin-bottom: auto;
+    }
+    & > .activity-name{
+        font-family: 'Bold-Poppins';
+        font-size: 1.3rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow-1);
+    transition: var(--transition-ease);
+
     & > .activity-type{
         font-family: 'Light-Poppins';
         font-size: 0.8rem;
