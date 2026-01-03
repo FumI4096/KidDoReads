@@ -2,9 +2,32 @@ from functools import wraps
 from flask import abort, current_app
 from flask_login import current_user
 import uuid
+import os
+import boto3
 from database.db import Database 
+import json
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+def get_s3_client():
+    """Initialize and return S3 client for DigitalOcean Spaces"""
+    print("=== Spaces Config Debug ===")
+    print(f"Endpoint: {os.getenv('SPACES_ENDPOINT')}")
+    print(f"Region: {os.getenv('SPACES_REGION')}")
+    print(f"Key exists: {bool(os.getenv('SPACES_KEY'))}")
+    print(f"Secret exists: {bool(os.getenv('SPACES_SECRET'))}")
+    return boto3.client('s3',
+        region_name=os.getenv('SPACES_REGION', 'sfo3'),
+        endpoint_url=os.getenv('SPACES_ENDPOINT', 'https://sfo3.digitaloceanspaces.com'),
+        aws_access_key_id=os.getenv('SPACES_KEY'),
+        aws_secret_access_key=os.getenv('SPACES_SECRET')
+    )
+
+def get_spaces_url(filename, folder='uploads'):
+    """Generate the public URL for a file in Spaces"""
+    bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+    region = os.getenv('SPACES_REGION', 'sfo3')
+    return f"https://{bucket_name}.{region}.cdn.digitaloceanspaces.com/{folder}/{filename}"
 
 def role_required(*roles):
     def decorator(f):
@@ -35,9 +58,9 @@ def tts_prompt(contentType):
 
             'Prefix coming up:'
 
-            'Here’s the prefix:'
+            'Here's the prefix:'
 
-            'Let’s check out this prefix:'
+            'Let's check out this prefix:'
 
             'Suffix:'
 
@@ -58,7 +81,7 @@ def tts_prompt(contentType):
 
             'What it stands for is:'
 
-            'Here’s what it means:'
+            'Here's what it means:'
 
             Then read the meaning in an upbeat tone. After that, pause for 2 seconds again.
             
@@ -139,3 +162,43 @@ def get_tts_key():
 
 def get_chatbot_key():
     return current_app.config['CHATBOT_KEY']
+
+def get_speechgen_key():
+    return current_app.config['SPEECHGEN_KEY']
+
+def get_speechgen_email():
+    return current_app.config['SPEECHGEN_EMAIL']
+
+def recalculate_scores_on_student_attempts(student_id, content_id):
+    """Recalculate and update the scores for a given content item."""
+    db = get_db()
+    content_answer = db.get_content_answer(content_id)
+    student_attempt_answers = db.get_student_activity_attempt_choices(student_id)
+    # Extract the correct answer
+    correct_answer_str = content_answer[1][0][0]  # Gets '["b", "b", "a", "a"]'
+    correct_answer = json.loads(correct_answer_str)  # Gets ["b", "b", "a", "a"]
+    
+    new_scores = []  # List to store new scores
+
+    for student_data in student_attempt_answers[1]:
+        attemptid = student_data[0]
+        current_score = student_data[1]
+        student_answer_str = student_data[2]
+        
+        # Parse student answer
+        student_answer_dict = json.loads(student_answer_str)
+        student_answer = [student_answer_dict[str(i)] for i in range(len(student_answer_dict))]
+        
+        new_score = sum(1 for i in range(len(correct_answer)) if i < len(student_answer) and correct_answer[i] == student_answer[i])
+        
+        print(f"\nAttempt ID: {attemptid}")
+        print(f"  Current Score: {current_score}")
+        print(f"  Student Answer: {student_answer}")
+        print(f"  New Score: {new_score}")
+        
+        new_scores.append(new_score)
+    
+    print("Content Answer:", correct_answer)
+    print("Student Attempt Answers:", new_scores)
+    
+    return new_scores

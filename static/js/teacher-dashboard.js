@@ -18,8 +18,8 @@ const chatbotButton = document.getElementById('chatbot-button')
 const notification = new Notification();
 let isInMainSection = false;
 
-
 const id = await decrypt(sessionStorage.getItem("id"))
+let currentPreviewAudio = null;
 
 
 logOutButton.addEventListener('click', () => {
@@ -125,8 +125,156 @@ function createContent(){
 
         selectContent.appendChild(optionElement)
     });
+
+    // Voice radio buttons container
+    const voiceTypeContainer = document.createElement("div");
+    voiceTypeContainer.setAttribute('id', "voice-type-container");
+    
+    const voiceTypeLabel = document.createElement("p");
+    voiceTypeLabel.textContent = "Voice Type";
+    voiceTypeLabel.setAttribute('id', 'voice-type-label');
+    voiceTypeContainer.appendChild(voiceTypeLabel);
+
+    const voiceTypes = [
+        {
+            id: 'onyx', 
+            value: 1,
+            name: 'Onyx', 
+            description: 'Male voice, lower tone',
+            showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
+        },
+        {
+            id: 'nova', 
+            value: 2,
+            name: 'Nova', 
+            description: 'Teacher-like, engaging',
+            showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
+        },
+        {
+            id: 'ivy', 
+            value: 3,
+            name: 'Ivy', 
+            description: 'Young girl, cheerful',
+            showForActivities: ['1', '2', '5', '6'] // Only for specific activities
+        }
+    ];
+
+    // Create radio buttons for each voice
+    voiceTypes.forEach(voice => {
+        const radioWrapper = document.createElement("div");
+        radioWrapper.classList.add("voice-radio-wrapper");
+        radioWrapper.setAttribute('data-voice', voice.id);
+        radioWrapper.style.display = 'block'; // Always visible
+
+        const radioInput = document.createElement("input");
+        radioInput.type = "radio";
+        radioInput.name = "voice_type";
+        radioInput.value = voice.value;
+        radioInput.id = `voice-${voice.id}`;
+        radioInput.classList.add("voice-radio");
+        radioInput.disabled = true; // Disabled by default
+
+        const radioLabel = document.createElement("label");
+        radioLabel.setAttribute('for', `voice-${voice.id}`);
+        radioLabel.classList.add("voice-radio-label");
+
+        const voiceInfo = document.createElement("div");
+        voiceInfo.classList.add("voice-info");
+
+        const voiceName = document.createElement("span");
+        voiceName.classList.add("voice-name");
+        voiceName.textContent = voice.name;
+
+        const voiceDesc = document.createElement("span");
+        voiceDesc.classList.add("voice-description");
+        voiceDesc.textContent = `(${voice.description})`;
+
+        voiceInfo.appendChild(voiceName);
+        voiceInfo.appendChild(voiceDesc);
+
+        const speakerIcon = document.createElement("ion-icon");
+        speakerIcon.name = "volume-high-outline";
+        speakerIcon.classList.add("speaker-icon");
+        speakerIcon.setAttribute('data-voice', voice.id);
+
+        radioLabel.appendChild(radioInput);
+        radioLabel.appendChild(voiceInfo);
+        radioLabel.appendChild(speakerIcon);
+
+        radioWrapper.appendChild(radioLabel);
+        voiceTypeContainer.appendChild(radioWrapper);
+
+        // Speaker icon click handler to play voice sample
+        speakerIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            playVoiceSample(voice.value);
+        });
+    });
+
+    // Function to update voice options based on selected activity
+    function updateVoiceOptions(activityValue) {
+        const allRadioInputs = document.querySelectorAll('.voice-radio-wrapper > label > input');
+
+        allRadioInputs.forEach(input => {
+            input.disabled = false; // Enable all by default
+        });
+
+        if (activityValue === '') {
+            allRadioInputs.forEach(input => {
+                input.disabled = true; 
+            });
+
+            return
+        }
+
+        // Ivy is disabled if the activity is NOT allowed
+        const ivyInput = document.getElementById('voice-ivy');
+        const allowedActivitiesForIvy = ['1', '2', '5', '6'];
+        if (!allowedActivitiesForIvy.includes(activityValue)) {
+            ivyInput.disabled = true;
+            ivyInput.checked = false; 
+        }
+    }
+
+
+    // Function to play voice sample
+    function playVoiceSample(voiceType) {
+        const voiceSamples = {
+            onyx: '/static/voice_samples/onyx.mp3',
+            nova: '/static/voice_samples/nova.mp3',
+            ivy: '/static/voice_samples/ivy.mp3'
+        };
+
+        const sampleSrc = voiceSamples[voiceType];
+
+        if (!sampleSrc) {
+            notification.notify("Voice sample not available", "error");
+            return;
+        }
+
+        // Stop any currently playing sample
+        if (currentPreviewAudio) {
+            currentPreviewAudio.pause();
+            currentPreviewAudio.currentTime = 0;
+        }
+
+        currentPreviewAudio = new Audio(sampleSrc);
+        currentPreviewAudio.volume = 1.0;
+
+        currentPreviewAudio.play().catch(err => {
+            console.error("Audio play error:", err);
+            notification.notify("Unable to play voice sample", "error");
+        });
+    }
+
+    // Listen to activity selection changes
+    selectContent.addEventListener('change', (e) => {
+        updateVoiceOptions(e.target.value);
+    });
     
     contentTypeContainer.appendChild(selectContent);
+    contentTypeContainer.appendChild(voiceTypeContainer);
     createContent.appendChild(contentTypeContainer);
     createContent.appendChild(submitContentButton);
     document.body.appendChild(contentContainer);
@@ -143,7 +291,10 @@ function createContent(){
         const activityExists = Array.from(allContentNames).some(
             (name) => name.innerHTML.trim().toLowerCase() === titleInput
         );
-        if (titleInput === "" || selectContent.value === "") {
+        
+        const selectedVoice = document.querySelector('input[name="voice_type"]:checked');
+        
+        if (titleInput === "" || selectContent.value === "" || !selectedVoice) {
             notification.notify("Please fill out all fields.", "error");
             return;
         }
@@ -178,6 +329,7 @@ function createContent(){
                 sessionStorage.setItem("currentActivityId", await encrypt(result.content_id))
                 await insertTtsId(await decrypt(sessionStorage.getItem("currentActivityId")))
                 editGamePageTo(parseInt(selectContent.value))
+                sessionStorage.setItem("currentVoiceId", selectedVoice.value)
             }
             else{
                 console.log(result.message)
@@ -191,8 +343,6 @@ function createContent(){
             notification.notify("Network error. Please check your connection and try again.", "error");
         }
     });
-
-
 }
 
 async function insertTtsId(id){
@@ -223,7 +373,7 @@ async function insertTtsId(id){
     }
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
+window.addEventListener("load", async function() {
     await showUserInfo()
     await showContents()
 });
@@ -249,7 +399,9 @@ async function showContents() {
     mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
     const url = `/contents/${id}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        credentials: 'same-origin'
+    });
     const result = await response.json();
 
     try{
@@ -258,7 +410,7 @@ async function showContents() {
         if (response.ok && result.status){
             if (result.data && result.data.length > 0) {
                 result.data.forEach(data => {
-                    addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.tts_json, data.content_type, data.content_type_name, data.isHidden)
+                    addContent(contentStructure(), data.content_id, data.content_title, data.content_json, data.tts_json, data.content_type, data.content_type_name, data.voice, data.isHidden)
                 })
             }
             else{
@@ -436,7 +588,10 @@ async function showUserInfo(){
     notification.notify("Loading user information...", "loading", null, null, loadingId);
     
     const url = `/user/${id}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        credentials: 'same-origin',
+        cache: 'no-cache'
+    });
     const result = await response.json();
 
     try{
@@ -457,6 +612,9 @@ async function showUserInfo(){
                 sessionStorage.setItem("image", await encrypt(defaultProfilePicture))
                 teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
             }
+
+            sessionStorage.setItem("assignedSections", await encrypt(result.data[0].section))
+            console.log(await decrypt(sessionStorage.getItem("assignedSections")))
 
         }
         else{
@@ -508,7 +666,7 @@ async function addAssessment(assessment_container, assessment_id, assessment_tit
     newContent.appendChild(buttonActionContainer);
     assessment_container.appendChild(newContent);
 }
-async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, content_hidden){
+async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, voice_type, content_hidden){
     const encryptedContentId = await encrypt(content_id)
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
@@ -675,6 +833,7 @@ async function addContent(content_container, content_id, content_title, content_
         sessionStorage.setItem("currentTtsId", encryptedContentId)
         sessionStorage.setItem("currentActivityTitle", content_title)
         sessionStorage.setItem("originalActivityTitle", content_title)
+        sessionStorage.setItem("currentVoiceId", voice_type)
         editGamePageTo(content_type)
     })
 
@@ -930,8 +1089,7 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
                         content_title: data.assessment_title,
                         completed_students: data.completed_students,
                         total_students: data.total_students,
-                        progress: data.progress,
-                        is_hidden_from_students: false
+                        progress: data.progress
                       }
                     : data;
                 
@@ -942,8 +1100,7 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
                     normalizedData.content_title, 
                     normalizedData.completed_students, 
                     normalizedData.total_students, 
-                    normalizedData.progress, 
-                    normalizedData.is_hidden_from_students, 
+                    normalizedData.progress,  
                     teacher_id, 
                     categoryValue === 'activities' ? selectContent.value : categoryValue,
                     categoryValue // Pass the category type
@@ -977,7 +1134,6 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
                         data.completed_students, 
                         data.total_students, 
                         data.progress, 
-                        data.is_hidden_from_students, 
                         teacher_id, 
                         selectContent.value,
                         'activities' // Pass the category type
@@ -1012,7 +1168,7 @@ function studentProgressHeader(headerContainer, table_header, table_body, teache
  * 
  */
 
-function attemptProgressHeader(headerContainer, content_name, content_id, table_header, table_body, category) {
+async function attemptProgressHeader(headerContainer, content_name, content_id, table_header, table_body, category) {
     const backToMainProgressButton = document.createElement('button');
     backToMainProgressButton.textContent = 'Back';
     backToMainProgressButton.setAttribute('id', 'back-to-main-progress-button');
@@ -1028,6 +1184,10 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
     const selectAttemptProgressFilter = document.createElement('select');
     selectAttemptProgressFilter.setAttribute('id', 'select-attempt-progress-filter');
     selectAttemptProgressFilter.name = 'select-attempt-progress-filter';
+
+    const selectSectionFilter = document.createElement('select');
+    selectSectionFilter.setAttribute('id', 'select-section-filter');
+    selectSectionFilter.name = 'select-section-filter';
     
     const filterOptions = [
         {value: 0, text: 'Student ID DESC'},
@@ -1038,6 +1198,18 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
         {value: 5, text: 'Least Attempts'}
     ];
 
+    const sectionOptions = JSON.parse(await decrypt(sessionStorage.getItem("assignedSections")));
+
+    console.log(sectionOptions)
+
+
+    sectionOptions.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.sectionid;
+        optionElement.textContent = option.sectionname;
+        selectSectionFilter.appendChild(optionElement);
+    });
+
     filterOptions.forEach(option => {
         const optionElement = document.createElement('option');
         optionElement.value = option.value;
@@ -1047,13 +1219,15 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
 
     detailsContainer.appendChild(backToMainProgressButton);
     detailsContainer.appendChild(selectAttemptProgressFilter);
+    detailsContainer.appendChild(selectSectionFilter);
     headerContainer.appendChild(detailsContainer);
 
     selectAttemptProgressFilter.addEventListener('change', async () => {
         // Use different endpoint based on category
+        const selectedSection = selectSectionFilter.value;
         const url = category === 'assessments'
-            ? `/attempts/assessments/${content_id}/filter/${selectAttemptProgressFilter.value}`
-            : `/attempts/activities/${content_id}/filter/${selectAttemptProgressFilter.value}`;
+            ? `/attempts/assessments/${content_id}/filter/${selectAttemptProgressFilter.value}/${selectedSection}`
+            : `/attempts/activities/${content_id}/filter/${selectAttemptProgressFilter.value}/${selectedSection}`;
         
         const loadingId = `loading-filter-${Date.now()}`;
         notification.notify("Filtering data...", "loading", null, null, loadingId);
@@ -1078,6 +1252,42 @@ function attemptProgressHeader(headerContainer, content_name, content_id, table_
                     student.student_lowest_score, 
                     student.total_questions,
                     category // Pass category to next level
+                );
+            });
+        } else {
+            console.log(result.message);
+        }
+    });
+    selectSectionFilter.addEventListener('change', async () => {
+        const selectedSection = selectSectionFilter.value;
+        
+        const url = category === 'assessments'
+            ? `/attempts/assessments/${content_id}/filter/${selectAttemptProgressFilter.value}/${selectedSection}`
+            : `/attempts/activities/${content_id}/filter/${selectAttemptProgressFilter.value}/${selectedSection}`;
+        
+        const loadingId = `loading-section-${Date.now()}`;
+        notification.notify("Filtering by section...", "loading", null, null, loadingId);
+            
+        const response = await fetch(url);
+        const result = await response.json();
+        table_body.innerHTML = '';
+        
+        notification.dismissLoading(loadingId);
+        
+        if (response.ok && result.status) {
+            result.scores.forEach(student => {
+                displayStudentAttemptScores(
+                    table_header, 
+                    table_body, 
+                    content_id,
+                    content_name, 
+                    student.student_id, 
+                    student.student_name, 
+                    student.student_attempts, 
+                    student.student_highest_score, 
+                    student.student_lowest_score, 
+                    student.total_questions,
+                    category
                 );
             });
         } else {
@@ -1212,7 +1422,7 @@ async function restorePreviousState(table_header, table_body) {
         // Going back to student scores view
         table_header.appendChild(getScoreHeaderRow());
         
-        const headerContainer = attemptProgressHeader(
+        const headerContainer = await attemptProgressHeader(
             getProgressEventsHeader(), 
             previousState.data.content_name, 
             previousState.data.content_id, 
@@ -1224,9 +1434,10 @@ async function restorePreviousState(table_header, table_body) {
         mainSection.insertBefore(headerContainer, mainSection.firstChild);
 
         // Re-fetch data with default filter using appropriate endpoint
+        const firstIndexSection = JSON.parse(await decrypt(sessionStorage.getItem("assignedSections")))[0]?.sectionid || 0;
         const url = previousState.data.category === 'assessments'
-            ? `/attempts/assessments/${previousState.data.content_id}/filter/0`
-            : `/attempts/activities/${previousState.data.content_id}/filter/0`;
+            ? `/attempts/assessments/${previousState.data.content_id}/filter/0/${firstIndexSection}`
+            : `/attempts/activities/${previousState.data.content_id}/filter/0/${firstIndexSection}`;
         
         const loadingId = `loading-restore-${Date.now()}`;
         notification.notify("Loading data...", "loading", null, null, loadingId);
@@ -1337,7 +1548,6 @@ async function getStudentProgressByContentType(teacherId, contentType) {
                     normalizedData.completed_students, 
                     normalizedData.total_students, 
                     normalizedData.progress, 
-                    normalizedData.is_hidden_from_students, 
                     teacherId, 
                     contentType,
                     category
@@ -1368,16 +1578,12 @@ async function getStudentProgressByContentType(teacherId, contentType) {
  * 
  */
 
-function displayAttemptProgress(table_header, table_body, content_id, content_title, completed_students, total_students, progress, is_hidden, teacherId, contentType, category) {
+async function displayAttemptProgress(table_header, table_body, content_id, content_title, completed_students, total_students, progress, teacherId, contentType, category) {
     const dataRow = document.createElement('tr');
     const contentTitleData = document.createElement('td');
     const completedStudentsData = document.createElement('td');
     const totalStudentsData = document.createElement('td');
     const progressData = document.createElement('td');
-
-    if(is_hidden){
-        dataRow.style.display = 'none';
-    }
 
     dataRow.classList.add('data-row');
     
@@ -1405,9 +1611,10 @@ function displayAttemptProgress(table_header, table_body, content_id, content_ti
         });
 
         // Use appropriate endpoint based on category
+        const firstIndexSection = JSON.parse(await decrypt(sessionStorage.getItem("assignedSections")))[0]?.sectionid || 0;
         const url = category === 'assessments'
-            ? `/attempts/assessments/${content_id}/filter/0`
-            : `/attempts/activities/${content_id}/filter/0`;
+            ? `/attempts/assessments/${content_id}/filter/0/${firstIndexSection}`
+            : `/attempts/activities/${content_id}/filter/0/${firstIndexSection}`;
         
         const loadingId = `loading-content-details-${Date.now()}`;
         notification.notify("Loading student scores...", "loading", null, null, loadingId);
@@ -1428,7 +1635,7 @@ function displayAttemptProgress(table_header, table_body, content_id, content_ti
         
         table_header.appendChild(getScoreHeaderRow());
         
-        const headerContainer = attemptProgressHeader(
+        const headerContainer = await attemptProgressHeader(
             getProgressEventsHeader(), 
             content_title, 
             content_id, 
@@ -1521,6 +1728,7 @@ function displayStudentAttemptScores(table_header, table_body, content_id, conte
         });
 
         // Use appropriate endpoint based on category
+
         const url = category === 'assessments'
             ? `/attempts/assessments/students/${student_id}/${content_id}/filter/0`
             : `/attempts/activities/students/${student_id}/${content_id}/filter/0`;
@@ -1602,23 +1810,18 @@ function displayAttemptScores(table_body, counted_attempts, score, status, date)
     table_body.appendChild(attemptScoreDataRow);
 }
 
-// helper/utility function to format date
 function formatDate(dateString) {
-    const date = new Date(dateString + '+08:00');
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const date = new Date(dateString + '+08:00'); // Parse as Singapore time
     
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
-    
-    let hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    
-    return `${month} ${day}, ${year} ${hours}:${minutes} ${ampm}`;
+    return date.toLocaleString('en-US', {
+        timeZone: 'Asia/Manila', 
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
 }
 
 function moveStudentInfo(){
@@ -1877,5 +2080,11 @@ async function conversationStructure(){
 }
 
 loginSuccess()
-
 moveStudentInfo();
+
+sessionStorage.removeItem('originalActivityTitle');
+sessionStorage.removeItem('questions');
+sessionStorage.removeItem('currentActivityId');
+sessionStorage.removeItem('currentActivityTitle');
+sessionStorage.removeItem('ttsInputs');
+sessionStorage.removeItem("contentType");

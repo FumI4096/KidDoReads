@@ -7,6 +7,7 @@ const toTeacherPageButton = document.getElementById('to-teacher-page-button')
 const questionInput = document.getElementById("question")
 const choicesContainer = document.getElementById("choices-container")
 const answerContainer = document.getElementById("answer-container")
+const importContentButton = document.getElementById("import-content-button")
 const saveButton = document.getElementById("save-button")
 const nextButton = document.getElementById("next-button")
 const previousButton = document.getElementById("previous-button")
@@ -21,12 +22,15 @@ const teacherId = await decrypt(sessionStorage.getItem("id"))
 const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
 const ttsId = await decrypt(sessionStorage.getItem("currentTtsId"))
 const currentTitle = sessionStorage.getItem("currentActivityTitle")
+const voiceId = sessionStorage.getItem("currentVoiceId")
 
 const categoryDisplay = document.getElementById("category-display")
 const contentDisplay = document.getElementById("content-display")
 
 const ttsConvertButton = document.getElementById('tts-convert-button-1')
 const ttsPlayButton = document.getElementById('tts-play-button-1')
+
+const contentType = 1 
 
 categoryDisplay.textContent = "Pronunciation"
 contentDisplay.textContent = "Word Audio Match"
@@ -157,7 +161,10 @@ function checkInputState() {
     const needsReconvert = hasAudio && questionChanged;
     const isComplete = getQuestion && getAnswer && hasAudio && !hasEmptyChoice && !needsReconvert;
 
+    const hasStartedEditing = getQuestion || getAnswer || hasAudio || getChoices.some(choice => choice.value.trim() !== "");
+
     saveButton.disabled = !isComplete;
+    importContentButton.disabled = hasStartedEditing;
     toTeacherPageButton.disabled = !isComplete;
 }
 
@@ -216,8 +223,7 @@ ttsConvertButton.addEventListener("click", async () => {
             }
         }
         
-        // Generate new speech
-        await keyWordTtsObj.generateSpeech(questionInput.value, ttsId.toString(), 1);
+        await keyWordTtsObj.generateSpeech(questionInput.value, ttsId.toString(), 1, voiceId);
 
         originalQuestionText = questionInput.value.trim();
 
@@ -273,6 +279,7 @@ questionInput.addEventListener("input", () => {
 function setFormToViewMode() {
     console.log("View Mode - Question", currentQuestion + 1);
     
+    importContentButton.disabled = false;
     notifObject.notify("Switched to view mode", "success");
     
     updateTtsButtonStates(false); 
@@ -686,6 +693,7 @@ async function saveAndExit(e) {
                     sessionStorage.removeItem('currentActivityTitle');
                     sessionStorage.removeItem('ttsInputs');
                     sessionStorage.removeItem("contentType");
+                    sessionStorage.removeItem("currentVoiceId");
                     window.location.href = '/teacher_dashboard';
                 }, 1000);
             } 
@@ -822,3 +830,168 @@ function answerRadioButtonsDisable(state) {
 function firstQuestionExist(length) {
     return length > 0;
 }
+
+importContentButton.addEventListener('click', async () => {
+    const response = await fetch(`/contents/${contentType}/${teacherId}`);
+    const result = await response.json();
+    const contentContainer = document.createElement("div");
+    contentContainer.setAttribute('id', "import-modal-container");
+
+    const closeContentButton = document.createElement("ion-icon");
+    closeContentButton.name = "close-outline";
+    closeContentButton.setAttribute('id', "close-import-modal-button");
+    closeContentButton.style.color = 'white';
+
+    const contentHeaderStatement = document.createElement("p");
+    contentHeaderStatement.setAttribute('id', 'import-modal-statement')
+    contentHeaderStatement.textContent = "Import an activity from your previous contents 🗒️";
+
+    const importContent = document.createElement("div");
+    importContent.setAttribute('id', "import-content");
+
+    const submitContentButton = document.createElement("button");
+    submitContentButton.textContent = "Confirm";
+    submitContentButton.setAttribute('id',"submit-content");
+
+    importContent.appendChild(closeContentButton);
+    importContent.appendChild(contentHeaderStatement)
+    contentContainer.appendChild(importContent);
+    const contentTypeContainer = document.createElement("div");
+    contentTypeContainer.setAttribute('id',"content-type-container");
+
+    const selectContent = document.createElement("select");
+    selectContent.setAttribute('id', "content-type");
+    selectContent.id = "content_type";
+    selectContent.name = "content_type";
+
+    // Add default option
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Select Content';
+    selectContent.appendChild(defaultOption);
+
+    // Add fetched contents as options
+    if (result.status && result.data) {
+        console.log(result.data)
+        const contentId = await decrypt(sessionStorage.getItem("currentActivityId"))
+        result.data.forEach(content => {
+            if(contentId == content.content_id){
+                return;
+            } // Skip current content
+            const optionElement = document.createElement('option');
+            optionElement.value = content.content_id;
+            optionElement.textContent = content.content_title;
+            selectContent.appendChild(optionElement);
+        });
+    }
+    else{
+        console.log(result.message)
+    }
+    
+    contentTypeContainer.appendChild(selectContent);
+    importContent.appendChild(contentTypeContainer);
+    importContent.appendChild(submitContentButton);
+    document.body.appendChild(contentContainer);
+
+    closeContentButton.addEventListener("click", () => {
+        document.body.removeChild(contentContainer);
+    });
+
+    submitContentButton.addEventListener('click', async () => {
+        const selectedContentId = selectContent.value;
+        try{
+
+            if (selectedContentId) {
+                const loadingId = `loading-import-${Date.now()}`;
+                submitContentButton.disabled = true;
+                notifObject.notify("Importing Content...", "loading", null, null, loadingId);
+                // Get the selected content data
+                const selectedContent = result.data.find(content => content.content_id == selectedContentId);
+                console.log('Selected content:', selectedContent);
+                // You can now use selectedContent.content_json and selectedContent.tts_json
+
+                selectedContent.content_json.forEach((questionNo) => {
+                    questionObject.push({
+                        question: questionNo.question,
+                        choices: questionNo.choices,
+                        answer: questionNo.answer
+                    });
+                    console.log('Question', questionNo.question);
+                    console.log('Choices', questionNo.choices);
+                    console.log('Answer', questionNo.answer);
+
+                    console.log(questionObject);
+                });
+
+                selectedContent.tts_json.forEach((audio) => {
+                    ttsObject.push({
+                        audioUrl: audio.audioUrl
+                    });
+                    console.log('Audio URL', audio.audioUrl);
+                    console.log(ttsObject);
+                });
+
+                const formData = new FormData();
+                formData.append('content', JSON.stringify(questionObject));
+                formData.append('id', teacherId);
+                formData.append('content_id', contentId);
+                formData.append('total_questions', questionObject.length);
+
+                const questionResponse = await fetch('/update_content', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const questionResult = await questionResponse.json();
+
+                const formDataTts = new FormData()
+                console.log(ttsObject)
+            
+                formDataTts.append('ttsId', ttsId)
+                formDataTts.append('ttsAudios', JSON.stringify(ttsObject))
+
+                const TtsResponse = await fetch('/update-speech', {
+                    method: 'POST',
+                    body: formDataTts
+                })
+
+                const TtsResult = await TtsResponse.json()
+
+                if((questionResponse.ok && questionResult.status) && (TtsResponse.ok && TtsResult.status)){
+                    console.log("Content imported succesfully")
+                    sessionStorage.setItem("questions", JSON.stringify(questionObject));
+                    sessionStorage.setItem("ttsInputs", JSON.stringify(ttsObject));
+                    notifObject.dismissLoading(loadingId);
+                    notifObject.notify("Content imported succesfully", "success")
+                    submitContentButton.disabled = false;
+                    loadQuestion(questionObject.length - 1);
+                    setFormToViewMode()
+                }
+                else{
+                    notifObject.dismissLoading(loadingId);
+                    if(questionResult.message){
+                        console.log(questionResult.message)
+                        notifObject.notify("Cannot Import Questions: " + questionResult.message, "error")
+                    }
+                    if(TtsResult.message){
+                        console.log(TtsResult.message)
+                        notifObject.notify("Cannot Import Speech: " + TtsResult.message, "error")
+                    }
+                    submitContentButton.disabled = false;
+                }
+                document.body.removeChild(contentContainer);
+            }
+            else{
+                notifObject.notify("Please select a content to import", "error")
+                return;
+            }
+        }
+        catch (error){
+            console.log(error)
+            notifObject.notify("Cannot import Content", "error")
+            submitContentButton.disabled = false;
+            document.body.removeChild(contentContainer);
+            return;
+        }
+    });
+});

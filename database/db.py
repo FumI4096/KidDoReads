@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 from werkzeug.security import generate_password_hash
 from mysql.connector import pooling
+from modules.cache import cache 
 
 load_dotenv()
 
@@ -58,19 +59,48 @@ class Database:
         """Fallback cleanup"""
         self.__exit__(None, None, None)
 
-    def insert_student(self, school_id, fname, lname, email, password, image):
+    def insert_student(self, school_id, fname, lname, email, password, image, section):
         try:
             hashed_password = generate_password_hash(password)
             query = """
-                INSERT INTO students (StudentID, FirstName, LastName, Email, S_Password, Image)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO students (StudentID, FirstName, LastName, Email, S_Password, Image, SectionID)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            self.cursor.execute(query, (school_id, fname, lname, email, hashed_password, image))
+            self.cursor.execute(query, (school_id, fname, lname, email, hashed_password, image, section))
             self.connection.commit()
+            for filter_type in ['default', 'id']:
+                cache.delete(f'student_records_{filter_type}')
             return True, "Student inserted successfully."
         except Exception as e:
             self.connection.rollback()
             return False, str(e)
+        
+    def bulk_insert_students(self, students_data):
+        """
+        Bulk insert multiple students at once.
+        
+        Args:
+            students_data: List of tuples containing (StudentID, FirstName, LastName, Email, S_Password, Image, SectionID)
+        
+        Returns:
+            Tuple of (success: bool, message: str, count: int)
+        """
+        try:
+            query = """
+                INSERT INTO students (StudentID, FirstName, LastName, Email, S_Password, Image, SectionID)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            self.cursor.executemany(query, students_data)
+            self.connection.commit()
+            for filter_type in ['default', 'id']:
+                cache.delete(f'student_records_{filter_type}')
+            
+            return True, "Students inserted successfully.", len(students_data)
+            
+        except Exception as e:
+            # Rollback on error
+            self.connection.rollback()
+            return False, str(e), 0
 
     def insert_teacher(self, school_id, fname, lname, email, password, image):
         try:
@@ -81,6 +111,8 @@ class Database:
             """
             self.cursor.execute(query, (school_id, fname, lname, email, hashed_password, image))
             self.connection.commit()
+            for filter_type in ['default', 'id']:
+                cache.delete(f'teacher_records_{filter_type}')
             return True, "Teacher inserted successfully."
         except Exception as e:
             self.connection.rollback()
@@ -95,12 +127,18 @@ class Database:
             """
             self.cursor.execute(query, (school_id, fname, lname, email, hashed_password, image))
             self.connection.commit()
+            for filter_type in ['default', 'id']:
+                cache.delete(f'admin_records_{filter_type}')
             return True, "Admin inserted successfully."
         except Exception as e:
             self.connection.rollback()
             return False, str(e)
     
-    def get_student_records(self, filter = "default"):
+    def get_student_records(self, filter = "default", sectionFilter = 1):
+        cache_key = f'student_records_{filter}_{sectionFilter}'
+        cached = cache.get(cache_key)
+        if cached: return cached
+        
         allowed_filters = {
             "default": "students.createdAt DESC",
             "id": "StudentID DESC"
@@ -109,18 +147,25 @@ class Database:
         
         query = f"""
             SELECT StudentID, FirstName, LastName, Email, Image, R_Name FROM students 
-            LEFT JOIN roles on S_Role = roles.R_ID 
+            LEFT JOIN roles on S_Role = roles.R_ID
+            WHERE SectionID = %s
             ORDER BY {filter_order}
         """
         
         try:
-            self.cursor.execute(query)
-            return True, self.cursor.fetchall()
+            self.cursor.execute(query, (sectionFilter,))
+            result = (True, self.cursor.fetchall())
+            cache.set(cache_key, result, timeout=180)  # ADD THIS LINE
+            return result
         except Exception as e:
             self.connection.rollback()
             return False, str(e)
     
     def get_teacher_records(self, filter = "default"):
+        cache_key = f'teacher_records_{filter}'
+        cached = cache.get(cache_key)
+        if cached: return cached
+        
         allowed_filters = {
             "default": "teachers.createdAt DESC",
             "id": "TeacherID DESC"
@@ -131,12 +176,17 @@ class Database:
         
         try:
             self.cursor.execute(query)
-            return True, self.cursor.fetchall()
+            result = (True, self.cursor.fetchall())
+            cache.set(cache_key, result, timeout=180)  # ADD THIS LINE
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)
         
     def get_admin_records(self, filter = "default"):
+        cache_key = f'admin_records_{filter}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         allowed_filters = {
             "default": "admin.createdAt DESC",
             "id": "AdminID DESC"
@@ -149,7 +199,9 @@ class Database:
         
         try:
             self.cursor.execute(query)
-            return True, self.cursor.fetchall()
+            result = (True, self.cursor.fetchall())
+            cache.set(cache_key, result, timeout=180)  # ADD THIS LINE
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)
@@ -197,6 +249,15 @@ class Database:
             self.cursor.execute(query, tuple(parameters))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                # FIXED: Clear all filter variations
+                for filter_type in ['default', 'id']:
+                    cache.delete(f'student_records_{filter_type}')
+                    cache.delete(f'teacher_records_{filter_type}')
+                    cache.delete(f'admin_records_{filter_type}')
+                
+                # Clear user info for both old and new IDs
+                cache.delete(f'user_info_{original_school_id}')
+                cache.delete(f'user_info_{school_id}')
                 return True, "User record updated successfully."
             else:
                 return False, "User record not found or no changes were made."
@@ -220,6 +281,21 @@ class Database:
             self.cursor.execute(query, (id,))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                # FIXED: Clear all filter variations
+                for filter_type in ['default', 'id']:
+                    cache.delete(f'student_records_{filter_type}')
+                    cache.delete(f'teacher_records_{filter_type}')
+                    cache.delete(f'admin_records_{filter_type}')
+                
+                # Clear user info
+                cache.delete(f'user_info_{id}')
+                
+                # ADDED: If teacher, clear their content cache too
+                if role == "teacher":
+                    cache.delete(f'contents_teacher_{id}')
+                    # Clear all content type caches since teacher's content affects them
+                    for type_id in range(0, 6):  # Adjust range based on your content types
+                        cache.delete(f'contents_type_{type_id}')
                 return True, "Record deleted successfully."
             else:
                 return False, f"User with ID {id} not found."
@@ -269,18 +345,37 @@ class Database:
             return str(e)
         
     def get_user_info_by_id(self, id):
+        cache_key = f'user_info_{id}'
+        cached = cache.get(cache_key)
+        
+        print("Cached User Info:", cached)
+        if cached: return cached
         try:
             query = """
-                SELECT ID, FullName, Email, Image FROM (
-                    SELECT StudentID AS ID, CONCAT(FirstName, ' ', LastName) AS FullName, Email, Image
+                SELECT ID, FullName, Email, Image, Section FROM (
+                    SELECT StudentID AS ID, CONCAT(FirstName, ' ', LastName) AS FullName, Email, Image, se.S_Names as Section
                     FROM students
+                    LEFT JOIN section as se ON students.SectionID = se.S_ID
                     WHERE StudentID = %s
                     UNION ALL
-                    SELECT TeacherID AS ID, CONCAT(FirstName, ' ', LastName) AS FullName, Email, Image
-                    FROM teachers
-                    WHERE TeacherID = %s
+                    SELECT T.TeacherID AS ID, CONCAT(T.FirstName, ' ', T.LastName) AS FullName, T.Email, T.Image,
+                        JSON_ARRAYAGG(
+                            JSON_OBJECT(
+                                'sectionid', S.S_ID,
+                                'sectionname', S.S_Names
+                            )
+                        ) AS Section
+                    FROM teachers AS T
+                    LEFT JOIN JSON_TABLE(
+                        T.Assigned_Sections,
+                        '$[*]' COLUMNS(SectionID INT PATH '$')
+                    ) AS jt ON TRUE
+                    LEFT JOIN section AS S
+                        ON jt.SectionID = S.S_ID
+                    WHERE T.TeacherID = %s
+                    GROUP BY T.TeacherID
                     UNION ALL
-                    SELECT AdminID AS ID, CONCAT(FirstName, ' ', LastName) AS FullName, Email, Image
+                    SELECT AdminID AS ID, CONCAT(FirstName, ' ', LastName) AS FullName, Email, Image, NULL AS Section
                     FROM admin
                     WHERE AdminID = %s
                 ) AS combined
@@ -288,10 +383,11 @@ class Database:
             self.cursor.execute(query, (id, id, id))
             record = self.cursor.fetchone()
 
-            if record:
-                return True, record
-            else:
-                return True, None
+            result = (True, record) if record else (True, None)
+            cache.set(cache_key, result, timeout=600)  # ADD THIS LINE - cache 10 minutes
+            
+            print(result)
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)        
@@ -337,11 +433,11 @@ class Database:
             self.connection.rollback() 
             return f"Database error: {e}"
         
-    def create_content(self, teacher_id: int, content_name, content_type: int):
+    def create_content(self, teacher_id: int, content_name, content_type: int, voice_type):
         try:
-            query = """INSERT INTO contents(TeacherID, Content_Title, ContentType) VALUES (%s, %s, %s)"""
+            query = """INSERT INTO contents(TeacherID, Content_Title, ContentType, Voice) VALUES (%s, %s, %s, %s)"""
             
-            self.cursor.execute(query, (teacher_id, content_name, content_type))
+            self.cursor.execute(query, (teacher_id, content_name, content_type, voice_type))
             content_id = self.cursor.lastrowid
             self.connection.commit()
             return True, "Content created successfully!", content_id
@@ -376,8 +472,11 @@ class Database:
             return False, str(e)
         
     def get_contents_by_teacher(self, teacher_id):
+        cache_key = f'contents_teacher_{teacher_id}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         query = """
-            SELECT ContentID, Content_Title, Content_Details_JSON, TTS_JSON, ContentType, ContentTypeName, isHiddenFromStudents
+            SELECT ContentID, Content_Title, Content_Details_JSON, TTS_JSON, ContentType, ContentTypeName, Voice, isHiddenFromStudents
             FROM contents
             LEFT JOIN content_type ON contents.ContentType = content_type.ContentTypeID
             LEFT JOIN tts_content on contents.tts_id = tts_content.tts_id
@@ -387,39 +486,77 @@ class Database:
         try:
             self.cursor.execute(query, (teacher_id,))
             results = self.cursor.fetchall()
-            return True, results
+            result = (True, results)
+            cache.set(cache_key, result, timeout=120) 
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)
         
-    def get_contents_by_type(self, type):
-        query = ""
+    def get_student_contents_by_type(self, type, student_id):
+        cache_key = f'contents_type_{type}_{student_id}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         
+        where_clause = "" if type == 0 else "WHERE C.ContentType = %s AND"
+        
+        query = f"""
+            SELECT
+                C.ContentID,
+                CONCAT(T.FirstName, ' ', T.LastName) AS Full_Name,
+                C.Content_Title,
+                C.Content_Details_JSON,
+                tts_content.tts_json,
+                C.ContentType
+            FROM contents AS C
+            LEFT JOIN teachers AS T
+                ON C.TeacherID = T.TeacherID
+            LEFT JOIN tts_content
+                ON tts_content.tts_id = C.tts_id
+            INNER JOIN students AS S
+                ON JSON_CONTAINS(
+                    T.assigned_sections,
+                    JSON_QUOTE(CAST(S.SectionID AS CHAR))
+                )
+            WHERE
+                S.StudentID = %s AND isHiddenFromStudents != 1
+        """
+        
+        params = [student_id]
         if type != 0:
-            query = """
-                SELECT ContentID, CONCAT(T.FirstName, ' ', T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM contents as C
-                LEFT JOIN teachers as T on C.TeacherID = T.TeacherID
-                LEFT JOIN tts_content on tts_content.tts_id = C.tts_id
-                WHERE ContentType = %s;
-            """
-            try:
-                self.cursor.execute(query, (type,))
-                return True, self.cursor.fetchall()
-            except Exception as e:
-                return False, f"Database error: {e}"
-        else:
-            query = """
-                SELECT ContentID, CONCAT(T.FirstName, ' ', T.LastName) as Full_Name, Content_Title, Content_Details_JSON, tts_json, ContentType, isHiddenFromStudents FROM contents as C
-                LEFT JOIN teachers as T on C.TeacherID = T.TeacherID
-                LEFT JOIN tts_content on tts_content.tts_id = C.tts_id
-            """
-            try:
-                self.cursor.execute(query)
-                return True, self.cursor.fetchall()
-            except Exception as e:
-                return False, f"Database error: {e}"
+            query += " AND C.ContentType = %s"
+            params.append(type)
+        try:
+            self.cursor.execute(query, tuple(params))
+            result = (True, self.cursor.fetchall())
+            cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+            return result
+        except Exception as e:
+            return False, f"Database error: {e}"
+    
+    def get_contents_by_type(self, content_type, teacher_id):
+        query = """
+            SELECT
+            contentid,
+            Content_Title,
+            tts_json,
+            content_details_json
+            FROM contents
+            LEFT JOIN tts_content ON contents.tts_id = tts_content.tts_id
+            WHERE contenttype = %s AND TeacherID = %s AND content_details_json is not NULL;
+        """
+        try:
+            self.cursor.execute(query, (content_type, teacher_id))
+            result = (True, self.cursor.fetchall())
+            #cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+            return result
+        except Exception as e:
+            return False, f"Database error: {e}"
     
     def get_assessments_by_type(self, type):
+        cache_key = f'assessments_type_{type}'
+        cached = cache.get(cache_key)
+        if cached: return cached
         query = ""
         
         if type != 0:
@@ -435,7 +572,9 @@ class Database:
             """
             try:
                 self.cursor.execute(query, (type,))
-                return True, self.cursor.fetchall()
+                result = (True, self.cursor.fetchall())
+                cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+                return result
             except Exception as e:
                 return False, f"Database error: {e}"
         else:
@@ -450,11 +589,16 @@ class Database:
             """
             try:
                 self.cursor.execute(query)
-                return True, self.cursor.fetchall()
+                result = (True, self.cursor.fetchall())
+                cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+                return result
             except Exception as e:
                 return False, f"Database error: {e}"
             
     def get_assessments(self):
+        cache_key = 'all_assessments'
+        cached = cache.get(cache_key)
+        if cached: return cached
         query = """
             SELECT 
             AssessmentID, Assessment_Title, Assessment_Details_JSON, 
@@ -468,7 +612,9 @@ class Database:
         try:
             self.cursor.execute(query)
             results = self.cursor.fetchall()
-            return True, results
+            result = (True, results)
+            cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
+            return result
         except Exception as e:
             self.connection.rollback() 
             return False, str(e)        
@@ -481,6 +627,10 @@ class Database:
         try:
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                cache.delete(f'contents_teacher_{teacher_id}')
+                # Clear all content type caches
+                for type_id in range(0, 6):  # Adjust range based on your content types
+                    cache.delete(f'contents_type_{type_id}')
                 return True, f"Activity deleted successfully."
             else:
                 return False, "Content not found."
@@ -510,6 +660,10 @@ class Database:
             self.cursor.execute(query, (content, total_questions, teacher_id, content_id))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                cache.delete(f'contents_teacher_{teacher_id}')
+                # FIXED: Clear all content type caches
+                for type_id in range(0, 6):
+                    cache.delete(f'contents_type_{type_id}')
                 return True, "Content updated successfully!"
             else:
                 return False, "Unsuccessful update"
@@ -523,6 +677,10 @@ class Database:
             self.cursor.execute(query, (isHidden, teacher_id, content_id))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
+                cache.delete(f'contents_teacher_{teacher_id}')
+                # FIXED: Clear all content type caches
+                for type_id in range(0, 6):
+                    cache.delete(f'contents_type_{type_id}')
                 statement = "is hidden to students" if isHidden else "is now shown to students"
                 return True, f"Activity {statement}."
             else:
@@ -738,8 +896,7 @@ class Database:
                 CONCAT(
                     COUNT(DISTINCT cla.StudentID), '/',
                     (SELECT COUNT(*) FROM students)
-                ) AS progress,
-                isHiddenFromStudents
+                ) AS progress
                 FROM contents c
                 LEFT JOIN content_log_attempts cla ON cla.ContentID = c.ContentID
                 WHERE c.TeacherID = %s AND c.ContentType = %s
@@ -777,7 +934,7 @@ class Database:
         except Exception as e:
             return False, f"Database error: {e}"
         
-    def get_student_scores_by_content_id(self, content_id: int, filter: str):
+    def get_student_scores_by_content_id(self, content_id: int, section_id: int, filter: str):
         try:
             allowed_filters = [
                 'StudentID DESC', 
@@ -802,17 +959,18 @@ class Database:
                 FROM students s
                 LEFT JOIN content_log_attempts cla ON cla.StudentID = s.StudentID AND cla.ContentID = %s
                 LEFT JOIN contents c ON c.ContentID = %s
+                WHERE s.SectionID = %s
                 GROUP BY s.StudentID
                 ORDER BY {filter};
             """
             
-            self.cursor.execute(query, (content_id, content_id))
+            self.cursor.execute(query, (content_id, content_id, section_id))
             results = self.cursor.fetchall()
             return True, results
         except Exception as e:
             return False, f"Database error: {e}"
         
-    def get_student_scores_by_assessment_id(self, assessment_id: int, filter: str):
+    def get_student_scores_by_assessment_id(self, assessment_id: int, section_id: int, filter: str):
         try:
             allowed_filters = [
                 'StudentID DESC', 
@@ -837,11 +995,12 @@ class Database:
                 FROM students s
                 LEFT JOIN assessment_log_attempts ala ON ala.StudentID = s.StudentID AND ala.AssessmentID = %s
                 LEFT JOIN assessments a ON a.AssessmentID = %s
+                WHERE s.SectionID = %s
                 GROUP BY s.StudentID
                 ORDER BY {filter};
             """
             
-            self.cursor.execute(query, (assessment_id, assessment_id))
+            self.cursor.execute(query, (assessment_id, assessment_id, section_id))
             results = self.cursor.fetchall()
             return True, results
         except Exception as e:
@@ -906,6 +1065,42 @@ class Database:
             return True, results
         except Exception as e:
             return False, f"Database error: {e}"
+        
+    def get_student_activity_attempt_choices(self, student_id: int):
+        try:
+            query = f"""
+                SELECT 
+                    attemptid,
+                    score,
+                    content_answer
+                FROM content_log_attempts
+                WHERE studentid = %s
+                ORDER BY attemptAt DESC;
+            """
+            
+            self.cursor.execute(query, (student_id,))
+            results = self.cursor.fetchall()
+            return True, results
+        except Exception as e:
+            return False, f"Database error: {e}"
+        
+    def get_content_answer(self, content_id: int):
+        query = """
+            SELECT 
+                JSON_EXTRACT(content_details_json, '$[*].answer') as all_answers
+            FROM contents
+            WHERE contentid = %s
+        """
+        
+        try:
+            self.cursor.execute(query, (content_id,))
+            results = self.cursor.fetchall()
+            result = (True, results)
+            # cache.set(cache_key, result, timeout=120) 
+            return result
+        except Exception as e:
+            self.connection.rollback() 
+            return False, str(e)
         
     def get_chat_history(self, teacher_id):
         try:
@@ -1079,9 +1274,71 @@ class Database:
             self.cursor.execute(query, (student_id, achievement_id))
             result = self.cursor.fetchone()
             
-            if result is not None:
-                return True
-            else:
-                return False
+            return True if result is not None else False
+            
+        except Exception as e:
+            return False, str(e)
+        
+    def get_section(self):
+        try:
+            query = """SELECT S_ID, S_Names, S_Grade FROM section"""
+            
+            self.cursor.execute(query)
+            results = self.cursor.fetchall()
+            return results
+        except Exception as e:
+            return False, str(e)
+    
+    def insert_section(self, section_name):
+        try:
+            query = """INSERT INTO section(S_Names) VALUES (%s)"""
+            
+            self.cursor.execute(query, (section_name,))
+            self.connection.commit()
+            return True, "Section inserted successfully."
+        except Exception as e:
+            self.connection.rollback() 
+            return False, str(e)
+        
+    def update_section(self, section_id, section_name):
+        try:
+            query = """UPDATE section SET S_Names = %s WHERE S_ID = %s"""
+            
+            self.cursor.execute(query, (section_name, section_id))
+            self.connection.commit()
+            return True, "Section updated successfully."
+        except Exception as e:
+            self.connection.rollback() 
+            return False, str(e)
+        
+    def delete_section(self, section_id):
+        try:
+            query = """DELETE FROM section WHERE S_ID = %s"""
+            
+            self.cursor.execute(query, (section_id,))
+            self.connection.commit()
+            return True, "Section deleted successfully."
+        except Exception as e:
+            self.connection.rollback() 
+            return False, str(e)
+        
+    def assign_section_to_teacher(self, teacher_id, section_json):
+        try:
+            query = """UPDATE teachers SET assigned_sections = %s WHERE TeacherID = %s"""
+            
+            self.cursor.execute(query, (section_json, teacher_id))
+            self.connection.commit()
+            return True, "Section/s assigned to teacher successfully."
+        except Exception as e:
+            self.connection.rollback() 
+            return False, str(e)
+        
+    def get_assigned_sections_of_teacher(self, teacher_id):
+        try:
+            query = """SELECT assigned_sections FROM teachers WHERE TeacherID = %s"""
+            
+            self.cursor.execute(query, (teacher_id,))
+            result = self.cursor.fetchone()
+            return True, result[0] if result else "[]"
         except Exception as e:
             return False, str(e)

@@ -60,6 +60,7 @@ main > aside{
     border-radius: 12px;
     padding: 3rem 1rem;
     gap: 2rem;
+    z-index: 100;
 
     & > ul{
         display: flex;

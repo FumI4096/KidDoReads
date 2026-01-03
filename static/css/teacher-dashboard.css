@@ -71,17 +71,25 @@ main > section{
     overflow: hidden;
     position: relative;
     box-shadow: var(--box-shadow-1);
-
+    background-color: rgba(211, 32, 32, 0.7);
+    
+    &::after{
+        content: '';
+        display: block;
+        inset: 0;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.38);
+    }
     & > .activity-type{
         font-family: 'Light-Poppins';
         font-size: 0.8rem;
-        color: var(--black-text);
         margin-bottom: auto;
     }
     & > .activity-name{
         font-family: 'Bold-Poppins';
         font-size: 1.3rem;
-        color: var(--black-text);
     }
 
     & > .content-button-action-container{
@@ -253,7 +261,13 @@ main > section{
     font-size: 1.2rem;
 }
 
-#content_type {
+#content-type-container{
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+#content_type, #voice_type {
     background-image: url('../images/cusztomize-dropdown-select-1.svg');
     background-repeat: no-repeat;
     background-size: 20px;
@@ -264,7 +278,7 @@ main > section{
     appearance: none; 
     height: auto;
     border: none;
-    padding: 0.5rem 3rem 0.5rem 0.6rem;
+    padding: 0.3rem 3rem 0.3rem 0.6rem;
     width: auto;
     border-radius: 2px;
     outline: none;
@@ -283,6 +297,57 @@ main > section{
         
     }
 }
+
+#voice-type-container{
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+
+    & > p{
+        color: white;
+    }
+
+    & > .voice-radio-wrapper{
+        display: flex;
+        gap: 0.2rem;
+
+        & > .voice-radio-label{
+            display: flex;
+            gap: 0.5rem;
+            & > .voice-info{
+                display: flex;
+                gap: 0.5rem;
+                margin-right: auto;
+                color: white;
+
+                & > span:first-child{
+                    font-family: 'Bold-Poppins';
+                }
+            }
+
+            & > .speaker-icon{
+                font-size: 1.2rem;
+                cursor: pointer;
+                color: white;
+            }
+
+            & > input{
+                cursor: pointer;
+
+                &:disabled{
+                    cursor: not-allowed;
+                    opacity: 0.4;
+
+                    & + *{
+                        opacity: 0.4;
+                    }
+                }
+            }
+        
+        }
+    }
+}
+
 
 #submit-content {
     background-color: var(--secondary-color);
@@ -362,6 +427,7 @@ main > section{
 /* Attempt Progress Dropdown & Main Progress Dropdowns */
 #select-attempt-progress-filter, #select-attempt-score-filter,
 #select-category, 
+#select-section-filter,
 #select-content {
     font-family: 'Regular-Poppins';
     background-color: white;
@@ -1014,7 +1080,7 @@ main > section{
         padding: 1.2rem;
     }
 
-    #content_type {
+    #content_type, #voice_type {
         width: 100%;
     }
 
@@ -1113,8 +1179,7 @@ main > section{
         font-size: 1rem;
     }
 
-    #content_type {
-        width: 100%;
+    #content_type, #voice_type {
         font-size: 1rem;
         padding: 0.5rem 2.5rem 0.5rem 0.5rem;
     }

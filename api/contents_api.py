@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
 from modules.utils import get_db
 from flask_login import login_required
-from modules.utils import allowed_file, generate_unique_filename, get_upload_picture_clues
+from modules.utils import get_s3_client, get_spaces_url,allowed_file, generate_unique_filename, get_upload_picture_clues
 import json
 import os
+from botocore.exceptions import ClientError
 
 contents_bp = Blueprint('contents_bp', __name__)
 
@@ -14,8 +15,9 @@ def create_content():
             teacher_id = request.form.get('teacher_id')
             content_title = request.form.get('content_title')
             content_type = request.form.get('content_type')
+            voice_type = request.form.get('voice_type')
             
-            status, message, content_id = db.create_content(int(teacher_id), content_title, content_type)
+            status, message, content_id = db.create_content(int(teacher_id), content_title, content_type, voice_type)
             
             if status:
                 return jsonify({"status": status, "message": message, "content_id": content_id})
@@ -44,7 +46,8 @@ def get_contents(teacher_id):
                     "tts_json": quiz_tts_json,
                     "content_type": row[4],
                     "content_type_name": row[5],
-                    "isHidden": row[6]
+                    "voice": row[6],
+                    "isHidden": row[7]
                 })
                 
             if status:
@@ -54,11 +57,11 @@ def get_contents(teacher_id):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@contents_bp.route('/students/contents/<int:type>', methods=["GET"])
-def get_contents_for_students(type):
+@contents_bp.route('/students/contents/<int:type>/<int:student_id>', methods=["GET"])
+def get_contents_for_students(type, student_id):
     try:
         with get_db() as db:
-            status, results = db.get_contents_by_type(type)
+            status, results = db.get_student_contents_by_type(type, student_id)
             rows = results
             
             contents = []
@@ -73,8 +76,7 @@ def get_contents_for_students(type):
                     "content_title": row[2],
                     "content_json": quiz_contents_json,
                     "tts_json": quiz_tts_json,
-                    "content_type": row[5],
-                    "isHidden": row[6]
+                    "content_type": row[5]
                 })
                 
             if status:
@@ -112,44 +114,6 @@ def get_assessments_for_students(type):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-# def get_all_content_titles(teacher_id):
-#     try:
-#         status, results = db.get_all_content_titles(teacher_id)
-#         rows = results
-        
-#         content_title = []
-#         for row in rows:
-#             content_title.append({
-#                 "content_title": row[0]
-#             })
-            
-#         if status:
-#             return jsonify({"status": True, "data": content_title})
-#         else:
-#             return jsonify({"status": False, "message": results})
-#     except Exception as e:
-#         return jsonify({"status": False, "message": str(e)})
-
-# @app.route('/contents', methods=['PATCH'])
-# def update_content_title():
-#     try:
-#         teacher_id = request.args.get('teacher_id')
-#         original_title = request.args.get('original_title')
-#         new_title = request.args.get('new_title')
-        
-#         status, results = db.update_content_title(teacher_id, original_title, new_title)
-            
-#         if status and results:
-#             quiz_data_str = results[0] 
-#             quiz_data_obj = json.loads(quiz_data_str)
-#             return jsonify({"status": True, "data": quiz_data_obj})
-#         elif status: 
-#             return jsonify({"status": False, "message": "Content not found"})
-#         else:
-#             return jsonify({"status": False, "message": results})
-#     except Exception as e:
-#         return jsonify({"status": False, "message": str(e)})
-    
 
 #change to patch
 @contents_bp.route('/update_content', methods=['POST'])
@@ -161,7 +125,14 @@ def update_content():
         content = request.form.get('content')
         totalQuestions = request.form.get('total_questions')
         
+        print("Teacher ID:", teacherId)
+        print("Content ID:", contentId)
+        print("Content to update:", content)
+        print("Total Questions:", totalQuestions)
+        
         result, message = db.update_content(teacherId, contentId, content, totalQuestions)
+        
+        print(result, message)
         
         if result is True:
             return jsonify({"status": True, "message": message})
@@ -197,26 +168,79 @@ def update_picture_clues_content():
                         if question_index is not None:
                             idx = int(question_index)
                             
-                            # Delete old image if it exists
+                            # Delete old image if it exists in Spaces
                             if idx < len(content_data):
                                 old_image = content_data[idx].get('picture', '')
                                 if old_image and old_image not in ['', 'PENDING_UPLOAD']:
-                                    old_filepath = os.path.join('static', old_image)
-                                    if os.path.exists(old_filepath):
+                                    # Check if it's a Spaces URL
+                                    if os.getenv('FLASK_ENV') == 'production':
                                         try:
-                                            os.remove(old_filepath)
-                                            print(f"Deleted old image: {old_filepath}")
+                                            # Extract filename from URL
+                                            # URL format: https://kiddoreads.sfo3.digitaloceanspaces.com/picture_clues/filename.jpg
+                                            old_filename = old_image.split('/')[-1]
+                                            
+                                            # Delete from Spaces
+                                            s3_client = get_s3_client()
+                                            bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+                                            s3_client.delete_object(
+                                                Bucket=bucket_name,
+                                                Key=f'picture_clues/{old_filename}'
+                                            )
+                                            print(f"Deleted old image from Spaces: {old_filename}")
                                         except Exception as e:
-                                            print(f"Error deleting old image: {e}")
+                                            print(f"Error deleting old image from Spaces: {e}")
+                                    else:
+                                        # Legacy: try to delete from local filesystem
+                                        old_filepath = os.path.join('static', old_image)
+                                        if os.path.exists(old_filepath):
+                                            try:
+                                                os.remove(old_filepath)
+                                                print(f"Deleted old local image: {old_filepath}")
+                                            except Exception as e:
+                                                print(f"Error deleting old local image: {e}")
                         
-                        # Save new image
+                        # Save new image to Spaces
                         filename = generate_unique_filename(file.filename)
-                        filepath = os.path.join(get_upload_picture_clues(), filename)
-                        file.save(filepath)
                         
-                        # Store relative path (without 'static/')
-                        image_path = f'static/upload_picture_clues/{filename}'
-                        print(f"Saved new image: {image_path}")
+                        if os.getenv('FLASK_ENV') == 'production':
+                            # Save to cloud storage (DigitalOcean Spaces, S3, etc.)
+                            try:
+                                s3_client = get_s3_client()
+                                bucket_name = os.getenv('SPACES_BUCKET_NAME', 'kiddoreads')
+                                
+                                # Reset file pointer
+                                file.seek(0)
+                                
+                                s3_client.upload_fileobj(
+                                    file,
+                                    bucket_name,
+                                    f'picture_clues/{filename}',
+                                    ExtraArgs={
+                                        'ACL': 'public-read',
+                                        'ContentType': file.content_type or 'image/jpeg'
+                                    }
+                                )
+                                
+                                # Generate cloud URL
+                                image_path = get_spaces_url(filename, 'picture_clues')
+                                print(f"Saved new image to cloud: {image_path}")
+                            except Exception as e:
+                                print(f"Error uploading to cloud: {e}")
+                                return jsonify({
+                                    "status": False,
+                                    "message": f"Failed to upload image to cloud: {str(e)}"
+                                }), 500
+                        else:
+                            # Save to local storage (development)
+                            upload_folder = os.path.join('static', 'upload_picture_clues')
+                            os.makedirs(upload_folder, exist_ok=True)
+                            
+                            filepath = os.path.join(upload_folder, filename)
+                            file.save(filepath)
+                            
+                            # Store relative path
+                            image_path = f'upload_picture_clues/{filename}'
+                            print(f"Saved new image locally: {filepath}")
                         
                         # ✅ Update the picture field in the JSON
                         if question_index is not None:
@@ -238,9 +262,15 @@ def update_picture_clues_content():
                 return jsonify({"status": True,"message": message,"image_path": image_path}) # Return the path to JavaScript
             else:
                 return jsonify({"status": False,"message": message})
+                
+    except ClientError as e:
+        return jsonify({
+            "status": False, 
+            "message": f"Spaces upload error: {str(e)}"
+        }), 500
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
-
+    
 @contents_bp.route('/content/<string:teacher_id>/<int:content_id>', methods=['DELETE'])
 @login_required
 def delete_content(teacher_id, content_id):
@@ -290,6 +320,33 @@ def get_assessments():
                 
             if status:
                 return jsonify({"status": True, "data": assessments})
+            else:
+                return jsonify({"status": False, "message": results})
+    except Exception as e:
+        return jsonify({"status": False, "message": str(e)})
+
+@contents_bp.route('/contents/<int:content_type>/<int:teacher_id>', methods=['GET'])
+def get_contents_by_type(content_type, teacher_id):
+    try:
+        with get_db() as db:
+            status, results = db.get_contents_by_type(content_type, teacher_id)
+            rows = results
+            
+            contents = []
+            for row in rows:
+                quiz_contents_str = row[3] or "{}"
+                quiz_contents_json = json.loads(quiz_contents_str)
+                quiz_tts_str = row[2] or "{}"
+                quiz_tts_json = json.loads(quiz_tts_str)
+                contents.append({
+                    "content_id": row[0],
+                    "content_title": row[1],
+                    "tts_json": quiz_tts_json,
+                    "content_json": quiz_contents_json,
+                })
+            
+            if status:
+                return jsonify({"status": True, "data": contents})
             else:
                 return jsonify({"status": False, "message": results})
     except Exception as e:

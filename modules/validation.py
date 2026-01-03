@@ -28,7 +28,7 @@ def loginValidation(id, password) -> list:
         
         return errors
     
-def regValidation(id, fname, lname, email, password, role) -> list:
+def regValidation(id, fname, lname, email, password, role, section) -> list:
     with get_db() as db:  # ✅ Use with statement
         errors = []
         
@@ -36,7 +36,7 @@ def regValidation(id, fname, lname, email, password, role) -> list:
         emailPattern = r'^[\w\.-]+@letran-calamba\.edu\.ph$'
         passwordPattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)\S{8,}$'
         
-        if not id or not fname or not lname or not email or not password or not role:
+        if not id or not fname or not lname or not email or not password or not role or (role == "student" and not section):
             errors.append("Please complete the valid requirements.")
             return errors
             

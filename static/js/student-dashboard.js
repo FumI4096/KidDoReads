@@ -105,7 +105,7 @@ logOutButton.addEventListener('click', () => {
 profileButton.addEventListener('click', studentProfile);
 window.addEventListener('resize', moveStudentInfo);
 
-document.addEventListener("DOMContentLoaded", async function() {
+window.addEventListener("load", async function() {
     await showContent(0);
     await showUserInfo();
 });
@@ -154,9 +154,12 @@ async function studentProfile() {
     studentName.textContent = await decrypt(sessionStorage.getItem('fullName'));
 
     const studentId = document.createElement('p');
-    studentId.textContent = "Learner ID: " + await decrypt( (sessionStorage.getItem('id')) || "N/A");
+    studentId.textContent = "Learner ID: " + await decrypt( (sessionStorage.getItem('id')));
 
-    learnerDetails.append(studentName, studentId);
+    const studentSection = document.createElement('p');
+    studentSection.textContent = "Section: " + await decrypt(sessionStorage.getItem('sectionName'));
+
+    learnerDetails.append(studentName, studentId, studentSection);
     cardBody.append(studentImage, learnerDetails);
     card.append(cardBody);
 
@@ -279,10 +282,13 @@ async function showContent(contentTypeNum) {
     const loadingId = `loading-content-${Date.now()}`;
     notification.notify("Loading activities...", "loading", null, null, loadingId);
 
-    const url = `/students/contents/${contentTypeNum}`;
+    const url = `/students/contents/${contentTypeNum}/${id}`;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            credentials: 'same-origin',
+            cache: 'no-cache'
+        });
         const result = await response.json();
         
         notification.dismissLoading(loadingId);
@@ -296,7 +302,6 @@ async function showContent(contentTypeNum) {
                     data.content_json,
                     data.tts_json,
                     data.content_type,
-                    data.isHidden,
                     "Activity"
                 );
             });
@@ -343,7 +348,7 @@ async function showAssessment(contentTypeNum) {
     }
 }
 
-function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, content_hidden, category_type) {
+function addContent(content_id, teacher_name, content_title, content_details, tts_json, content_type, category_type) {
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
     const teacherName = document.createElement("p");
@@ -375,8 +380,6 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 
     buttonContainer.append(playActivityButton, checkProgressButton);
     newContent.append(buttonContainer);
-
-    newContent.style.display = content_hidden ? 'none' : 'flex';
 
     playActivityButton.addEventListener('click', async () => {
         sessionStorage.setItem("currentActivityTitle", content_title);
@@ -827,7 +830,10 @@ async function showUserInfo() {
     notification.notify("Loading user information...", "loading", null, null, loadingId);
 
     const url = `/user/${id}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        credentials: 'same-origin',
+        cache: 'no-cache'
+    });
     const result = await response.json();
     
     try {
@@ -844,6 +850,11 @@ async function showUserInfo() {
             } else {
                 sessionStorage.setItem("image", await encrypt(defaultProfilePicture));
                 studentPicture.src = await decrypt(sessionStorage.getItem("image"));
+            }
+            if (result.data[0].section) {
+                sessionStorage.setItem("sectionName", await encrypt(result.data[0].section));
+
+                console.log("Section Name:", await decrypt(sessionStorage.getItem("sectionName")));
             }
             
         } else {

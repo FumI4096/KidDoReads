@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from modules.utils import get_db
+from modules.utils import get_db, recalculate_scores_on_student_attempts
 import json
 
 attempt_bp = Blueprint('attempt_bp', __name__)
@@ -182,8 +182,7 @@ def activity_student_progress(teacher_id, content_type):
                     "content_title": row[1],
                     "completed_students": row[2],
                     "total_students": row[3],
-                    "progress": row[4],
-                    'is_hidden_from_students': row[5]
+                    "progress": row[4]
                 })
             
             if status:
@@ -219,8 +218,8 @@ def assessments_student_progress():
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@attempt_bp.route('/attempts/activities/<int:content_id>/filter/<int:filter>', methods=['GET'])
-def activity_attempt_progress(content_id, filter):
+@attempt_bp.route('/attempts/activities/<int:content_id>/filter/<int:filter>/<int:section_id>', methods=['GET'])
+def activity_attempt_progress(content_id, section_id, filter):
     try:
         with get_db() as db:
             filters = [
@@ -232,7 +231,7 @@ def activity_attempt_progress(content_id, filter):
                 'total_attempts ASC'
             ]
             
-            status, results = db.get_student_scores_by_content_id(content_id, filters[filter])
+            status, results = db.get_student_scores_by_content_id(content_id, section_id, filters[filter])
             
             rows = results
             scores = []
@@ -254,8 +253,8 @@ def activity_attempt_progress(content_id, filter):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
 
-@attempt_bp.route('/attempts/assessments/<int:assessment_id>/filter/<int:filter>', methods=['GET'])
-def assessment_attempt_progress(assessment_id, filter):
+@attempt_bp.route('/attempts/assessments/<int:assessment_id>/filter/<int:filter>/<int:section_id>', methods=['GET'])
+def assessment_attempt_progress(assessment_id, filter, section_id):
     try:
         with get_db() as db:
             filters = [
@@ -267,7 +266,7 @@ def assessment_attempt_progress(assessment_id, filter):
                 'total_attempts ASC'
             ]
             
-            status, results = db.get_student_scores_by_assessment_id(assessment_id, filters[filter])
+            status, results = db.get_student_scores_by_assessment_id(assessment_id, section_id, filters[filter])
             
             rows = results
             scores = []
@@ -301,12 +300,20 @@ def student_activity_attempt_scores(student_id, content_id, filter):
             ]
             status, results = db.get_student_activity_attempt_scores(student_id, content_id, filters[filter])
             
+            new_scores = recalculate_scores_on_student_attempts(student_id, content_id)
+            
             rows = results
             attempt_scores = []
-            for row in rows:
+            for index, row in enumerate(rows):
+                current_score = row[1]
+                recalculated_score = new_scores[index]
+                
+                # Use recalculated score if different, otherwise use current score
+                final_score = recalculated_score if current_score != recalculated_score else current_score
+                
                 attempt_scores.append({
                     "attempt_count": row[0],
-                    "score": row[1],
+                    "score": final_score,
                     "status": row[2],
                     "date": row[3]
                 })
