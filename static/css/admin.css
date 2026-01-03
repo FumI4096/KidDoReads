@@ -26,186 +26,685 @@ main > section{
     }
 }
 
-#section-record{
+#section-record {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     flex-grow: 1;
     flex-basis: 100%;
     min-height: 0;
+}
 
-    & > #main-section-record{
-        display: flex;
+#section-record > #main-section-record {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    flex-grow: 1;
+    flex-basis: 100%;
+    min-height: 0;
+}
+
+#main-section-record > section {
+    flex-grow: 1;
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#main-section-record > section::-webkit-scrollbar {
+    width: 8px;
+}
+
+#main-section-record > section::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#main-section-record > section::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+#main-section-record > section::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#main-section-record > section > h2 {
+    font-family: 'Regular-Poppins', sans-serif;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+/* Section Table Container */
+#section-table-container > button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--edit-color);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    font-family: 'Regular-Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#section-table-container > button:hover {
+    background-color: var(--edit-hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#section-table-container > button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#section-table-container > button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none;
+}
+
+/* Section Container */
+#section-table-container > .section-container {
+    display: flex;
+    padding: 1.25rem 1.5rem;
+    background-color: white;
+    gap: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    align-items: flex-start;
+}
+
+#section-table-container > .section-container:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+#section-table-container > .section-container > input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+#section-table-container > .section-container > input[type="checkbox"]:hover {
+    transform: scale(1.1);
+}
+
+/* Section Wrapper */
+.section-container > .section-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.section-wrapper > .section-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.section-info > p {
+    font-family: 'Light-Poppins', sans-serif;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.section-info > p:first-child {
+    font-weight: 600;
+    font-family: 'Regular-Poppins', sans-serif;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+/* Section Action Bar */
+.section-wrapper > .section-action-bar {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    order: 2;
+}
+
+.section-action-bar > button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Regular-Poppins', sans-serif;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex: 0 0 auto;
+    white-space: nowrap;
+    order: 1;
+}
+
+.section-action-bar > button:nth-child(1) {
+    background-color: var(--secondary-color);
+    color: var(--white-text);
+    order: 1;
+}
+
+.section-action-bar > button:nth-child(1):hover {
+    background-color: var(--secondary-color-200);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.section-action-bar > button:nth-child(2) {
+    background-color: var(--accent-color-orange);
+    color: var(--white-text);
+    order: 2;
+}
+
+.section-action-bar > button:nth-child(2):hover {
+    background-color: var(--danger-hover-color);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.section-action-bar > button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.section-action-bar > button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none;
+}
+
+/* Button and Div Sizes */
+#section-table-container > button,
+#section-table-container > div {
+    width: 100%;
+    border-radius: 12px;
+    min-height: 100px;
+}
+
+/* Teacher Record Section */
+#teacher-record-section > .teacher-container {
+    min-height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.25rem 1.75rem;
+    background-color: white;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+#teacher-record-section > .teacher-container:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.teacher-container > h3 {
+    font-family: 'Regular-Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+    color: rgba(0, 0, 0, 0.87);
+    flex: 1 1 200px;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Teacher Action Bar */
+.teacher-container > .teacher-action-bar {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    order: 2;
+}
+
+.teacher-action-bar > button {
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Regular-Poppins', sans-serif;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    letter-spacing: 0.01em;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.teacher-action-bar > button:nth-child(1) {
+    background-color: var(--danger-color);
+    color: var(--white-text);
+    order: 1;
+}
+
+.teacher-action-bar > button:nth-child(1):not(:disabled):hover {
+    background-color: var(--danger-hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.teacher-action-bar > button:nth-child(2) {
+    background-color: var(--primary-color);
+    color: var(--white-text);
+    order: 2;
+}
+
+.teacher-action-bar > button:nth-child(2):not(:disabled):hover {
+    background-color: var(--primary-color-200);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.teacher-action-bar > button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.teacher-action-bar > button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none;
+}
+
+/* ===============================================
+   RESPONSIVE BREAKPOINTS
+   =============================================== */
+
+/* Large Desktop (1920px+) - Default styles above */
+
+/* Desktop (1440px - 1920px) */
+@media (max-width: 1920px) {
+    #main-section-record > section > h2 {
+        font-size: 1.45rem;
+    }
+}
+
+/* Standard Desktop / Large Laptop (1200px - 1440px) */
+@media (max-width: 1440px) {
+    #section-record {
+        gap: 1.25rem;
+    }
+    
+    #main-section-record {
+        gap: 1.25rem;
+    }
+    
+    #main-section-record > section > h2 {
+        font-size: 1.35rem;
+    }
+    
+    .teacher-container > h3 {
+        font-size: 1.05rem;
+    }
+    
+    .section-action-bar > button {
+        padding: 0.45rem 0.9rem;
+        font-size: 0.85rem;
+    }
+    
+    .teacher-action-bar > button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Laptop (1024px - 1200px) */
+@media (max-width: 1200px) {
+    #section-record {
+        gap: 1rem;
+    }
+    
+    #main-section-record {
+        gap: 1rem;
+    }
+    
+    #main-section-record > section > h2 {
+        font-size: 1.25rem;
+    }
+    
+    #section-table-container > .section-container {
+        padding: 1rem 1.25rem;
+    }
+    
+    #teacher-record-section > .teacher-container {
+        padding: 1rem 1.5rem;
+    }
+    
+    .teacher-container > h3 {
+        font-size: 1rem;
+    }
+    
+    .section-info > p {
+        font-size: 0.9rem;
+    }
+}
+
+/* CRITICAL BREAKPOINT: 1024px - 1023px (Tablet Landscape) */
+/* This is where layout starts to get cramped - optimize spacing and sizing */
+@media (max-width: 1023px) {
+    #section-record {
+        gap: 1rem;
+    }
+    
+    #main-section-record {
+        gap: 1rem;
+    }
+    
+    #main-section-record > section > h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Reduce container padding to save space */
+    #section-table-container > .section-container {
+        padding: 0.875rem 1rem;
+        gap: 0.875rem;
+        min-height: 85px;
+    }
+    
+    #teacher-record-section > .teacher-container {
+        padding: 0.875rem 1.25rem;
+        gap: 0.875rem;
+        min-height: 85px;
+    }
+    
+    /* Optimize checkbox size */
+    #section-table-container > .section-container > input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+    
+    /* Adjust section info text */
+    .section-info > p {
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+    
+    .teacher-container > h3 {
+        font-size: 0.975rem;
+    }
+    
+    /* Optimize button spacing in action bars */
+    .section-action-bar {
+        gap: 0.5rem;
+    }
+    
+    .section-action-bar > button {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.825rem;
+        border-radius: 5px;
+    }
+    
+    .teacher-action-bar {
+        gap: 0.625rem;
+    }
+    
+    .teacher-action-bar > button {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.875rem;
+        border-radius: 6px;
+    }
+    
+    /* Reduce "Add Section" button size */
+    #section-table-container > button {
+        font-size: 1.2rem;
+        padding: 0 1rem;
+        min-height: 85px;
+    }
+    
+    #section-table-container > button,
+    #section-table-container > div {
+        border-radius: 10px;
+    }
+}
+
+/* Tablet Landscape / Small Laptop (992px and below) */
+/* Stack sections and teachers vertically */
+@media (max-width: 992px) {
+    #main-section-record {
+        flex-direction: column;
+    }
+    
+    #section-table-container > button {
+        font-size: 1.3rem;
+    }
+}
+
+/* Tablet Portrait (768px - 992px) */
+@media (max-width: 768px) {
+    #section-record {
+        gap: 1rem;
+        padding-bottom: 100px;
+    }
+    
+    #main-section-record > section > h2 {
+        font-size: 1.15rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Keep checkbox beside section name on mobile */
+    #section-table-container > .section-container {
+        padding: 0.875rem 1rem;
         flex-direction: row;
-        gap: 1.5rem;
-        flex-grow: 1;
-        flex-basis: 100%;
-        min-height: 0;
+        gap: 0.75rem;
+        min-height: auto;
+        align-items: flex-start;
+    }
+    
+    #section-table-container > .section-container > input[type="checkbox"] {
+        margin-top: 2px;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+    
+    .section-container > .section-wrapper {
+        flex-direction: column;
+        gap: 0.75rem;
+        flex: 1;
+    }
+    
+    .section-wrapper > .section-info {
+        width: 100%;
+        order: 1;
+    }
+    
+    /* Move action buttons below section info */
+    .section-wrapper > .section-action-bar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        order: 2;
+    }
+    
+    .section-action-bar > button {
+        flex: 1 1 auto;
+        min-width: 100px;
+        justify-content: center;
+        padding: 0.625rem 0.875rem;
+    }
+    
+    #section-table-container > button,
+    #section-table-container > div {
+        min-height: auto;
+        border-radius: 10px;
+    }
+    
+    /* Teacher container - buttons go below name */
+    #teacher-record-section > .teacher-container {
+        flex-direction: column;
+        padding: 0.875rem 1rem;
+        min-height: auto;
+    }
+    
+    .teacher-container > h3 {
+        width: 100%;
+        font-size: 1rem;
+        order: 1;
+    }
+    
+    /* Move teacher action buttons below name */
+    .teacher-container > .teacher-action-bar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        order: 2;
+    }
+    
+    .teacher-action-bar > button {
+        flex: 1 1 auto;
+        min-width: 100px;
+        justify-content: center;
+        padding: 0.625rem 0.875rem;
+    }
+}
 
-        & > section{
-            flex-grow: 1;
-            width: 100%;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            overflow-y: auto;
-            & > h2{
-                font-family: 'Regular-Poppins';
-                margin-bottom: 0.5rem;
-            }
-        }
+/* Mobile Landscape / Large Phone (576px - 768px) */
+@media (max-width: 576px) {
+    #section-record {
+        gap: 0.75rem;
+        padding-bottom: 90px;
+    }
+    
+    #main-section-record {
+        gap: 0.75rem;
+    }
+    
+    #main-section-record > section > h2 {
+        font-size: 1.05rem;
+    }
+    
+    /* Keep checkbox beside name */
+    #section-table-container > .section-container {
+        padding: 0.75rem 0.875rem;
+        border-radius: 8px;
+        flex-direction: row;
+        gap: 0.625rem;
+    }
+    
+    #section-table-container > .section-container > input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+    }
+    
+    .section-info > p {
+        font-size: 0.85rem;
+    }
+    
+    .section-action-bar > button {
+        padding: 0.5rem 0.625rem;
+        font-size: 0.8rem;
+        border-radius: 5px;
+    }
+    
+    #section-table-container > button {
+        font-size: 1.1rem;
+        padding: 0 0.75rem;
+    }
+    
+    #section-table-container > button,
+    #section-table-container > div {
+        border-radius: 8px;
+    }
+    
+    #teacher-record-section > .teacher-container {
+        padding: 0.75rem 0.875rem;
+        border-radius: 8px;
+    }
+    
+    .teacher-container > h3 {
+        font-size: 0.95rem;
+    }
+    
+    .teacher-action-bar > button {
+        padding: 0.5rem 0.625rem;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+}
 
-        & > #section-table-container{
-            & > button{
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 0.5rem;
-                background-color: var(--edit-color);
-                border: none;
-                color: white;
-                font-size: 1.5rem;
-                font-family: 'Regular-Poppins';
-                cursor: pointer;
-
-                &:hover{
-                    background-color: var(--edit-hover-color);
-                }
-
-                &:disabled{
-                    opacity: 0.6;
-                    cursor: not-allowed;
-                    pointer-events: none;
-                }
-            }
-            & > .section-container{
-                display: flex;
-                padding: 0 1rem;
-                background-color: white;
-                gap: 1rem;
-
-                & > input{
-                    width: 20px;
-                    cursor: pointer;
-                }
-                & > .section-wrapper{
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-
-                    & > .section-info{
-                        display: flex;
-                        gap: 0.5rem;
-
-                        & > p{
-                            font-family: 'Light-Poppins';
-
-                            &:first-child{
-                                font-weight: bold;
-                            }
-                        }
-                    }
-
-                    & > .section-action-bar{
-                        display: flex;
-                        flex-direction: column;
-                        gap: 0.5rem;
-
-                        & > button{
-                            padding: 0.3rem 0.7rem;
-                            border: none;
-                            border-radius: 3px;
-                            font-family: 'Regular-Poppins';
-                            cursor: pointer;
-                            &:nth-child(1){
-                                background-color: var(--secondary-color);
-                                color: var(--white-text);
-                                &:hover{
-                                    background-color: var(--secondary-color-200);
-                                }
-
-                            }
-                            &:nth-child(2){
-                                background-color: var(--accent-color-orange);
-                                color: var(--white-text);
-
-                                &:hover{
-                                    background-color: var(--danger-hover-color);
-                                }
-                            }
-                            &:disabled{
-                                opacity: 0.6;
-                                cursor: not-allowed;
-                                pointer-events: none;
-                            }
-                        }
-                    }
-                }
-            }
-            & > button, & > div{
-                height: 100px;
-                width: 100%;
-                border-radius: 10px;
-                min-height: 100px;
-            }
-        }
-
-        & > #teacher-record-section{
-            & > .teacher-container{
-                height: 100px;
-                min-height: 100px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 1.3rem;
-                background-color: white;
-                border-radius: 3px;
-
-                & > h3{
-                    font-family: 'Regular-Poppins';
-                }
-
-                & > .teacher-action-bar{
-                    display: flex;
-                    gap: 0.5rem;
-
-                    & > button{
-                        padding: 0.5rem 1rem;
-                        border: none;
-                        border-radius: 3px;
-                        font-family: 'Regular-Poppins';
-                        cursor: pointer;
-
-                        &:nth-child(1){
-                            background-color: var(--danger-color);
-                            color: var(--white-text);
-
-                            &:not(:disabled):hover{
-                                background-color: var(--danger-hover-color);
-                            }
-                        }
-
-                        &:nth-child(2){
-                            background-color: var(--primary-color);
-                            color: var(--white-text);
-
-                            &:not(:disabled):hover{
-                                background-color: var(--primary-color-200);
-                            }
-                        }
-
-                        &:disabled{
-                            opacity: 0.6;
-                            cursor: not-allowed;
-                            pointer-events: none;
-                        }
-                    }
-                }
-            }
-        }
+/* Mobile Portrait / Small Phone (400px and below) */
+@media (max-width: 400px) {
+    #section-record {
+        padding-bottom: 100px;
+    }
+    
+    #main-section-record > section > h2 {
+        font-size: 1rem;
+    }
+    
+    /* Keep checkbox beside name even on smallest screens */
+    #section-table-container > .section-container {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+    
+    #section-table-container > .section-container > input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+    }
+    
+    /* Stack action buttons vertically on very small screens */
+    .section-action-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .section-action-bar > button {
+        width: 100%;
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+    
+    .teacher-action-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .teacher-action-bar > button {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+    
+    #section-table-container > button {
+        font-size: 1rem;
     }
 }
 
@@ -1035,4 +1534,6 @@ td > p{
         padding: 1.8rem
     }
 }
+
+
 
