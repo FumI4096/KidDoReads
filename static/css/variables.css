@@ -1,6 +1,6 @@
 :root{
     /*forest color palette*/
-    --background: #E8E1D7;
+    --background: #f7f2ec;
     --primary-color: #677C69;
     --primary-color-200: #40534D;
     --primary-color-300: #1A3637;
@@ -16,6 +16,7 @@
 
     --primary-accent-color-1: linear-gradient(var(--primary-color-200), var(--primary-color));
     --primary-gradient-1: linear-gradient(to right, var(--primary-color-300) 60%, var(--primary-color));
+    --light-gradient-1: linear-gradient(to right, #c7d1c8 30%, #E9DFBE);
 
     --green-color: #26d684;
 
@@ -37,6 +38,7 @@
 
     /* Other Variables */
     --box-shadow-1: 0 3px 5px rgba(0, 0, 0, 0.3);
+    --box-shadow-2: 0 0 10px rgba(0, 0, 0, 0.3);
     --dim-background: rgba(0, 0, 0, 0.6);
     --layout-padding: 0.7rem 5rem;
 
