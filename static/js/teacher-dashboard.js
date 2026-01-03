@@ -630,61 +630,68 @@ async function showUserInfo(){
 }
 
 async function addAssessment(assessment_container, assessment_id, assessment_title, assessment_details, tts_json, assessment_type, assessment_type_name){
+    /* MAIN CARD */
     const newContent = document.createElement("div");
+    newContent.classList.add("assessment-content");
+
+    /* HEADER */
+    const contentHeader = document.createElement("div");
+    contentHeader.classList.add("assessment-content-header");
+
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
-    newContent.classList.add("content");
-    newContent.style.backgroundImage = `url('/static/images/activities-background-images/${assessment_type}.jpg')`; /* content background image */
-    newContent.style.backgroundSize = "cover";
-    newContent.style.backgroundPosition = "center";
+
     activityName.classList.add("activity-name");
     activityType.classList.add("activity-type");
     activityName.innerHTML = assessment_title;
     activityType.innerHTML = assessment_type_name;
-    newContent.appendChild(activityName);
-    newContent.appendChild(activityType);
+
+    /* IMAGE AREA (BOTTOM 80%) */
+
+    const imageArea = document.createElement("div");
+    imageArea.classList.add("content-image");
+    imageArea.style.backgroundImage =
+      `url('/static/images/activities-background-images/${assessment_type}.jpg')`;
+ 
+    const buttonActionContainer = document.createElement("div");
+    buttonActionContainer.classList.add("assessment-button-action-container");
 
     const previewButton = document.createElement("button");
     previewButton.textContent = "Preview Assessment";
-
-    const hideFromStudentLabel = document.createElement("label")
-    hideFromStudentLabel.textContent = "Hidden from Students"
-    
-    const buttonActionContainer = document.createElement("div");
-    buttonActionContainer.classList.add("assessment-button-action-container");
-    buttonActionContainer.appendChild(previewButton);
 
     previewButton.addEventListener('click', async () => {
         sessionStorage.setItem("questions", JSON.stringify(assessment_details))
         sessionStorage.setItem("ttsObjects", JSON.stringify(tts_json))
         sessionStorage.setItem("currentActivityTitle", assessment_title)
         previewGamePageTo(assessment_type)
-        
 
     })
 
-    newContent.appendChild(buttonActionContainer);
+    newContent.append(contentHeader, imageArea);
+    contentHeader.append(activityType, activityName);
+    buttonActionContainer.appendChild(previewButton);
+    imageArea.append(buttonActionContainer);
     assessment_container.appendChild(newContent);
 }
+
 async function addContent(content_container, content_id, content_title, content_details, tts_json, content_type, content_type_name, voice_type, content_hidden){
     const encryptedContentId = await encrypt(content_id)
+
+    /* MAIN CARD */
     const newContent = document.createElement("div");
+    newContent.classList.add("content");
+
+    /* HEADER */
+    const contentHeader = document.createElement("div");
+    contentHeader.classList.add("content-header");
+
     const activityName = document.createElement("p");
     const activityType = document.createElement("p");
-    newContent.classList.add("content");
-    newContent.style.backgroundImage = `url('/static/images/activities-background-images/${content_type}.jpg')`; /* content background image */
-    newContent.style.backgroundSize = "cover";
-    newContent.style.backgroundPosition = "center";
+
     activityName.classList.add("activity-name");
     activityType.classList.add("activity-type");
     activityName.innerHTML = content_title;
     activityType.innerHTML = content_type_name;
-    newContent.appendChild(activityName);
-    newContent.appendChild(activityType);
-
-    const editButton = document.createElement("button");
-    const previewButton = document.createElement("button");
-    const deleteButton = document.createElement("button")
 
     const hideFromStudentContainer = document.createElement("div")
     hideFromStudentContainer.classList.add("hide-from-student-container")
@@ -695,24 +702,8 @@ async function addContent(content_container, content_id, content_title, content_
 
     const hideFromStudentLabel = document.createElement("label")
     hideFromStudentLabel.textContent = "Hidden from Students"
-    
-    editButton.classList.add("edit-button");
-    editButton.innerHTML = "Edit Activity";
-    previewButton.classList.add("preview-button");
-    previewButton.innerHTML = "Preview Activity";
-    deleteButton.classList.add("delete-button");
-    deleteButton.innerHTML = "Delete Activity";
 
-    hideFromStudentContainer.append(hideFromStudentCheckbox, hideFromStudentLabel)
-    
-    const buttonActionContainer = document.createElement("div");
-    buttonActionContainer.classList.add("content-button-action-container");
-    buttonActionContainer.appendChild(editButton);
-    buttonActionContainer.appendChild(previewButton);
-    buttonActionContainer.appendChild(deleteButton);
-    buttonActionContainer.appendChild(hideFromStudentContainer);
-
-    hideFromStudentCheckbox.addEventListener('click', (event) => {
+     hideFromStudentCheckbox.addEventListener('click', (event) => {
         if (Object.keys(content_details).length <= 3) {
             event.preventDefault();
             notification.notify("The activity has less than 3 questions. Please add more.", "error");
@@ -751,6 +742,36 @@ async function addContent(content_container, content_id, content_title, content_
             notification.notify("Network error. Please check your connection and try again.", "error");
         }
     })
+
+    hideFromStudentContainer.append(hideFromStudentCheckbox, hideFromStudentLabel)
+
+    contentHeader.append(activityType, activityName);
+    contentHeader.append(hideFromStudentContainer);
+
+    /* IMAGE AREA (BOTTOM 80%) */
+
+    const imageArea = document.createElement("div");
+    imageArea.classList.add("content-image");
+    imageArea.style.backgroundImage =
+      `url('/static/images/activities-background-images/${content_type}.jpg')`;
+
+    /* BUTTONS */
+    const editButton = document.createElement("button");
+    const previewButton = document.createElement("button");
+    const deleteButton = document.createElement("button")
+    
+    const buttonActionContainer = document.createElement("div");
+    buttonActionContainer.classList.add("content-button-action-container");
+    buttonActionContainer.appendChild(editButton);
+    buttonActionContainer.appendChild(previewButton);
+    buttonActionContainer.appendChild(deleteButton);
+
+    editButton.classList.add("edit-button");
+    editButton.innerHTML = "Edit Activity";
+    previewButton.classList.add("preview-button");
+    previewButton.innerHTML = "Preview Activity";
+    deleteButton.classList.add("delete-button");
+    deleteButton.innerHTML = "Delete Activity";
 
     deleteButton.addEventListener('click', async () => {
         const deleteActivityContainer = document.createElement('div');
@@ -850,7 +871,8 @@ async function addContent(content_container, content_id, content_title, content_
 
     })
 
-    newContent.appendChild(buttonActionContainer);
+    newContent.append(contentHeader, imageArea);
+    imageArea.appendChild(buttonActionContainer);
     content_container.appendChild(newContent);
     content_container.appendChild(addContentButton);
 }
