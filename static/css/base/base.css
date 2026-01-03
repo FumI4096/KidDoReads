@@ -158,10 +158,10 @@ main > aside{
 }
 
 #category-type {
-    font-family: 'Amore-Christmas';
-    letter-spacing: 2px;
+    font-family: 'Medium-Poppins';
     color: var(--primary-color-300);
-    font-size: 4rem;
+    font-size: 3rem;
+    padding-left: 1rem;
     
 }
 
