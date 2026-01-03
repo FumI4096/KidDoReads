@@ -396,7 +396,14 @@ async function showContents() {
     if (window.innerWidth <= 936){
         if (!mainSection.contains(await teacherInfoStructure())) mainSection.appendChild(await teacherInfoStructure());
     }
-    mainSection.appendChild(categoryTypeStructure())
+
+    const parentContainer = document.querySelector('.parent-container');
+    const header = await contentHeaderStructure();
+
+    if (parentContainer && !parentContainer.contains(header)) {
+    parentContainer.prepend(header);
+    }
+
     mainSection.appendChild(contentStructure())
     const url = `/contents/${id}`;
     const response = await fetch(url, {
@@ -427,6 +434,31 @@ async function showContents() {
         notification.dismissLoading(loadingId);
         console.error("Network Error:", error);
         notification.notify("Network error. Please check your connection and try again.", "error");
+    }
+
+    async function contentHeaderStructure() {
+        const parent = document.querySelector('.parent-container');
+        let header = parent.querySelector('.content-header');
+
+        if (!header) {
+            header = document.createElement('div');
+            header.className = 'content-header';
+
+            const greetTeacher = document.createElement('p');
+            greetTeacher.className = 'header-teacher-greeting';
+
+            const teacherName = await decrypt(sessionStorage.getItem("fullName"));
+            greetTeacher.textContent = `Hi, ${teacherName}! 👋`;
+
+            const welcomeText = document.createElement('h2');
+            welcomeText.className = 'header-welcome-text';
+            welcomeText.textContent = 'Welcome back! Here are your activities.';
+
+            header.appendChild(greetTeacher);
+            header.appendChild(welcomeText);
+        }
+
+        return header;
     }
 
     function contentStructure(){
@@ -479,20 +511,6 @@ async function showContents() {
 
         return button
     }
-
-    function categoryTypeStructure(){
-        const categoryType = document.getElementById('category-type')
-        
-        if(!categoryType){
-            const p = document.createElement("p")
-            p.setAttribute('id', "category-type")
-            p.textContent = "Activities"
-
-            return p;
-        }
-
-        return categoryType
-    }
 }
 
 async function showAssessments() {
@@ -503,7 +521,6 @@ async function showAssessments() {
     if (window.innerWidth <= 936){
         if (!mainSection.contains(await teacherInfoStructure())) mainSection.appendChild(await teacherInfoStructure());
     }
-    mainSection.appendChild(categoryTypeStructure())
     mainSection.appendChild(contentStructure())
     const url = '/assessments';
     const response = await fetch(url);
@@ -565,20 +582,6 @@ async function showAssessments() {
         }
 
         return teacherInfoContainer
-    }
-
-    function categoryTypeStructure(){
-        const categoryType = document.getElementById('category-type')
-        
-        if(!categoryType){
-            const p = document.createElement("p")
-            p.setAttribute('id', "category-type")
-            p.textContent = "Assessments"
-
-            return p;
-        }
-
-        return categoryType
     }
 }
 

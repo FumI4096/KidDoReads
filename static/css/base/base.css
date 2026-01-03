@@ -12,7 +12,7 @@ html, body{
 }
 
 body{
-    padding: 2.4rem;
+    padding: 1rem;
     background-image: url('../../images/background/light-olive-circle.svg'), url('../../images/background/dark-green-circle.svg');
     background-position: -20% 130%, 120% -80%;
     background-repeat: no-repeat, no-repeat;
@@ -27,12 +27,13 @@ header{
     height: 40px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     & > span {
-        font-family: 'Amore-Christmas';
+        font-family: 'Bold-Poppins';
+        letter-spacing: -2px;
         font-size: 2rem;
-        letter-spacing: 1px;
-        color: var(--accent-color-orange);
+        color: rgb(37, 37, 37);
         background-clip: text;
     }
 
