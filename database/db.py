@@ -512,19 +512,26 @@ class Database:
                 ON C.TeacherID = T.TeacherID
             LEFT JOIN tts_content
                 ON tts_content.tts_id = C.tts_id
-            LEFT JOIN content_log_attempts as cl
-                ON cl.contentid = C.contentid 
+            LEFT JOIN content_log_attempts AS cl
+                ON cl.ContentID = C.ContentID
                 AND cl.StudentID = %s
+                AND cl.AttemptID = (
+                    SELECT MAX(AttemptID)
+                    FROM content_log_attempts
+                    WHERE ContentID = C.ContentID
+                    AND StudentID = %s
+                )
             INNER JOIN students AS S
                 ON JSON_CONTAINS(
                     T.assigned_sections,
                     JSON_QUOTE(CAST(S.SectionID AS CHAR))
                 )
             WHERE
-                S.StudentID = %s AND isHiddenFromStudents != 1
+                S.StudentID = %s
+                AND isHiddenFromStudents != 1
         """
         
-        params = [student_id, student_id]
+        params = [student_id, student_id, student_id]
         if type != 0:
             query += " AND C.ContentType = %s"
             params.append(type)
@@ -574,10 +581,16 @@ class Database:
                 LEFT JOIN assessment_log_attempts AS ala
                     ON ala.AssessmentID = a.AssessmentID 
                     AND ala.StudentID = %s
+                    AND ala.AttemptID = (
+                        SELECT MAX(AttemptID)
+                        FROM assessment_log_attempts
+                        WHERE AssessmentID = a.AssessmentID
+                        AND StudentID = %s
+                    )
                 WHERE a.AssessmentType = %s;
             """
             try:
-                self.cursor.execute(query, (student_id, type))
+                self.cursor.execute(query, (student_id, student_id, type))
                 result = (True, self.cursor.fetchall())
                 cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
                 return result
@@ -596,9 +609,15 @@ class Database:
                 LEFT JOIN assessment_log_attempts AS ala
                     ON ala.AssessmentID = a.AssessmentID 
                     AND ala.StudentID = %s
+                    AND ala.AttemptID = (
+                        SELECT MAX(AttemptID)
+                        FROM assessment_log_attempts
+                        WHERE AssessmentID = a.AssessmentID
+                        AND StudentID = %s
+                    )
             """
             try:
-                self.cursor.execute(query, (student_id,))
+                self.cursor.execute(query, (student_id, student_id))
                 result = (True, self.cursor.fetchall())
                 cache.set(cache_key, result, timeout=120)  # ADD THIS LINE
                 return result
