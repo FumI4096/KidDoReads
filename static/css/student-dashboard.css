@@ -523,11 +523,32 @@ main > section {
     position: absolute;
     height: 100%;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.38);
+    background-color: rgba(0, 0, 0, 0.65);
   }
 
   & > * {
     z-index: 2;
+  }
+}
+
+#legend-stars {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+
+  & > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+
+    & > span {
+      color: black;
+      font-family: 'Regular-Poppins';
+      font-size: 0.9rem;
+      text-align: center;
+    }
   }
 }
 
@@ -540,6 +561,13 @@ main > section {
   font-family: 'Bold-Poppins';
   font-size: 1.3rem;
   color: var(--white-text);
+  display: flex;
+
+  & > ion-icon {
+    margin-right: 5px;
+    position: relative;
+    top: 4px;
+  }
 }
 
 .content .teacher-name {
@@ -616,7 +644,7 @@ main > section {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 11;
   display: grid;
   place-content: center;
   background-color: var(--dim-background);

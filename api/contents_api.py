@@ -76,7 +76,8 @@ def get_contents_for_students(type, student_id):
                     "content_title": row[2],
                     "content_json": quiz_contents_json,
                     "tts_json": quiz_tts_json,
-                    "content_type": row[5]
+                    "content_type": row[5],
+                    "status": row[6]
                 })
                 
             if status:
@@ -86,11 +87,11 @@ def get_contents_for_students(type, student_id):
     except Exception as e:
         return jsonify({"status": False, "message": str(e)})
     
-@contents_bp.route('/students/assessments/<int:type>', methods=["GET"])
-def get_assessments_for_students(type):
+@contents_bp.route('/students/assessments/<int:type>/<int:student_id>', methods=["GET"])
+def get_assessments_for_students(type, student_id):
     try:
         with get_db() as db:
-            status, results = db.get_assessments_by_type(type)
+            status, results = db.get_assessments_by_type(type, student_id)
             rows = results
             
             assessments = []
@@ -104,7 +105,8 @@ def get_assessments_for_students(type):
                     "assessment_title": row[1],
                     "assessment_json": quiz_contents_json,
                     "tts_json": quiz_tts_json,
-                    "assessment_type": row[4]
+                    "assessment_type": row[4],
+                    "status": row[5]
                 })
                 
             if status:
