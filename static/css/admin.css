@@ -1559,3 +1559,255 @@ td > p{
         line-height: 1.5;
     }
 }
+
+@media screen and (max-width: 1580px){
+
+    .action-buttons > div{
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+
+        & > * {
+            width: 60%;
+        }
+    }
+
+}
+
+@media screen and (max-width: 1455px){
+    td > p{
+        font-size: 0.75rem;
+    }
+
+}
+
+@media screen and (max-width: 1274px){
+    #import-student-container{
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        & > #import-student-wrapper{
+            width: 100%;
+        }
+    }
+}
+
+@media screen and (max-width: 1209px){
+    #input-box{
+        width: 100%;
+        height: auto;
+
+        & > div{
+            display: flex;
+            width: 100%;
+            gap: 0.8rem;
+
+            & > input, & > select{
+                width: 100%;
+            }
+        }
+
+        & > div > #password{
+            width: calc(100% - 1.6rem);
+        }
+
+    }
+
+}
+
+@media screen and (max-width: 1105px){
+    #user-form{
+        gap: 0.8rem;
+        padding: 1.5rem;
+    }
+
+    thead > tr > th{
+        font-size: 0.85rem;
+    }
+
+
+}
+
+@media screen and (max-width: 936px){
+    #import-student-wrapper{
+        & > #import-note-container{
+            & > #import-note-details-container{
+                gap: 1rem;
+                flex-direction: column-reverse;
+                & > ul{
+                    & > li{
+                        font-size: 0.7rem;
+                        &::before{
+                            content: '* ';
+                            color: rgb(252, 0, 0);
+                        }
+                    }
+                }
+                & > aside{
+                    & > img{
+                        width: 80%;
+                    }
+                }
+            }
+        
+        }
+    }
+    main > section{
+        flex-basis: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        flex-grow: 1;
+        & > div {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row-reverse;
+            width: 100%;
+        }
+        & > div > p{
+            width: 100%;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+    }
+
+    #admin-info{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: row-reverse;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        padding: 0;
+
+        & > img{
+            inline-size: 30px;
+            border-radius: 100%;
+        }
+
+        & > span{
+            font-family: 'Regular-Poppins';
+            color: black;
+            font-size: 0.9rem;
+        }
+    }
+
+    .toggle-user{
+        background-color: transparent !important;
+        box-shadow: none !important;
+        border-bottom: solid 3px var(--secondary-color);
+        border-radius: 0 !important;
+    }
+    #table-container{
+        height: 700px;
+    }
+
+}
+@media screen and (max-width: 772px) {
+    #import-student-wrapper{
+        & > #import-note-container{
+            & > #import-note-details-container{
+                & > ul{
+                    & > li{
+                        font-size: 0.8rem;
+                    }
+                }
+                & > aside{
+                    & > img{
+                        width: 100%;
+                    }
+                }
+            }
+        
+        }
+    }
+    #table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+    #table-container table {
+        min-width: 800px; 
+    }
+    
+    #filter-form{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    #delete-form{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 2rem;
+    }
+
+    #delete-input-container{
+        width: 400px;
+        gap: 1rem;
+
+        & > p {
+            font-size: 1.1rem;
+        }
+
+        & > aside > *{
+            width: 50%;
+        }
+    }
+}
+
+@media screen and (max-width: 768px){
+    #user-form{
+        flex-direction: column;
+    }
+    #submit-actions{
+        width: 100%;
+    }
+
+    #input-box > div > input, #input-box > div > select{
+        font-size: 0.8rem;
+    } 
+
+    #delete-input-container{
+        & > aside{
+            gap: 1rem;
+        }
+
+        & > aside > input:nth-child(1), & > aside > input:nth-child(2){
+            width: 100%;
+        }
+    }
+
+}
+
+@media screen and (max-width: 500px){
+
+    #input-box > div{
+        flex-direction: column;
+    }
+
+    #input-box > div:nth-child(1){
+        flex-direction: row;
+    }
+
+    #input-box > div:nth-child(3) > #password{
+        width: 100%;
+    }
+
+    #email-password-container > ion-icon{
+        transform: translateY(119%);
+    }
+
+    #delete-form{
+        padding: 0 1rem;
+    }
+
+    #delete-input-container{
+        width: 100%;
+        padding: 1.8rem
+    }
+}
