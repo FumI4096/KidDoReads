@@ -34,63 +34,52 @@ main > section{
     display:flex;
     flex-direction: column;
 
-#content-container{
-    color: var(--white-text);
-    gap: 1rem;
-    padding: 1rem;
-    height: auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    max-height: 100%;
-    min-height: 0;
-    overflow-y: auto;
-    &::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    & > #content-container{
-        position: absolute;
-        border-left: solid 2px #c7d1c8;
-        box-shadow: var(--box-shadow-2);
-        color: var(--white-text);
-        background-color: var(--background);
-        gap: 1rem;
-        margin-top: 10rem;
-        padding: 1rem;
-        border-radius: 20px;
-        height: auto;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        max-height: 100%;
-        min-height: 100%;
+        & > .content-header {
+        flex: 0 0 auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        min-height: 30%;
         min-width: 100%;
-        overflow-y: auto;
-        z-index: 2;
+        padding: 3rem;
+        border-radius: 20px;
+        background-image: var(--light-gradient-1);
+        z-index: 1;
+        font-weight: 600;
+
+        & > .header-teacher-greeting {
+            font-family: 'Light-Poppins';
+            color: var(--black-text);
+            font-size: 2rem;
+        }
+
+        & > .header-welcome-text {
+            font-family: 'Extra-Light-Poppins';
+            color: var(--black-text);
+            font-size: 1rem;
+            margin-top: 0;
+        }
     }
 }
 
-.content {
-    display: flex;
-    flex-direction: column;
+#content-container {
+    position: absolute;
+    border-left: solid 2px #c7d1c8;
+    box-shadow: var(--box-shadow-2);
+    color: var(--white-text);
+    background-color: var(--background);
+    margin-top: 10rem;
+    padding: 1rem;
     border-radius: 20px;
-    overflow: hidden;
-    box-shadow: var(--box-shadow-1);
-    transition: var(--transition-ease);
-    
-    & > .activity-type{
-        font-family: 'Light-Poppins';
-        font-size: 0.8rem;
-        margin-bottom: auto;
-    }
-    & > .activity-name{
-        font-family: 'Bold-Poppins';
-        font-size: 1.3rem;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #ccc;
-        border-radius: 10px;
-    }
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    max-height: 100%;
+    min-width: 100%;
+    overflow-y: auto;
+    z-index: 2;
 }
 
 .content {

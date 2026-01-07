@@ -516,11 +516,19 @@ async function showContents() {
 async function showAssessments() {
     const loadingId = `loading-assessments-${Date.now()}`;
     notification.notify("Loading assessments...", "loading", null, null, loadingId);
-    
+
     mainSection.innerHTML = ''
     if (window.innerWidth <= 936){
         if (!mainSection.contains(await teacherInfoStructure())) mainSection.appendChild(await teacherInfoStructure());
     }
+
+    const parentContainer = document.querySelector('.parent-container');
+    const header = await contentHeaderStructure();
+
+    if (parentContainer && !parentContainer.contains(header)) {
+        parentContainer.prepend(header);
+    }
+
     mainSection.appendChild(contentStructure())
     const url = '/assessments';
     const response = await fetch(url);
@@ -546,6 +554,31 @@ async function showAssessments() {
         notification.dismissLoading(loadingId);
         console.error("Network Error:", error);
         notification.notify("Network error. Please check your connection and try again.", "error");
+    }
+
+    async function contentHeaderStructure() {
+        const parent = document.querySelector('.parent-container');
+        let header = parent.querySelector('.content-header');
+
+        if (!header) {
+            header = document.createElement('div');
+            header.className = 'content-header';
+
+            const greetTeacher = document.createElement('p');
+            greetTeacher.className = 'header-teacher-greeting';
+
+            const teacherName = await decrypt(sessionStorage.getItem("fullName"));
+            greetTeacher.textContent = `Hi, ${teacherName}! 👋`;
+
+            const welcomeText = document.createElement('h2');
+            welcomeText.className = 'header-welcome-text';
+            welcomeText.textContent = 'Welcome back! Here are your assessments.';
+
+            header.appendChild(greetTeacher);
+            header.appendChild(welcomeText);
+        }
+
+            return header;
     }
 
     function contentStructure(){
