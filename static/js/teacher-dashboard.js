@@ -141,21 +141,24 @@ function createContent(){
             value: 1,
             name: 'Onyx', 
             description: 'Male voice, lower tone',
-            showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
+            showForActivities: ['1', '2', '3', '4', '5', '6'],
+            voiceFile: '/static/voices/onyx_sample.mp3'
         },
         {
             id: 'nova', 
             value: 2,
             name: 'Nova', 
             description: 'Teacher-like, engaging',
-            showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
+            showForActivities: ['1', '2', '3', '4', '5', '6'],
+            voiceFile: '/static/voices/nova_sample.mp3'
         },
         {
             id: 'ivy', 
             value: 3,
             name: 'Ivy', 
             description: 'Young girl, cheerful',
-            showForActivities: ['1', '2', '5', '6'] // Only for specific activities
+            showForActivities: ['1', '2', '5', '6'],
+            voiceFile: '/static/voices/ivy_sample.mp3'
         }
     ];
 
@@ -208,7 +211,7 @@ function createContent(){
         speakerIcon.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            playVoiceSample(voice.value);
+            playVoiceSample(voice.voiceFile);
         });
     });
 
@@ -239,15 +242,7 @@ function createContent(){
 
 
     // Function to play voice sample
-    function playVoiceSample(voiceType) {
-        const voiceSamples = {
-            onyx: '/static/voice_samples/onyx.mp3',
-            nova: '/static/voice_samples/nova.mp3',
-            ivy: '/static/voice_samples/ivy.mp3'
-        };
-
-        const sampleSrc = voiceSamples[voiceType];
-
+    function playVoiceSample(sampleSrc) {
         if (!sampleSrc) {
             notification.notify("Voice sample not available", "error");
             return;
