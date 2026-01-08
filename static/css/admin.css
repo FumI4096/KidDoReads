@@ -1939,14 +1939,14 @@ td > p{
         gap: 0.5rem;
     }
 
-    #delete-form{
+    #delete-form, #modal-section-container, #delete-section-container, #import-student-container{
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 0 2rem;
     }
 
-    #delete-input-container{
+    #delete-input-container, #delete-section-wrapper{
         width: 400px;
         gap: 1rem;
 
@@ -1972,7 +1972,7 @@ td > p{
         font-size: 0.8rem;
     } 
 
-    #delete-input-container{
+    #delete-input-container, #delete-section-wrapper{
         & > aside{
             gap: 1rem;
         }
@@ -2002,11 +2002,11 @@ td > p{
         transform: translateY(119%);
     }
 
-    #delete-form{
+    #delete-form, #modal-section-container, #delete-section-container, #import-student-container{
         padding: 0 1rem;
     }
 
-    #delete-input-container{
+    #delete-input-container, #delete-section-wrapper{
         width: 100%;
         padding: 1.8rem
     }
