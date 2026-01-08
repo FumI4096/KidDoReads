@@ -354,18 +354,33 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
     const starIcon = document.createElement('ion-icon');
     const newContent = document.createElement("div");
     const activityName = document.createElement("p");
-    const teacherName = document.createElement("p");
+    const addedByTeacher = document.createElement("p");
     const contentType = document.createElement("p")
     const categoryType = document.createElement("p");
+
     newContent.classList.add("content");
     newContent.style.backgroundImage = `url('/static/images/activities-background-images/${content_type}.jpg')`;
     newContent.style.backgroundSize = "cover";
     newContent.style.backgroundPosition = "center";
+
+    starIcon.classList.add("star-icon");
     activityName.classList.add("activity-name");
-    teacherName.classList.add("teacher-name");
-    contentType.classList.add("category-type")
+    addedByTeacher.classList.add("added-by-teacher");
+    contentType.classList.add("content-type")
     categoryType.classList.add("category-type");
     activityName.innerHTML = content_title;
+
+    /* HEADER */
+    const contentHeader = document.createElement("div");
+    contentHeader.classList.add("content-header");
+
+    /* IMAGE AREA (BOTTOM 80%) */
+
+    const imageArea = document.createElement("div");
+    imageArea.classList.add("content-image");
+    imageArea.style.backgroundImage =
+      `url('/static/images/activities-background-images/${content_type}.jpg')`;
+
 
     if (status == 0){
         //Activity is new or not yet started
@@ -382,11 +397,12 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         starIcon.name = "star";
         starIcon.style.color = "var(--green-color)"
     }
+
     activityName.prepend(starIcon);
-    teacherName.innerHTML = teacher_name;
+    addedByTeacher.textContent = `added by ${teacher_name}`;
+
     contentType.innerHTML = getContentName(content_type)
     categoryType.innerHTML = category_type;
-    newContent.append(activityName, teacherName, categoryType, contentType);
     console.log(status)
 
     const buttonContainer = document.createElement('div');
@@ -516,6 +532,10 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 
     })
     displayContents.appendChild(newContent);
+    newContent.append(contentHeader, imageArea);
+    contentHeader.append(activityName, contentType, categoryType, addedByTeacher);
+    imageArea.appendChild(buttonContainer);
+
 
     function hasUnfinishedAttemptContainer(answer, attempt_id, type){
         const unfinishedAttemptContainer = document.createElement('div')
@@ -884,7 +904,18 @@ async function showUserInfo() {
             sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
             const studentName = document.getElementById('student_name');
             const studentPicture = document.getElementById('student_picture');
+            const studentEmail = document.getElementById('student_email')
+
             studentName.textContent = await decrypt(sessionStorage.getItem("fullName"));
+
+            if (result.data[0].email) {
+                sessionStorage.setItem("email", await encrypt(result.data[0].email));
+            }
+
+            if (sessionStorage.getItem("email")) {
+                studentEmail.textContent = await decrypt(sessionStorage.getItem("email"));
+            }
+            
             if (result.data[0].image) {
                 sessionStorage.setItem("image", await encrypt(result.data[0].image));
                 studentPicture.src = await decrypt(sessionStorage.getItem("image"));

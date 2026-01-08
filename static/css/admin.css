@@ -4,7 +4,7 @@ main > section{
     flex-basis: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: 0.5rem;
     flex-grow: 1;
     & > div {
         display: flex;
@@ -779,14 +779,14 @@ main > section{
     }
 }
 
-#user-form{
+#user-form  {
     display: flex;
     justify-content: center;
     align-items: center;
     height: auto;
     gap: 1.5rem;
     padding: 2.7rem 1.5rem;
-    background-color: var(--background);
+    background-color: var(--white-text);
     box-shadow: var(--box-shadow-1);
     position: relative;
 
@@ -804,6 +804,21 @@ main > section{
     flex-direction: column;
     gap: 0.2rem;
 
+    & > i {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
     & > input {
         visibility: hidden;
         position: absolute;
@@ -819,21 +834,22 @@ main > section{
     }
 
     & > p{
-        font-size: 0.77rem;
+        font-size: 1rem;
         font-family: 'Regular-Poppins';
     }
 }
 
 #image-display{
-    border: 2px solid var(--black-text);
-    aspect-ratio: 1/1;
+    object-fit: cover;
     width: 120px;
     height: 120px;
     border-radius: 100%;
-}
+    margin: 10px;
+    transition: opacity 0.3s ease;
 
-#image-display:hover{
-    opacity: 0.85;
+    &:hover{
+        opacity: 0.35;
+    }
 }
 
 #input-box{
@@ -927,10 +943,14 @@ main > section{
     width: 80px;
     font-size: 0.80rem;
     border: none;
-    border-radius: 3px;
+    border-radius: 6px;
     box-shadow: var(--box-shadow-1);
     font-family: 'Regular-Poppins';
     cursor: pointer;
+
+    &:hover {
+        filter: var(--filter-saturate-hover);
+    }
 }
 
 #cancel-user-button{
@@ -953,8 +973,8 @@ main > section{
     align-items: center;
 
     & > button {
-        background-color: var(--primary-color);
-        color: white;
+        background-color: var(--accent-color-orange);
+        color: var(--white-text);
         padding: 0.5rem 1rem;
         font-size: 0.87rem;
         border: none;
@@ -963,12 +983,15 @@ main > section{
         font-family: 'Regular-Poppins';
         cursor: pointer;
         margin-right: auto;
+        transition: var(--transition-ease);
 
-        &:hover {
-            background-color: var(--primary-color-200);
-        }
     }
+
+     & > button:hover{
+        transform: scale(var(--hover-scale));
+     }
 }
+
 
 #filter{
     width: 150px;
@@ -1096,7 +1119,7 @@ td > p{
     padding: 0.7rem 0;
     font-size: 0.83rem;
     border: none;
-    border-radius: 3px;
+    border-radius: 6px;
     box-shadow: var(--box-shadow-1);
     font-family: 'Regular-Poppins';
     cursor: pointer;
@@ -1128,7 +1151,7 @@ td > p{
     padding: 0.7rem 0;
     font-size: 0.83rem;
     border: none;
-    border-radius: 3px;   
+    border-radius: 6px;   
     box-shadow: var(--box-shadow-1);
     font-family: 'Regular-Poppins';
     cursor: pointer;

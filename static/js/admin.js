@@ -1232,8 +1232,18 @@ window.addEventListener("load", async function() {
     
             const adminName = document.getElementById('admin_name')
             const adminPicture = document.getElementById('admin_picture')
+            const adminEmail = document.getElementById('admin_email')
     
             adminName.textContent = await decrypt(sessionStorage.getItem("fullName"))
+
+            if (result.data[0].email) {
+                sessionStorage.setItem("email", await encrypt(result.data[0].email));
+            }
+
+            if (sessionStorage.getItem("email")) {
+                adminEmail.textContent = await decrypt(sessionStorage.getItem("email"));
+            }
+
             if (result.data[0].image){
                 sessionStorage.setItem("image", await encrypt(result.data[0].image))
                 adminPicture.src = await decrypt(sessionStorage.getItem("image"))
