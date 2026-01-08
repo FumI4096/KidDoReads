@@ -884,7 +884,18 @@ async function showUserInfo() {
             sessionStorage.setItem("fullName", await encrypt(result.data[0].fullName));
             const studentName = document.getElementById('student_name');
             const studentPicture = document.getElementById('student_picture');
+            const studentEmail = document.getElementById('student_email')
+
             studentName.textContent = await decrypt(sessionStorage.getItem("fullName"));
+
+            if (result.data[0].email) {
+                sessionStorage.setItem("email", await encrypt(result.data[0].email));
+            }
+
+            if (sessionStorage.getItem("email")) {
+                studentEmail.textContent = await decrypt(sessionStorage.getItem("email"));
+            }
+            
             if (result.data[0].image) {
                 sessionStorage.setItem("image", await encrypt(result.data[0].image));
                 studentPicture.src = await decrypt(sessionStorage.getItem("image"));

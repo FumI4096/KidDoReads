@@ -373,21 +373,6 @@ main > section {
   color: #fff;
 }
 
-/* === ALIGN PROFILE BUTTON WITH ACTIVITIES & ASSESSMENTS === */
-#student-info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding-left: 10px;
-}
-
-#student-info img {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
 #student-profile-button {
   display: flex;
   align-items: center;

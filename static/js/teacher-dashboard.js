@@ -478,8 +478,10 @@ async function showContents() {
 
             const teacherPicture = document.createElement('img')
             teacherPicture.setAttribute('id', 'teacher_picture')
+
             const teacherName = document.createElement('span')
             teacherName.setAttribute('id', 'teacher_name')
+
             sectionTeacherInfo.appendChild(teacherPicture)
             sectionTeacherInfo.appendChild(teacherName)
 
@@ -633,8 +635,18 @@ async function showUserInfo(){
 
             const teacherName = document.getElementById('teacher_name')
             const teacherPicture = document.getElementById('teacher_picture')
+            const teacherEmail = document.getElementById('teacher_email')
 
             teacherName.textContent = await decrypt(sessionStorage.getItem("fullName"))
+
+            if (result.data[0].email) {
+                sessionStorage.setItem("email", await encrypt(result.data[0].email));
+            }
+
+            if (sessionStorage.getItem("email")) {
+                teacherEmail.textContent = await decrypt(sessionStorage.getItem("email"));
+            }
+            
             if (result.data[0].image){
                 sessionStorage.setItem("image", await encrypt(result.data[0].image))
                 teacherPicture.src = await decrypt(sessionStorage.getItem("image"))
