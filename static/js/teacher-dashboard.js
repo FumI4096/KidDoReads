@@ -141,21 +141,24 @@ function createContent(){
             value: 1,
             name: 'Onyx', 
             description: 'Male voice, lower tone',
-            showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
+            showForActivities: ['1', '2', '3', '4', '5', '6'],
+            voiceFile: '/static/voices/onyx_sample.mp3'
         },
         {
             id: 'nova', 
             value: 2,
             name: 'Nova', 
             description: 'Teacher-like, engaging',
-            showForActivities: ['1', '2', '3', '4', '5', '6'] // Show for all
+            showForActivities: ['1', '2', '3', '4', '5', '6'],
+            voiceFile: '/static/voices/nova_sample.mp3'
         },
         {
             id: 'ivy', 
             value: 3,
             name: 'Ivy', 
             description: 'Young girl, cheerful',
-            showForActivities: ['1', '2', '5', '6'] // Only for specific activities
+            showForActivities: ['1', '2', '5', '6'],
+            voiceFile: '/static/voices/ivy_sample.mp3'
         }
     ];
 
@@ -208,7 +211,7 @@ function createContent(){
         speakerIcon.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            playVoiceSample(voice.value);
+            playVoiceSample(voice.voiceFile);
         });
     });
 
@@ -239,15 +242,7 @@ function createContent(){
 
 
     // Function to play voice sample
-    function playVoiceSample(voiceType) {
-        const voiceSamples = {
-            onyx: '/static/voice_samples/onyx.mp3',
-            nova: '/static/voice_samples/nova.mp3',
-            ivy: '/static/voice_samples/ivy.mp3'
-        };
-
-        const sampleSrc = voiceSamples[voiceType];
-
+    function playVoiceSample(sampleSrc) {
         if (!sampleSrc) {
             notification.notify("Voice sample not available", "error");
             return;
@@ -516,11 +511,19 @@ async function showContents() {
 async function showAssessments() {
     const loadingId = `loading-assessments-${Date.now()}`;
     notification.notify("Loading assessments...", "loading", null, null, loadingId);
-    
+
     mainSection.innerHTML = ''
     if (window.innerWidth <= 936){
         if (!mainSection.contains(await teacherInfoStructure())) mainSection.appendChild(await teacherInfoStructure());
     }
+
+    const parentContainer = document.querySelector('.parent-container');
+    const header = await contentHeaderStructure();
+
+    if (parentContainer && !parentContainer.contains(header)) {
+        parentContainer.prepend(header);
+    }
+
     mainSection.appendChild(contentStructure())
     const url = '/assessments';
     const response = await fetch(url);
@@ -546,6 +549,31 @@ async function showAssessments() {
         notification.dismissLoading(loadingId);
         console.error("Network Error:", error);
         notification.notify("Network error. Please check your connection and try again.", "error");
+    }
+
+    async function contentHeaderStructure() {
+        const parent = document.querySelector('.parent-container');
+        let header = parent.querySelector('.content-header');
+
+        if (!header) {
+            header = document.createElement('div');
+            header.className = 'content-header';
+
+            const greetTeacher = document.createElement('p');
+            greetTeacher.className = 'header-teacher-greeting';
+
+            const teacherName = await decrypt(sessionStorage.getItem("fullName"));
+            greetTeacher.textContent = `Hi, ${teacherName}! 👋`;
+
+            const welcomeText = document.createElement('h2');
+            welcomeText.className = 'header-welcome-text';
+            welcomeText.textContent = 'Welcome back! Here are your assessments.';
+
+            header.appendChild(greetTeacher);
+            header.appendChild(welcomeText);
+        }
+
+            return header;
     }
 
     function contentStructure(){

@@ -34,12 +34,14 @@ main > section{
     display:flex;
     flex-direction: column;
 
-    & > .content-header {
-        position: absolute;
+        & > .content-header {
+        flex: 0 0 auto;
         top: 0;
         left: 0;
         bottom: 0;
         right: 0;
+        min-height: 30%;
+        min-width: 100%;
         padding: 3rem;
         border-radius: 20px;
         background-image: var(--light-gradient-1);
@@ -47,8 +49,7 @@ main > section{
         font-weight: 600;
 
         & > .header-teacher-greeting {
-            font-family: 'Medium-Poppins';
-            margin-top: 5px;
+            font-family: 'Light-Poppins';
             color: var(--black-text);
             font-size: 2rem;
         }
@@ -57,29 +58,28 @@ main > section{
             font-family: 'Extra-Light-Poppins';
             color: var(--black-text);
             font-size: 1rem;
-            margin-top: 0.5rem;
+            margin-top: 0;
         }
     }
+}
 
-    & > #content-container{
-        position: absolute;
-        border-left: solid 2px #c7d1c8;
-        box-shadow: var(--box-shadow-2);
-        color: var(--white-text);
-        background-color: var(--background);
-        gap: 1rem;
-        margin-top: 10rem;
-        padding: 1rem;
-        border-radius: 20px;
-        height: auto;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        max-height: 100%;
-        min-height: 100%;
-        min-width: 100%;
-        overflow-y: auto;
-        z-index: 2;
-    }
+#content-container {
+    position: absolute;
+    border-left: solid 2px #c7d1c8;
+    box-shadow: var(--box-shadow-2);
+    color: var(--white-text);
+    background-color: var(--background);
+    margin-top: 10rem;
+    padding: 1rem;
+    border-radius: 20px;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    max-height: 100%;
+    min-width: 100%;
+    overflow-y: auto;
+    z-index: 2;
 }
 
 .content {
