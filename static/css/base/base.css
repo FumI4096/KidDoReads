@@ -13,29 +13,21 @@ html, body{
 
 body{
     padding: 1rem;
-    background-image: url('../../images/background/light-olive-circle.svg'), url('../../images/background/dark-green-circle.svg');
+    background-image: url('../../images/background/light-olive-circle.svg'), url('../../images/background/dark-green-circle.svg'), url('../../images/background/leaves.PNG');
     background-position: -20% 130%, 120% -80%;
     background-repeat: no-repeat, no-repeat;
     background-color: var(--background);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
     position: relative;
 }
 
-header{
-    height: 40px;
+header {
+    height: 70px;
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
-    & > span {
-        font-family: 'Bold-Poppins';
-        letter-spacing: -2px;
-        font-size: 2rem;
-        color: rgb(37, 37, 37);
-        background-clip: text;
-    }
 
     & > img{
         height: 100%;
@@ -102,7 +94,6 @@ main > aside{
     }
 
     & > ul > #log-out-button {
-        color: white;
         position: relative; 
     }
     
@@ -117,11 +108,11 @@ main > aside{
 
     & > ul > #log-out-button > ion-icon{
         font-size: 20px;
-        color: white;
+        color: var(--accent-color-almond);
     }
 
     & > ul > #log-out-button > span{
-        color: white;
+        color: var(--accent-color-almond);
 
     }
 
@@ -129,26 +120,39 @@ main > aside{
 }
 
 #admin-info, #student-info, #teacher-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 0 1rem;
     width: 100%;
     display: flex;
-    gap: 1.2rem;
+    gap: 0.2rem;
 
     & > img{
-        inline-size: 44px;
+        object-fit: cover;
+        inline-size: 80px;
         border-radius: 100%;
-        height: 44px;
-        width: 44px;
+        height: 80px;
+        width: 80px;
     }
 
     & > span{
-        font-family: 'Regular-Poppins';
-        color: var(--accent-color-almond);
-        font-size: 1rem;
+        font-family: 'Extra-Light-Poppins';
+        color: var(--white-text);
         display: grid;
         place-content: center;
     }
 
+    & > .user-name{
+        font-family: 'Regular-Poppins';
+        font-size: 1.2rem;
+    }
+    
+    & > .user-email{
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--accent-color-almond);
+    }
 }
 
 .toggle-user{
@@ -194,7 +198,6 @@ main > aside > img{
             font-size: 0.9rem;
         }
     }
-
 }
 
 @media screen and (max-width: 936px){
@@ -278,7 +281,7 @@ main > aside > img{
         }
     }
 
-    #admin-info, #student-info, #teacher-info{
+    #admin-info, #student-info, #teacher-info { 
         width: 100%;
         display: flex;
         align-items: center;
@@ -298,8 +301,12 @@ main > aside > img{
             font-family: 'Regular-Poppins';
             color: var(--primary-accent-color-1);
             font-size: 0.9rem;
-            
         }
+
+        & > .user-email{
+            display: none;
+        }
+
     }
 
     .toggle-user{

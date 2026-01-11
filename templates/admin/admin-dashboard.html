@@ -8,6 +8,7 @@
     <!-- Link to external CSS file for styling -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}">
 </head>
@@ -16,14 +17,15 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     <header>
-        <img src="{{url_for('static', filename='images/stylish-icons/sparkle-01.svg')}}" />
+        <img src="{{url_for('static', filename='images/achievement-icons/2-brain-starter.png')}}" />
     </header>
 
     <main>
         <aside>
             <section id="admin-info">
                 <img alt="image" id="admin_picture"/>
-                <span id="admin_name">Administrator</span>
+                <span id="admin_name" class="user-name">Administrator</span>
+                <span id="admin_email" class="user-email">email</span>
             </section> 
             <ul>
                 <li class="navigator" id="admin-record-button">
@@ -63,7 +65,10 @@
                             <img id="image-display" src={{url_for('static', filename="images/default_profile_picture.png")}}
                             />
                         </label>
-                        <p>Enter Image</p>
+                        <span class="upload-icon">
+                            <i class="fa-solid fa-upload"></i>
+                        </span>
+                        <p>Upload Image</p>
                         <input type="file" id="image-input" name="image" accept="image/png, image/jpeg" value="Enter Image">
                     </div>
                     <div id="input-box">
@@ -103,7 +108,7 @@
             </form>
 
             <form id="filter-form">
-                <button type="button" id="import-student-button">Import Student File</button>
+                <button type="button" id="import-student-button"><i class="fa-solid fa-upload"></i> Import Student File</button>
                 <select id="filter" name="fiter">
                     <option value="default">Descending</option>
                     <option value="id">Ascending</option>
