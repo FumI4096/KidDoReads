@@ -300,24 +300,41 @@ def student_activity_attempt_scores(student_id, content_id, filter):
             ]
             status, results = db.get_student_activity_attempt_scores(student_id, content_id, filters[filter])
             
-            new_scores = recalculate_scores_on_student_attempts(student_id, content_id)
+            try:
+                new_scores = recalculate_scores_on_student_attempts(student_id, content_id)
+                print(f"Recalculated scores: {new_scores}")
+            except Exception as recalc_error:
+                print(f"ERROR in recalculate_scores_on_student_attempts: {recalc_error}")
+                import traceback
+                traceback.print_exc()
+                new_scores = []
+            
+            print("Hello - reached after recalculation")
             
             rows = results
             attempt_scores = []
             for index, row in enumerate(rows):
-                current_score = row[1]
-                recalculated_score = new_scores[index]
-                
-                # Use recalculated score if different, otherwise use current score
-                final_score = recalculated_score if current_score != recalculated_score else current_score
-                
-                attempt_scores.append({
-                    "attempt_count": row[0],
-                    "score": final_score,
-                    "status": row[2],
-                    "date": row[3]
-                })
+                try:
+                    current_score = row[1]
+                    
+                    # Safely get recalculated score
+                    if new_scores and isinstance(new_scores, list) and index < len(new_scores):
+                        recalculated_score = new_scores[index]
+                        final_score = recalculated_score if current_score != recalculated_score else current_score
+                    else:
+                        final_score = current_score
+                    
+                    attempt_scores.append({
+                        "attempt_count": row[0],
+                        "score": final_score,
+                        "status": row[2],
+                        "date": row[3]
+                    })
+                except Exception as row_error:
+                    print(f"ERROR processing row {index}: {row_error}")
+                    continue
             
+            print(f"DEBUG: attempt_scores = {attempt_scores}")
             if status:
                 return jsonify({"status": status, "attemptScores": attempt_scores})
             else:
