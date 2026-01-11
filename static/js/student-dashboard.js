@@ -512,18 +512,24 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
 
         attemptScoreTable.appendChild(attemptScoreTableHeader)
 
-        
-        if (response.ok && result.status){
-            result.attemptScores.forEach(attempt => {
-                attemptScoreTableBody.appendChild(displayAttemptScores(attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date)));
-            });
-            attemptScoreTable.appendChild(attemptScoreTableBody)
-            attemptScoreWrapper.appendChild(attemptScoreTable)
-            attemptScoreContainer.appendChild(attemptScoreWrapper)
+        try{
 
-            document.body.appendChild(attemptScoreContainer)
-        } else {
-            notification.notify("Failed to load progress. Please try again.", "error");
+            if (response.ok && result.status){
+                result.attemptScores.forEach(attempt => {
+                    attemptScoreTableBody.appendChild(displayAttemptScores(attempt.attempt_count, attempt.score, attempt.status, formatDate(attempt.date)));
+                });
+                attemptScoreTable.appendChild(attemptScoreTableBody)
+                attemptScoreWrapper.appendChild(attemptScoreTable)
+                attemptScoreContainer.appendChild(attemptScoreWrapper)
+    
+                document.body.appendChild(attemptScoreContainer)
+            } else {
+                notification.notify("Failed to load progress. Please try again.", "error");
+                console.log(result.message)
+            }
+        }
+        catch (error){
+            console.log(error)
         }
 
 
