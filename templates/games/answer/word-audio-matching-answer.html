@@ -7,84 +7,83 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}"> 
 </head>
-<body>
+<body data-activity="wordAudioMatch">
     <header>
         <p id="display-activity-title"></p>
         <h3 id="question-number-display">Question</h3>
         <button id="to-dashboard-page-button"></button>
     </header>
-    <section class="question-container">
-        <div class="instruction-wrapper">
-            <div class="instruction-text">
-                <p>Click the <strong>button</strong> to hear the mystery word!</p>
-                <button id="tts-speaker-button">
-                    <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
-                    Play Me
-                </button>
+    <main class="main-content">
+        <section class="question-container">
+                <div class="instruction-wrapper">
+                    <div class="instruction-text">
+                        <p>Click the <strong>button</strong> to hear the mystery word!</p>
+                        <button id="tts-speaker-button">
+                            <img src="{{url_for('static', filename='images/tts-icons/tts-play-icon.svg')}}" alt="play-icon"/>
+                            Play Me
+                        </button>
+                    </div>
+                    <div class="mascot-wrapper">
+                        <video id="talkingOwlVideo" class="owl-video" autoplay muted loop preload="auto">
+                            <source src="{{url_for('static', filename='animation/talking-owl.webm')}}" type="video/webm">
+                            Your browser does not support the video tag.
+                        </video>
+                        <video id="idleOwlVideo" class="owl-video active" autoplay muted loop preload="auto">
+                            <source src="{{url_for('static', filename='animation/idle-owl.webm')}}" type="video/webm">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+                <p class="question" id="question-text" style="display: none;"></p> <!-- Hidden -->
+                <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word and choose the <strong>correct spelling</strong> among the choices!</p>
+            </section>            
+            <section class="choices-container">
+                <div class="choice-box">
+                    <label class="choice-label"> 
+                        <input type="radio" name="answer" value="a" id="answer-a">
+                        <p class="choice-letter">A.</p>
+                        <span class="choice-text" id="choice-a">Choice A Text</span>
+                    </label>
+                </div>
+
+                <div class="choice-box">
+                    <label class="choice-label">
+                        <input type="radio" name="answer" value="b" id="answer-b">
+                        <p class="choice-letter">B.</p>
+                        <span class="choice-text" id="choice-b">Choice B Text</span>
+                    </label>
+                </div>
+                <div class="choice-box">
+                    <label class="choice-label">
+                        <input type="radio" name="answer" value="c" id="answer-c">
+                        <p class="choice-letter">C.</p>
+                        <span class="choice-text" id="choice-c">Choice B Text</span>
+                    </label>
+                </div>
+
+            </section>
+            
+            <div id="answer-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Question No.</th>
+                            <th>Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
             </div>
-            <div class="mascot-wrapper">
-                <video id="talkingOwlVideo" class="owl-video" autoplay muted loop preload="auto">
-                    <source src="{{url_for('static', filename='animation/talking-owl.webm')}}" type="video/webm">
-                    Your browser does not support the video tag.
-                </video>
-                <video id="idleOwlVideo" class="owl-video active" autoplay muted loop preload="auto">
-                    <source src="{{url_for('static', filename='animation/idle-owl.webm')}}" type="video/webm">
-                    Your browser does not support the video tag.
-                </video>
+
+            <div id="button-container">
+                <button id="previous-button">Previous</button>
+                <button id="next-button">Next</button>
             </div>
-        </div>
-        <p class="question" id="question-text" style="display: none;"></p> <!-- Hidden -->
-    </section>
-    
-    <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word and choose the <strong>correct spelling</strong> among the choices!</p>
-    
-    <section class="choices-container">
-        <div class="choice-box">
-            <label class="choice-label"> 
-                <input type="radio" name="answer" value="a" id="answer-a">
-                <p class="choice-letter">A.</p>
-                <span class="choice-text" id="choice-a">Choice A Text</span>
-            </label>
-        </div>
-
-        <div class="choice-box">
-            <label class="choice-label">
-                <input type="radio" name="answer" value="b" id="answer-b">
-                <p class="choice-letter">B.</p>
-                <span class="choice-text" id="choice-b">Choice B Text</span>
-            </label>
-        </div>
-        <div class="choice-box">
-            <label class="choice-label">
-                <input type="radio" name="answer" value="c" id="answer-c">
-                <p class="choice-letter">C.</p>
-                <span class="choice-text" id="choice-c">Choice B Text</span>
-            </label>
-        </div>
-
-    </section>
-    
-    <div id="answer-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Question No.</th>
-                    <th>Answer</th>
-                    <th>Correct Answer</th>
-                    <th>Result</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-            </tbody>
-        </table>
-    </div>
-
-    <div id="button-container">
-        <button id="previous-button">Previous</button>
-        <button id="next-button">Next</button>
-    </div>
-    
+    </main>
     <script type=module src=" {{url_for('static', filename='js/games/answer/word-audio-match-answer.js')}} "></script>
 </body>
 </html>

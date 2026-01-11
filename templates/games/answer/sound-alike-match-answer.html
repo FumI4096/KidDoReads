@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/base/games/edit/answer-game-layout.css')}}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/stylish-icons/sparkle-01.svg')  }}"> 
 </head>
-<body>
+<body data-activity="soundAlikeMatch">
     <header>
         <p id="display-activity-title"></p>
         <h3 id="question-number-display">Question</h3>
         <button id="to-dashboard-page-button"></button>
     </header>
+    <main class="main-content">
     <section class="question-container">
         <div class="instruction-wrapper">
             <div class="instruction-text">
@@ -36,9 +37,9 @@
         </div>
         <p class="question" id="sentence-text" style="display: none;"></p>
         <button id="tts-keyword-button" style="display: none;">Keyword Speaker</button>
+            <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word, and choose the correct meaning based on the sentence!</p>
+
     </section>
-    
-    <p class="instruction-detail"><strong>Instruction:</strong> Listen carefully to the word, and choose the correct meaning based on the sentence!</p>
     
     <section class="choices-container">
         <div class="choice-box">
@@ -86,7 +87,9 @@
         <button id="previous-button">Previous</button>
         <button id="next-button">Next</button>
     </div>
-    
+
+    </main>
+
     <script type=module src=" {{url_for('static', filename='js/games/answer/sound-alike-match-answer.js')}} "></script>
 </body>
 </html>

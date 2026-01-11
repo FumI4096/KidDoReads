@@ -694,7 +694,7 @@ async function addAssessment(assessment_container, assessment_id, assessment_tit
     const imageArea = document.createElement("div");
     imageArea.classList.add("content-image");
     imageArea.style.backgroundImage =
-      `url('/static/images/activities-background-images/${assessment_type}.jpg')`;
+      `url('/static/images/activities-background-images/${assessment_type}.png')`;
  
     const buttonActionContainer = document.createElement("div");
     buttonActionContainer.classList.add("assessment-button-action-container");
@@ -796,7 +796,7 @@ async function addContent(content_container, content_id, content_title, content_
     const imageArea = document.createElement("div");
     imageArea.classList.add("content-image");
     imageArea.style.backgroundImage =
-      `url('/static/images/activities-background-images/${content_type}.jpg')`;
+      `url('/static/images/activities-background-images/${content_type}.png')`;
 
     /* BUTTONS */
     const editButton = document.createElement("button");

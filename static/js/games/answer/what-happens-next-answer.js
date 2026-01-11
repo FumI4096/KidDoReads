@@ -3,6 +3,7 @@ import MascotPlaySpeech from '../../modules/MascotPlaySpeech.js'
 import { checkAttemptsByStudentID, checkActivityAttemptsByStudentID, checkAssessmentAttemptsByStudentID, checkPerfectScoresByStudentID } from '../../modules/Achievement.js';
 import Notification from '../../modules/Notification.js'
 import ScoreEvaluator from '../../modules/ScoreEvaluation.js'  
+import BackgroundHandler from '../../modules/BackgroundHandler.js';
 
 const scoreAudios = {
     perfect: new Audio('/static/upload_score_voices/perfect_score_1764465112187.mp3'),
@@ -17,6 +18,8 @@ Object.values(scoreAudios).forEach(audio => {
     audio.preload = 'auto';
     audio.load();
 });
+
+BackgroundHandler(); // applies the correct background
 
 const displayActivityTitle = document.getElementById('display-activity-title');
 const toDashboardPageButton = document.getElementById('to-dashboard-page-button');
