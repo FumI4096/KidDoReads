@@ -17,31 +17,9 @@ html, body{
 body{
     display: flex;
     flex-direction: column;
-    padding: 2rem 10rem;
-    gap: 1rem;
-    background-color: var(--background) !important;
-    background-image: 
-        url('../../../../images/background/dark-green-circle.svg');
-    background-position: 100% 0%;
-    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
 }
-
-body::after {
-    content: '';
-    position: fixed;
-    top: 80px;
-    left: 130px;
-    width: 100%;
-    height: 100%;
-    background-image: url('../../../../images/background/leaves.PNG');
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    transform: rotate(180deg);
-    z-index: -1; 
-    pointer-events: none; 
-}
-
 /* ==================== HEADER ==================== */
 header{
     display: flex;
@@ -49,7 +27,22 @@ header{
     align-items: center;
     margin-bottom: 0.5rem;
     flex-shrink: 0;
+    background-color: var(--background);
+    height: 100px; /* adjust as needed */
+    padding: 0 1rem; /* optional left/right spacing */
+    box-shadow: var(--box-shadow-1);
 }
+
+
+.main-content {
+    flex: 1;                      /* take remaining space below header */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;       /* vertical centering */
+    align-items: center;           /* horizontal centering */
+    margin-top: 2rem;
+}
+
 
 .header-left {
     font-size: 0.95rem;
@@ -91,6 +84,7 @@ header{
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: var(--box-shadow-1);
 }
 
 .header-right button:hover,
@@ -102,17 +96,16 @@ header{
 .question-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    align-items: center;      /* horizontal centering */
     background: white;
     border-radius: 0.5rem;
     padding: 2.5rem 3rem;
     box-shadow: var(--box-shadow-1);
     border: 1px solid #ccc;
-    margin-bottom: 0.5rem;
+    width: 70%;
+    min-height: 400px;
     flex-shrink: 0;
-    min-height: 320px; /* Minimum height */
-    /* REMOVED max-height - now it can grow vertically */
+    margin-bottom: 1rem;
 }
 
 .question-container .question {
@@ -134,11 +127,11 @@ header{
 /* ==================== INSTRUCTION WRAPPER ==================== */
 .instruction-wrapper {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 100%;
     gap: 2rem;
-    flex-shrink: 0;
+    flex: 1;
 }
 
 .instruction-text {
@@ -158,9 +151,10 @@ header{
 
 /* Instruction Detail */
 .instruction-detail {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: var(--black-text);
     text-align: center;
+    margin-top: auto;
     margin-bottom: 1rem;
 }
 
@@ -254,27 +248,28 @@ header{
 }
 
 /* ==================== TTS BUTTONS ==================== */
-#tts-speaker-button,
-#tts-sentence-button {
+#tts-speaker-button, #tts-sentence-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.6rem 1.2rem;
-    background: rgb(212, 212, 212);
+    padding: 0.8rem 3rem;
+    background: var(--accent-color-orange);
+    color: var(--white-text);
     border: none;
     border-radius: 25px;
     cursor: pointer;
     font-size: 0.95rem;
-    color: var(--black-text);
     transition: all 0.3s ease;
     font-weight: 500;
     position: relative;
     overflow: hidden;
+
+    & > img {
+        filter: invert(1);
+    }
 }
 
-#tts-speaker-button:hover,
-#tts-sentence-button:hover {
-    background: rgb(190, 190, 190);
+#tts-speaker-button:hover, #tts-sentence-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -321,9 +316,9 @@ header{
 .choices-container{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 0.5rem;
     padding: 0 5rem;
-    width: 100%;
+    width: 60%;
 }
 
 .choice-box:nth-child(3) {
@@ -337,24 +332,26 @@ header{
     gap: 0.8rem;
     align-items: center;
     justify-content: flex-start;
-    background: var(--accent-color-wood);
+    background: var(--white-text);
     border-radius: 100px;
     border: none;
     transition: all 0.3s ease;
     cursor: pointer;
+    height: 80%;
     min-width: 450px;
+    box-shadow: var(--box-shadow-1);
     /* Width adjusts automatically based on content */
 }
 
 .choice-box:hover{
-    filter: var(--filter-saturate-hover);
+    transform: scale(var(--hover-scale));
 }
 
 .choice-box.selected,
 .choice-box:active,
 .choice-box:focus,
 .choice-box:has(input[type="radio"]:checked) {
-    background: var(--primary-color);
+    border: 5px solid var(--green-color);
 }
 
 .choice-label{
@@ -364,7 +361,7 @@ header{
     justify-content: flex-start;
     cursor: pointer;
     font-size: 1.3rem;
-    color: var(--white-text);
+    color: var(--black-text);
     width: 100%;
     padding: 2.2rem 2.5rem;
     /* Height adjusts based on text content */
@@ -393,9 +390,11 @@ header{
 /* ==================== NAVIGATION BUTTONS ==================== */
 #button-container{
     display: flex;
-    justify-content: space-between;
-    margin-top: auto;
-    padding: 1rem 0;
+    justify-content: space-between; /* pushes items to edges */
+    align-items: center;            /* vertically center buttons */
+    width: 100%;                    /* important: span full width */
+    margin: auto;
+    padding: 2rem;
     flex-shrink: 0;
 }
 
@@ -427,21 +426,23 @@ header{
 #previous-button,
 #next-button,
 #submit-button {
-    background: var(--secondary-color);
+    background: var(--accent-color-orange);
     color: var(--white-text);
     border: none;
+    width: 12rem;
     padding: 0.6rem 2rem;
-    font-size: 0.95rem;
+    font-size: 1.2rem;
     font-weight: 500;
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: var(--box-shadow-1);
 }
 
 #previous-button:hover,
 #next-button:hover,
 #submit-button:hover {
-    filter: var(--filter-saturate-hover);
+    transform: scale(var(--hover-scale));
 }
 
 /* ==================== ANSWER CONTAINER ==================== */
@@ -620,7 +621,7 @@ header{
 /* Only adjust for tablets (below 900px) - Keep 2-column layout */
 
 @media (max-width: 1470px) {
-    body {
+    .main-content {
         padding: 2.5rem 5rem;
     }
 }
@@ -635,18 +636,18 @@ header{
     }
 
     .choice-box:nth-child(3){
-        width: 70%;
+        height: 30%;
         justify-self: unset;
     }
     .choice-box{
-        width: 70%;
+        height: 30%;
     }
 }
 @media (max-width: 900px) {
     body {
         padding: 2rem 3rem;
     }
-    
+
     .header-right button,
     #to-dashboard-page-button {
         padding: 0.45rem 1rem;
@@ -700,15 +701,11 @@ header{
     }
     
     header {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr; /* 3 columns */
+        align-items: center;
         margin-bottom: 0.8rem;
-        flex-direction: column-reverse;
-        align-items: start;
-        margin: 0;
         gap: 0.3rem;
-    }
-
-    #to-dashboard-page-button {
-        align-self: flex-end;
     }
     
     .header-left,
