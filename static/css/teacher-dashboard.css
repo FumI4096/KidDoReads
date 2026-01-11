@@ -33,6 +33,7 @@ main > section{
     position: relative;
     display:flex;
     flex-direction: column;
+    height: 100%;
 
         & > .content-header {
         flex: 0 0 auto;
@@ -593,6 +594,15 @@ main > section{
 
 /* RESPONSIVE - ALWAYS SAME HEIGHT! */
 @media (max-width: 768px) {
+
+    .header-welcome-text{
+        display: none;
+    }
+
+    #parent-container {
+        padding: 2rem;
+    }
+
     .progress-header {
         gap: 0.8rem;
     }
@@ -617,6 +627,7 @@ main > section{
 
 /* Mobile L (425px) - ALWAYS SAME HEIGHT */
 @media (max-width: 425px) {
+
     .progress-header {
         flex-direction: row;
         gap: 0.6rem;
@@ -1035,7 +1046,7 @@ main > section{
     align-content: center;
     padding: 2rem 3rem;
     gap: 3rem;
-    background-color: var(--grey-text);
+    background-color: var(--accent-color-wood);
     box-shadow: var(--box-shadow-1);
 
     & > p {
@@ -1054,7 +1065,7 @@ main > section{
             background-color: var(--primary-color);
             color: var(--white-text);
             width: auto;
-            padding: 0.7rem 1rem;
+            padding: 0.7rem 2rem;
             font-size: 0.83rem;
             border: none;
             border-radius: 3px;
@@ -1071,7 +1082,7 @@ main > section{
             background-color: var(--accent-color-orange);
             color: white;
             width: auto;
-            padding: 0.7rem 1rem;
+            padding: 0.7rem 2rem;
             font-size: 0.83rem;
             border: none;
             border-radius: 3px;   
