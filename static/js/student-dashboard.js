@@ -157,7 +157,8 @@ async function studentProfile() {
     studentId.textContent = "Learner ID: " + await decrypt( (sessionStorage.getItem('id')));
 
     const studentSection = document.createElement('p');
-    studentSection.textContent = "Section: " + await decrypt(sessionStorage.getItem('sectionName'));
+    studentSection.textContent = await decrypt(sessionStorage.getItem('sectionName'));
+    studentSection.classList.add('learner-section');
 
     learnerDetails.append(studentName, studentId, studentSection);
     cardBody.append(studentImage, learnerDetails);
@@ -359,9 +360,6 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
     const categoryType = document.createElement("p");
 
     newContent.classList.add("content");
-    newContent.style.backgroundImage = `url('/static/images/activities-background-images/${content_type}.jpg')`;
-    newContent.style.backgroundSize = "cover";
-    newContent.style.backgroundPosition = "center";
 
     starIcon.classList.add("star-icon");
     activityName.classList.add("activity-name");
@@ -379,7 +377,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
     const imageArea = document.createElement("div");
     imageArea.classList.add("content-image");
     imageArea.style.backgroundImage =
-      `url('/static/images/activities-background-images/${content_type}.jpg')`;
+      `url('/static/images/activities-background-images/${content_type}.png')`;
 
 
     if (status == 0){
@@ -416,7 +414,6 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
     checkProgressButton.innerHTML = "Check Progress";
 
     buttonContainer.append(playActivityButton, checkProgressButton);
-    newContent.append(buttonContainer);
 
     playActivityButton.addEventListener('click', async () => {
         sessionStorage.setItem("currentActivityTitle", content_title);
@@ -606,18 +603,22 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
     console.log(assessment_title)
     console.log(status)
     const starIcon = document.createElement('ion-icon');
+    starIcon.classList.add("star-icon");
     const newContent = document.createElement("div");
     const assessmentName = document.createElement("p");
     const assessmentType = document.createElement("p")
-    newContent.classList.add("content");
-    newContent.style.backgroundImage = `url('/static/images/activities-background-images/${assessment_type}.jpg')`;
-    newContent.style.backgroundSize = "cover";
-    newContent.style.backgroundPosition = "center";
+
+    newContent.classList.add("assessment-content");
+
     assessmentName.classList.add("activity-name");
     assessmentType.classList.add("category-type")
     assessmentName.innerHTML = assessment_title;
     assessmentType.innerHTML = getContentName(assessment_type)
     newContent.append(assessmentName, assessmentType);
+
+    /* HEADER */
+    const contentHeader = document.createElement("div");
+    contentHeader.classList.add("assessment-content-header");
 
     if (status == 0){
         //Activity is new or not yet started
@@ -634,7 +635,17 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
         starIcon.name = "star";
         starIcon.style.color = "var(--green-color)"
     }
+
     assessmentName.prepend(starIcon);
+
+
+    /* IMAGE AREA (BOTTOM 80%) */
+
+    const imageArea = document.createElement("div");
+    imageArea.classList.add("content-image");
+    imageArea.style.backgroundImage =
+      `url('/static/images/activities-background-images/${assessment_type}.png')`;
+
 
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add("button-container");
@@ -762,7 +773,12 @@ function addAssessment(assessment_id, assessment_title, assessment_details, tts_
 
 
     })
+    
     displayContents.appendChild(newContent);
+    newContent.append(contentHeader, imageArea);
+    contentHeader.append(assessmentName, assessmentType);
+    buttonContainer.appendChild(playActivityButton, checkProgressButton);
+    imageArea.append(buttonContainer);
 
     function hasUnfinishedAttemptContainer(answer, attempt_id, type, categoryTypeNum){
         const unfinishedAttemptContainer = document.createElement('div')

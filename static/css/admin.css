@@ -969,8 +969,7 @@ main > section{
 #filter-form{
     display: flex;
     gap: 0.3rem;
-    justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 
     & > button {
         background-color: var(--accent-color-orange);
@@ -990,11 +989,11 @@ main > section{
      & > button:hover{
         transform: scale(var(--hover-scale));
      }
-}
 
-
-#filter{
-    width: 150px;
+     & > #filter {
+        align-self: flex-end;
+            width: 150px;
+     }
 }
 
 #section-filter{

@@ -1,13 +1,32 @@
 @import "variables.css";
 
 /* === GENERAL LAYOUT === */
-main > section {
+html, body {
+    overflow-x: hidden !important; /* Force hide page horizontal scroll */
+    max-width: 100vw;
+}
+
+main {
+    overflow-x: hidden !important;
+    max-width: 100%;
+    width: 100%;
+}
+
+main > section{
+    overflow-x: hidden !important; /* Prevent main from scrolling */
+    max-width: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: 0.2rem;
     min-height: 0;
-    padding: 1rem;
+
+    & > p {
+        font-family: 'Light-Poppins';
+        font-size: 1.8rem;
+        margin: 0;
+        margin-bottom: 0;
+    }
 }
 
 /* === PROFILE BACKGROUND OVERLAY === */
@@ -127,6 +146,14 @@ main > section {
 }
 .learner-card-body div p {
   font-family: 'Regular-Poppins';
+}
+
+.learner-details {
+  & > .learner-section {
+    font-size: 1rem;
+    color: var(--accent-color-orange);
+    font-family: 'Regular-Poppins';
+  }
 }
 
 #information-container aside {
@@ -359,29 +386,22 @@ main > section {
 
 /* === ACTIVITY BOX LAYOUT (TEACHER STYLE) === */
 #display-contents {
+    position: absolute;
+    border-left: solid 2px #c7d1c8;
+    box-shadow: var(--box-shadow-2);
+    color: var(--white-text);
+    background-color: var(--background);
+    margin-top: 5rem;
+    padding: 1rem;
+    border-radius: 20px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
-    padding: 1rem;
+    min-height: 30%;
     max-height: 100%;
-    min-height: 280px;
+    width: 80%;
     overflow-y: auto;
-    &::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #ccc;
-        border-radius: 10px;
-
-        &:hover {
-            background: #aaa;
-        }
-    }
+    z-index: 2;
 }
 
 #legend-stars {
@@ -489,6 +509,56 @@ main > section {
     & > button:hover {
           transform: scale(var(--hover-scale));
         }
+}
+
+.assessment-content {
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 200px;
+    box-shadow: var(--box-shadow-1);
+    transition: var(--transition-ease);
+
+    & > .assessment-content-header {
+        height: 40%;
+        background: white;
+        color: var(--black-text);
+        padding: 1rem 1rem 1rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        justify-content: center;
+
+        & > .category-type {
+            font-family: 'Light-Poppins';
+            font-size: 0.8rem;
+        }
+
+        & > .activity-name {
+            font-family: 'Bold-Poppins';
+            font-size: 1.1rem;
+
+            & > .star-icon{
+                margin-right: 10px;
+            }
+        }
+
+    }
+
+    & > .content-image {
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        padding: 0.6rem;
+    }
+
+    &:hover {
+        transform: scale(var(--hover-scale));
+    }
 }
 
 
