@@ -386,20 +386,16 @@ main > section{
 
 /* === ACTIVITY BOX LAYOUT (TEACHER STYLE) === */
 #display-contents {
-    position: absolute;
     border-left: solid 2px #c7d1c8;
     box-shadow: var(--box-shadow-2);
     color: var(--white-text);
     background-color: var(--background);
-    margin-top: 5rem;
     padding: 1rem;
     border-radius: 20px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
-    min-height: 30%;
-    max-height: 100%;
-    width: 80%;
+    width: 100%;
     overflow-y: auto;
     z-index: 2;
 }
@@ -433,6 +429,7 @@ main > section{
     overflow: hidden;
     box-shadow: var(--box-shadow-1);
     transition: var(--transition-ease);
+    height: 250px;
 
     & > .content-header {
         height: 45%;
