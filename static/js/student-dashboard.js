@@ -467,7 +467,7 @@ function addContent(content_id, teacher_name, content_title, content_details, tt
         const loadingId = `loading-progress-${Date.now()}`;
         notification.notify("Loading progress...", "loading", null, null, loadingId);
 
-        const url = `/attempts/activities/students/${id}/${content_id}/filter/0`;
+        const url = `/attempts/activities/students/${id}/${content_id}/filter/2`;
         const response = await fetch(url);
         const result = await response.json();
 

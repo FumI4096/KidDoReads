@@ -176,6 +176,8 @@ def recalculate_scores_on_student_attempts(student_id, content_id):
     student_attempt_answers = db.get_student_activity_attempt_choices(student_id)
     # Extract the correct answer
     correct_answer_str = content_answer[1][0][0]  # Gets '["b", "b", "a", "a"]'
+    print(correct_answer_str)
+    print(student_attempt_answers)
     correct_answer = json.loads(correct_answer_str)  # Gets ["b", "b", "a", "a"]
     
     new_scores = []  # List to store new scores
@@ -185,9 +187,26 @@ def recalculate_scores_on_student_attempts(student_id, content_id):
         current_score = student_data[1]
         student_answer_str = student_data[2]
         
+        # Handle None/NULL student answers (incomplete attempts)
+        if student_answer_str is None:
+            print(f"\nAttempt ID: {attemptid}")
+            print(f"  Current Score: {current_score}")
+            print(f"  Student Answer: None (incomplete attempt)")
+            print(f"  New Score: 0")
+            new_scores.append(0)
+            continue
+        
         # Parse student answer
-        student_answer_dict = json.loads(student_answer_str)
-        student_answer = [student_answer_dict[str(i)] for i in range(len(student_answer_dict))]
+        try:
+            student_answer_dict = json.loads(student_answer_str)
+            student_answer = [student_answer_dict[str(i)] for i in range(len(student_answer_dict))]
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            print(f"\nAttempt ID: {attemptid}")
+            print(f"  ERROR parsing student answer: {e}")
+            print(f"  Raw answer: {student_answer_str}")
+            print(f"  New Score: 0")
+            new_scores.append(0)
+            continue
         
         new_score = sum(1 for i in range(len(correct_answer)) if i < len(student_answer) and correct_answer[i] == student_answer[i])
         
