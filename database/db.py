@@ -69,7 +69,8 @@ class Database:
             self.cursor.execute(query, (school_id, fname, lname, email, hashed_password, image, section))
             self.connection.commit()
             for filter_type in ['default', 'id']:
-                cache.delete(f'student_records_{filter_type}')
+                for section_id in range(1, 10):
+                    cache.delete(f'student_records_{filter_type}_{section_id}')
             return True, "Student inserted successfully."
         except Exception as e:
             self.connection.rollback()
@@ -93,7 +94,8 @@ class Database:
             self.cursor.executemany(query, students_data)
             self.connection.commit()
             for filter_type in ['default', 'id']:
-                cache.delete(f'student_records_{filter_type}')
+                for section_id in range(1, 10):
+                    cache.delete(f'student_records_{filter_type}_{section_id}')
             
             return True, "Students inserted successfully.", len(students_data)
             
@@ -251,7 +253,8 @@ class Database:
                 self.connection.commit()
                 # FIXED: Clear all filter variations
                 for filter_type in ['default', 'id']:
-                    cache.delete(f'student_records_{filter_type}')
+                    for section_id in range(1, 10):
+                        cache.delete(f'student_records_{filter_type}_{section_id}')
                     cache.delete(f'teacher_records_{filter_type}')
                     cache.delete(f'admin_records_{filter_type}')
                 
@@ -283,7 +286,9 @@ class Database:
                 self.connection.commit()
                 # FIXED: Clear all filter variations
                 for filter_type in ['default', 'id']:
-                    cache.delete(f'student_records_{filter_type}')
+                    for section_id in range(1, 10):
+                        cache.delete(f'student_records_{filter_type}_{section_id}')
+                        
                     cache.delete(f'teacher_records_{filter_type}')
                     cache.delete(f'admin_records_{filter_type}')
                 

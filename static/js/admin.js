@@ -279,6 +279,7 @@ importStudentButton.addEventListener('click', async () => {
             confirmImportButton.disabled = false
             confirmImportButton.textContent = 'Confirm'
             document.body.removeChild(importContainer)
+            sectionSelect.value = '1';
         }
     })
 
