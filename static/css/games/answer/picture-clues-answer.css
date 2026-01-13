@@ -1,8 +1,8 @@
 .question-container{
     height: auto;
     min-height: unset;
-    width: 100%;
-    flex-direction: row;
+    width: 95%;
+    gap: 2rem;
 }
 
 .instruction-wrapper{

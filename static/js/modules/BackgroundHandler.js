@@ -8,8 +8,8 @@ export default function BackgroundHandler() {
         listenAndChoose: "../static/images/activities-background-images/2.png",
         soundAlikeMatch: "../static/images/activities-background-images/3.png",
         meaningMaker: "../static/images/activities-background-images/4.png",
-        picturesClues: "../static/images/activities-background-images/5.png",
-        whatHappensNext: "../static/images/activities-background-images/6.png",
+        whatHappensNext: "../static/images/activities-background-images/5.png",
+        picturesClues: "../static/images/activities-background-images/6.png",
     };
 
 const bg = backgrounds[activityType] || backgrounds.default;
