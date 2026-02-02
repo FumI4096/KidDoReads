@@ -95,11 +95,7 @@ Contributions are welcome! Feel free to:
 
 ## 📝 License
 
-This project is available for educational and personal use.
-
-## 👥 Contributors
-
-This project has 2 contributors. Thank you to all who have contributed to making KidDoReads better!
+This project is available for educational use.
 
 ## 📧 Contact
 
