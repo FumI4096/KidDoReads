@@ -18,6 +18,10 @@ KidDoReads is a platform designed to help Grade 3 kids with their English litera
 - **CSS**
 - **HTML**
 
+### AI Integration
+- **OpenAI** - Provides chatbot for teachers for simple queries and responsive TTS models for students
+- **Speechgen.io** - Integrates an exclusive TTS model for a specific game for students
+
 ## 🚀 Deployment
 
 The application is deployed on **Digital Ocean**, ensuring reliable hosting and performance.
